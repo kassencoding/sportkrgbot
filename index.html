@@ -1,79 +1,294 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GiDCity Меню</title>
-
-  <!-- ПОДКЛЮЧАЕМ ШРИФТ ЗДЕСЬ (вне CSS!) -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --purple:#b37aff;
-      --green:#7BFF5A;
-      --text:#ffffff;
-      --bg1:#000000; --bg2:#2b0040; --bg3:#500080;
-    }
-
-    /* фон + анимация */
-    body{
-      margin:0;
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, Arial, sans-serif;
-      color:var(--text);
-      min-height:100vh;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      text-align:center; padding:22px;
-      background: linear-gradient(140deg, var(--bg1), var(--bg2), var(--bg3), var(--bg1));
-      background-size:240% 240%;
-      animation: moveGradient 18s ease-in-out infinite;
-    }
-    @keyframes moveGradient{
-      0%{background-position:0% 50%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 50%}
-    }
-
-    .title{
-      font-weight:800; /* толще */
-      font-size:42px;
-      color:var(--purple);
-      margin:6px 0 8px;
-      text-shadow:0 0 10px rgba(179,122,255,.6);
-    }
-    .subtitle{
-      font-weight:700;
-      color:var(--green);
-      margin:0 0 26px;
-      text-shadow:0 0 8px rgba(123,255,90,.45);
-    }
-
-    .btn{
-      display:block; width:min(420px,92vw);
-      margin:12px auto; padding:16px 18px;
-      border-radius:14px; text-decoration:none; color:#000;
-      background:var(--green);
-      font-weight:700; font-size:18px;
-      box-shadow:0 0 10px rgba(123,255,90,.65), 0 0 22px rgba(123,255,90,.45);
-      transition:.2s transform, .2s box-shadow, .2s filter;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .btn:hover,.btn:active{
-      transform:translateY(-1px) scale(1.02);
-      box-shadow:0 0 16px rgba(123,255,90,.95), 0 0 30px rgba(123,255,90,.75);
-      filter:brightness(1.02);
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GiDCity Меню</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --purple:#b37aff; --green:#7BFF5A; --text:#fff;
+    --bg1:#000; --bg2:#2b0040; --bg3:#500080;
+    --card:#111116; --muted:#9ba0a5;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--text); min-height:100vh; padding:20px;
+    background:linear-gradient(140deg,var(--bg1),var(--bg2),var(--bg3),var(--bg1));
+    background-size:240% 240%; animation:moveGradient 18s ease-in-out infinite;
+    display:flex; flex-direction:column; gap:16px;
+  }
+  @keyframes moveGradient{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+  h1{margin:0 0 6px; font-weight:800; font-size:34px; color:var(--purple); text-shadow:0 0 10px rgba(179,122,255,.6)}
+  .tag{color:var(--green); margin-bottom:12px; text-shadow:0 0 8px rgba(123,255,90,.45)}
+  .screen{display:none}
+  .show{display:block}
+  .tiles{display:grid; grid-template-columns:1fr; gap:12px}
+  .btn{
+    display:block; width:100%; padding:14px 16px; border-radius:14px; text-decoration:none; text-align:center;
+    color:#000; background:var(--green); font-weight:700; font-size:16px;
+    box-shadow:0 0 10px rgba(123,255,90,.65),0 0 22px rgba(123,255,90,.45); transition:.2s transform,.2s box-shadow;
+  }
+  .btn:hover{transform:translateY(-1px) scale(1.02); box-shadow:0 0 16px rgba(123,255,90,.95),0 0 30px rgba(123,255,90,.75)}
+  .secondary{background:#1f1f29; color:#fff; box-shadow:none; border:1px solid #2c2c39}
+  .wrap{background:var(--card); border:1px solid #242433; border-radius:16px; padding:14px}
+  label{font-size:12px; color:var(--muted)}
+  input,select,textarea{
+    width:100%; margin-top:6px; margin-bottom:10px; background:#0f0f15; color:#fff; border:1px solid #2a2a39;
+    border-radius:12px; padding:12px 14px; font-size:15px; outline:none;
+  }
+  textarea{min-height:110px; resize:vertical}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .list{display:flex; flex-direction:column; gap:10px}
+  .item{background:#0f0f15; border:1px solid #2a2a39; border-radius:14px; padding:12px}
+  .title2{font-weight:700}
+  .muted{color:var(--muted); font-size:12px}
+  .badge{display:inline-block; background:#1b1b27; border:1px solid #2f2f40; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px}
+  .top{display:flex; align-items:center; justify-content:space-between}
+  .nav{position:sticky; top:0; background:transparent; padding-top:4px}
+  .back{color:#fff; background:#1b1b27; border:1px solid #2a2a39; border-radius:999px; padding:8px 12px; text-decoration:none; font-size:14px}
+  .spacer{height:6px}
+  @media(min-width:540px){ .tiles{grid-template-columns:1fr 1fr} }
+</style>
 </head>
 <body>
 
-  <div class="title">GiDCity</div>
-  <div class="subtitle">Зашёл • Сделал • Заработал</div>
+  <!-- SCREEN: HOME -->
+  <section id="home" class="screen show">
+    <h1>GiDCity</h1>
+    <div class="tag">Зашёл • Сделал • Заработал</div>
+    <div class="tiles">
+      <a class="btn" href="#find">🔍 Найти заказы</a>
+      <a class="btn" href="#create">➕ Создать заказ</a>
+      <a class="btn" href="#exec">🛠 Стать исполнителем</a>
+      <a class="btn" href="#mine">📦 Мои заказы</a>
+      <a class="btn secondary" href="https://t.me/GiDCityBot">Открыть в чате</a>
+    </div>
+  </section>
 
-  <a class="btn" href="https://t.me/GiDCityBot?start=find">🔍 Найти заказы</a>
-  <a class="btn" href="https://t.me/GiDCityBot?start=create">➕ Создать заказ</a>
-  <a class="btn" href="https://t.me/GiDCityBot?start=be_executor">🛠 Стать исполнителем</a>
-  <a class="btn" href="https://t.me/GiDCityBot?start=my_orders">📦 Мои заказы</a>
+  <!-- SCREEN: FIND ORDERS -->
+  <section id="find" class="screen">
+    <div class="nav">
+      <a class="back" href="#home">← Назад</a>
+    </div>
+    <h1>Найти заказы</h1>
+    <div class="wrap">
+      <div class="row">
+        <div>
+          <label>Категория</label>
+          <select id="f_category">
+            <option value="">Любая</option>
+            <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+            <option>Дизайн</option><option>IT</option><option>Другое</option>
+          </select>
+        </div>
+        <div>
+          <label>Город</label>
+          <input id="f_city" placeholder="Алматы / Астана">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Бюджет от (₸)</label>
+          <input id="f_price_min" type="number" min="0" placeholder="0">
+        </div>
+        <div>
+          <label>Бюджет до (₸)</label>
+          <input id="f_price_max" type="number" min="0" placeholder="100000">
+        </div>
+      </div>
+      <button class="btn" id="applyFilters">🔎 Применить фильтры</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="list" id="ordersList"></div>
+  </section>
 
+  <!-- SCREEN: CREATE ORDER -->
+  <section id="create" class="screen">
+    <div class="nav">
+      <a class="back" href="#home">← Назад</a>
+    </div>
+    <h1>Создать заказ</h1>
+    <div class="wrap">
+      <div class="row">
+        <div>
+          <label>Категория</label>
+          <select id="c_category" required>
+            <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+            <option>Дизайн</option><option>IT</option><option>Другое</option>
+          </select>
+        </div>
+        <div>
+          <label>Город</label>
+          <input id="c_city" placeholder="Алматы" required>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Бюджет (₸)</label>
+          <input id="c_budget" type="number" min="0" placeholder="15000" required>
+        </div>
+        <div>
+          <label>Дедлайн</label>
+          <input id="c_deadline" type="date" required>
+        </div>
+      </div>
+      <label>Описание задачи</label>
+      <textarea id="c_desc" placeholder="Что нужно сделать? Адрес, время, детали…" required></textarea>
+
+      <div class="row">
+        <div>
+          <label>Контакт (телеграм/тел.)</label>
+          <input id="c_contact" placeholder="@username или +7…">
+        </div>
+        <div>
+          <label>Имя</label>
+          <input id="c_name" placeholder="Имя заказчика">
+        </div>
+      </div>
+
+      <button class="btn" id="createBtn">🚀 Создать</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: MY ORDERS -->
+  <section id="mine" class="screen">
+    <div class="nav">
+      <a class="back" href="#home">← Назад</a>
+    </div>
+    <h1>Мои заказы</h1>
+    <div class="list" id="myOrders"></div>
+  </section>
+
+  <!-- SCREEN: EXECUTOR -->
+  <section id="exec" class="screen">
+    <div class="nav">
+      <a class="back" href="#home">← Назад</a>
+    </div>
+    <h1>Анкета исполнителя</h1>
+    <div class="wrap">
+      <div class="row">
+        <div>
+          <label>Город</label>
+          <input id="e_city" placeholder="Алматы" />
+        </div>
+        <div>
+          <label>Навыки</label>
+          <input id="e_skills" placeholder="Курьер, ремонт, уборка…" />
+        </div>
+      </div>
+      <label>О себе</label>
+      <textarea id="e_about" placeholder="Коротко о вашем опыте и доступности"></textarea>
+      <button class="btn" id="execBtn">✅ Отправить анкету</button>
+    </div>
+  </section>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  tg && tg.expand();
+
+  // ===== Навигация по hash =====
+  const screens = ["home","find","create","mine","exec"];
+  function show(id){
+    screens.forEach(s=>document.getElementById(s).classList.remove('show'));
+    document.getElementById(id).classList.add('show');
+    location.hash = id==='home'?'':('#'+id);
+    if(id==='find') renderOrders();
+    if(id==='mine') renderMyOrders();
+  }
+  window.addEventListener('hashchange', () => {
+    const id = location.hash.replace('#','') || 'home';
+    if(screens.includes(id)) show(id);
+  });
+  // первый показ
+  show((location.hash||'#home').replace('#',''));
+
+  // ====== Хранилище заказов ======
+  const KEY = 'gidcity_orders';
+  function getOrders(){ try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []} }
+  function setOrders(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
+
+  // ====== Создание заказа ======
+  document.getElementById('createBtn').onclick = () => {
+    const order = {
+      id: 'o_'+Date.now(),
+      category: document.getElementById('c_category').value,
+      city: document.getElementById('c_city').value.trim(),
+      budget: Number(document.getElementById('c_budget').value||0),
+      deadline: document.getElementById('c_deadline').value,
+      desc: document.getElementById('c_desc').value.trim(),
+      contact: document.getElementById('c_contact').value.trim(),
+      name: document.getElementById('c_name').value.trim(),
+      created: new Date().toISOString()
+    };
+    if(!order.city || !order.budget || !order.deadline || !order.desc){
+      alert('Заполните поля: город, бюджет, дедлайн, описание.');
+      return;
+    }
+    const list = getOrders();
+    list.unshift(order);
+    setOrders(list);
+
+    // отправка в бота
+    try { tg && tg.sendData(JSON.stringify({type:'create_order', order})); } catch(e){}
+
+    alert('Заказ создан!');
+    // очистим форму
+    ['c_city','c_budget','c_deadline','c_desc','c_contact','c_name'].forEach(id=>document.getElementById(id).value='');
+    show('mine');
+  };
+
+  // ====== Рендер списка заказов ======
+  function card(o){
+    return `
+      <div class="item">
+        <div class="top">
+          <div class="title2">${o.category} • ${o.city}</div>
+          <div class="badge">₸ ${o.budget.toLocaleString('ru-RU')}</div>
+        </div>
+        <div class="muted">до ${o.deadline}</div>
+        <div style="margin:6px 0 8px">${escapeHtml(o.desc)}</div>
+        ${o.contact ? `<div class="muted">Контакт: ${escapeHtml(o.contact)}</div>` : ''}
+      </div>`;
+  }
+  function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m]))}
+
+  function renderOrders(){
+    const list = getOrders();
+    const cat = document.getElementById('f_category').value;
+    const city = document.getElementById('f_city').value.trim().toLowerCase();
+    const pmin = Number(document.getElementById('f_price_min').value||0);
+    const pmax = Number(document.getElementById('f_price_max').value||1e12);
+    const filtered = list.filter(o =>
+      (!cat || o.category===cat) &&
+      (!city || o.city.toLowerCase().includes(city)) &&
+      o.budget>=pmin && o.budget<=pmax
+    );
+    document.getElementById('ordersList').innerHTML =
+      filtered.length ? filtered.map(card).join('') : `<div class="muted">Нет заказов по выбранным критериям.</div>`;
+  }
+  document.getElementById('applyFilters').onclick = renderOrders;
+
+  function renderMyOrders(){
+    const list = getOrders();
+    document.getElementById('myOrders').innerHTML =
+      list.length ? list.map(card).join('') : `<div class="muted">Вы ещё не создали заказов.</div>`;
+  }
+
+  // ====== Анкета исполнителя ======
+  document.getElementById('execBtn').onclick = () => {
+    const payload = {
+      type:'executor_profile',
+      city: document.getElementById('e_city').value.trim(),
+      skills: document.getElementById('e_skills').value.trim(),
+      about: document.getElementById('e_about').value.trim()
+    };
+    try { tg && tg.sendData(JSON.stringify(payload)); } catch(e){}
+    alert('Анкета отправлена. Мы подберём задания!');
+    show('home');
+  };
+</script>
 </body>
 </html>
