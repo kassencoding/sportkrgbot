@@ -10,222 +10,374 @@
 
 <style>
 :root{
-  --purple:#b37aff;
-  --green:#7BFF5A;
-  --text:#fff;
-  --card:#111116;
-  --muted:#9ba0a5;
-
-  /* Фон «книжная абстракция» */
+  --purple:#b37aff; --green:#7BFF5A; --text:#fff; --card:#111116; --muted:#9ba0a5;
+  --focus: 0 0 0 3px rgba(123,255,90,.35);
+  /* фон — книжная абстракция */
   --bg-img: url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?>\
 <svg xmlns='http://www.w3.org/2000/svg' width='2400' height='1400'>\
-<defs>\
-<linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\
-<stop offset='0%' stop-color='%23b37aff'/>\
-<stop offset='50%' stop-color='%236671ff'/>\
-<stop offset='100%' stop-color='%237BFF5A'/>\
-</linearGradient>\
-</defs>\
+<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\
+<stop offset='0%' stop-color='%23b37aff'/><stop offset='55%' stop-color='%236671ff'/>\
+<stop offset='100%' stop-color='%237BFF5A'/></linearGradient></defs>\
 <rect fill='%230b0b12' width='100%' height='100%'/>\
-<g opacity='0.85'>\
-<path fill='url(%23g)' d='M0 300 C 400 200, 800 400, 1200 280 S 2000 200, 2400 320 L 2400 0 L 0 0 Z'/>\
-<path fill='url(%23g)' opacity='0.45' d='M0 800 C 500 900, 900 700, 1400 820 S 2100 900, 2400 780 L 2400 1400 L 0 1400 Z'/>\
+<g opacity='0.88'>\
+<path fill='url(%23g)' d='M0 300 C 400 200, 800 420, 1200 280 S 2000 220, 2400 340 L 2400 0 L 0 0 Z'/>\
+<path fill='url(%23g)' opacity='0.45' d='M0 820 C 520 920, 920 700, 1420 820 S 2100 900, 2400 780 L 2400 1400 L 0 1400 Z'/>\
 </g>\
 <g fill='%23ffffff' fill-opacity='0.14'>\
-<circle cx='200' cy='300' r='2'/>\
-<circle cx='420' cy='640' r='1.6'/>\
-<circle cx='760' cy='180' r='1.8'/>\
-<circle cx='1220' cy='260' r='1.4'/>\
-<circle cx='1680' cy='520' r='1.8'/>\
-<circle cx='2100' cy='940' r='1.6'/>\
-</g>\
-</svg>");
+<circle cx='200' cy='300' r='2'/><circle cx='420' cy='640' r='1.6'/>\
+<circle cx='760' cy='180' r='1.8'/><circle cx='1220' cy='260' r='1.4'/>\
+<circle cx='1680' cy='520' r='1.8'/><circle cx='2100' cy='940' r='1.6'/>\
+</g></svg>");
 }
 
-/* ===== Общий фон ===== */
+/* фон */
 body{
-  margin:0; padding:20px;
-  font-family:'Poppins',sans-serif;
-  color:var(--text);
-  min-height:100vh;
-  background:
-    linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
-    var(--bg-img);
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
+  margin:0; padding:20px; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text); min-height:100vh;
+  background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), var(--bg-img);
+  background-size:cover; background-position:center; background-attachment:fixed;
 }
 
-/* ===== Главный экран ===== */
-h1{
-  margin:0;
-  font-size:38px;
-  font-weight:800;
-  letter-spacing:-0.5px;
-  color:var(--purple);
-  text-shadow:0 0 14px rgba(179,122,255,.6);
-}
-.tag{
-  margin:6px 0 16px;
-  font-size:16px;
-  color:var(--green);
-  text-shadow:0 0 8px rgba(123,255,90,.45);
-}
-.tiles{
-  display:grid;
-  gap:14px;
-}
+/* главная */
+h1{margin:0 0 6px; font-weight:800; font-size:38px; color:var(--purple); text-shadow:0 0 14px rgba(179,122,255,.6)}
+.tag{color:var(--green); margin-bottom:16px; text-shadow:0 0 8px rgba(123,255,90,.45)}
+.tiles{display:grid; gap:14px; max-width:860px}
 
-/* ===== Стеклянные кнопки ===== */
+/* кнопки (glass) */
 .btn{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  width:100%;
-  padding:16px 20px;
-  text-decoration:none;
-  border-radius:18px;
-  cursor:pointer;
-
-  font-size:18px;
-  font-weight:700;
-
-  color:#fff;
-  background:rgba(255,255,255,0.10);
-  border:1px solid rgba(255,255,255,0.35);
+  position:relative;
+  display:flex; justify-content:center; align-items:center; gap:10px;
+  width:100%; padding:16px 20px; border-radius:18px; cursor:pointer;
+  text-decoration:none; font-size:18px; font-weight:800; letter-spacing:.2px;
+  color:#fff; background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.35);
   backdrop-filter:blur(18px);
-
-  box-shadow:
-    0 0 16px rgba(179,122,255,.35),
-    0 0 38px rgba(123,255,90,.28);
-
+  box-shadow:0 0 16px rgba(179,122,255,.35), 0 0 38px rgba(123,255,90,.28);
   transition:.25s ease;
 }
-.btn:hover{
-  background:rgba(255,255,255,0.18);
-  transform:translateY(-2px) scale(1.04);
-}
-.btn:active{
-  transform:scale(0.95);
-}
-.secondary{
-  background:rgba(255,255,255,0.06);
-  border-color:rgba(255,255,255,0.25);
-  box-shadow:none;
+.btn:hover{background:rgba(255,255,255,0.18); transform:translateY(-2px) scale(1.04)}
+.btn:active{transform:scale(0.96)}
+.btn:focus{outline:none; box-shadow:var(--focus)}
+.secondary{background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.25); box-shadow:none}
+
+/* бейдж счетчика */
+.badge-btn{
+  position:absolute; top:-8px; right:-8px;
+  min-width:24px; height:24px; padding:0 6px;
+  display:flex; align-items:center; justify-content:center;
+  background:#ff4d4f; color:#fff; border-radius:999px; font-size:12px; border:2px solid rgba(255,255,255,.3);
 }
 
-/* ===== Окна (экраны) ===== */
-.screen{
-  display:none;
-  position:fixed;
-  inset:0;
-  padding:20px;
-  overflow-y:auto;
-
-  backdrop-filter:blur(22px);
-  background:rgba(0,0,0,0.55);
-
-  animation:fade .25s ease;
+/* окна-оверлеи с анимацией снизу */
+.screen{ display:none; position:fixed; inset:0; padding:20px; overflow-y:auto; background:rgba(0,0,0,0.45); backdrop-filter:blur(16px) }
+.screen.active{ display:block }
+.panel{
+  max-width:860px; margin:0 auto; background:rgba(0,0,0,0.55);
+  border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:16px;
+  transform:translateY(32px); opacity:0; animation:slideUp .28s cubic-bezier(.22,.8,.24,1) forwards;
 }
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.screen.active{ display:block; }
+@keyframes slideUp{ from{transform:translateY(34px);opacity:0} to{transform:translateY(0);opacity:1} }
 
-.nav{margin-bottom:14px;}
-.back{
-  display:inline-block;
-  padding:8px 14px;
-  border-radius:12px;
-  background:rgba(255,255,255,0.16);
-  text-decoration:none;
-  color:#fff;
-  border:1px solid rgba(255,255,255,0.25);
-  backdrop-filter:blur(12px);
-}
-.wrap{background:rgba(0,0,0,0.45); border-radius:16px; padding:16px; border:1px solid rgba(255,255,255,0.25);}
-label{font-size:13px; color:var(--muted);}
+.nav{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+.back{color:#fff; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.25); border-radius:12px; padding:8px 14px; text-decoration:none}
+.wrap{background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.25); border-radius:16px; padding:16px}
+label{font-size:13px; color:var(--muted)}
 input,select,textarea{
-  width:100%; margin-top:6px; margin-bottom:12px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.25);
-  color:#fff;
-  padding:12px 14px;
-  border-radius:14px;
-  font-size:15px;
-  backdrop-filter:blur(10px);
+  width:100%; margin-top:6px; margin-bottom:12px; background:rgba(255,255,255,0.06);
+  color:#fff; border:1px solid rgba(255,255,255,0.25); border-radius:14px; padding:12px 14px; font-size:15px; outline:none; backdrop-filter:blur(10px)
 }
-textarea{min-height:120px; resize:vertical;}
-.row{display:grid; gap:10px; grid-template-columns:1fr 1fr;}
-@media(max-width:560px){ .row{grid-template-columns:1fr;} }
-
-.list{display:flex; flex-direction:column; gap:12px;}
-.item{
-  background:rgba(255,255,255,0.07);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:16px;
-  padding:14px;
-  backdrop-filter:blur(14px);
-}
-.title2{font-weight:700; font-size:17px;}
-.muted{font-size:13px; color:var(--muted);}
-.badge{
-  padding:4px 10px;
-  background:rgba(255,255,255,0.15);
-  border-radius:999px;
-  font-size:12px;
-}
-
-/* Отступ */
+input:focus,select:focus,textarea:focus{box-shadow:var(--focus); border-color:#3a3a59}
+textarea{min-height:120px; resize:vertical}
+.row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+@media(max-width:560px){ .row{grid-template-columns:1fr} }
+.list{display:flex; flex-direction:column; gap:12px}
+.item{background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.2); border-radius:16px; padding:14px; backdrop-filter:blur(14px)}
+.title2{font-weight:700; font-size:17px}
+.muted{color:var(--muted); font-size:13px}
+.badge{display:inline-block; background:rgba(255,255,255,0.15); padding:4px 10px; border-radius:999px; margin-left:8px; font-size:12px}
 .spacer{height:6px}
 </style>
 </head>
 <body>
 
+<!-- Главный экран -->
 <section id="home">
   <h1>GiDCity</h1>
   <div class="tag">Зашёл • Сделал • Заработал</div>
   <div class="tiles">
-    <button class="btn" onclick="openScreen('find')">🔍 Найти заказы</button>
+    <button class="btn" onclick="openScreen('find')">🔍 Найти заказы <span id="ordersCountBadge" class="badge-btn" style="display:none">0</span></button>
     <button class="btn" onclick="openScreen('create')">➕ Создать заказ</button>
     <button class="btn" onclick="openScreen('exec')">🛠 Стать исполнителем</button>
     <button class="btn" onclick="openScreen('mine')">📦 Мои заказы</button>
+    <button class="btn secondary" id="openInChat">Открыть в чате</button>
   </div>
 </section>
 
-<!-- ========== ОКНА ========== -->
-<section id="find" class="screen">
-  <div class="nav"><a class="back" onclick="closeScreens()">← Назад</a></div>
-  <h1>Найти заказы</h1>
-  <!-- Твой контент остаётся -->
+<!-- Найти заказы (показываем все) -->
+<section id="find" class="screen" aria-labelledby="findTitle">
+  <div class="panel">
+    <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
+    <h1 id="findTitle">Найти заказы</h1>
+    <div class="wrap">
+      <form id="filterForm">
+        <div class="row">
+          <div>
+            <label for="f-category">Категория</label>
+            <select id="f-category" name="category">
+              <option value="">Любая</option>
+              <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+              <option>Дизайн</option><option>IT</option><option>Другое</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-city">Город</label>
+            <input id="f-city" name="city" placeholder="Алматы / Астана" />
+          </div>
+        </div>
+        <div class="row">
+          <div><label for="f-min">Бюджет от (₸)</label><input id="f-min" name="min" type="number" min="0" placeholder="0" /></div>
+          <div><label for="f-max">Бюджет до (₸)</label><input id="f-max" name="max" type="number" min="0" placeholder="100000" /></div>
+        </div>
+        <button class="btn" type="submit">🔎 Применить фильтры</button>
+      </form>
+    </div>
+    <div class="spacer"></div>
+    <div id="findList" class="list" aria-live="polite"></div>
+  </div>
 </section>
 
-<section id="create" class="screen">
-  <div class="nav"><a class="back" onclick="closeScreens()">← Назад</a></div>
-  <h1>Создать заказ</h1>
-  <!-- Форма остаётся -->
+<!-- Создать заказ -->
+<section id="create" class="screen" aria-labelledby="createTitle">
+  <div class="panel">
+    <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
+    <h1 id="createTitle">Создать заказ</h1>
+    <div class="wrap">
+      <form id="createForm">
+        <div class="row">
+          <div>
+            <label for="c-category">Категория</label>
+            <select id="c-category" name="category" required>
+              <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+              <option>Дизайн</option><option>IT</option><option>Другое</option>
+            </select>
+          </div>
+          <div>
+            <label for="c-city">Город</label>
+            <input id="c-city" name="city" placeholder="Алматы" required />
+          </div>
+        </div>
+        <div class="row">
+          <div><label for="c-budget">Бюджет (₸)</label><input id="c-budget" name="budget" type="number" min="0" placeholder="15000" required /></div>
+          <div><label for="c-deadline">Дедлайн</label><input id="c-deadline" name="deadline" type="date" required /></div>
+        </div>
+        <label for="c-desc">Описание задачи</label>
+        <textarea id="c-desc" name="desc" placeholder="Что нужно сделать? Адрес, время, детали…" required></textarea>
+        <div class="row">
+          <div><label for="c-contact">Контакт</label><input id="c-contact" name="contact" placeholder="@username или +7…" required /></div>
+          <div><label for="c-name">Имя</label><input id="c-name" name="name" placeholder="Имя заказчика" required /></div>
+        </div>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <button class="btn" type="submit">🚀 Создать</button>
+          <button class="btn secondary" type="button" id="sendOrderToBot">📤 Отправить в бот</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </section>
 
-<section id="exec" class="screen">
-  <div class="nav"><a class="back" onclick="closeScreens()">← Назад</a></div>
-  <h1>Анкета исполнителя</h1>
-  <!-- Форма остаётся -->
+<!-- Мои заказы (локально созданные) -->
+<section id="mine" class="screen" aria-labelledby="mineTitle">
+  <div class="panel">
+    <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
+    <h1 id="mineTitle">Мои заказы</h1>
+    <div id="mineList" class="list"><div class="muted">Пока пусто. Создайте первый заказ →</div></div>
+    <div class="row" style="grid-template-columns:1fr 1fr; margin-top:10px">
+      <button class="btn secondary" id="exportJson">⬇️ Экспорт JSON</button>
+      <button class="btn secondary" id="clearAll">🗑 Очистить всё</button>
+    </div>
+  </div>
 </section>
 
-<section id="mine" class="screen">
-  <div class="nav"><a class="back" onclick="closeScreens()">← Назад</a></div>
-  <h1>Мои заказы</h1>
-  <!-- Список остаётся -->
+<!-- Анкета исполнителя -->
+<section id="exec" class="screen" aria-labelledby="execTitle">
+  <div class="panel">
+    <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
+    <h1 id="execTitle">Анкета исполнителя</h1>
+    <div class="wrap">
+      <form id="execForm">
+        <div class="row">
+          <div><label for="e-city">Город</label><input id="e-city" name="city" placeholder="Алматы" required /></div>
+          <div><label for="e-skills">Навыки</label><input id="e-skills" name="skills" placeholder="Курьер, ремонт, уборка…" required /></div>
+        </div>
+        <label for="e-about">О себе</label>
+        <textarea id="e-about" name="about" placeholder="Коротко о вашем опыте и доступности" required></textarea>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <button class="btn" type="submit">✅ Сохранить анкету</button>
+          <button class="btn secondary" type="button" id="sendProfileToBot">📤 Отправить в бот</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </section>
 
 <script>
+/* Telegram init */
+const tg = window.Telegram?.WebApp;
+const isInTelegram = !!tg;
+if(isInTelegram){ tg.ready(); tg.expand(); document.body.classList.toggle('tg-light', tg.colorScheme==='light'); }
+
+/* Навигация окон */
 function openScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.getElementById(id)?.classList.add('active');
 }
-function closeScreens(){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-}
-</script>
+function closeScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
 
+/* Deep link (замени, если нужно) */
+const BOT_USERNAME='GiDCityBot', STARTAPP_KEY='menu';
+document.getElementById('openInChat').onclick=()=> {
+  const url=`https://t.me/${BOT_USERNAME}?startapp=${encodeURIComponent(STARTAPP_KEY)}`;
+  if(isInTelegram){ tg.openTelegramLink(url); } else { window.open(url,'_blank'); }
+};
+
+/* Storage */
+const LS_ORDERS='gid_orders_v1', LS_PROFILE='gid_profile_v1';
+const Store={
+  getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[]}catch(_){return[]} },
+  setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); },
+  addOrder(o){ const l=this.getOrders(); l.unshift(o); this.setOrders(l); return l; },
+  deleteOrder(id){ const l=this.getOrders().filter(x=>x.id!==id); this.setOrders(l); return l; },
+  getProfile(){ try{return JSON.parse(localStorage.getItem(LS_PROFILE))||null}catch(_){return null} },
+  setProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); }
+};
+
+/* Seed данные */
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function daysFromNow(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+if(Store.getOrders().length===0){
+  Store.setOrders([
+    { id:'seed1', category:'Курьер', city:'Алматы', budget:10000, deadline:daysFromNow(1), desc:'Отвезти документы из А в Б', contact:'@client1', name:'Айдар', isMine:false },
+    { id:'seed2', category:'Уборка', city:'Астана', budget:15000, deadline:todayISO(), desc:'2-х комнатная квартира', contact:'@client2', name:'Салтанат', isMine:false }
+  ]);
+}
+
+/* Рендер */
+const findList=document.getElementById('findList'), mineList=document.getElementById('mineList'), ordersBadge=document.getElementById('ordersCountBadge');
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function prettyDeadline(iso){
+  const d=new Date(iso+'T00:00:00'), t=new Date(todayISO()+'T00:00:00'); const diff=Math.round((d-t)/86400000);
+  if(diff===0)return'сегодня'; if(diff===1)return'до завтра'; if(diff<0)return'просрочено'; return `до ${d.toLocaleDateString('ru-KZ')}`;
+}
+function renderOrders(container, list){
+  container.innerHTML='';
+  if(!list||list.length===0){ container.innerHTML='<div class="muted">Ничего не найдено.</div>'; return; }
+  list.forEach(o=>{
+    const el=document.createElement('div'); el.className='item';
+    const mineMark = o.isMine ? ' • <span class="muted">мой</span>' : '';
+    el.innerHTML=`
+      <div class="title2">${escapeHTML(o.category)} • ${escapeHTML(o.city)} <span class="badge">₸ ${Number(o.budget).toLocaleString('ru-RU')}</span>${mineMark}</div>
+      <div class="muted">${prettyDeadline(o.deadline)}</div>
+      <div>${escapeHTML(o.desc)}</div>
+      <div class="muted">Контакт: ${escapeHTML(o.contact)} • ${escapeHTML(o.name)}</div>
+      <div style="display:flex; gap:8px; margin-top:8px">
+        <button class="btn secondary" data-act="send" data-id="${o.id}">📤 В бот</button>
+        <button class="btn secondary" data-act="delete" data-id="${o.id}">🗑 Удалить</button>
+      </div>`;
+    container.appendChild(el);
+  });
+  container.querySelectorAll('button[data-act]').forEach(b=>{
+    b.onclick=(e)=>{
+      const id=e.currentTarget.getAttribute('data-id'), act=e.currentTarget.getAttribute('data-act');
+      const order=Store.getOrders().find(x=>x.id===id);
+      if(act==='delete'){ Store.deleteOrder(id); refreshAll(); }
+      if(act==='send' && order){ sendToBot({type:'order', payload:order}); }
+    };
+  });
+}
+
+/* Фильтры в "Найти заказы" (все заказы, не только мои) */
+document.getElementById('filterForm').addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const fd=new FormData(e.currentTarget);
+  const cat=(fd.get('category')||'').trim(), city=(fd.get('city')||'').trim().toLowerCase();
+  const min=Number(fd.get('min')||0), max=Number(fd.get('max')||0);
+  const list=Store.getOrders().filter(o=>{
+    let ok=true;
+    if(cat) ok=ok&&o.category===cat;
+    if(city) ok=ok&&o.city.toLowerCase().includes(city);
+    if(min) ok=ok&&Number(o.budget)>=min;
+    if(max) ok=ok&&Number(o.budget)<=max;
+    return ok;
+  });
+  renderOrders(findList, list);
+});
+
+/* Создание заказа → добавляем, открываем "Найти", показываем все */
+document.getElementById('createForm').addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const fd=new FormData(e.currentTarget);
+  const order={
+    id: Math.random().toString(36).slice(2,10)+Date.now().toString(36),
+    category:fd.get('category'), city:fd.get('city'),
+    budget:Number(fd.get('budget')), deadline:fd.get('deadline'),
+    desc:fd.get('desc'), contact:fd.get('contact'), name:fd.get('name'),
+    isMine:true
+  };
+  if(!(order.category&&order.city&&order.deadline&&order.desc&&order.contact&&order.name)){ alert('Заполните все поля'); return; }
+  if(!(order.budget>=0)){ alert('Бюджет должен быть неотрицательным'); return; }
+  Store.addOrder(order);
+  e.currentTarget.reset(); document.getElementById('c-deadline').value=todayISO();
+  openScreen('find'); refreshAll(); // открываем "Найти" и показываем весь список
+});
+document.getElementById('sendOrderToBot').onclick=()=>{
+  const last=Store.getOrders()[0]; if(!last){ alert('Нет заказов для отправки'); return; }
+  sendToBot({type:'order', payload:last});
+};
+
+/* Анкета */
+document.getElementById('execForm').addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const fd=new FormData(e.currentTarget);
+  const profile={ city:fd.get('city'), skills:fd.get('skills'), about:fd.get('about'), updatedAt:new Date().toISOString() };
+  if(!profile.city||!profile.skills||!profile.about){ alert('Заполните все поля анкеты'); return; }
+  Store.setProfile(profile); alert('Анкета сохранена ✅');
+});
+document.getElementById('sendProfileToBot').onclick=()=>{
+  const p=Store.getProfile(); if(!p){ alert('Сначала заполните анкету'); return; }
+  sendToBot({type:'profile', payload:p});
+};
+
+/* Экспорт / очистка */
+document.getElementById('exportJson').onclick=()=>{
+  const data={orders:Store.getOrders(), profile:Store.getProfile()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='gidcity-data.json'; a.click(); URL.revokeObjectURL(url);
+};
+document.getElementById('clearAll').onclick=()=>{ if(confirm('Удалить все локальные данные?')){ localStorage.clear(); refreshAll(); } };
+
+/* Связка с ботом */
+function sendToBot(message){
+  const payload=JSON.stringify(message);
+  if(isInTelegram){
+    try{ tg.sendData(payload); tg.showAlert('Отправлено в бот ✅'); }
+    catch(e){ tg.showAlert('Не удалось отправить: '+e.message); }
+  }else{
+    console.log('Payload for bot:', payload);
+    alert('Открыто вне Telegram. JSON показан в консоли и будет скачан.');
+    const blob=new Blob([payload],{type:'application/json'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`gidcity-${message.type}.json`; a.click(); URL.revokeObjectURL(url);
+  }
+}
+
+/* Инициализация списков и бейджа */
+function refreshAll(){
+  const orders=Store.getOrders();
+  renderOrders(findList, orders);              // в «Найти» — все заказы
+  renderOrders(mineList, orders.filter(o=>o.isMine)); // в «Мои» — только мои
+  // бейдж с общим количеством заказов
+  if(orders.length>0){ ordersBadge.style.display='flex'; ordersBadge.textContent=orders.length; }
+  else { ordersBadge.style.display='none'; }
+}
+refreshAll();
+</script>
 </body>
 </html>
