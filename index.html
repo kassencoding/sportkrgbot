@@ -2,15 +2,17 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>GiDCity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GiDCity Меню</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
 :root{
-  --purple:#b37aff; --green:#7BFF5A; --text:#fff; --muted:#9ba0a5;
-  --focus:0 0 0 3px rgba(123,255,90,.35);
-  --bg-img:url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?>\
+  --purple:#b37aff; --green:#7BFF5A; --text:#fff; --card:#111116; --muted:#9ba0a5;
+  --focus: 0 0 0 3px rgba(123,255,90,.35);
+  --bg-img: url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?>\
 <svg xmlns='http://www.w3.org/2000/svg' width='2400' height='1400'>\
 <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\
 <stop offset='0%' stop-color='%23b37aff'/><stop offset='55%' stop-color='%236671ff'/>\
@@ -19,166 +21,253 @@
 <g opacity='0.88'>\
 <path fill='url(%23g)' d='M0 300 C 400 200, 800 420, 1200 280 S 2000 220, 2400 340 L 2400 0 L 0 0 Z'/>\
 <path fill='url(%23g)' opacity='0.45' d='M0 820 C 520 920, 920 700, 1420 820 S 2100 900, 2400 780 L 2400 1400 L 0 1400 Z'/>\
+</g>\
+<g fill='%23ffffff' fill-opacity='0.14'>\
+<circle cx='200' cy='300' r='2'/><circle cx='420' cy='640' r='1.6'/>\
+<circle cx='760' cy='180' r='1.8'/><circle cx='1220' cy='260' r='1.4'/>\
+<circle cx='1680' cy='520' r='1.8'/><circle cx='2100' cy='940' r='1.6'/>\
 </g></svg>");
 }
-*{box-sizing:border-box}
+
+/* фон */
 body{
-  margin:0;
-  padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));
-  font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  margin:0; padding:20px; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   color:var(--text); min-height:100vh;
-  background:linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), var(--bg-img);
+  background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), var(--bg-img);
   background-size:cover; background-position:center; background-attachment:fixed;
 }
 
-/* Заголовки + роли */
-h1{margin:0 0 6px; font-weight:800; font-size:40px; letter-spacing:-.3px; color:var(--purple); text-shadow:0 0 16px rgba(179,122,255,.6)}
-.tag{color:var(--green); margin-bottom:14px; text-shadow:0 0 8px rgba(123,255,90,.45)}
-.role-switch{display:inline-flex; border-radius:14px; padding:4px; gap:4px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.25); backdrop-filter:blur(10px); margin-bottom:16px}
-.role-switch button{border:0; padding:8px 12px; border-radius:10px; color:#fff; font-weight:800; cursor:pointer; background:transparent}
-.role-switch button.active{background:rgba(255,255,255,.22)}
-
-/* Кнопки */
+/* заголовки */
+h1{margin:0 0 6px; font-weight:800; font-size:38px; color:var(--purple); text-shadow:0 0 14px rgba(179,122,255,.6)}
+.tag{color:var(--green); margin-bottom:16px; text-shadow:0 0 8px rgba(123,255,90,.45)}
 .tiles{display:grid; gap:14px; max-width:860px}
+
+/* Кнопки (glass) — иконка слева, слово справа */
 .btn{
-  position:relative; display:flex; align-items:center; gap:14px; width:100%;
-  padding:18px 20px; border-radius:20px; cursor:pointer; text-decoration:none;
-  background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
-  border:1px solid rgba(255,255,255,.28); backdrop-filter:blur(18px);
-  color:#fff; font-weight:800; font-size:18px; letter-spacing:.2px;
-  box-shadow:0 6px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
+  position:relative;
+  display:flex; align-items:center; gap:14px;
+  width:100%; padding:16px 20px; border-radius:18px; cursor:pointer;
+  text-decoration:none; font-size:18px; font-weight:800; letter-spacing:.2px;
+  color:#fff; background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.35);
+  backdrop-filter:blur(18px);
+  box-shadow:0 0 16px rgba(179,122,255,.35), 0 0 38px rgba(123,255,90,.28);
   transition:.25s ease;
 }
-.btn:hover{transform:translateY(-2px)}
+.btn:hover{background:rgba(255,255,255,0.18); transform:translateY(-2px) scale(1.04)}
+.btn:active{transform:scale(0.96)}
 .btn:focus{outline:none; box-shadow:var(--focus)}
-.btn .icon{width:28px; height:28px; flex:0 0 28px; filter:drop-shadow(0 0 8px rgba(123,255,90,.55)) drop-shadow(0 0 14px rgba(179,122,255,.45))}
-.btn .text{margin-left:auto; text-align:right}
-.badge-btn{position:absolute; top:-8px; right:-8px; min-width:24px; height:24px; padding:0 6px; display:flex; align-items:center; justify-content:center; border-radius:999px; background:#ff4d4f; color:#fff; font-size:12px; border:2px solid rgba(255,255,255,.35)}
+.secondary{background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.25); box-shadow:none}
 
-/* Экраны */
-.screen{display:none; position:fixed; inset:0; padding:20px; overflow-y:auto; background:rgba(0,0,0,.42); backdrop-filter:blur(16px)}
-.screen.active{display:block}
-.panel{max-width:860px; margin:0 auto; background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.25); border-radius:20px; padding:16px; transform:translateY(28px); opacity:0; animation:slideUp .28s cubic-bezier(.22,.8,.24,1) forwards}
-@keyframes slideUp{from{transform:translateY(34px);opacity:0}to{transform:translateY(0);opacity:1}}
-.nav{display:flex; gap:10px; margin-bottom:8px}
-.back{color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.25); border-radius:12px; padding:8px 14px; text-decoration:none}
+.btn .icon{width:28px; height:28px; flex:0 0 28px; filter: drop-shadow(0 0 8px rgba(123,255,90,.55)) drop-shadow(0 0 12px rgba(179,122,255,.45));}
+.btn .btn-text{margin-left:auto; text-align:right;}
 
-.wrap{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.25); border-radius:16px; padding:16px}
+/* бейдж */
+.badge-btn{
+  position:absolute; top:-8px; right:-8px;
+  min-width:24px; height:24px; padding:0 6px;
+  display:flex; align-items:center; justify-content:center;
+  background:#ff4d4f; color:#fff; border-radius:999px; font-size:12px; border:2px solid rgba(255,255,255,.3);
+}
+
+/* окна-оверлеи + анимация снизу */
+.screen{ display:none; position:fixed; inset:0; padding:20px; overflow-y:auto; background:rgba(0,0,0,0.45); backdrop-filter:blur(16px) }
+.screen.active{ display:block }
+.panel{
+  max-width:860px; margin:0 auto; background:rgba(0,0,0,0.55);
+  border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:16px;
+  transform:translateY(32px); opacity:0; animation:slideUp .28s cubic-bezier(.22,.8,.24,1) forwards;
+}
+@keyframes slideUp{ from{transform:translateY(34px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+.nav{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+.back{color:#fff; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.25); border-radius:12px; padding:8px 14px; text-decoration:none}
+.wrap{background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.25); border-radius:16px; padding:16px}
 label{font-size:13px; color:var(--muted)}
-input,select,textarea{width:100%; margin-top:6px; margin-bottom:12px; background:rgba(255,255,255,.06); color:#fff; border:1px solid rgba(255,255,255,.25); border-radius:14px; padding:12px 14px; font-size:15px; outline:none; backdrop-filter:blur(10px)}
-input:focus,select:focus,textarea:focus{box-shadow:var(--focus)}
+input,select,textarea{
+  width:100%; margin-top:6px; margin-bottom:12px; background:rgba(255,255,255,0.06);
+  color:#fff; border:1px solid rgba(255,255,255,0.25); border-radius:14px; padding:12px 14px; font-size:15px; outline:none; backdrop-filter:blur(10px)
+}
+input:focus,select:focus,textarea:focus{box-shadow:var(--focus); border-color:#3a3a59}
 textarea{min-height:120px; resize:vertical}
 .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-@media(max-width:560px){.row{grid-template-columns:1fr}}
+@media(max-width:560px){ .row{grid-template-columns:1fr} }
 .list{display:flex; flex-direction:column; gap:12px}
-.item{background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.2); border-radius:16px; padding:14px; backdrop-filter:blur(14px)}
+.item{background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.2); border-radius:16px; padding:14px; backdrop-filter:blur(14px)}
 .title2{font-weight:700; font-size:17px}
 .muted{color:var(--muted); font-size:13px}
-.badge{display:inline-block; background:rgba(255,255,255,.15); padding:4px 10px; border-radius:999px; margin-left:8px; font-size:12px}
+.badge{display:inline-block; background:rgba(255,255,255,0.15); padding:4px 10px; border-radius:999px; margin-left:8px; font-size:12px}
 .spacer{height:6px}
 
-/* фильтр */
+/* сворачиваемый фильтр */
 .collapse{overflow:hidden; max-height:0; transition:max-height .25s ease}
 .collapse.open{max-height:500px}
-
-/* кошелёк */
-.wallet-header{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:12px}
-.wallet-balance .label{color:var(--muted); font-size:13px}
-.wallet-balance .value{font-size:28px; font-weight:800; color:var(--green)}
-.wallet-actions{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
-.btn-tile{display:flex; align-items:center; justify-content:center; gap:12px; height:clamp(72px,18vw,110px); border-radius:16px; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); backdrop-filter:blur(14px); color:#fff; font-weight:800; font-size:17px}
 
 /* модалки */
 .modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(12px); z-index:50}
 .modal.active{display:block}
 .modal .panel{max-width:560px}
+
+/* авторизация */
+#authOverlay{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.6)); z-index:60}
+#authCard{max-width:520px; width:100%; border-radius:18px; padding:20px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.12)}
+.auth-title{font-size:26px; font-weight:800; color:var(--purple); margin-bottom:6px}
+.auth-sub{color:var(--muted); margin-bottom:16px}
+.small{font-size:13px}
 </style>
 </head>
 <body>
 
-<!-- Главная -->
+<!-- Авторизация (появляется сразу при заходе) -->
+<div id="authOverlay" aria-hidden="false" style="display:none">
+  <div id="authCard" class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px">
+      <div>
+        <div class="auth-title">GiDCity</div>
+        <div class="auth-sub">Лёгкий вход через Telegram — начните создавать и выполнять заказы.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px" id="authBody">
+      <!-- динамичное тело -->
+      <div style="display:flex; gap:8px; flex-direction:column">
+        <button id="tgLoginBtn" class="btn"><span class="btn-text">🔑 Войти через Telegram</span></button>
+        <div style="text-align:center" class="small muted">или</div>
+
+        <div id="guestFormWrap" class="wrap">
+          <form id="guestForm">
+            <label for="g-name">Имя</label>
+            <input id="g-name" name="name" placeholder="Ваше имя" required />
+            <label for="g-contact">Контакт</label>
+            <input id="g-contact" name="contact" placeholder="@username или +7…" required />
+            <div style="display:flex; gap:8px">
+              <button class="btn" type="submit">🚶 Войти как гость</button>
+              <button class="btn secondary" type="button" id="guestCancel">Отмена</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="muted small" style="margin-top:8px">Если вы открыли приложение внутри Telegram — используйте кнопку «Войти через Telegram».</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Главный экран -->
 <section id="home">
   <h1>GiDCity</h1>
   <div class="tag">Зашёл • Сделал • Заработал</div>
-
-  <!-- Переключатель ролей -->
-  <div class="role-switch">
-    <button id="roleCustomerBtn">Заказчик</button>
-    <button id="roleExecutorBtn">Исполнитель</button>
-  </div>
-
-  <!-- Меню -->
   <div class="tiles">
-    <!-- Заказчик -->
-    <div class="role-customer">
-      <button class="btn" onclick="openScreen('create')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="i1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs><path d="M12 5v14M5 12h14" stroke="url(#i1)" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="text">Создать заказ</span>
-      </button>
-      <button class="btn" onclick="openScreen('mine')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="i4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs><path d="M4 7h16M6 11h12M8 15h8" stroke="url(#i4)" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="text">Мои заказы</span>
-      </button>
-      <button class="btn" onclick="openScreen('messenger')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="i5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs><path d="M21 11c0 4.4-4 8-9 8-1.2 0-2.3-.2-3.3-.6L3 20l1.6-3.9A7.5 7.5 0 0 1 3 11c0-4.4 4-8 9-8s9 3.6 9 8Z" stroke="url(#i5)" stroke-width="2"/></svg>
-        <span class="text">Мессенджер</span>
-      </button>
-      <button class="btn" onclick="openScreen('wallet')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="i3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs><rect x="3" y="6" width="18" height="12" rx="3" stroke="url(#i3)" stroke-width="2"/><circle cx="17" cy="12" r="1.5" fill="#7BFF5A"/></svg>
-        <span class="text">Кошелёк</span>
-      </button>
-    </div>
+    <!-- СОЗДАТЬ -->
+    <button class="btn" onclick="openScreen('create')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs>
+          <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/>
+          </linearGradient>
+        </defs>
+        <path d="M3 21l6-1 11-11a3 3 0 10-4.24-4.24L4.76 15.76 3 21z" stroke="url(#grad1)" stroke-width="2" />
+        <path d="M14 6l4 4" stroke="url(#grad1)" stroke-width="2" />
+      </svg>
+      <span class="btn-text">➕ Создать заказ</span>
+    </button>
 
-    <!-- Исполнитель -->
-    <div class="role-executor" style="display:none">
-      <button class="btn" onclick="openScreen('find')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="i2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs><circle cx="11" cy="11" r="6.5" stroke="url(#i2)" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="url(#i2)" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="text">Найти заказы</span>
-        <span id="ordersCountBadge" class="badge-btn" style="display:none">0</span>
-      </button>
-      <button class="btn" onclick="openScreen('messenger')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><use href="#i5"/></svg>
-        <span class="text">Мессенджер</span>
-      </button>
-      <button class="btn" onclick="openScreen('wallet')">
-        <svg class="icon" viewBox="0 0 24 24" fill="none"><use href="#i3"/></svg>
-        <span class="text">Кошелёк</span>
-      </button>
-    </div>
+    <!-- НАЙТИ -->
+    <button class="btn" onclick="openScreen('find')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <circle cx="11" cy="11" r="6.5" stroke="url(#grad2)" stroke-width="2"/>
+        <path d="M16.5 16.5L21 21" stroke="url(#grad2)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="btn-text">🔍 Найти заказы</span>
+      <span id="ordersCountBadge" class="badge-btn" style="display:none">0</span>
+    </button>
+
+    <!-- КОШЕЛЁК -->
+    <button class="btn" onclick="openScreen('wallet')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <rect x="3" y="6" width="18" height="12" rx="3" stroke="url(#grad3)" stroke-width="2"/>
+        <circle cx="17" cy="12" r="1.5" fill="#7BFF5A"/>
+      </svg>
+      <span class="btn-text">💎 Кошелёк</span>
+    </button>
+
+    <!-- МОИ -->
+    <button class="btn" onclick="openScreen('mine')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <path d="M4 7h16M6 11h12M8 15h8" stroke="url(#grad4)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="btn-text">📦 Мои заказы</span>
+    </button>
+
+    <!-- открыть в чате -->
+    <button class="btn secondary" id="openInChat">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <path d="M21 11c0 4.418-4.03 8-9 8-1.2 0-2.35-.2-3.4-.57L3 20l1.7-4.1A7.6 7.6 0 0 1 3 11c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="url(#grad5)" stroke-width="2"/>
+      </svg>
+      <span class="btn-text">Открыть в чате</span>
+    </button>
   </div>
 </section>
 
-<!-- Найти заказы (исполнитель) -->
+<!-- Найти заказы -->
 <section id="find" class="screen" aria-labelledby="findTitle">
   <div class="panel">
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
     <h1 id="findTitle">Найти заказы</h1>
+
+    <!-- Кнопка раскрытия фильтра -->
     <div style="display:flex; gap:10px; margin-bottom:10px">
-      <button class="btn" id="toggleFilter" type="button"><span class="text">Фильтр</span></button>
+      <button class="btn secondary" id="toggleFilter" type="button">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="grad6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+          <path d="M4 6h16M6 12h12M8 18h8" stroke="url(#grad6)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-text">⚙ Фильтр</span>
+      </button>
     </div>
+
+    <!-- Сворачиваемый фильтр -->
     <div id="filterWrap" class="collapse">
       <div class="wrap">
         <form id="filterForm">
           <div class="row">
-            <div><label>Категория</label>
-              <select name="category"><option value="">Любая</option><option>Курьер</option><option>Уборка</option><option>Ремонт</option><option>Дизайн</option><option>IT</option><option>Другое</option></select>
+            <div>
+              <label for="f-category">Категория</label>
+              <select id="f-category" name="category">
+                <option value="">Любая</option>
+                <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+                <option>Дизайн</option><option>IT</option><option>Другое</option>
+              </select>
             </div>
-            <div><label>Город</label><input name="city" placeholder="Алматы / Астана"></div>
+            <div>
+              <label for="f-city">Город</label>
+              <input id="f-city" name="city" placeholder="Алматы / Астана" />
+            </div>
           </div>
           <div class="row">
-            <div><label>Бюджет от (₸)</label><input name="min" type="number" min="0" placeholder="0"></div>
-            <div><label>Бюджет до (₸)</label><input name="max" type="number" min="0" placeholder="100000"></div>
+            <div><label for="f-min">Бюджет от (₸)</label><input id="f-min" name="min" type="number" min="0" placeholder="0" /></div>
+            <div><label for="f-max">Бюджет до (₸)</label><input id="f-max" name="max" type="number" min="0" placeholder="100000" /></div>
           </div>
-          <button class="btn" type="submit"><span class="text">Применить</span></button>
+          <button class="btn" type="submit">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="grad7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+              <path d="M10 17l-4-4 1.4-1.4L10 14.2l6.6-6.6L18 9" stroke="url(#grad7)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="btn-text">🔎 Применить</span>
+          </button>
         </form>
       </div>
     </div>
+
     <div class="spacer"></div>
-    <div id="findList" class="list"></div>
+    <div id="findList" class="list" aria-live="polite"></div>
   </div>
 </section>
 
-<!-- Создать заказ (заказчик) -->
+<!-- Создать заказ -->
 <section id="create" class="screen" aria-labelledby="createTitle">
   <div class="panel">
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
@@ -186,21 +275,44 @@ textarea{min-height:120px; resize:vertical}
     <div class="wrap">
       <form id="createForm">
         <div class="row">
-          <div><label>Категория</label>
-            <select name="category" required><option>Курьер</option><option>Уборка</option><option>Ремонт</option><option>Дизайн</option><option>IT</option><option>Другое</option></select>
+          <div>
+            <label for="c-category">Категория</label>
+            <select id="c-category" name="category" required>
+              <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+              <option>Дизайн</option><option>IT</option><option>Другое</option>
+            </select>
           </div>
-          <div><label>Город</label><input name="city" placeholder="Алматы" required></div>
+          <div>
+            <label for="c-city">Город</label>
+            <input id="c-city" name="city" placeholder="Алматы" required />
+          </div>
         </div>
         <div class="row">
-          <div><label>Бюджет (₸)</label><input name="budget" type="number" min="0" placeholder="15000" required></div>
-          <div><label>Дедлайн</label><input name="deadline" type="date" required></div>
+          <div><label for="c-budget">Бюджет (₸)</label><input id="c-budget" name="budget" type="number" min="0" placeholder="15000" required /></div>
+          <div><label for="c-deadline">Дедлайн</label><input id="c-deadline" name="deadline" type="date" required /></div>
         </div>
-        <label>Описание задачи</label><textarea name="desc" placeholder="Что нужно сделать? Адрес, время, детали…" required></textarea>
+        <label for="c-desc">Описание задачи</label>
+        <textarea id="c-desc" name="desc" placeholder="Что нужно сделать? Адрес, время, детали…" required></textarea>
         <div class="row">
-          <div><label>Контакт</label><input name="contact" placeholder="@username или +7…" required></div>
-          <div><label>Имя</label><input name="name" placeholder="Имя заказчика" required></div>
+          <div><label for="c-contact">Контакт</label><input id="c-contact" name="contact" placeholder="@username или +7…" required /></div>
+          <div><label for="c-name">Имя</label><input id="c-name" name="name" placeholder="Имя заказчика" required /></div>
         </div>
-        <button class="btn" type="submit"><span class="text">Создать</span></button>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <button class="btn" type="submit">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="grad8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+              <path d="M12 5v14M5 12h14" stroke="url(#grad8)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="btn-text">🚀 Создать</span>
+          </button>
+          <button class="btn secondary" type="button" id="sendOrderToBot">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="grad9" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+              <path d="M4 12h10M9 7l5 5-5 5" stroke="url(#grad9)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="btn-text">📤 В бот</span>
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -211,7 +323,23 @@ textarea{min-height:120px; resize:vertical}
   <div class="panel">
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
     <h1 id="mineTitle">Мои заказы</h1>
-    <div id="mineList" class="list"><div class="muted">Пока пусто</div></div>
+    <div id="mineList" class="list"><div class="muted">Пока пусто. Создайте первый заказ →</div></div>
+    <div class="row" style="grid-template-columns:1fr 1fr; margin-top:10px">
+      <button class="btn secondary" id="exportJson">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="grad10" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" stroke="url(#grad10)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-text">⬇ Экспорт JSON</span>
+      </button>
+      <button class="btn secondary" id="clearAll">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="grad11" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+          <path d="M4 7h16M9 7v12m6-12v12M6 7l1-3h10l1 3" stroke="url(#grad11)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-text">🗑 Очистить всё</span>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -221,162 +349,182 @@ textarea{min-height:120px; resize:vertical}
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
     <h1 id="walletTitle">Кошелёк</h1>
     <div class="wrap">
-      <div class="wallet-header">
-        <div class="wallet-balance"><div class="label">Баланс</div><div id="balance" class="value">₸ 0</div></div>
-        <div class="wallet-actions">
-          <button class="btn-tile" type="button" id="btnTopup">Пополнить</button>
-          <button class="btn-tile" type="button" id="btnPay">Оплатить</button>
-          <button class="btn-tile" type="button" id="btnTransfer">Перевести</button>
-          <button class="btn-tile" type="button" id="btnWithdraw">Вывести</button>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+        <div>
+          <div class="muted">Баланс</div>
+          <div id="balance" style="font-size:28px; font-weight:800; color:var(--green)">₸ 0</div>
+        </div>
+        <div style="display:grid; gap:8px; grid-template-columns:repeat(2,1fr)">
+          <button class="btn" type="button" id="btnTopup"><span class="btn-text">➕ Пополнить</span></button>
+          <button class="btn" type="button" id="btnPay"><span class="btn-text">💳 Оплатить</span></button>
+          <button class="btn" type="button" id="btnTransfer"><span class="btn-text">🔁 Перевести</span></button>
+          <button class="btn" type="button" id="btnWithdraw"><span class="btn-text">↘ Вывести</span></button>
         </div>
       </div>
     </div>
     <div class="spacer"></div>
-    <div class="wrap"><div class="muted" style="margin-bottom:8px">История</div><div id="history" class="list"><div class="muted">Пока пусто</div></div></div>
-  </div>
-</section>
-
-<!-- Мессенджер -->
-<section id="messenger" class="screen" aria-labelledby="msTitle">
-  <div class="panel">
-    <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
-    <h1 id="msTitle">Мессенджер</h1>
-    <div id="chatList" class="list"></div>
-    <div id="chatThread" style="display:none">
-      <div class="wrap" style="margin-bottom:10px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <a class="back" href="#" onclick="openChatList()">← К диалогам</a>
-          <div id="chatTitle" style="font-weight:800;font-size:18px"></div>
-        </div>
-      </div>
-      <div id="messages" class="list" style="max-height:48vh; overflow:auto; padding-right:6px"></div>
-      <div class="wrap" style="margin-top:10px">
-        <form id="msgForm" style="display:flex; gap:10px">
-          <input id="msgText" placeholder="Сообщение…">
-          <button class="btn" type="submit" style="padding:12px 16px; min-width:120px"><span class="text">Отправить</span></button>
-        </form>
-      </div>
+    <div class="wrap">
+      <div class="muted" style="margin-bottom:8px">История</div>
+      <div id="history" class="list"><div class="muted">Пока пусто</div></div>
     </div>
   </div>
 </section>
 
-<!-- Модалки -->
-<div id="bidModal" class="modal"><div class="panel">
-  <h2 style="margin:0 0 10px; font-size:24px">Предложить цену</h2>
-  <div id="bidOrderInfo" class="muted" style="margin-bottom:10px"></div>
-  <div class="wrap">
-    <form id="bidForm">
-      <div class="row">
-        <div><label>Ваша цена (₸)</label><input name="price" type="number" min="0" placeholder="15000" required></div>
-        <div><label>Имя</label><input name="name" placeholder="Ваше имя" required></div>
-      </div>
-      <label>Комментарий</label><textarea name="comment" placeholder="Сроки, детали и т.д."></textarea>
-      <div class="row" style="grid-template-columns:1fr 1fr">
-        <button class="btn" type="submit"><span class="text">Отправить</span></button>
-        <button class="btn" type="button" id="bidCancel"><span class="text">Закрыть</span></button>
-      </div>
-    </form>
+<!-- Модалка «Предложить цену» -->
+<div id="bidModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bidTitle">
+  <div class="panel">
+    <h2 id="bidTitle" style="margin:0 0 10px; font-size:24px">Предложить цену</h2>
+    <div id="bidOrderInfo" class="muted" style="margin-bottom:10px"></div>
+    <div class="wrap">
+      <form id="bidForm">
+        <div class="row">
+          <div><label for="b-price">Ваша цена (₸)</label><input id="b-price" name="price" type="number" min="0" placeholder="15000" required /></div>
+          <div><label for="b-name">Имя</label><input id="b-name" name="name" placeholder="Ваше имя" required /></div>
+        </div>
+        <label for="b-comment">Комментарий</label>
+        <textarea id="b-comment" name="comment" placeholder="Коротко о сроках, деталях и т.д."></textarea>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <button class="btn secondary" type="button" id="bidCancel"><span class="btn-text">Отмена</span></button>
+          <button class="btn" type="submit"><span class="btn-text">💸 Отправить предложение</span></button>
+        </div>
+      </form>
+    </div>
   </div>
-</div></div>
+</div>
 
-<div id="bidsListModal" class="modal"><div class="panel">
-  <h2 style="margin:0 0 10px; font-size:24px">Заявки по заказу</h2>
-  <div id="bidsOrderInfo" class="muted" style="margin-bottom:10px"></div>
-  <div class="wrap"><div id="bidsList" class="list"></div></div>
-  <div style="height:8px"></div>
-  <div class="wrap"><button class="btn" type="button" id="bidsClose"><span class="text">Закрыть</span></button></div>
-</div></div>
-
-<div id="walletModal" class="modal"><div class="panel">
-  <h2 id="walletModalTitle" style="margin:0 0 10px; font-size:24px">Операция</h2>
-  <div class="wrap"><form id="walletForm"><div id="walletFields"></div><div class="row" style="grid-template-columns:1fr 1fr"><button class="btn" type="submit"><span class="text" id="walletSubmitText">Готово</span></button><button class="btn" type="button" id="walletCancel"><span class="text">Закрыть</span></button></div></form></div>
-</div></div>
+<!-- Модалка кошелька (универсальная) -->
+<div id="walletModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="walletModalTitle">
+  <div class="panel">
+    <h2 id="walletModalTitle" style="margin:0 0 10px; font-size:24px">Операция</h2>
+    <div class="wrap">
+      <form id="walletForm">
+        <div id="walletFields"></div>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <button class="btn secondary" type="button" id="walletCancel"><span class="btn-text">Отмена</span></button>
+          <button class="btn" type="submit"><span class="btn-text" id="walletSubmitText">Готово</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <script>
-/* Telegram init */
-const tg = window.Telegram?.WebApp; const isInTelegram=!!tg;
-if(isInTelegram){ tg.ready(); tg.expand(); }
+/* ========== Telegram init & auth overlay ========== */
+const tg = window.Telegram?.WebApp;
+const isInTelegram = !!tg;
+if (isInTelegram) {
+  try { tg.ready(); tg.expand(); document.body.classList.toggle('tg-light', tg.colorScheme === 'light'); }
+  catch(_) {}
+}
 
-/* Model / Storage */
-const LS_ROLE='gid_role_v1';
-const LS_ORDERS='gid_orders_v2';
-const LS_WALLET='gid_wallet_v1';
-const LS_CHATS='gid_chats_v1';
-const currentUser={ id:'me' }; // заглушка
+const authOverlay = document.getElementById('authOverlay');
+const tgLoginBtn = document.getElementById('tgLoginBtn');
+const guestForm = document.getElementById('guestForm');
+const guestCancel = document.getElementById('guestCancel');
 
-const Role={ get(){return localStorage.getItem(LS_ROLE)||'customer'}, set(r){localStorage.setItem(LS_ROLE,r); applyRole()} };
+function showAuthOverlay(){ authOverlay.style.display = 'flex'; }
+function hideAuthOverlay(){ authOverlay.style.display = 'none'; }
 
+/* Storage keys and helper */
+const LS_ORDERS='gid_orders_v1', LS_PROFILE='gid_profile_v1', LS_WALLET='gid_wallet_v1';
+const Store = {
+  getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[]}catch(_){return[]} },
+  setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); },
+  addOrder(o){ const l=this.getOrders(); l.unshift(o); this.setOrders(l); return l; },
+  updateOrder(id, mutator){ const l=this.getOrders(); const i=l.findIndex(x=>x.id===id); if(i>-1){ mutator(l[i]); this.setOrders(l);} return l; },
+  deleteOrder(id){ const l=this.getOrders().filter(x=>x.id!==id); this.setOrders(l); return l; },
+  getProfile(){ try{return JSON.parse(localStorage.getItem(LS_PROFILE))||null}catch(_){return null} },
+  setProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); },
+  getWallet(){ try{return JSON.parse(localStorage.getItem(LS_WALLET))||{balance:0,history:[]} }catch(_){return {balance:0,history:[]}} },
+  setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); }
+};
+
+/* Seed orders if empty */
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function daysFromNow(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-if(!localStorage.getItem(LS_ORDERS)){
-  localStorage.setItem(LS_ORDERS, JSON.stringify([
-    { id:'seed1', ownerId:'uA', status:'open', category:'Курьер', city:'Алматы', budget:10000, deadline:daysFromNow(1), desc:'Отвезти документы из А в Б', contact:'@client1', name:'Айдар', bids:[] },
-    { id:'seed2', ownerId:'uB', status:'open', category:'Уборка', city:'Астана', budget:15000, deadline:todayISO(), desc:'2-х комнатная квартира', contact:'@client2', name:'Салтанат', bids:[] }
-  ]));
+if(Store.getOrders().length===0){
+  Store.setOrders([
+    { id:'seed1', category:'Курьер', city:'Алматы', budget:10000, deadline:daysFromNow(1), desc:'Отвезти документы из А в Б', contact:'@client1', name:'Айдар', bids:[] },
+    { id:'seed2', category:'Уборка', city:'Астана', budget:15000, deadline:todayISO(), desc:'2-х комнатная квартира', contact:'@client2', name:'Салтанат', bids:[] }
+  ]);
 }
-if(!localStorage.getItem(LS_WALLET)){ localStorage.setItem(LS_WALLET, JSON.stringify({balance:0,history:[]})); }
-if(!localStorage.getItem(LS_CHATS)){ localStorage.setItem(LS_CHATS, JSON.stringify({dialogs:[]})); }
 
-function getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[]}catch(_){return[]} }
-function setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); }
+/* Elements */
+const findList=document.getElementById('findList'), mineList=document.getElementById('mineList'), ordersBadge=document.getElementById('ordersCountBadge');
+const balanceEl=document.getElementById('balance'), histEl=document.getElementById('history');
 
-/* Helpers */
-function money(n){ return '₸ '+Number(n||0).toLocaleString('ru-RU'); }
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function prettyDeadline(iso){ const d=new Date(iso+'T00:00:00'), t=new Date(todayISO()+'T00:00:00'); const diff=Math.round((d-t)/86400000); if(diff===0)return'сегодня'; if(diff===1)return'до завтра'; if(diff<0)return'просрочено'; return `до ${d.toLocaleDateString('ru-KZ')}`; }
-
-/* Role UI */
-const roleCustomerBtn=document.getElementById('roleCustomerBtn');
-const roleExecutorBtn=document.getElementById('roleExecutorBtn');
-function applyRole(){
-  const r=Role.get();
-  roleCustomerBtn.classList.toggle('active', r==='customer');
-  roleExecutorBtn.classList.toggle('active', r==='executor');
-  document.querySelector('.role-customer').style.display=(r==='customer')?'block':'none';
-  document.querySelector('.role-executor').style.display=(r==='executor')?'block':'none';
-  refreshAll();
+/* Utils */
+function escapeHTML(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function prettyDeadline(iso){
+  if(!iso) return 'без дедлайна';
+  const d=new Date(iso+'T00:00:00'), t=new Date(todayISO()+'T00:00:00'); const diff=Math.round((d-t)/86400000);
+  if(diff===0) return 'сегодня'; if(diff===1) return 'до завтра'; if(diff<0) return 'просрочено';
+  return 'до ' + d.toLocaleDateString('ru-KZ');
 }
-roleCustomerBtn.onclick=()=>Role.set('customer');
-roleExecutorBtn.onclick=()=>Role.set('executor');
+function money(n){ return '₸ ' + Number(n||0).toLocaleString('ru-RU'); }
 
-/* Find (executor) */
-const findList=document.getElementById('findList');
-function renderFind(){
-  if(Role.get()!=='executor') return;
-  const orders=getOrders().filter(o=>o.status==='open' && o.ownerId!=='me');
-  const badge=document.getElementById('ordersCountBadge');
-  if(orders.length){ badge.style.display='flex'; badge.textContent=orders.length; } else { badge.style.display='none'; }
-  renderOrders(findList, orders, 'find');
-}
+/* ----- renderOrders (safely) ----- */
 function renderOrders(container, list, ctx){
   container.innerHTML='';
-  if(!list?.length){ container.innerHTML='<div class="muted">Ничего не найдено.</div>'; return; }
+  if(!Array.isArray(list) || list.length===0){ container.innerHTML='<div class="muted">Ничего не найдено.</div>'; return; }
   list.forEach(o=>{
     const el=document.createElement('div'); el.className='item';
-    const bidsCount=o.bids?.length||0;
-    el.innerHTML=`
-      <div class="title2">${escapeHTML(o.category)} • ${escapeHTML(o.city)} <span class="badge">${money(o.budget)}</span></div>
-      <div class="muted">${prettyDeadline(o.deadline)} • заявок: ${bidsCount}</div>
-      <div>${escapeHTML(o.desc)}</div>
-      <div class="muted">Контакт: ${escapeHTML(o.contact)} • ${escapeHTML(o.name)}</div>
-      ${ctx==='find'?`<div style="display:flex; gap:8px; margin-top:8px"><button class="btn" data-act="bid" data-id="${o.id}"><span class="text">Предложить цену</span></button></div>`:''}
-    `;
+    const titleWrap = document.createElement('div');
+    titleWrap.className='title2';
+    titleWrap.innerHTML = `${escapeHTML(o.category)} • ${escapeHTML(o.city)} <span class="badge">${money(o.budget)}</span>`;
+    el.appendChild(titleWrap);
+
+    const meta = document.createElement('div'); meta.className='muted';
+    meta.textContent = `${prettyDeadline(o.deadline)} • заявок: ${Array.isArray(o.bids)?o.bids.length:0}`;
+    el.appendChild(meta);
+
+    const desc = document.createElement('div'); desc.innerHTML = escapeHTML(o.desc);
+    el.appendChild(desc);
+
+    const contact = document.createElement('div'); contact.className='muted';
+    contact.innerHTML = `Контакт: ${escapeHTML(o.contact)} • ${escapeHTML(o.name)}`;
+    el.appendChild(contact);
+
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
+
+    if(ctx==='find'){
+      const btnBid = document.createElement('button'); btnBid.className='btn'; btnBid.setAttribute('data-act','bid'); btnBid.setAttribute('data-id',o.id);
+      btnBid.innerHTML = `<span class="btn-text">💸 Предложить цену</span>`;
+      actions.appendChild(btnBid);
+      btnBid.addEventListener('click', ()=> openBidModal(o));
+    } else { // mine
+      const btnSend = document.createElement('button'); btnSend.className='btn secondary'; btnSend.setAttribute('data-act','send'); btnSend.setAttribute('data-id',o.id);
+      btnSend.innerHTML = `<span class="btn-text">📤 В бот</span>`;
+      actions.appendChild(btnSend);
+      btnSend.addEventListener('click', ()=>{
+        const order = Store.getOrders().find(x=>x.id===o.id);
+        if(order) sendToBot({type:'order', payload:order});
+      });
+
+      const btnDelete = document.createElement('button'); btnDelete.className='btn secondary'; btnDelete.setAttribute('data-act','delete'); btnDelete.setAttribute('data-id',o.id);
+      btnDelete.innerHTML = `<span class="btn-text">🗑 Удалить</span>`;
+      actions.appendChild(btnDelete);
+      btnDelete.addEventListener('click', ()=>{
+        if(confirm('Удалить заказ?')){ Store.deleteOrder(o.id); refreshAll(); }
+      });
+    }
+
+    el.appendChild(actions);
     container.appendChild(el);
-  });
-  container.querySelectorAll('button[data-act="bid"]').forEach(b=>{
-    b.onclick=()=>{ const id=b.getAttribute('data-id'); const o=getOrders().find(x=>x.id===id); if(o) openBidModal(o); };
   });
 }
 
-/* Find filters */
-document.getElementById('toggleFilter').onclick=()=> document.getElementById('filterWrap').classList.toggle('open');
-document.getElementById('filterForm').addEventListener('submit',(e)=>{
+/* Filter toggle */
+const toggleFilterBtn=document.getElementById('toggleFilter');
+const filterWrap=document.getElementById('filterWrap');
+if(toggleFilterBtn) toggleFilterBtn.onclick=()=>{ filterWrap.classList.toggle('open'); };
+document.getElementById('filterForm')?.addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
   const cat=(fd.get('category')||'').trim(), city=(fd.get('city')||'').trim().toLowerCase();
   const min=Number(fd.get('min')||0), max=Number(fd.get('max')||0);
-  const list=getOrders().filter(o=>{
-    let ok=o.status==='open' && o.ownerId!=='me';
+  const list=Store.getOrders().filter(o=>{
+    let ok=true;
     if(cat) ok=ok&&o.category===cat;
     if(city) ok=ok&&o.city.toLowerCase().includes(city);
     if(min) ok=ok&&Number(o.budget)>=min;
@@ -386,177 +534,270 @@ document.getElementById('filterForm').addEventListener('submit',(e)=>{
   renderOrders(findList, list, 'find');
 });
 
-/* Create (customer) */
+/* Create order */
 document.getElementById('createForm').addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
-  const order={ id:Math.random().toString(36).slice(2,10)+Date.now().toString(36), ownerId:'me', status:'open',
-    category:fd.get('category'), city:fd.get('city'), budget:Number(fd.get('budget')), deadline:fd.get('deadline'),
-    desc:fd.get('desc'), contact:fd.get('contact'), name:fd.get('name'), bids:[] };
-  const arr=getOrders(); arr.unshift(order); setOrders(arr); e.currentTarget.reset(); openScreen('mine'); refreshAll();
+  const order={
+    id: Math.random().toString(36).slice(2,10)+Date.now().toString(36),
+    category:fd.get('category'), city:fd.get('city'),
+    budget:Number(fd.get('budget')||0), deadline:fd.get('deadline'),
+    desc:fd.get('desc'), contact:fd.get('contact'), name:fd.get('name'),
+    isMine:true, bids:[]
+  };
+  if(!(order.category&&order.city&&order.deadline&&order.desc&&order.contact&&order.name)){ alert('Заполните все поля'); return; }
+  if(!(order.budget>=0)){ alert('Бюджет должен быть неотрицательным'); return; }
+  Store.addOrder(order);
+  e.currentTarget.reset(); document.getElementById('c-deadline').value=todayISO();
+  openScreen('find'); refreshAll();
 });
+document.getElementById('sendOrderToBot').onclick=()=>{
+  const last=Store.getOrders()[0]; if(!last){ alert('Нет заказов для отправки'); return; }
+  sendToBot({type:'order', payload:last});
+};
 
-/* My (role-aware) */
-const mineList=document.getElementById('mineList');
-function renderMine(){
-  const r=Role.get(); const orders=getOrders();
-  let list=[];
-  if(r==='customer'){ list=orders.filter(o=>o.ownerId==='me').sort((a,b)=>a.status.localeCompare(b.status)); }
-  else { list=orders.filter(o=>o.assigneeId==='me'); }
-  mineList.innerHTML='';
-  if(!list.length){ mineList.innerHTML='<div class="muted">Пока пусто</div>'; return; }
-  list.forEach(o=>{
-    const bidsCount=o.bids?.length||0; const el=document.createElement('div'); el.className='item';
-    el.innerHTML=`
-      <div class="title2">${escapeHTML(o.category)} • ${escapeHTML(o.city)} <span class="badge">${money(o.budget)}</span></div>
-      <div class="muted">Статус: ${o.status}${o.assigneeName?` • Исполнитель: ${escapeHTML(o.assigneeName)}`:''}</div>
-      <div>${escapeHTML(o.desc)}</div>
-      ${r==='customer' && o.status==='open'
-        ? `<div style="display:flex; gap:8px; margin-top:8px"><button class="btn" data-act="bids" data-id="${o.id}"><span class="text">Заявки (${bidsCount})</span></button></div>`
-        : (o.status==='assigned'?`<div style="display:flex; gap:8px; margin-top:8px"><button class="btn" data-act="chat" data-id="${o.id}"><span class="text">Открыть чат</span></button></div>`:'')
-      }`;
-    mineList.appendChild(el);
-  });
-  mineList.querySelectorAll('button[data-act="bids"]').forEach(b=>b.onclick=()=>openBidsModal(b.getAttribute('data-id')));
-  mineList.querySelectorAll('button[data-act="chat"]').forEach(b=>b.onclick=()=>openChatByOrder(b.getAttribute('data-id')));
-}
-
-/* Bids */
-const bidModal=document.getElementById('bidModal'), bidInfo=document.getElementById('bidOrderInfo'), bidForm=document.getElementById('bidForm'); let bidOrderId=null;
-function openBidModal(order){ bidOrderId=order.id; bidInfo.innerHTML=`<b>${escapeHTML(order.category)} • ${escapeHTML(order.city)}</b> — бюджет: ${money(order.budget)}`; bidForm.reset(); bidModal.classList.add('active'); }
-document.getElementById('bidCancel').onclick=()=> bidModal.classList.remove('active');
-bidModal.addEventListener('click',e=>{ if(e.target===bidModal) bidModal.classList.remove('active'); });
-bidForm.addEventListener('submit',(e)=>{
+/* Guest form handling */
+guestForm.addEventListener('submit',(e)=>{
   e.preventDefault();
-  const fd=new FormData(bidForm);
-  const price=Number(fd.get('price')||0), name=(fd.get('name')||'').trim(), comment=(fd.get('comment')||'').trim();
-  if(!(price>0) || !name){ alert('Заполните цену и имя'); return; }
-  const arr=getOrders(); const i=arr.findIndex(o=>o.id===bidOrderId); if(i<0) return;
-  arr[i].bids=arr[i].bids||[]; arr[i].bids.push({ id:Math.random().toString(36).slice(2,8), userId:'me', name, price, comment, createdAt:new Date().toISOString() });
-  setOrders(arr); bidModal.classList.remove('active'); alert('Предложение отправлено ✅'); refreshAll();
+  const fd=new FormData(e.currentTarget);
+  const profile={ name: (fd.get('name')||'').trim(), contact:(fd.get('contact')||'').trim(), createdAt:new Date().toISOString() };
+  if(!profile.name||!profile.contact){ alert('Заполните имя и контакт'); return; }
+  Store.setProfile(profile);
+  hideAuthOverlay();
+  refreshAll();
 });
+guestCancel.addEventListener('click', ()=>{ /* leave overlay visible or close? keep visible */ });
 
-/* Customer: list & approve bids */
-const bidsListModal=document.getElementById('bidsListModal'), bidsOrderInfo=document.getElementById('bidsOrderInfo'), bidsList=document.getElementById('bidsList');
-document.getElementById('bidsClose').onclick=()=> bidsListModal.classList.remove('active');
-bidsListModal.addEventListener('click',e=>{ if(e.target===bidsListModal) bidsListModal.classList.remove('active'); });
-function openBidsModal(orderId){
-  const arr=getOrders(); const o=arr.find(x=>x.id===orderId); if(!o) return;
-  bidsOrderInfo.textContent=`${o.category} • ${o.city} — ${money(o.budget)}`;
-  bidsList.innerHTML=(o.bids?.length)?'':'<div class="muted">Пока нет предложений</div>';
-  (o.bids||[]).forEach(b=>{
-    const row=document.createElement('div'); row.className='item';
-    row.innerHTML=`<div class="title2">${escapeHTML(b.name)} <span class="badge">${money(b.price)}</span></div>
-                   <div class="muted">${new Date(b.createdAt).toLocaleString('ru-KZ')}</div>
-                   ${b.comment?`<div>${escapeHTML(b.comment)}</div>`:''}
-                   <div style="display:flex; gap:8px; margin-top:8px">
-                     <button class="btn" data-approve="${b.id}"><span class="text">Одобрить</span></button>
-                   </div>`;
-    bidsList.appendChild(row);
-  });
-  bidsList.querySelectorAll('button[data-approve]').forEach(btn=>{
-    btn.onclick=()=>approveBid(orderId, btn.getAttribute('data-approve'));
-  });
-  bidsListModal.classList.add('active');
-}
-function approveBid(orderId, bidId){
-  const arr=getOrders(); const i=arr.findIndex(o=>o.id===orderId); if(i<0) return;
-  const o=arr[i]; const b=(o.bids||[]).find(x=>x.id===bidId); if(!b) return;
-  o.status='assigned'; o.assigneeId=b.userId; o.assigneeName=b.name; setOrders(arr);
-  bidsListModal.classList.remove('active'); const dialogId=ensureChat(o,b); openScreen('messenger'); openChat(dialogId); refreshAll();
-}
-
-/* Messenger */
-function getChats(){ try{return JSON.parse(localStorage.getItem(LS_CHATS))||{dialogs:[]}}catch(_){return{dialogs:[]}} }
-function setChats(x){ localStorage.setItem(LS_CHATS, JSON.stringify(x)); }
-const chatListEl=document.getElementById('chatList'), chatThreadEl=document.getElementById('chatThread'), messagesEl=document.getElementById('messages'), msgForm=document.getElementById('msgForm'), msgText=document.getElementById('msgText'), chatTitleEl=document.getElementById('chatTitle');
-let currentChatId=null;
-function ensureChat(order,bid){
-  const data=getChats(); const id=`o_${order.id}_u_${bid.userId}`; let d=data.dialogs.find(x=>x.id===id);
-  if(!d){ d={id,name:bid.name,unread:0,last:'',orderId:order.id,messages:[]};
-    d.messages.push({from:'system',text:`Назначен исполнитель ${bid.name} за ${money(bid.price)} по заказу '${order.category} • ${order.city}'.`,ts:Date.now()});
-    data.dialogs.unshift(d); setChats(data);
+/* Telegram login button — we take initDataUnsafe when available */
+tgLoginBtn.addEventListener('click', ()=>{
+  if(isInTelegram){
+    try {
+      const data = tg.initDataUnsafe || {};
+      if(data.user){
+        const profile = {
+          id: data.user.id,
+          name: [data.user.first_name, data.user.last_name].filter(Boolean).join(' '),
+          username: data.user.username || '',
+          telegram: true,
+          createdAt: new Date().toISOString()
+        };
+        Store.setProfile(profile);
+        hideAuthOverlay();
+        refreshAll();
+        tg.showAlert && tg.showAlert('Вход выполнен ✅');
+      } else {
+        // fallback: request showPopup or open a deep link to bot login
+        tg.showPopup && tg.showPopup({title:'Нет данных', message:'Не удалось получить данные пользователя.'});
+      }
+    } catch (err){
+      console.error(err);
+      alert('Ошибка при получении данных Telegram: '+err.message);
+    }
+  } else {
+    alert('Кнопка работает только внутри Telegram WebApp. Используйте гостевой вход вне Telegram.');
   }
-  return id;
-}
-function renderChatList(){
-  const data=getChats().dialogs;
-  chatThreadEl.style.display='none'; chatListEl.style.display='flex'; chatListEl.innerHTML='';
-  if(!data.length){ chatListEl.innerHTML='<div class="wrap muted">Пока нет диалогов</div>'; return; }
-  data.forEach(d=>{ const row=document.createElement('div'); row.className='item'; row.style.cursor='pointer';
-    row.innerHTML=`<div class="title2">${escapeHTML(d.name)} ${d.unread?`<span class="badge">${d.unread}</span>`:''}</div><div class="muted">${escapeHTML(d.last||'')}</div>`;
-    row.onclick=()=>openChat(d.id); chatListEl.appendChild(row); });
-}
-function openChat(id){
-  const data=getChats(); const d=data.dialogs.find(x=>x.id===id); if(!d) return;
-  currentChatId=id; d.unread=0; setChats(data);
-  chatTitleEl.textContent=d.name; chatListEl.style.display='none'; chatThreadEl.style.display='block'; renderMessages(d.messages||[]);
-}
-function openChatList(){ currentChatId=null; renderChatList(); }
-function renderMessages(list){
-  messagesEl.innerHTML=''; list.forEach(m=>{ const bubble=document.createElement('div'); bubble.className='item'; bubble.style.background='rgba(255,255,255,.08)';
-    const who=m.from==='me'?'Вы':(m.from==='system'?'Система':'Собеседник');
-    bubble.innerHTML=`<div>${escapeHTML(m.text)}</div><div class="muted">${who} • ${new Date(m.ts).toLocaleTimeString('ru-KZ',{hour:'2-digit',minute:'2-digit'})}</div>`;
-    if(m.from==='me') bubble.style.border='1px solid rgba(123,255,90,.35)'; messagesEl.appendChild(bubble);
-  }); messagesEl.scrollTop=messagesEl.scrollHeight;
-}
-msgForm.addEventListener('submit',(e)=>{
-  e.preventDefault(); const txt=msgText.value.trim(); if(!txt||!currentChatId) return;
-  const data=getChats(); const d=data.dialogs.find(x=>x.id===currentChatId); if(!d) return;
-  d.messages.push({from:'me', text:txt, ts:Date.now()}); d.last=txt; setChats(data); msgText.value=''; renderMessages(d.messages);
 });
-function openChatByOrder(orderId){ const data=getChats(); const d=data.dialogs.find(x=>x.orderId===orderId); if(d){ openScreen('messenger'); openChat(d.id); } }
 
-/* Wallet */
-const balanceEl=document.getElementById('balance'), histEl=document.getElementById('history');
-const walletModal=document.getElementById('walletModal'), walletFields=document.getElementById('walletFields'), walletForm=document.getElementById('walletForm'), walletCancel=document.getElementById('walletCancel'), walletSubmitText=document.getElementById('walletSubmitText'), walletTitle=document.getElementById('walletModalTitle'); let walletAction=null;
-function getWallet(){ try{return JSON.parse(localStorage.getItem(LS_WALLET))||{balance:0,history:[]}}catch(_){return{balance:0,history:[]}} }
-function setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); }
-function openWalletModal(act){
-  walletAction=act; walletFields.innerHTML=''; walletForm.reset();
-  if(act==='topup'){ walletTitle.textContent='Пополнение'; walletFields.innerHTML=`<label>Сумма (₸)</label><input name="amount" type="number" min="0" required/><label>Комментарий</label><input name="note"/>`; walletSubmitText.textContent='Пополнить'; }
-  if(act==='pay'){ walletTitle.textContent='Оплата'; walletFields.innerHTML=`<label>Сумма (₸)</label><input name="amount" type="number" min="0" required/><label>Назначение</label><input name="note"/>`; walletSubmitText.textContent='Оплатить'; }
-  if(act==='transfer'){ walletTitle.textContent='Перевод'; walletFields.innerHTML=`<label>Кому</label><input name="to" placeholder="@username" required/><label>Сумма (₸)</label><input name="amount" type="number" min="0" required/><label>Комментарий</label><input name="note"/>`; walletSubmitText.textContent='Перевести'; }
-  if(act==='withdraw'){ walletTitle.textContent='Вывод средств'; walletFields.innerHTML=`<label>Сумма (₸)</label><input name="amount" type="number" min="0" required/><label>Реквизиты</label><input name="note" required/>`; walletSubmitText.textContent='Вывести'; }
+/* If already have profile — don't show overlay */
+if(!Store.getProfile()){
+  // show overlay after tiny delay to let UI load
+  setTimeout(()=>{ showAuthOverlay(); }, 200);
+} else {
+  hideAuthOverlay();
+}
+
+/* ====== БИДЫ ====== */
+const bidModal=document.getElementById('bidModal');
+const bidForm=document.getElementById('bidForm');
+const bidCancel=document.getElementById('bidCancel');
+const bidInfo=document.getElementById('bidOrderInfo');
+let currentBidOrderId=null;
+
+function openBidModal(order){
+  currentBidOrderId=order.id;
+  bidInfo.textContent = `${order.category} • ${order.city} — бюджет заказчика: ${money(order.budget)}`;
+  bidForm.reset();
+  bidModal.classList.add('active');
+}
+function closeBidModal(){ bidModal.classList.remove('active'); currentBidOrderId=null; }
+
+bidCancel.onclick=closeBidModal;
+bidModal.addEventListener('click', (e)=>{ if(e.target===bidModal) closeBidModal(); });
+
+bidForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  if(!currentBidOrderId) return;
+  const fd=new FormData(bidForm);
+  const price=Number(fd.get('price')||0);
+  const name=(fd.get('name')||'').trim();
+  const comment=(fd.get('comment')||'').trim();
+  if(!(price>0)){ alert('Укажите корректную цену'); return; }
+  if(!name){ alert('Введите имя'); return; }
+
+  Store.updateOrder(currentBidOrderId, (o)=>{
+    if(!Array.isArray(o.bids)) o.bids=[];
+    o.bids.push({ price, name, comment, createdAt:new Date().toISOString() });
+  });
+  closeBidModal();
+  alert('Ваше предложение отправлено ✅');
+  refreshAll();
+});
+
+/* ====== КОШЕЛЁК ====== */
+const walletModal=document.getElementById('walletModal');
+const walletFields=document.getElementById('walletFields');
+const walletCancel=document.getElementById('walletCancel');
+const walletForm=document.getElementById('walletForm');
+const walletSubmitText=document.getElementById('walletSubmitText');
+const walletTitle=document.getElementById('walletModalTitle');
+
+let walletAction=null;
+
+function openWalletModal(action){
+  walletAction=action;
+  walletFields.innerHTML='';
+  if(action==='topup'){
+    walletTitle.textContent='Пополнение';
+    walletFields.innerHTML=`
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="10000" required />
+      <label for="w-note">Комментарий</label><input id="w-note" name="note" placeholder="Источник/метод" />
+    `;
+    walletSubmitText.textContent='Пополнить';
+  } else if(action==='pay'){
+    walletTitle.textContent='Оплата';
+    walletFields.innerHTML=`
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="5000" required />
+      <label for="w-note">Назначение платежа</label><input id="w-note" name="note" placeholder="ID заказа / описание" />
+    `;
+    walletSubmitText.textContent='Оплатить';
+  } else if(action==='transfer'){
+    walletTitle.textContent='Перевод';
+    walletFields.innerHTML=`
+      <label for="w-to">Кому</label><input id="w-to" name="to" placeholder="@username" required />
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="5000" required />
+      <label for="w-note">Комментарий</label><input id="w-note" name="note" placeholder="за услугу / аванс" />
+    `;
+    walletSubmitText.textContent='Перевести';
+  } else if(action==='withdraw'){
+    walletTitle.textContent='Вывод средств';
+    walletFields.innerHTML=`
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="20000" required />
+      <label for="w-note">Реквизиты</label><input id="w-note" name="note" placeholder="Карта/IBAN/Каспи" required />
+    `;
+    walletSubmitText.textContent='Вывести';
+  }
+  walletForm.reset();
   walletModal.classList.add('active');
 }
 function closeWalletModal(){ walletModal.classList.remove('active'); walletAction=null; }
-walletCancel.onclick=closeWalletModal; walletModal.addEventListener('click',e=>{ if(e.target===walletModal) closeWalletModal(); });
-['btnTopup','btnPay','btnTransfer','btnWithdraw'].forEach(id=>document.getElementById(id).onclick=()=>openWalletModal(id.replace('btn','').toLowerCase()));
+walletCancel.onclick=closeWalletModal;
+walletModal.addEventListener('click', (e)=>{ if(e.target===walletModal) closeWalletModal(); });
+
+document.getElementById('btnTopup').onclick = ()=> openWalletModal('topup');
+document.getElementById('btnPay').onclick = ()=> openWalletModal('pay');
+document.getElementById('btnTransfer').onclick = ()=> openWalletModal('transfer');
+document.getElementById('btnWithdraw').onclick = ()=> openWalletModal('withdraw');
+
 walletForm.addEventListener('submit',(e)=>{
-  e.preventDefault(); const fd=new FormData(walletForm); const w=getWallet(); const amount=Number(fd.get('amount')||0); const note=(fd.get('note')||'').trim(); const ts=new Date().toISOString();
-  if(!(amount>0)){ alert('Сумма должна быть > 0'); return; }
-  if(walletAction==='topup'){ w.balance+=amount; w.history.unshift({type:'topup',amount,note,ts}); }
-  if(walletAction==='pay'){ if(w.balance<amount){ alert('Недостаточно средств'); return; } w.balance-=amount; w.history.unshift({type:'pay',amount,note,ts}); }
-  if(walletAction==='transfer'){ const to=(fd.get('to')||'').trim(); if(!to){ alert('Получатель?'); return; } if(w.balance<amount){ alert('Недостаточно средств'); return; } w.balance-=amount; w.history.unshift({type:'transfer',amount,to,note,ts}); }
-  if(walletAction==='withdraw'){ if(w.balance<amount){ alert('Недостаточно средств'); return; } w.balance-=amount; w.history.unshift({type:'withdraw',amount,note,ts}); }
-  setWallet(w); closeWalletModal(); renderWallet();
+  e.preventDefault();
+  const fd=new FormData(walletForm);
+  const w=Store.getWallet();
+  const amount=Number(fd.get('amount')||0);
+  const note=(fd.get('note')||'').trim();
+  if(!(amount>0)){ alert('Укажите корректную сумму'); return; }
+
+  const ts=new Date().toISOString();
+
+  if(walletAction==='topup'){
+    w.balance = Number(w.balance || 0) + amount;
+    w.history.unshift({type:'topup', amount, note, ts});
+  }else if(walletAction==='pay'){
+    if(w.balance<amount){ alert('Недостаточно средств'); return; }
+    w.balance -= amount;
+    w.history.unshift({type:'pay', amount, note, ts});
+  }else if(walletAction==='transfer'){
+    const to=(fd.get('to')||'').trim();
+    if(!to){ alert('Укажите получателя'); return; }
+    if(w.balance<amount){ alert('Недостаточно средств'); return; }
+    w.balance -= amount;
+    w.history.unshift({type:'transfer', amount, to, note, ts});
+  }else if(walletAction==='withdraw'){
+    if(w.balance<amount){ alert('Недостаточно средств'); return; }
+    w.balance -= amount;
+    w.history.unshift({type:'withdraw', amount, note, ts});
+  }
+
+  Store.setWallet(w);
+  closeWalletModal();
+  renderWallet();
 });
+
+/* Render wallet history nicely */
 function renderWallet(){
-  const w=getWallet(); balanceEl.textContent=money(w.balance);
-  if(!w.history.length){ histEl.innerHTML='<div class="muted">Пока пусто</div>'; return; }
-  histEl.innerHTML=''; w.history.forEach(h=>{ const r=document.createElement('div'); r.className='item'; const title={topup:'Пополнение',pay:'Оплата',transfer:'Перевод',withdraw:'Вывод'}[h.type]||'Операция'; const sign=h.type==='topup'?'+':'-'; const extra=h.to?` → ${escapeHTML(h.to)}`:''; r.innerHTML=`<div class="title2">${title}${extra} <span class="badge">${sign} ${money(h.amount)}</span></div><div class="muted">${new Date(h.ts).toLocaleString('ru-KZ')}</div>${h.note?`<div>${escapeHTML(h.note)}</div>`:''}`; histEl.appendChild(r); });
+  const w=Store.getWallet();
+  balanceEl.textContent = money(w.balance);
+  if(!Array.isArray(w.history) || w.history.length===0){ histEl.innerHTML='<div class="muted">Пока пусто</div>'; return; }
+  histEl.innerHTML='';
+  w.history.forEach(h=>{
+    const row=document.createElement('div'); row.className='item';
+    const titleMap={topup:'Пополнение', pay:'Оплата', transfer:'Перевод', withdraw:'Вывод'};
+    const sign = (h.type==='topup')? '+' : '-';
+    const extra = h.to ? ` → ${escapeHTML(h.to)}` : '';
+    row.innerHTML = `
+      <div class="title2">${titleMap[h.type] || h.type}${extra} <span class="badge">${sign} ${money(h.amount)}</span></div>
+      <div class="muted">${new Date(h.ts).toLocaleString('ru-KZ')}</div>
+      ${h.note? `<div>${escapeHTML(h.note)}</div>` : ''}
+    `;
+    histEl.appendChild(row);
+  });
 }
 
-/* Screens nav helpers */
-function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id)?.classList.add('active'); }
+/* Send to bot (if in Telegram use sendData, otherwise download JSON) */
+function sendToBot(message){
+  const payload=JSON.stringify(message);
+  if(isInTelegram){
+    try{ tg.sendData(payload); tg.showAlert && tg.showAlert('Отправлено в бот ✅'); }
+    catch(e){ tg.showAlert && tg.showAlert('Не удалось отправить: '+(e.message||e)); }
+  }else{
+    console.log('Payload for bot:', payload);
+    alert('Открыто вне Telegram. JSON показан в консоли и будет скачан.');
+    const blob=new Blob([payload],{type:'application/json'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`gidcity-${message.type||'data'}.json`; a.click(); URL.revokeObjectURL(url);
+  }
+}
+
+/* Open/close screens */
+function openScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
 function closeScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
 
-/* Chat helpers */
-const chatListEl=document.getElementById('chatList'), chatThreadEl=document.getElementById('chatThread'), messagesEl=document.getElementById('messages'), msgForm=document.getElementById('msgForm'), msgText=document.getElementById('msgText'), chatTitleEl=document.getElementById('chatTitle');
-function getChats(){ try{return JSON.parse(localStorage.getItem(LS_CHATS))||{dialogs:[]}}catch(_){return{dialogs:[]}} }
-function setChats(x){ localStorage.setItem(LS_CHATS, JSON.stringify(x)); }
-let currentChatId=null;
-function ensureChat(order,bid){ const data=getChats(); const id=`o_${order.id}_u_${bid.userId}`; let d=data.dialogs.find(x=>x.id===id); if(!d){ d={id,name:bid.name,unread:0,last:'',orderId:order.id,messages:[]}; d.messages.push({from:'system',text:`Назначен исполнитель ${bid.name} за ${money(bid.price)} по заказу '${order.category} • ${order.city}'.`,ts:Date.now()}); data.dialogs.unshift(d); setChats(data);} return id; }
-function renderChatList(){ const data=getChats().dialogs; chatThreadEl.style.display='none'; chatListEl.style.display='flex'; chatListEl.innerHTML=''; if(!data.length){ chatListEl.innerHTML='<div class="wrap muted">Пока нет диалогов</div>'; return; } data.forEach(d=>{ const row=document.createElement('div'); row.className='item'; row.style.cursor='pointer'; row.innerHTML=`<div class="title2">${escapeHTML(d.name)} ${d.unread?`<span class="badge">${d.unread}</span>`:''}</div><div class="muted">${escapeHTML(d.last||'')}</div>`; row.onclick=()=>openChat(d.id); chatListEl.appendChild(row); }); }
-function openChat(id){ const data=getChats(); const d=data.dialogs.find(x=>x.id===id); if(!d) return; currentChatId=id; d.unread=0; setChats(data); chatTitleEl.textContent=d.name; chatListEl.style.display='none'; chatThreadEl.style.display='block'; renderMessages(d.messages||[]); }
-function openChatList(){ currentChatId=null; renderChatList(); }
-function renderMessages(list){ messagesEl.innerHTML=''; list.forEach(m=>{ const bubble=document.createElement('div'); bubble.className='item'; bubble.style.background='rgba(255,255,255,.08)'; const who=m.from==='me'?'Вы':(m.from==='system'?'Система':'Собеседник'); bubble.innerHTML=`<div>${escapeHTML(m.text)}</div><div class="muted">${who} • ${new Date(m.ts).toLocaleTimeString('ru-KZ',{hour:'2-digit',minute:'2-digit'})}</div>`; if(m.from==='me') bubble.style.border='1px solid rgba(123,255,90,.35)'; messagesEl.appendChild(bubble); }); messagesEl.scrollTop=messagesEl.scrollHeight; }
-msgForm.addEventListener('submit',(e)=>{ e.preventDefault(); const txt=msgText.value.trim(); if(!txt||!currentChatId) return; const data=getChats(); const d=data.dialogs.find(x=>x.id===currentChatId); if(!d) return; d.messages.push({from:'me', text:txt, ts:Date.now()}); d.last=txt; setChats(data); msgText.value=''; renderMessages(d.messages); });
+/* Export / clear */
+document.getElementById('exportJson').onclick=()=>{
+  const data={orders:Store.getOrders(), profile:Store.getProfile(), wallet:Store.getWallet()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='gidcity-data.json'; a.click(); URL.revokeObjectURL(url);
+};
+document.getElementById('clearAll').onclick=()=>{ if(confirm('Удалить все локальные данные?')){ localStorage.clear(); location.reload(); } };
 
-/* Init */
-function refreshAll(){ renderFind(); renderMine(); renderWallet(); renderChatList(); }
-applyRole();
+/* Open in chat link */
+const BOT_USERNAME='GiDCityBot', STARTAPP_KEY='menu';
+document.getElementById('openInChat').onclick=()=> {
+  const url = `https://t.me/${BOT_USERNAME}?startapp=${encodeURIComponent(STARTAPP_KEY)}`;
+  if(isInTelegram){ tg.openTelegramLink && tg.openTelegramLink(url); } else { window.open(url,'_blank'); }
+};
+
+/* Initial render */
+function refreshAll(){
+  const orders=Store.getOrders();
+  renderOrders(findList, orders, 'find');               // «Найти» — общий список
+  renderOrders(mineList, orders.filter(o=>o.isMine), 'mine'); // «Мои» — только мои
+  if(orders.length>0){ ordersBadge.style.display='flex'; ordersBadge.textContent=orders.length; }
+  else { ordersBadge.style.display='none'; }
+  renderWallet();
+}
+refreshAll();
 </script>
 </body>
 </html>
