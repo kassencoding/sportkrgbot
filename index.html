@@ -3,200 +3,219 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiDCity — Миниприложение</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<title>GiDCity</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --purple:#6f5bff;
-  --deep:#06060b;
-  --navy:#081228;
   --accent1:#b37aff;
   --accent2:#7BFF5A;
   --gold:#f5c24a;
-  --glass-bg: rgba(255,255,255,0.04);
-  --panel-bg: rgba(6,6,10,0.66);
-  --muted: rgba(255,255,255,0.55);
-  --text:#ffffff;
+  --bg-dark:#05060a;
+  --glass: rgba(255,255,255,0.04);
+  --muted: rgba(255,255,255,0.62);
+  --text: #ffffff;
   --radius:14px;
 }
-
-/* Page background gradient (фиолет -> черный -> темно-синий) */
+/* Use iOS-like system font stack */
 body{
-  margin:0; min-height:100vh; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  margin:0; font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   background:
-    radial-gradient(800px 400px at 10% 10%, rgba(179,122,255,0.08), transparent 8%),
-    linear-gradient(180deg, var(--purple) 0%, black 35%, #06122a 100%);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  padding:18px;
+    radial-gradient(800px 420px at 10% 8%, rgba(179,122,255,0.08), transparent 8%),
+    linear-gradient(180deg, var(--purple) 0%, black 36%, #06122a 100%);
+  min-height:100vh; color:var(--text); padding:18px;
+  display:flex; flex-direction:column; align-items:center;
 }
 
-/* Header + logo + city */
+/* Header */
 .header{
-  max-width:920px; margin:0 auto 18px; display:flex; align-items:center; gap:14px; justify-content:space-between;
+  width:100%; max-width:920px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;
 }
-.header-left{ display:flex; align-items:center; gap:12px; }
-.logo{
-  width:64px; height:64px; border-radius:12px; overflow:hidden; display:inline-flex; align-items:center; justify-content:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.6);
-  background:linear-gradient(135deg,var(--accent1),var(--accent2));
+.brand{
+  display:flex; align-items:center; gap:12px;
 }
-.logo img{ width:100%; height:100%; object-fit:cover; display:block; }
-.app-title{ font-size:28px; color:var(--accent1); font-weight:800; letter-spacing:-0.6px; }
-.top-right{ font-size:14px; color:var(--muted); }
+.brand h1{ margin:0; font-size:22px; font-weight:800; }
+.brand .gid{ color:#fff; }
+.brand .city{ color:var(--purple); margin-left:2px; }
+.city-display{ color:var(--muted); font-size:14px; }
 
-/* Card wrapper */
-.container{ max-width:920px; margin:0 auto; border-radius:20px; padding:18px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border:1px solid rgba(255,255,255,0.03); box-shadow:0 30px 60px rgba(0,0,0,0.6); }
-
-/* Menu list */
-.menu-list{ display:grid; gap:12px; }
-.menu-item{
-  display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-radius:12px; cursor:pointer;
+/* Main container */
+.container{
+  width:100%; max-width:920px; border-radius:20px; padding:18px;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
   border:1px solid rgba(255,255,255,0.03);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.menu-item:hover{ transform:translateY(-3px); box-shadow: 0 18px 40px rgba(0,0,0,0.5); }
-.menu-title{ font-weight:800; font-size:18px; }
-
-/* special (ZAKAZAT') */
-.menu-item.special{
-  border-radius:8px; /* more square */
-  border:1px solid rgba(245,194,74,0.22);
-  background: linear-gradient(180deg, rgba(245,194,74,0.06), rgba(255,255,255,0.01));
-  padding-left:22px;
-  padding-right:22px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
 }
 
-/* screens overlay (matte behind glass panels) */
+/* Menu items */
+.menu-list{ display:grid; gap:12px; }
+.menu-item{
+  display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+  border:1px solid rgba(255,255,255,0.03); cursor:pointer;
+}
+.menu-item.special{ border-radius:8px; border:1px solid rgba(245,194,74,0.22); background: linear-gradient(180deg, rgba(245,194,74,0.06), rgba(0,0,0,0.02)); }
+.menu-title{ font-weight:800; font-size:16px; }
+.menu-sub{ color:var(--muted); font-weight:700; }
+
+/* screens (overlays) */
 .screen{
-  display:none; position:fixed; inset:0; padding:28px; z-index:80;
-  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.7));
-  backdrop-filter: blur(4px);
+  position:fixed; inset:0; display:none; z-index:50; padding:28px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.72));
+  backdrop-filter: blur(6px);
 }
 .screen.active{ display:block; }
 
 /* panel (glass) */
 .panel{
   max-width:880px; margin:36px auto; border-radius:18px; padding:18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.18));
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.16));
   border:1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 24px 60px rgba(3,3,8,0.7);
-  backdrop-filter: blur(6px);
-  transform-origin:center top; transition: transform .36s cubic-bezier(.2,.9,.22,1), opacity .24s ease;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+  transform-origin:center top; transition: transform .36s cubic-bezier(.2,.9,.22,1), opacity .26s ease;
 }
 
-/* tabs (square-style) */
-.tabs{ display:flex; gap:10px; align-items:center; padding:8px 0; overflow:auto; }
-.tab{
-  padding:10px 18px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); font-weight:800; cursor:pointer;
-  white-space:nowrap;
-}
-.tab.active{ color:#071; border-color: rgba(123,255,90,0.18); box-shadow: 0 10px 30px rgba(123,255,90,0.04); background: linear-gradient(90deg, rgba(123,255,90,0.06), rgba(179,122,255,0.04)); }
+/* Tabs */
+.tabs{ display:flex; gap:10px; align-items:center; overflow:auto; padding-bottom:6px; margin-top:12px; }
+.tab{ padding:10px 16px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); color:var(--muted); font-weight:700; cursor:pointer; background:transparent; white-space:nowrap; }
+.tab.active{ color:#071; border-color: rgba(123,255,90,0.18); background: linear-gradient(90deg, rgba(123,255,90,0.06), rgba(179,122,255,0.04)); }
 .tab.gold{ color:var(--gold); border-color: rgba(245,194,74,0.22); background: linear-gradient(90deg, rgba(245,194,74,0.08), rgba(255,255,255,0.01)); }
 
-/* list of cards */
-.list{ display:flex; flex-direction:column; gap:14px; margin-top:14px; }
-.card{
-  display:flex; gap:14px; align-items:flex-start; padding:16px; border-radius:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+/* list cards */
+.list{ display:flex; flex-direction:column; gap:12px; margin-top:14px; }
+.card{ display:flex; gap:12px; padding:14px; border-radius:12px; align-items:flex-start;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
   border:1px solid rgba(255,255,255,0.03);
 }
-.card-left{ width:56px; flex:0 0 56px; display:flex; align-items:center; justify-content:center; }
-.avatar{ width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:white; box-shadow: 0 8px 22px rgba(0,0,0,0.55); }
+.card-left{ flex:0 0 48px; }
+.avatar{ width:48px; height:48px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; box-shadow: 0 8px 22px rgba(0,0,0,0.55); }
 .card-body{ flex:1; }
 .card-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.card-title{ font-weight:800; font-size:18px; }
+.card-title{ font-weight:800; font-size:16px; }
 .card-meta{ color:var(--muted); font-size:13px; margin-top:8px; }
 .card-desc{ margin-top:10px; color:rgba(255,255,255,0.92); }
 
-/* smaller avatar variant for card items */
-.avatar.small{ width:44px; height:44px; font-size:15px; }
-
-/* call to action button in card */
-.cta{ margin-top:12px; padding:10px 16px; border-radius:12px; font-weight:800; cursor:pointer; border:none;
-  background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#041; box-shadow: 0 8px 30px rgba(123,122,255,0.06);
+/* CTA */
+.btn{
+  padding:10px 16px; border-radius:12px; font-weight:800; cursor:pointer; border:none; display:inline-flex; align-items:center; justify-content:center;
 }
+.btn.primary{ background: linear-gradient(90deg, #ffd84d, #ffcf3b); color:#111; box-shadow:0 8px 30px rgba(245,194,74,0.12); min-width:220px; }
+.btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); min-width:120px; }
 
-/* form standard fields vertical same size (except description) */
-.form-field{ width:100%; margin-top:10px; }
+/* forms */
+.form-field{ margin-top:12px; }
 .input, textarea, select{
   width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);
   color:var(--text); font-size:15px;
 }
-textarea{ min-height:120px; resize:vertical; }
-.placeholder-subtle{ color: rgba(255,255,255,0.45); }
+textarea{ min-height:140px; resize:vertical; color:rgba(255,255,255,0.9); }
 
-/* small utility */
-.row{ display:flex; gap:10px; align-items:center; }
-.right-muted{ color:var(--muted); font-weight:700; }
+/* city list vertical scroller */
+.city-list{ max-height:48vh; overflow:auto; margin-top:12px; display:flex; flex-direction:column; gap:8px; padding-right:6px; }
+.city-item{ padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background:rgba(255,255,255,0.01); cursor:pointer; color:var(--muted); font-weight:700; }
+.city-item.active{ background:linear-gradient(90deg, rgba(179,122,255,0.06), rgba(123,255,90,0.03)); color:#071; border-color: rgba(123,255,90,0.08); }
+
+/* bid modal */
+.modal-back{ position:fixed; inset:0; display:none; background: rgba(0,0,0,0.55); z-index:120; align-items:center; justify-content:center; }
+.modal{ background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.16)); border:1px solid rgba(255,255,255,0.06); padding:16px; border-radius:12px; width:92%; max-width:420px; }
+.modal.active{ display:flex; }
+
+/* small text */
+.small{ font-size:13px; color:var(--muted); }
+.center{ text-align:center; }
 
 /* responsive */
 @media(max-width:880px){
-  .panel{ margin:12px; padding:14px; }
+  .panel{ margin:12px; padding:12px; }
   .card{ flex-direction:column; align-items:flex-start; }
-  .card-left{ width:100%; }
-  .tabs{ gap:8px; }
 }
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<div class="header">
-  <div class="header-left">
-    <div class="logo"><img src="logo.jpg" alt="GiDCity logo" /></div>
-    <div>
-      <div class="app-title">GiDCity</div>
-    </div>
+<header class="header">
+  <div class="brand">
+    <h1><span class="gid">GiD</span><span class="city">City</span></h1>
   </div>
-  <div class="top-right" id="topCityDisplay">—</div>
-</div>
+  <div class="city-display" id="topCity">—</div>
+</header>
 
 <!-- MAIN MENU -->
-<div class="container">
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px">
+<main class="container" id="mainContainer">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
     <div style="font-weight:800; font-size:18px">Меню</div>
   </div>
 
   <div class="menu-list" id="menuList">
-    <div class="menu-item special" data-action="create">
-      <div class="menu-title">ЗАКАЗАТЬ</div>
-      <div class="right-muted">новое</div>
-    </div>
+    <div class="menu-item special" data-action="create"><div class="menu-title">ЗАКАЗАТЬ</div><div class="menu-sub">новое</div></div>
+    <div class="menu-item" data-action="find"><div class="menu-title">Найти заказы</div><div id="ordersCount" class="menu-sub">0</div></div>
+    <div class="menu-item" data-action="wallet"><div class="menu-title">Кошелёк</div><div class="menu-sub">₸ <span id="balanceTop">0</span></div></div>
+    <div class="menu-item" data-action="messenger"><div class="menu-title">Мессенджер</div><div class="menu-sub">Чаты</div></div>
+    <div style="height:8px"></div>
+    <div class="menu-item" data-action="mine" style="border-top:1px solid rgba(255,255,255,0.02); padding-top:14px;"><div class="menu-title">Мои заказы</div><div class="menu-sub">Ваши заявки</div></div>
+  </div>
+</main>
 
-    <div class="menu-item" data-action="find">
-      <div class="menu-title">Найти заказы</div>
-      <div id="ordersBadge" class="right-muted" style="display:inline-block">0</div>
-    </div>
+<!-- SCREENS: flow: auth -> city -> role -> main screens -->
 
-    <div class="menu-item" data-action="wallet">
-      <div class="menu-title">Кошелёк</div>
-      <div class="right-muted">₸ <span id="balanceTop">0</span></div>
+<!-- AUTH SCREEN -->
+<section id="authScreen" class="screen active">
+  <div class="panel" style="max-width:520px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-weight:800; font-size:20px">Вход в GiDCity</div>
     </div>
+    <form id="authForm" style="margin-top:14px;">
+      <div class="form-field"><input id="authLogin" class="input" placeholder="Email или телефон" required /></div>
+      <div class="form-field"><input id="authPass" class="input" placeholder="Пароль" type="password" required /></div>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button type="submit" class="btn primary">Войти</button>
+        <button type="button" id="registerBtn" class="btn ghost">Регистрация</button>
+      </div>
+      <div style="margin-top:10px; color:var(--muted); font-size:13px;">(Данные сохраняются локально для демонстрации)</div>
+    </form>
+  </div>
+</section>
 
-    <div class="menu-item" data-action="messenger">
-      <div class="menu-title">Мессенджер</div>
-      <div class="right-muted">Чаты</div>
+<!-- CITY SELECT -->
+<section id="cityScreen" class="screen">
+  <div class="panel" style="max-width:520px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-weight:800; font-size:20px">Выберите город</div>
     </div>
-
-    <div class="menu-item" data-action="mine" style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.02); padding-top:16px;">
-      <div class="menu-title">Мои заказы</div>
-      <div class="right-muted">Ваши заявки</div>
+    <div style="margin-top:12px;">
+      <input id="citySearch" class="input" placeholder="Поиск по городу" />
+      <div class="city-list" id="cityList"></div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <button id="cityConfirm" class="btn primary">Подтвердить</button>
+      <button id="cityCancel" class="btn ghost">Отмена</button>
     </div>
   </div>
-</div>
+</section>
 
-<!-- SCREENS: Find / Create / Wallet / Messenger / Mine -->
+<!-- ROLE SELECT -->
+<section id="roleScreen" class="screen">
+  <div class="panel" style="max-width:520px;">
+    <div style="font-weight:800; font-size:20px">Кем вы будете?</div>
+    <div style="display:flex; gap:12px; margin-top:14px;">
+      <button id="asUser" class="btn primary" style="flex:1; background: linear-gradient(90deg,#7be495,#52c12d);">Пользователь</button>
+      <button id="asWorker" class="btn ghost" style="flex:1;">Исполнитель</button>
+    </div>
+  </div>
+</section>
+
+<!-- FIND SCREEN -->
 <section id="findScreen" class="screen" aria-hidden="true">
   <div class="panel" id="findPanel">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-weight:800; font-size:20px">Найти заказы</div>
-      <button class="cta" onclick="closeScreen('findScreen')">← Назад</button>
+      <button class="btn ghost" onclick="closeScreen('findScreen')">← Назад</button>
     </div>
 
-    <!-- Tabs on top -->
-    <div class="tabs" style="margin-top:12px" id="findTabs">
+    <div class="tabs" id="findTabs">
       <div class="tab active" data-tab="all">Все заказы</div>
       <div class="tab gold" data-tab="spec">СПЕЦ. ЗАКАЗ</div>
       <div class="tab" data-tab="taxi">Такси</div>
@@ -204,26 +223,24 @@ textarea{ min-height:120px; resize:vertical; }
       <div class="tab" data-tab="more">Ещё</div>
     </div>
 
-    <!-- search row -->
-    <div style="display:flex; gap:10px; margin-top:12px; align-items:center;">
-      <input id="searchInput" class="input" placeholder="Поиск по городу/категории" />
-      <button class="cta" id="applySearch">Поиск</button>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <input id="searchInput" class="input" placeholder="Поиск по городу/категории/описанию" />
+      <button id="applySearch" class="btn primary">Поиск</button>
     </div>
 
-    <!-- list -->
-    <div class="list" id="findList" style="margin-top:14px"></div>
+    <div class="list" id="findList"></div>
   </div>
 </section>
 
+<!-- CREATE / ORDER SCREEN -->
 <section id="createScreen" class="screen" aria-hidden="true">
   <div class="panel" id="createPanel">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-weight:800; font-size:20px">Новый заказ</div>
-      <button class="cta" onclick="closeScreen('createScreen')">← Назад</button>
+      <button class="btn ghost" onclick="closeScreen('createScreen')">← Назад</button>
     </div>
 
-    <!-- categories chips (no slider) -->
-    <div class="tabs" style="margin-top:12px" id="createTabs">
+    <div class="tabs" id="createTabs">
       <div class="tab gold active" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
       <div class="tab" data-val="Такси">Такси</div>
       <div class="tab" data-val="Доставка еды">Доставка еды</div>
@@ -231,117 +248,124 @@ textarea{ min-height:120px; resize:vertical; }
       <div class="tab" data-val="Уборка">Уборка</div>
     </div>
 
-    <form id="createForm" style="margin-top:12px">
-      <!-- note: city removed from form; displayed in header -->
+    <form id="createForm" style="margin-top:12px;">
       <div class="form-field">
-        <textarea id="c-desc" class="textarea" placeholder="закажи любую услугу и мы найдем исполнителя" ></textarea>
+        <textarea id="c-desc" class="input" placeholder="закажи любую услугу и мы найдем исполнителя"></textarea>
       </div>
 
-      <!-- vertical equal inputs -->
       <div class="form-field">
         <input id="c-budget" class="input" type="number" placeholder="Бюджет (₸)" required />
       </div>
+
       <div class="form-field">
-        <input id="c-deadline" class="input" type="date" required />
+        <input id="c-datetime" class="input" type="datetime-local" required />
       </div>
 
-      <!-- contact/name removed; user data via auth/profile -->
-
-      <div style="display:flex; gap:10px; margin-top:12px;">
-        <button class="cta" type="submit">ЗАКАЗАТЬ СЕЙЧАС</button>
-        <button type="button" class="tab" onclick="closeScreen('createScreen')">Отмена</button>
-        <div style="margin-left:auto; color:var(--muted); font-weight:800; align-self:center" id="selectedCategory">СПЕЦ. ЗАКАЗ</div>
+      <div style="display:flex; gap:12px; margin-top:14px; align-items:center;">
+        <button class="btn primary" type="submit" id="orderNowBtn" style="min-width:260px; background: linear-gradient(90deg,#ffd84d,#ffcf3b)">ЗАКАЗАТЬ СЕЙЧАС</button>
+        <button type="button" class="btn ghost" id="orderCancelBtn">Отмена</button>
+        <div style="margin-left:auto; color:var(--muted); font-weight:800;" id="selectedCategory">СПЕЦ. ЗАКАЗ</div>
       </div>
     </form>
   </div>
 </section>
 
-<section id="walletScreen" class="screen" aria-hidden="true">
-  <div class="panel">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
-      <div style="font-weight:800; font-size:20px">Кошелёк</div>
-      <button class="cta" onclick="closeScreen('walletScreen')">← Назад</button>
-    </div>
-    <div style="margin-top:12px; display:flex; gap:12px; align-items:center;">
-      <div style="flex:1"><div class="right-muted">Баланс</div><div style="font-weight:800; font-size:22px">₸ <span id="balance">0</span></div></div>
-      <div style="display:flex; flex-direction:column; gap:8px;">
-        <button class="cta" id="topupBtn">Пополнить</button>
-        <button class="tab" id="withdrawBtn">Вывести</button>
-      </div>
-    </div>
-  </div>
-</section>
-
+<!-- MESSENGER SCREEN -->
 <section id="messengerScreen" class="screen" aria-hidden="true">
   <div class="panel" style="display:flex; gap:12px;">
     <div style="width:320px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-weight:800">Мессенджер</div><button class="tab" onclick="closeScreen('messengerScreen')">← Назад</button></div>
-      <div id="chatsList" style="margin-top:12px"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-weight:800">Мессенджер</div>
+        <button class="btn ghost" onclick="closeScreen('messengerScreen')">← Назад</button>
+      </div>
+      <div id="chatsList" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
     </div>
+
     <div style="flex:1;">
-      <div id="chatView" style="display:none; flex-direction:column; gap:8px;">
-        <div id="chatHeader" style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-          <div class="avatar small" id="chatAvatar"></div>
+      <div id="chatView" style="display:none; flex-direction:column;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div class="avatar small" id="chatAvatar" style="width:44px;height:44px;"></div>
           <div>
             <div id="chatTitle" style="font-weight:800"></div>
-            <div style="color:var(--muted); font-size:13px;" id="chatSub">Чат</div>
+            <div class="small" id="chatSub">Чат</div>
           </div>
         </div>
-        <div id="messages" style="max-height:60vh; overflow:auto; padding:8px;"></div>
-        <div style="display:flex; gap:8px; margin-top:8px;">
+        <div id="messages" style="margin-top:12px; max-height:60vh; overflow:auto; padding-right:8px;"></div>
+        <div style="display:flex; gap:8px; margin-top:12px;">
           <input id="messageInput" class="input" placeholder="Сообщение..." />
-          <button class="cta" id="sendMsgBtn">Отправить</button>
+          <button id="sendMsgBtn" class="btn primary">Отправить</button>
         </div>
       </div>
-      <div id="noChat" style="color:var(--muted); padding:30px; text-align:center;">Выберите чат слева</div>
+      <div id="noChat" class="center small" style="padding:24px;">Выберите чат слева</div>
     </div>
   </div>
 </section>
 
+<!-- MINE SCREEN -->
 <section id="mineScreen" class="screen" aria-hidden="true">
   <div class="panel">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
       <div style="font-weight:800; font-size:20px">Мои заказы</div>
-      <button class="tab" onclick="closeScreen('mineScreen')">← Назад</button>
+      <button class="btn ghost" onclick="closeScreen('mineScreen')">← Назад</button>
     </div>
-    <div class="list" id="mineList" style="margin-top:12px"></div>
+    <div class="list" id="mineList" style="margin-top:12px;"></div>
   </div>
 </section>
 
-<!-- templates -->
-<template id="cardTpl">
-  <div class="card">
-    <div class="card-left"><div class="avatar small"></div></div>
-    <div class="card-body">
-      <div class="card-top">
-        <div>
-          <div class="card-title"></div>
-          <div class="card-meta"></div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-weight:800; font-size:20px">₸ <span class="price"></span></div>
-        </div>
+<!-- WALLET SCREEN -->
+<section id="walletScreen" class="screen" aria-hidden="true">
+  <div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-weight:800; font-size:20px">Кошелёк</div>
+      <button class="btn ghost" onclick="closeScreen('walletScreen')">← Назад</button>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center; margin-top:12px;">
+      <div style="flex:1"><div class="small">Баланс</div><div style="font-weight:800; font-size:22px">₸ <span id="balance">0</span></div></div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button id="topupBtn" class="btn primary">Пополнить</button>
+        <button id="withdrawBtn" class="btn ghost">Вывести</button>
       </div>
-      <div class="card-desc"></div>
-      <div class="cta-row"></div>
     </div>
   </div>
-</template>
+</section>
+
+<!-- BID MODAL -->
+<div class="modal-back" id="bidModalWrap">
+  <div class="modal" id="bidModal">
+    <div style="font-weight:800; font-size:18px;">Предложить цену</div>
+    <div style="margin-top:10px;">
+      <input id="bidPrice" class="input" placeholder="Ваша цена (₸)" type="number" />
+      <input id="bidComment" class="input" placeholder="Короткий комментарий (сроки, детали)" style="margin-top:8px;" />
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button id="sendBidBtn" class="btn primary">Отправить</button>
+        <button id="closeBidBtn" class="btn ghost">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ---------- Storage + init ---------- */
-const LS_ORDERS='gid_orders_v4', LS_CHATS='gid_chats_v4', LS_WALLET='gid_wallet_v4', LS_CITY='gid_city_v1';
+/* ----------------- Storage keys & helpers ----------------- */
+const LS_ORDERS='gid_orders_v5', LS_CHATS='gid_chats_v5', LS_WALLET='gid_wallet_v5', LS_PROFILE='gid_profile_v1', LS_CITY='gid_city_v1', LS_ROLE='gid_role_v1';
+
 const Store = {
   getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[];}catch(e){return[]} },
   setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); },
   addOrder(o){ const arr=this.getOrders(); arr.unshift(o); this.setOrders(arr); return arr; },
-  updateOrder(id,mut){ const arr=this.getOrders(); const i=arr.findIndex(x=>x.id===id); if(i>-1){ mut(arr[i]); this.setOrders(arr);} return arr; },
+  updateOrder(id,fn){ const a=this.getOrders(); const i=a.findIndex(x=>x.id===id); if(i>-1){ fn(a[i]); this.setOrders(a);} return a; },
+  deleteOrder(id){ const a=this.getOrders().filter(x=>x.id!==id); this.setOrders(a); return a; },
   getChats(){ try{return JSON.parse(localStorage.getItem(LS_CHATS))||[];}catch(e){return[]} },
   setChats(x){ localStorage.setItem(LS_CHATS, JSON.stringify(x)); },
   addChat(c){ const arr=this.getChats(); arr.unshift(c); this.setChats(arr); return arr; },
-  updateChat(id,mut){ const arr=this.getChats(); const i=arr.findIndex(x=>x.id===id); if(i>-1){ mut(arr[i]); this.setChats(arr);} return arr; },
+  updateChat(id,fn){ const a=this.getChats(); const i=a.findIndex(x=>x.id===id); if(i>-1){ fn(a[i]); this.setChats(a);} return a; },
   getWallet(){ try{return JSON.parse(localStorage.getItem(LS_WALLET))||{balance:0}}catch(e){return {balance:0}} },
-  setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); }
+  setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); },
+  getProfile(){ try{return JSON.parse(localStorage.getItem(LS_PROFILE))||null}catch(e){return null} },
+  setProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); },
+  setCity(c){ localStorage.setItem(LS_CITY, c); },
+  getCity(){ return localStorage.getItem(LS_CITY) || null; },
+  setRole(r){ localStorage.setItem(LS_ROLE, r); },
+  getRole(){ return localStorage.getItem(LS_ROLE) || null; }
 };
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
@@ -355,275 +379,376 @@ function avatarStyle(name, el){
   el.textContent = initials(name);
 }
 
-/* seed if empty */
+/* seed sample data if empty */
 if(Store.getOrders().length===0){
   Store.setOrders([
-    { id:'seed1', category:'Такси', city:'Алматы', budget:800, deadline:todayISO(), desc:'Поездка до аэропорта', contact:'@client1', name:'Айдар', bids:[], ownerId:'u_client1' },
-    { id:'seed2', category:'Доставка еды', city:'Астана', budget:1200, deadline:todayISO(), desc:'Доставка обеда', contact:'@client2', name:'Салтанат', bids:[], ownerId:'u_client2' }
+    { id:'o1', category:'Такси', city:'Алматы', budget:800, datetime: todayISO()+"T12:00", desc:'Поездка до аэропорта', ownerId:'owner_1', ownerName:'Айдар', bids:[], status:'open' },
+    { id:'o2', category:'Доставка еды', city:'Астана', budget:1200, datetime: todayISO()+"T13:00", desc:'Доставка обеда', ownerId:'owner_2', ownerName:'Салтанат', bids:[], status:'open' }
   ]);
 }
 
-/* ---------- UI helpers ---------- */
-const topCity = document.getElementById('topCityDisplay');
-function ensureCity(){
-  let city = localStorage.getItem(LS_CITY);
-  if(!city){
-    // gentle prompt to select city (could be replaced with nicer UI later)
-    city = prompt('Укажите ваш город (например: Алматы):','Алматы') || '—';
-    localStorage.setItem(LS_CITY, city);
-  }
-  topCity.textContent = city;
-}
-ensureCity();
+/* ----------------- UI elements ----------------- */
+const authScreen = document.getElementById('authScreen');
+const cityScreen = document.getElementById('cityScreen');
+const roleScreen = document.getElementById('roleScreen');
 
-/* menu wiring */
-document.getElementById('menuList').addEventListener('click', (e)=>{
+const findScreen = document.getElementById('findScreen');
+const createScreen = document.getElementById('createScreen');
+const messengerScreen = document.getElementById('messengerScreen');
+const mineScreen = document.getElementById('mineScreen');
+const walletScreen = document.getElementById('walletScreen');
+
+const menuList = document.getElementById('menuList');
+const topCity = document.getElementById('topCity');
+const ordersCount = document.getElementById('ordersCount');
+const balanceTop = document.getElementById('balanceTop');
+
+/* ----------------- Flow: AUTH -> CITY -> ROLE -> MAIN ----------------- */
+function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const sc=document.getElementById(id); if(sc) sc.classList.add('active'); }
+function closeScreen(id){ const sc=document.getElementById(id); if(sc) sc.classList.remove('active'); }
+
+/* Auth form handling (simple local) */
+document.getElementById('authForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const login = document.getElementById('authLogin').value.trim();
+  const pass = document.getElementById('authPass').value.trim();
+  if(!login || !pass){ alert('Введите логин и пароль'); return; }
+  // store profile minimal
+  const profile = { id: 'u_'+uid(), login, name: login.split('@')[0] || login, phone:'', createdAt:new Date().toISOString() };
+  Store.setProfile(profile);
+  // next screen: city select
+  openScreen('cityScreen');
+  renderCityList();
+});
+
+/* Register button — just same flow but keep profile */
+document.getElementById('registerBtn').onclick = ()=>{
+  const login = prompt('Введите email или телефон для регистрации:','user@example.com');
+  if(!login) return;
+  const profile = { id:'u_'+uid(), login, name: login.split('@')[0] || login, phone:'', createdAt:new Date().toISOString() };
+  Store.setProfile(profile);
+  openScreen('cityScreen');
+  renderCityList();
+};
+
+/* City selection data (Kazakhstan major cities) */
+const CITIES = ["Алматы","Астана","Шымкент","Караганда","Актобе","Костанай","Павлодар","Усть-Каменогорск","Тараз","Кызылорда","Петропавловск","Семей","Атырау","Актау","Уральск"];
+
+/* render vertical city list */
+function renderCityList(filter=''){
+  const cityList = document.getElementById('cityList'); cityList.innerHTML='';
+  const q = (filter||'').toLowerCase();
+  CITIES.filter(c=> c.toLowerCase().includes(q)).forEach(c=>{
+    const el = document.createElement('div'); el.className='city-item'; el.textContent = c;
+    if(Store.getCity()===c) el.classList.add('active');
+    el.onclick = ()=> {
+      document.querySelectorAll('.city-item').forEach(x=>x.classList.remove('active'));
+      el.classList.add('active');
+      localStorage.setItem(LS_CITY, c);
+    };
+    cityList.appendChild(el);
+  });
+}
+document.getElementById('citySearch').addEventListener('input', (e)=> renderCityList(e.target.value));
+document.getElementById('cityConfirm').addEventListener('click', ()=>{
+  const sel = localStorage.getItem(LS_CITY);
+  if(!sel){ alert('Выберите город'); return; }
+  document.getElementById('topCity').textContent = sel;
+  // proceed to role selection
+  openScreen('roleScreen');
+});
+document.getElementById('cityCancel').addEventListener('click', ()=> { openScreen('authScreen'); });
+
+/* role selection */
+document.getElementById('asUser').onclick = ()=>{
+  Store.setRole('user'); openScreenMainAfterSetup();
+};
+document.getElementById('asWorker').onclick = ()=>{
+  Store.setRole('worker'); openScreenMainAfterSetup();
+};
+
+function openScreenMainAfterSetup(){
+  // close overlays and show main menu
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  // show main UI (container already visible); update menu based on role
+  applyRoleToMenu(Store.getRole());
+  refreshAll();
+}
+
+/* apply role: adjust menu text/visibility if needed */
+function applyRoleToMenu(role){
+  // For simplicity we'll keep same menu but actions differ in handlers.
+  // Update header city display:
+  document.getElementById('topCity').textContent = Store.getCity() || '—';
+}
+
+/* menu actions */
+menuList.addEventListener('click', (e)=>{
   const item = e.target.closest('.menu-item');
   if(!item) return;
   const action = item.getAttribute('data-action');
-  if(action==='find') openScreen('findScreen', item);
-  if(action==='create') openScreen('createScreen', item);
-  if(action==='wallet') openScreen('walletScreen', item);
-  if(action==='mine') openScreen('mineScreen', item);
-  if(action==='messenger') openScreen('messengerScreen', item);
-});
-
-/* open/close screens + animate from button */
-function openScreen(id, fromBtn=null){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const screen = document.getElementById(id);
-  screen.classList.add('active');
-  const panel = screen.querySelector('.panel');
-  if(fromBtn && panel){
-    animateFromButton(fromBtn, panel);
+  if(action==='create'){ // If role is worker, redirect to find
+    if(Store.getRole()==='worker'){ openScreen('findScreen'); } else { openScreen('createScreen', item); }
   }
-  refreshAll();
-}
-function closeScreen(id){
-  const screen = document.getElementById(id);
-  if(screen) screen.classList.remove('active');
-}
-function animateFromButton(btn, panel){
-  // compute centers and animate
-  try{
-    const b = btn.getBoundingClientRect();
-    const p = panel.getBoundingClientRect();
-    const dx = b.left + b.width/2 - (p.left + p.width/2);
-    const dy = b.top + b.height/2 - (p.top + p.height/2);
-    panel.style.transition = 'none';
-    panel.style.transform = `translate(${dx}px, ${dy}px) scale(.86)`;
-    panel.style.opacity = '0';
-    requestAnimationFrame(()=> {
-      panel.style.transition = 'transform .36s cubic-bezier(.2,.9,.22,1), opacity .26s ease';
-      panel.style.transform = '';
-      panel.style.opacity = '1';
-    });
-  }catch(e){}
-}
-
-/* --------- Find screen: tabs and rendering --------- */
-const findTabs = document.getElementById('findTabs');
-findTabs.addEventListener('click', (e)=>{
-  const t = e.target.closest('.tab'); if(!t) return;
-  findTabs.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  renderFindList();
+  if(action==='find'){ openScreen('findScreen'); }
+  if(action==='wallet'){ openScreen('walletScreen'); }
+  if(action==='messenger'){ openScreen('messengerScreen'); }
+  if(action==='mine'){ openScreen('mineScreen'); }
 });
-document.getElementById('applySearch').onclick = ()=> renderFindList();
 
-function getActiveFindTab(){
-  const t = [...findTabs.querySelectorAll('.tab')].find(x=>x.classList.contains('active'));
-  return t ? t.getAttribute('data-tab') : 'all';
-}
-
+/* ----------------- Render lists ----------------- */
 function renderFindList(){
-  const listEl = document.getElementById('findList'); listEl.innerHTML='';
+  const list = document.getElementById('findList'); list.innerHTML='';
   const q = (document.getElementById('searchInput').value||'').toLowerCase().trim();
-  const tab = getActiveFindTab();
-  let items = Store.getOrders().slice();
-  if(tab==='spec') items = items.filter(i=> (i.category||'').toLowerCase().includes('спец') || (i.category||'').toLowerCase().includes('спец'));
-  if(tab==='taxi') items = items.filter(i=> (i.category||'').toLowerCase().includes('такси'));
-  if(tab==='food') items = items.filter(i=> (i.category||'').toLowerCase().includes('доставка') || (i.category||'').toLowerCase().includes('еда'));
-  if(q) items = items.filter(i=> (i.city||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q) || (i.desc||'').toLowerCase().includes(q));
-  document.getElementById('ordersBadge').textContent = Store.getOrders().length;
-  if(items.length===0){ listEl.innerHTML = '<div style="color:var(--muted)">Ничего не найдено</div>'; return; }
-  const tpl = document.getElementById('cardTpl');
+  const activeTab = document.querySelector('#findTabs .tab.active')?.getAttribute('data-tab') || 'all';
+  let items = Store.getOrders().filter(o=> o.status==='open');
+  if(activeTab==='spec') items = items.filter(o=> (o.category||'').toLowerCase().includes('спец'));
+  if(activeTab==='taxi') items = items.filter(o=> (o.category||'').toLowerCase().includes('такси'));
+  if(activeTab==='food') items = items.filter(o=> (o.category||'').toLowerCase().includes('доставка') || (o.category||'').toLowerCase().includes('еда'));
+  if(q) items = items.filter(o=> (o.city||'').toLowerCase().includes(q) || (o.category||'').toLowerCase().includes(q) || (o.desc||'').toLowerCase().includes(q));
+  ordersCount.textContent = Store.getOrders().length;
+  if(items.length===0){ list.innerHTML = '<div style="color:var(--muted)">Ничего не найдено</div>'; return; }
   items.forEach(o=>{
-    const node = tpl.content.cloneNode(true);
-    const card = node.querySelector('.card');
-    node.querySelector('.card-title').textContent = `${o.category} • ${o.city}`;
-    node.querySelector('.card-meta').textContent = `Дедлайн: ${o.deadline} • Заказчик: ${o.name || '---'}`;
-    node.querySelector('.card-desc').textContent = o.desc;
-    node.querySelector('.price').textContent = Number(o.budget||0).toLocaleString('ru-RU');
-    const av = node.querySelector('.avatar');
-    avatarStyle(o.name||o.contact||'Заказчик', av);
-    av.classList.add('small');
-    const ctaRow = node.querySelector('.cta-row');
-    // remove extra avatar near CTA; only CTA button remains
-    const bidBtn = document.createElement('button'); bidBtn.className='cta'; bidBtn.textContent='Предложить цену';
-    bidBtn.onclick = ()=> openBidModal(o);
+    const card = document.createElement('div'); card.className='card';
+    const left = document.createElement('div'); left.className='card-left';
+    const av = document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||o.ownerId||'З', av);
+    left.appendChild(av);
+    const body = document.createElement('div'); body.className='card-body';
+    const top = document.createElement('div'); top.className='card-top';
+    const titleWrap = document.createElement('div');
+    const title = document.createElement('div'); title.className='card-title'; title.textContent = `${o.category} • ${o.city}`;
+    const meta = document.createElement('div'); meta.className='card-meta'; meta.textContent = `Дедлайн: ${o.datetime ? o.datetime.replace('T',' ') : o.datetime} • Заказчик: ${o.ownerName||'—'}`;
+    titleWrap.appendChild(title); titleWrap.appendChild(meta);
+    const price = document.createElement('div'); price.style.textAlign='right'; price.innerHTML = `<div style="font-weight:800; font-size:18px">₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div>`;
+    top.appendChild(titleWrap); top.appendChild(price);
+    const desc = document.createElement('div'); desc.className='card-desc'; desc.textContent = o.desc || '';
+    const ctaRow = document.createElement('div'); ctaRow.style.marginTop='12px';
+    const bidBtn = document.createElement('button'); bidBtn.className='btn primary'; bidBtn.textContent='Предложить цену';
+    bidBtn.onclick = ()=> openBidModalForOrder(o.id);
     ctaRow.appendChild(bidBtn);
-    listEl.appendChild(node);
+    body.appendChild(top); body.appendChild(desc); body.appendChild(ctaRow);
+    card.appendChild(left); card.appendChild(body);
+    list.appendChild(card);
   });
 }
 
-/* -------- Create screen: category selection + submit ---------- */
-const createTabs = document.getElementById('createTabs');
-createTabs.addEventListener('click', (e)=>{
-  const t = e.target.closest('.tab'); if(!t) return;
-  createTabs.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  document.getElementById('selectedCategory').textContent = t.getAttribute('data-val') || t.textContent;
-});
-
-document.getElementById('createForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const category = document.getElementById('selectedCategory').textContent || 'Другое';
-  const budget = Number(document.getElementById('c-budget').value) || 0;
-  const deadline = document.getElementById('c-deadline').value || todayISO();
-  const desc = document.getElementById('c-desc').value || '';
-  const city = localStorage.getItem(LS_CITY) || '—';
-  const order = { id: 'o_'+uid(), category, city, budget, deadline, desc, name:'', contact:'', bids:[], ownerId:'owner_'+uid() };
-  Store.addOrder(order);
-  alert('Заказ создан');
-  closeScreen('createScreen');
-  refreshAll();
-});
-
-/* -------- bids (performer) without extra avatar -------- */
-function openBidModal(order){
-  // lightweight modal using prompt for price+name (can be swapped to proper modal later)
-  const price = prompt('Ваша цена (₸):');
-  if(price===null) return;
-  const name = prompt('Ваше имя:', 'Исполнитель') || 'Исполнитель';
-  const comment = prompt('Комментарий (опционально):','') || '';
-  Store.updateOrder(order.id, (o)=>{ if(!Array.isArray(o.bids)) o.bids=[]; o.bids.push({ price: Number(price)||0, name, comment, createdAt: new Date().toISOString(), performerId:'p_'+uid() }); });
-  alert('Предложение отправлено');
-  refreshAll();
+/* render my orders */
+function renderMineList(){
+  const mine = document.getElementById('mineList'); mine.innerHTML='';
+  const orders = Store.getOrders().filter(o=> o.ownerId === (Store.getProfile()?.id || ''));
+  if(orders.length===0){ mine.innerHTML = '<div style="color:var(--muted)">Пока нет ваших заказов</div>'; return; }
+  orders.forEach(o=>{
+    const card = document.createElement('div'); card.className='card';
+    const left = document.createElement('div'); left.className='card-left';
+    const av = document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||'Вы', av);
+    left.appendChild(av);
+    const body = document.createElement('div'); body.className='card-body';
+    const top = document.createElement('div'); top.className='card-top';
+    const title = document.createElement('div'); title.className='card-title'; title.textContent = `${o.category} • ${o.city}`;
+    const price = document.createElement('div'); price.style.textAlign='right'; price.innerHTML = `<div style="font-weight:800; font-size:18px">₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div>`;
+    top.appendChild(title); top.appendChild(price);
+    const meta = document.createElement('div'); meta.className='card-meta'; meta.textContent = `Дедлайн: ${o.datetime || ''}`;
+    const desc = document.createElement('div'); desc.className='card-desc'; desc.textContent = o.desc || '';
+    const actions = document.createElement('div'); actions.style.marginTop='12px';
+    const viewBids = document.createElement('button'); viewBids.className='btn ghost'; viewBids.textContent='Просмотр заявок';
+    viewBids.onclick = ()=> showBidsForOrder(o.id);
+    actions.appendChild(viewBids);
+    body.appendChild(top); body.appendChild(meta); body.appendChild(desc); body.appendChild(actions);
+    card.appendChild(left); card.appendChild(body);
+    mine.appendChild(card);
+  });
 }
 
-/* -------- accept/reject and chat creation -------- */
-function acceptBid(orderId, bidIndex){
-  const order = Store.getOrders().find(o=>o.id===orderId);
-  if(!order) return;
-  const bid = (order.bids||[])[bidIndex];
-  if(!bid) return;
-  const chatId = 'chat_'+uid();
-  const chat = { id: chatId, orderId, participants:[order.ownerId, bid.performerId], title:`${order.category} • ${order.city}`, meta:{ownerName:order.name, performerName:bid.name}, messages:[{from:'system', text:`Чат создан между ${order.name||'Заказчик'} и ${bid.name}`, ts:new Date().toISOString()}] };
-  Store.addChat(chat);
-  Store.updateOrder(orderId, (o)=>{ if(o.bids && o.bids[bidIndex]) o.bids[bidIndex].accepted=true; });
-  openScreen('messengerScreen');
-  setTimeout(()=>{ refreshChats(); openChat(chatId); }, 220);
-}
-
-/* -------- Chats UI -------- */
+/* render chats */
 function refreshChats(){
   const list = document.getElementById('chatsList'); list.innerHTML='';
   const chats = Store.getChats();
-  if(chats.length===0){ list.innerHTML = '<div style="color:var(--muted)">Пока нет чатов</div>'; return; }
+  if(!chats.length){ list.innerHTML = '<div style="color:var(--muted)">Пока нет чатов</div>'; return; }
   chats.forEach(c=>{
-    const el = document.createElement('div'); el.style.display='flex'; el.style.gap='10px'; el.style.padding='10px'; el.style.alignItems='center'; el.style.cursor='pointer';
-    const av = document.createElement('div'); av.className='avatar small'; avatarStyle(c.meta.performerName || c.meta.ownerName || 'Чат', av);
-    const t = document.createElement('div'); t.innerHTML = `<div style="font-weight:800">${c.title}</div><div style="color:var(--muted); font-size:13px">${c.meta.performerName||''}</div>`;
+    const el = document.createElement('div'); el.style.display='flex'; el.style.gap='10px'; el.style.padding='8px'; el.style.alignItems='center'; el.style.cursor='pointer';
+    const av = document.createElement('div'); av.className='avatar'; av.style.width='44px'; av.style.height='44px'; avatarStyle(c.meta?.performerName || c.meta?.ownerName || 'Ч', av);
+    const t = document.createElement('div'); t.innerHTML = `<div style="font-weight:800">${c.title}</div><div style="color:var(--muted); font-size:13px">${c.meta?.performerName||c.meta?.ownerName||''}</div>`;
     el.appendChild(av); el.appendChild(t);
     el.onclick = ()=> openChat(c.id);
     list.appendChild(el);
   });
 }
 
+/* ----------------- Bid modal flow ----------------- */
+let currentBidOrderId = null;
+const bidModalWrap = document.getElementById('bidModalWrap');
+document.getElementById('closeBidBtn').onclick = ()=> { bidModalWrap.classList.remove('active'); currentBidOrderId=null; }
+document.getElementById('sendBidBtn').onclick = ()=>{
+  const price = Number(document.getElementById('bidPrice').value || 0);
+  const comment = document.getElementById('bidComment').value || '';
+  const profile = Store.getProfile() || { id:'guest_'+uid(), name:'Исполнитель' };
+  if(!(price>0)){ alert('Укажите корректную цену'); return; }
+  if(!currentBidOrderId){ alert('Нет заказа'); return; }
+  Store.updateOrder(currentBidOrderId, (o)=>{
+    if(!Array.isArray(o.bids)) o.bids=[];
+    o.bids.push({ price, name: profile.name || profile.login || 'Исполнитель', performerId: profile.id || ('p_'+uid()), comment, createdAt:new Date().toISOString() });
+  });
+  bidModalWrap.classList.remove('active');
+  currentBidOrderId=null;
+  alert('Предложение отправлено ✅');
+  renderFindList();
+};
+
+function openBidModalForOrder(orderId){
+  currentBidOrderId = orderId;
+  document.getElementById('bidPrice').value='';
+  document.getElementById('bidComment').value='';
+  bidModalWrap.classList.add('active');
+}
+
+/* ------------- Owner views bids and accept ------------- */
+function showBidsForOrder(orderId){
+  const order = Store.getOrders().find(o=>o.id===orderId);
+  if(!order) return alert('Заказ не найден');
+  // open mine screen and display bids block under relevant panel
+  openScreen('mineScreen');
+  setTimeout(()=>{
+    const panel = document.querySelector('#mineScreen .panel');
+    let block = panel.querySelector('.bids-block');
+    if(block) block.remove();
+    block = document.createElement('div'); block.className='bids-block'; block.style.marginTop='12px';
+    block.innerHTML = `<div style="font-weight:800;margin-bottom:8px">Заявки для заказа</div>`;
+    const bids = order.bids || [];
+    if(!bids.length){ block.innerHTML += '<div style="color:var(--muted)">Пока нет заявок</div>'; panel.appendChild(block); return; }
+    bids.forEach((b, idx)=>{
+      const row = document.createElement('div'); row.style.display='flex'; row.style.gap='12px'; row.style.alignItems='center'; row.style.padding='10px 0';
+      const av = document.createElement('div'); av.className='avatar'; av.style.width='42px'; av.style.height='42px'; avatarStyle(b.name||'И', av);
+      const body = document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${b.name} — ₸ ${b.price}</div><div style="color:var(--muted);font-size:13px">${b.comment||''}</div>`;
+      const actions = document.createElement('div'); actions.style.display='flex'; actions.style.flexDirection='column'; actions.style.gap='8px';
+      const accept = document.createElement('button'); accept.className='btn primary'; accept.textContent='Принять'; accept.onclick = ()=> acceptBid(orderId, idx);
+      const reject = document.createElement('button'); reject.className='btn ghost'; reject.textContent='Отклонить'; reject.onclick = ()=>{
+        Store.updateOrder(orderId, (oo)=>{ oo.bids = (oo.bids||[]).filter((_,i)=>i!==idx); });
+        showBidsForOrder(orderId);
+      };
+      actions.appendChild(accept); actions.appendChild(reject);
+      row.appendChild(av); row.appendChild(body); row.appendChild(actions);
+      block.appendChild(row);
+    });
+    panel.appendChild(block);
+  }, 180);
+}
+
+/* accept bid -> remove from find (mark closed), create chat */
+function acceptBid(orderId, bidIndex){
+  const order = Store.getOrders().find(o=>o.id===orderId);
+  if(!order) return;
+  const bid = (order.bids||[])[bidIndex];
+  if(!bid) return;
+  // mark order closed (in_work)
+  Store.updateOrder(orderId, (o)=>{ o.status = 'in_progress'; o.assigned = { performerId: bid.performerId, performerName: bid.name, price: bid.price }; });
+  // create chat
+  const chat = {
+    id: 'chat_'+uid(),
+    orderId,
+    title: `${order.category} • ${order.city}`,
+    participants: [order.ownerId, bid.performerId],
+    meta: { ownerName: order.ownerName||'Заказчик', performerName: bid.name },
+    messages: [{ from:'system', text:`Чат создан между ${order.ownerName||'Заказчик'} и ${bid.name}`, ts: new Date().toISOString() }]
+  };
+  Store.addChat(chat);
+  // open messenger and show chat
+  openScreen('messengerScreen');
+  setTimeout(()=>{ refreshChats(); openChat(chat.id); alert('Заявка принята — чат создан'); }, 240);
+  renderFindList();
+  renderMineList();
+}
+
+/* --------- CHAT: open and send ---------- */
 function openChat(chatId){
-  const chat = Store.getChats().find(c=>c.id===chatId); if(!chat) return;
-  document.getElementById('chatView').style.display='flex'; document.getElementById('noChat').style.display='none';
+  const chat = Store.getChats().find(c=>c.id===chatId);
+  if(!chat) return;
+  document.getElementById('chatView').style.display='flex';
+  document.getElementById('noChat').style.display='none';
   document.getElementById('chatTitle').textContent = chat.title;
-  avatarStyle(chat.meta.performerName||chat.meta.ownerName||'Чат', document.getElementById('chatAvatar'));
+  avatarStyle(chat.meta?.performerName||chat.meta?.ownerName||'Ч', document.getElementById('chatAvatar'));
   const msgs = document.getElementById('messages'); msgs.innerHTML='';
   (chat.messages||[]).forEach(m=>{
     const d = document.createElement('div'); d.style.marginBottom='8px';
     if(m.from==='system'){ d.style.color='var(--muted)'; d.style.textAlign='center'; d.textContent = m.text; }
     else if(m.from==='me'){ d.style.alignSelf='flex-end'; d.style.background='linear-gradient(180deg, rgba(123,255,90,0.08), rgba(123,255,90,0.03))'; d.style.padding='8px 12px'; d.style.borderRadius='10px'; d.textContent = m.text; }
-    else { d.style.alignSelf='flex-start'; d.style.background='rgba(255,255,255,0.02)'; d.style.padding='8px 12px'; d.style.borderRadius='10px'; d.textContent = m.from + ': ' + m.text; }
+    else { d.style.alignSelf='flex-start'; d.style.background='rgba(255,255,255,0.02)'; d.style.padding='8px 12px'; d.style.borderRadius='10px'; d.textContent = (m.fromName? m.fromName+': ':'') + m.text; }
     msgs.appendChild(d);
   });
   msgs.scrollTop = msgs.scrollHeight;
   document.getElementById('sendMsgBtn').onclick = ()=>{
     const v = document.getElementById('messageInput').value.trim(); if(!v) return;
     Store.updateChat(chatId, (c)=>{ c.messages.push({ from:'me', text:v, ts:new Date().toISOString() }); });
-    document.getElementById('messageInput').value = '';
+    document.getElementById('messageInput').value='';
     openChat(chatId);
   };
 }
 
-/* -------- Mine list rendering (with bids avatars small) -------- */
-function renderMineList(){
-  const list = document.getElementById('mineList'); list.innerHTML='';
-  const orders = Store.getOrders();
-  if(!orders.length){ list.innerHTML = '<div style="color:var(--muted)">Нет ваших заказов</div>'; return; }
-  const tpl = document.getElementById('cardTpl');
-  orders.forEach(o=>{
-    const node = tpl.content.cloneNode(true);
-    node.querySelector('.card-title').textContent = `${o.category} • ${o.city}`;
-    node.querySelector('.card-meta').textContent = `Дедлайн: ${o.deadline}`;
-    node.querySelector('.card-desc').textContent = o.desc;
-    node.querySelector('.price').textContent = Number(o.budget||0).toLocaleString('ru-RU');
-    const av = node.querySelector('.avatar'); avatarStyle(o.name||o.contact||'Заказчик', av); av.classList.add('small');
-    const cta = node.querySelector('.cta-row');
-    const viewBtn = document.createElement('button'); viewBtn.className='tab'; viewBtn.textContent='Просмотр заявок';
-    viewBtn.onclick = ()=> showBidsForOrder(o);
-    cta.appendChild(viewBtn);
-    list.appendChild(node);
-  });
-}
+/* --------- Create order submit ---------- */
+document.getElementById('createForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const profile = Store.getProfile();
+  if(!profile){ alert('Сначала войдите в профиль'); openScreen('authScreen'); return; }
+  const category = document.querySelector('#createTabs .tab.active')?.getAttribute('data-val') || 'Другое';
+  const city = Store.getCity() || '—';
+  const budget = Number(document.getElementById('c-budget').value) || 0;
+  const datetime = document.getElementById('c-datetime').value || '';
+  const desc = document.getElementById('c-desc').value || '';
+  if(!desc || !datetime){ alert('Заполните описание и дату'); return; }
+  const order = { id:'o_'+uid(), category, city, budget, datetime, desc, ownerId: profile.id, ownerName: profile.name, bids:[], status:'open' };
+  Store.addOrder(order);
+  alert('Заказ создан');
+  closeScreen('createScreen');
+  renderFindList();
+  renderMineList();
+});
 
-/* show bids for order in mine panel (simple block) */
-function showBidsForOrder(order){
-  openScreen('mineScreen');
-  const panel = document.getElementById('minePanel');
-  // remove existing bids block
-  const existing = panel.querySelector('.bids-block'); if(existing) existing.remove();
-  const block = document.createElement('div'); block.className='bids-block'; block.style.marginTop='12px';
-  block.innerHTML = `<div style="font-weight:800; margin-bottom:8px">Заявки</div>`;
-  const bids = order.bids || [];
-  if(!bids.length){ block.innerHTML += '<div style="color:var(--muted)">Пока нет заявок</div>'; panel.appendChild(block); return; }
-  bids.forEach((b, idx)=>{
-    const row = document.createElement('div'); row.style.display='flex'; row.style.gap='12px'; row.style.padding='10px 0'; row.style.alignItems='center';
-    const av = document.createElement('div'); av.className='small-avatar'; avatarStyle(b.name||'', av);
-    const body = document.createElement('div'); body.style.flex='1';
-    body.innerHTML = `<div style="font-weight:800">${b.name} — ₸ ${b.price}</div><div style="color:var(--muted);font-size:13px">${b.comment || ''}</div>`;
-    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.flexDirection='column'; actions.style.gap='8px';
-    const accept = document.createElement('button'); accept.className='cta'; accept.textContent='Принять'; accept.onclick = ()=> acceptBid(order.id, idx);
-    const reject = document.createElement('button'); reject.className='tab'; reject.textContent='Отклонить'; reject.onclick = ()=> { Store.updateOrder(order.id, (o)=>{ o.bids = (o.bids||[]).filter((_,i)=>i!==idx); }); showBidsForOrder(Store.getOrders().find(x=>x.id===order.id)); };
-    actions.appendChild(accept); actions.appendChild(reject);
-    row.appendChild(av); row.appendChild(body); row.appendChild(actions);
-    block.appendChild(row);
+/* ----------------- tabs handlers ----------------- */
+document.querySelectorAll('.tabs .tab').forEach(tab=>{
+  tab.addEventListener('click', (e)=>{
+    const parent = tab.closest('.tabs');
+    parent.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    tab.classList.add('active');
+    if(parent.id==='findTabs') renderFindList();
+    if(parent.id==='createTabs') document.getElementById('selectedCategory').textContent = tab.getAttribute('data-val') || tab.textContent;
   });
-  panel.appendChild(block);
-}
+});
 
-/* ---------- misc: top balance, counts ---------- */
+/* search button */
+document.getElementById('applySearch').onclick = ()=> renderFindList();
+
+/* menu counts */
 function refreshAll(){
   document.getElementById('balance').textContent = Store.getWallet().balance || 0;
-  document.getElementById('balanceTop').textContent = Store.getWallet().balance || 0;
-  document.getElementById('ordersBadge').textContent = Store.getOrders().length;
+  balanceTop.textContent = Store.getWallet().balance || 0;
+  ordersCount.textContent = Store.getOrders().length;
   renderFindList();
   renderMineList();
   refreshChats();
+  document.getElementById('topCity').textContent = Store.getCity() || '—';
 }
 
-/* top-level simple actions */
-document.getElementById('topupBtn').onclick = ()=> {
-  const v = prompt('Сумма пополнения (₸):','1000'); if(!v) return;
-  const w = Store.getWallet(); w.balance = (w.balance||0) + Number(v); Store.setWallet(w); refreshAll(); alert('Пополнено');
+/* wallet quick */
+document.getElementById('topupBtn').onclick = ()=>{
+  const v = prompt('Сумма для пополнения (₸):','1000'); if(!v) return; const w = Store.getWallet(); w.balance=(w.balance||0)+Number(v); Store.setWallet(w); refreshAll(); alert('Пополнено');
 };
-document.getElementById('withdrawBtn').onclick = ()=> {
-  const v = prompt('Сумма вывода (₸):','500'); if(!v) return;
-  const w = Store.getWallet(); if(w.balance < Number(v)){ alert('Недостаточно средств'); return; } w.balance -= Number(v); Store.setWallet(w); refreshAll(); alert('Выведено');
+document.getElementById('withdrawBtn').onclick = ()=>{
+  const v = prompt('Сумма вывода (₸):','500'); if(!v) return; const w = Store.getWallet(); if(w.balance < Number(v)){ alert('Недостаточно'); return; } w.balance -= Number(v); Store.setWallet(w); refreshAll(); alert('Выведено');
 };
 
-/* initial render */
+/* init on load */
 document.addEventListener('DOMContentLoaded', ()=>{
-  // default category selected
-  document.querySelector('#createTabs .tab.gold')?.classList.add('active');
-  document.getElementById('selectedCategory').textContent = document.querySelector('#createTabs .tab.gold')?.getAttribute('data-val') || 'СПЕЦ. ЗАКАЗ';
+  // if profile exists, skip auth
+  const prof = Store.getProfile();
+  if(prof){
+    // show city selection if not set
+    if(!Store.getCity()) openScreen('cityScreen'); else {
+      // if role set show main else role select
+      if(!Store.getRole()) openScreen('roleScreen'); else { openScreenMainAfterSetup(); }
+    }
+  } else {
+    openScreen('authScreen');
+  }
+  renderCityList();
   refreshAll();
 });
 </script>
