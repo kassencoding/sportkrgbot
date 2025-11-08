@@ -12,6 +12,7 @@
 :root{
   --purple:#b37aff; --green:#7BFF5A; --text:#fff; --card:#111116; --muted:#9ba0a5;
   --focus: 0 0 0 3px rgba(123,255,90,.35);
+  /* фон — книжная абстракция */
   --bg-img: url("data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?>\
 <svg xmlns='http://www.w3.org/2000/svg' width='2400' height='1400'>\
 <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>\
@@ -70,32 +71,42 @@ h1{margin:0 0 6px; font-weight:800; font-size:38px; color:var(--purple); text-sh
 }
 
 /* окна-оверлеи + анимация снизу */
-.screen{ display:none; position:fixed; inset:0; padding:20px; overflow-y:auto; background:rgba(0,0,0,0.45); backdrop-filter:blur(16px) }
+/* Изменено: панели больше не прозрачны \"стеклянные\" — делаем плотный фон, без backdrop-filter,
+   чтобы они не показывали содержимое за ними */
+.screen{ display:none; position:fixed; inset:0; padding:20px; overflow-y:auto; background:rgba(0,0,0,0.45); }
 .screen.active{ display:block }
 .panel{
-  max-width:860px; margin:0 auto; background:rgba(0,0,0,0.55);
-  border:1px solid rgba(255,255,255,0.25); border-radius:20px; padding:16px;
+  max-width:860px; margin:0 auto;
+  /* раньше: background:rgba(0,0,0,0.55); backdrop-filter:blur(16px); */
+  /* теперь плотный, слегка градиентный фон, почти непрозрачный */
+  background: linear-gradient(180deg, rgba(12,12,18,0.97), rgba(8,8,12,0.98));
+  border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
   transform:translateY(32px); opacity:0; animation:slideUp .28s cubic-bezier(.22,.8,.24,1) forwards;
 }
 @keyframes slideUp{ from{transform:translateY(34px);opacity:0} to{transform:translateY(0);opacity:1} }
 
 .nav{display:flex; align-items:center; gap:10px; margin-bottom:8px}
 .back{color:#fff; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.25); border-radius:12px; padding:8px 14px; text-decoration:none}
-.wrap{background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.25); border-radius:16px; padding:16px}
+.wrap{
+  /* также делаем внутренние обёртки плотными, чтобы не было просвечивания */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04); border-radius:16px; padding:16px;
+}
 label{font-size:13px; color:var(--muted)}
 input,select,textarea{
-  width:100%; margin-top:6px; margin-bottom:12px; background:rgba(255,255,255,0.06);
-  color:#fff; border:1px solid rgba(255,255,255,0.25); border-radius:14px; padding:12px 14px; font-size:15px; outline:none; backdrop-filter:blur(10px)
+  width:100%; margin-top:6px; margin-bottom:12px; background:rgba(255,255,255,0.03);
+  color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:12px 14px; font-size:15px; outline:none;
 }
 input:focus,select:focus,textarea:focus{box-shadow:var(--focus); border-color:#3a3a59}
 textarea{min-height:120px; resize:vertical}
 .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 @media(max-width:560px){ .row{grid-template-columns:1fr} }
 .list{display:flex; flex-direction:column; gap:12px}
-.item{background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.2); border-radius:16px; padding:14px; backdrop-filter:blur(14px)}
+.item{background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); border-radius:16px; padding:14px;}
 .title2{font-weight:700; font-size:17px}
 .muted{color:var(--muted); font-size:13px}
-.badge{display:inline-block; background:rgba(255,255,255,0.15); padding:4px 10px; border-radius:999px; margin-left:8px; font-size:12px}
+.badge{display:inline-block; background:rgba(255,255,255,0.06); padding:4px 10px; border-radius:999px; margin-left:8px; font-size:12px}
 .spacer{height:6px}
 
 /* сворачиваемый фильтр */
@@ -103,54 +114,12 @@ textarea{min-height:120px; resize:vertical}
 .collapse.open{max-height:500px}
 
 /* модалки */
-.modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(12px); z-index:50}
+.modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:50}
 .modal.active{display:block}
 .modal .panel{max-width:560px}
-
-/* авторизация */
-#authOverlay{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(0deg, rgba(0,0,0,.6), rgba(0,0,0,.6)); z-index:60}
-#authCard{max-width:520px; width:100%; border-radius:18px; padding:20px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.12)}
-.auth-title{font-size:26px; font-weight:800; color:var(--purple); margin-bottom:6px}
-.auth-sub{color:var(--muted); margin-bottom:16px}
-.small{font-size:13px}
 </style>
 </head>
 <body>
-
-<!-- Авторизация (появляется сразу при заходе) -->
-<div id="authOverlay" aria-hidden="false" style="display:none">
-  <div id="authCard" class="panel">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px">
-      <div>
-        <div class="auth-title">GiDCity</div>
-        <div class="auth-sub">Лёгкий вход через Telegram — начните создавать и выполнять заказы.</div>
-      </div>
-    </div>
-
-    <div style="margin-top:12px" id="authBody">
-      <!-- динамичное тело -->
-      <div style="display:flex; gap:8px; flex-direction:column">
-        <button id="tgLoginBtn" class="btn"><span class="btn-text">🔑 Войти через Telegram</span></button>
-        <div style="text-align:center" class="small muted">или</div>
-
-        <div id="guestFormWrap" class="wrap">
-          <form id="guestForm">
-            <label for="g-name">Имя</label>
-            <input id="g-name" name="name" placeholder="Ваше имя" required />
-            <label for="g-contact">Контакт</label>
-            <input id="g-contact" name="contact" placeholder="@username или +7…" required />
-            <div style="display:flex; gap:8px">
-              <button class="btn" type="submit">🚶 Войти как гость</button>
-              <button class="btn secondary" type="button" id="guestCancel">Отмена</button>
-            </div>
-          </form>
-        </div>
-
-        <div class="muted small" style="margin-top:8px">Если вы открыли приложение внутри Telegram — используйте кнопку «Войти через Telegram».</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Главный экран -->
 <section id="home">
@@ -159,6 +128,7 @@ textarea{min-height:120px; resize:vertical}
   <div class="tiles">
     <!-- СОЗДАТЬ -->
     <button class="btn" onclick="openScreen('create')">
+      <!-- иконка: неоновое перо -->
       <svg class="icon" viewBox="0 0 24 24" fill="none">
         <defs>
           <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
@@ -409,25 +379,28 @@ textarea{min-height:120px; resize:vertical}
 </div>
 
 <script>
-/* ========== Telegram init & auth overlay ========== */
+/* Telegram init */
 const tg = window.Telegram?.WebApp;
 const isInTelegram = !!tg;
-if (isInTelegram) {
-  try { tg.ready(); tg.expand(); document.body.classList.toggle('tg-light', tg.colorScheme === 'light'); }
-  catch(_) {}
+if(isInTelegram){ try{ tg.ready(); tg.expand(); document.body.classList.toggle('tg-light', tg.colorScheme==='light'); }catch(e){} }
+
+/* Навигация окон */
+function openScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
 }
+function closeScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
 
-const authOverlay = document.getElementById('authOverlay');
-const tgLoginBtn = document.getElementById('tgLoginBtn');
-const guestForm = document.getElementById('guestForm');
-const guestCancel = document.getElementById('guestCancel');
+/* Deep link (замени при необходимости) */
+const BOT_USERNAME='GiDCityBot', STARTAPP_KEY='menu';
+document.getElementById('openInChat').onclick=()=> {
+  const url = `https://t.me/${BOT_USERNAME}?startapp=${encodeURIComponent(STARTAPP_KEY)}`;
+  if(isInTelegram){ try{ tg.openTelegramLink(url); }catch(e){ window.open(url,'_blank'); } } else { window.open(url,'_blank'); }
+};
 
-function showAuthOverlay(){ authOverlay.style.display = 'flex'; }
-function hideAuthOverlay(){ authOverlay.style.display = 'none'; }
-
-/* Storage keys and helper */
+/* Storage */
 const LS_ORDERS='gid_orders_v1', LS_PROFILE='gid_profile_v1', LS_WALLET='gid_wallet_v1';
-const Store = {
+const Store={
   getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[]}catch(_){return[]} },
   setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); },
   addOrder(o){ const l=this.getOrders(); l.unshift(o); this.setOrders(l); return l; },
@@ -439,7 +412,7 @@ const Store = {
   setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); }
 };
 
-/* Seed orders if empty */
+/* Seed orders */
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function daysFromNow(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
 if(Store.getOrders().length===0){
@@ -449,76 +422,60 @@ if(Store.getOrders().length===0){
   ]);
 }
 
-/* Elements */
+/* Utils */
 const findList=document.getElementById('findList'), mineList=document.getElementById('mineList'), ordersBadge=document.getElementById('ordersCountBadge');
 const balanceEl=document.getElementById('balance'), histEl=document.getElementById('history');
-
-/* Utils */
-function escapeHTML(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function prettyDeadline(iso){
-  if(!iso) return 'без дедлайна';
-  const d=new Date(iso+'T00:00:00'), t=new Date(todayISO()+'T00:00:00'); const diff=Math.round((d-t)/86400000);
-  if(diff===0) return 'сегодня'; if(diff===1) return 'до завтра'; if(diff<0) return 'просрочено';
-  return 'до ' + d.toLocaleDateString('ru-KZ');
+  try{
+    const d=new Date(iso+'T00:00:00'), t=new Date(todayISO()+'T00:00:00'); const diff=Math.round((d-t)/86400000);
+    if(diff===0) return 'сегодня';
+    if(diff===1) return 'до завтра';
+    if(diff<0) return 'просрочено';
+    return 'до ' + d.toLocaleDateString('ru-KZ');
+  }catch(e){ return iso; }
 }
 function money(n){ return '₸ ' + Number(n||0).toLocaleString('ru-RU'); }
 
-/* ----- renderOrders (safely) ----- */
+/* Рендер заказов */
 function renderOrders(container, list, ctx){
   container.innerHTML='';
-  if(!Array.isArray(list) || list.length===0){ container.innerHTML='<div class="muted">Ничего не найдено.</div>'; return; }
+  if(!list||list.length===0){ container.innerHTML='<div class="muted">Ничего не найдено.</div>'; return; }
   list.forEach(o=>{
     const el=document.createElement('div'); el.className='item';
-    const titleWrap = document.createElement('div');
-    titleWrap.className='title2';
-    titleWrap.innerHTML = `${escapeHTML(o.category)} • ${escapeHTML(o.city)} <span class="badge">${money(o.budget)}</span>`;
-    el.appendChild(titleWrap);
-
-    const meta = document.createElement('div'); meta.className='muted';
-    meta.textContent = `${prettyDeadline(o.deadline)} • заявок: ${Array.isArray(o.bids)?o.bids.length:0}`;
-    el.appendChild(meta);
-
-    const desc = document.createElement('div'); desc.innerHTML = escapeHTML(o.desc);
-    el.appendChild(desc);
-
-    const contact = document.createElement('div'); contact.className='muted';
-    contact.innerHTML = `Контакт: ${escapeHTML(o.contact)} • ${escapeHTML(o.name)}`;
-    el.appendChild(contact);
-
-    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
-
-    if(ctx==='find'){
-      const btnBid = document.createElement('button'); btnBid.className='btn'; btnBid.setAttribute('data-act','bid'); btnBid.setAttribute('data-id',o.id);
-      btnBid.innerHTML = `<span class="btn-text">💸 Предложить цену</span>`;
-      actions.appendChild(btnBid);
-      btnBid.addEventListener('click', ()=> openBidModal(o));
-    } else { // mine
-      const btnSend = document.createElement('button'); btnSend.className='btn secondary'; btnSend.setAttribute('data-act','send'); btnSend.setAttribute('data-id',o.id);
-      btnSend.innerHTML = `<span class="btn-text">📤 В бот</span>`;
-      actions.appendChild(btnSend);
-      btnSend.addEventListener('click', ()=>{
-        const order = Store.getOrders().find(x=>x.id===o.id);
-        if(order) sendToBot({type:'order', payload:order});
-      });
-
-      const btnDelete = document.createElement('button'); btnDelete.className='btn secondary'; btnDelete.setAttribute('data-act','delete'); btnDelete.setAttribute('data-id',o.id);
-      btnDelete.innerHTML = `<span class="btn-text">🗑 Удалить</span>`;
-      actions.appendChild(btnDelete);
-      btnDelete.addEventListener('click', ()=>{
-        if(confirm('Удалить заказ?')){ Store.deleteOrder(o.id); refreshAll(); }
-      });
-    }
-
-    el.appendChild(actions);
+    const bidsCount = Array.isArray(o.bids)? o.bids.length : 0;
+    const actions = (ctx==='find')
+      ? `<button class="btn" data-act="bid" data-id="${o.id}"><span class="btn-text">💸 Предложить цену</span></button>`
+      : `<button class="btn secondary" data-act="send" data-id="${o.id}"><span class="btn-text">📤 В бот</span></button>
+         <button class="btn secondary" data-act="delete" data-id="${o.id}"><span class="btn-text">🗑 Удалить</span></button>`;
+    el.innerHTML=`
+      <div class="title2">${escapeHTML(o.category)} • ${escapeHTML(o.city)}
+        <span class="badge">${money(o.budget)}</span>
+      </div>
+      <div class="muted">${prettyDeadline(o.deadline)} • заявок: ${bidsCount}</div>
+      <div>${escapeHTML(o.desc)}</div>
+      <div class="muted">Контакт: ${escapeHTML(o.contact)} • ${escapeHTML(o.name)}</div>
+      <div style="display:flex; gap:8px; margin-top:8px">
+        ${actions}
+      </div>`;
     container.appendChild(el);
+  });
+  container.querySelectorAll('button[data-act]').forEach(b=>{
+    b.onclick=(e)=>{
+      const id=e.currentTarget.getAttribute('data-id'), act=e.currentTarget.getAttribute('data-act');
+      const order=Store.getOrders().find(x=>x.id===id);
+      if(act==='delete'){ Store.deleteOrder(id); refreshAll(); }
+      if(act==='send' && order){ sendToBot({type:'order', payload:order}); }
+      if(act==='bid' && order){ openBidModal(order); }
+    };
   });
 }
 
-/* Filter toggle */
+/* Фильтр в «Найти» */
 const toggleFilterBtn=document.getElementById('toggleFilter');
 const filterWrap=document.getElementById('filterWrap');
-if(toggleFilterBtn) toggleFilterBtn.onclick=()=>{ filterWrap.classList.toggle('open'); };
-document.getElementById('filterForm')?.addEventListener('submit',(e)=>{
+toggleFilterBtn.onclick=()=>{ filterWrap.classList.toggle('open'); };
+document.getElementById('filterForm').addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
   const cat=(fd.get('category')||'').trim(), city=(fd.get('city')||'').trim().toLowerCase();
@@ -534,14 +491,14 @@ document.getElementById('filterForm')?.addEventListener('submit',(e)=>{
   renderOrders(findList, list, 'find');
 });
 
-/* Create order */
+/* Создание заказа */
 document.getElementById('createForm').addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
   const order={
     id: Math.random().toString(36).slice(2,10)+Date.now().toString(36),
     category:fd.get('category'), city:fd.get('city'),
-    budget:Number(fd.get('budget')||0), deadline:fd.get('deadline'),
+    budget:Number(fd.get('budget')), deadline:fd.get('deadline'),
     desc:fd.get('desc'), contact:fd.get('contact'), name:fd.get('name'),
     isMine:true, bids:[]
   };
@@ -556,55 +513,13 @@ document.getElementById('sendOrderToBot').onclick=()=>{
   sendToBot({type:'order', payload:last});
 };
 
-/* Guest form handling */
-guestForm.addEventListener('submit',(e)=>{
-  e.preventDefault();
-  const fd=new FormData(e.currentTarget);
-  const profile={ name: (fd.get('name')||'').trim(), contact:(fd.get('contact')||'').trim(), createdAt:new Date().toISOString() };
-  if(!profile.name||!profile.contact){ alert('Заполните имя и контакт'); return; }
-  Store.setProfile(profile);
-  hideAuthOverlay();
-  refreshAll();
-});
-guestCancel.addEventListener('click', ()=>{ /* leave overlay visible or close? keep visible */ });
-
-/* Telegram login button — we take initDataUnsafe when available */
-tgLoginBtn.addEventListener('click', ()=>{
-  if(isInTelegram){
-    try {
-      const data = tg.initDataUnsafe || {};
-      if(data.user){
-        const profile = {
-          id: data.user.id,
-          name: [data.user.first_name, data.user.last_name].filter(Boolean).join(' '),
-          username: data.user.username || '',
-          telegram: true,
-          createdAt: new Date().toISOString()
-        };
-        Store.setProfile(profile);
-        hideAuthOverlay();
-        refreshAll();
-        tg.showAlert && tg.showAlert('Вход выполнен ✅');
-      } else {
-        // fallback: request showPopup or open a deep link to bot login
-        tg.showPopup && tg.showPopup({title:'Нет данных', message:'Не удалось получить данные пользователя.'});
-      }
-    } catch (err){
-      console.error(err);
-      alert('Ошибка при получении данных Telegram: '+err.message);
-    }
-  } else {
-    alert('Кнопка работает только внутри Telegram WebApp. Используйте гостевой вход вне Telegram.');
-  }
-});
-
-/* If already have profile — don't show overlay */
-if(!Store.getProfile()){
-  // show overlay after tiny delay to let UI load
-  setTimeout(()=>{ showAuthOverlay(); }, 200);
-} else {
-  hideAuthOverlay();
-}
+/* Экспорт / очистка */
+document.getElementById('exportJson').onclick=()=>{
+  const data={orders:Store.getOrders(), profile:Store.getProfile(), wallet:Store.getWallet()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='gidcity-data.json'; a.click(); URL.revokeObjectURL(url);
+};
+document.getElementById('clearAll').onclick=()=>{ if(confirm('Удалить все локальные данные?')){ localStorage.clear(); refreshAll(); } };
 
 /* ====== БИДЫ ====== */
 const bidModal=document.getElementById('bidModal');
@@ -615,7 +530,7 @@ let currentBidOrderId=null;
 
 function openBidModal(order){
   currentBidOrderId=order.id;
-  bidInfo.textContent = `${order.category} • ${order.city} — бюджет заказчика: ${money(order.budget)}`;
+  bidInfo.innerHTML = '<b>' + escapeHTML(order.category) + ' • ' + escapeHTML(order.city) + '</b> — бюджет заказчика: ' + money(order.budget);
   bidForm.reset();
   bidModal.classList.add('active');
 }
@@ -709,7 +624,7 @@ walletForm.addEventListener('submit',(e)=>{
   const ts=new Date().toISOString();
 
   if(walletAction==='topup'){
-    w.balance = Number(w.balance || 0) + amount;
+    w.balance += amount;
     w.history.unshift({type:'topup', amount, note, ts});
   }else if(walletAction==='pay'){
     if(w.balance<amount){ alert('Недостаточно средств'); return; }
@@ -732,63 +647,42 @@ walletForm.addEventListener('submit',(e)=>{
   renderWallet();
 });
 
-/* Render wallet history nicely */
+/* Рендер кошелька */
 function renderWallet(){
   const w=Store.getWallet();
   balanceEl.textContent = money(w.balance);
-  if(!Array.isArray(w.history) || w.history.length===0){ histEl.innerHTML='<div class="muted">Пока пусто</div>'; return; }
+  if(!w.history.length){ histEl.innerHTML='<div class="muted">Пока пусто</div>'; return; }
   histEl.innerHTML='';
   w.history.forEach(h=>{
     const row=document.createElement('div'); row.className='item';
     const titleMap={topup:'Пополнение', pay:'Оплата', transfer:'Перевод', withdraw:'Вывод'};
     const sign = (h.type==='topup')? '+' : '-';
     const extra = h.to ? ` → ${escapeHTML(h.to)}` : '';
+    const noteHTML = h.note ? `<div>${escapeHTML(h.note)}</div>` : '';
     row.innerHTML = `
-      <div class="title2">${titleMap[h.type] || h.type}${extra} <span class="badge">${sign} ${money(h.amount)}</span></div>
+      <div class="title2">${titleMap[h.type]}${extra} <span class="badge">${sign} ${money(h.amount)}</span></div>
       <div class="muted">${new Date(h.ts).toLocaleString('ru-KZ')}</div>
-      ${h.note? `<div>${escapeHTML(h.note)}</div>` : ''}
+      ${noteHTML}
     `;
     histEl.appendChild(row);
   });
 }
 
-/* Send to bot (if in Telegram use sendData, otherwise download JSON) */
+/* Связка с ботом */
 function sendToBot(message){
   const payload=JSON.stringify(message);
   if(isInTelegram){
-    try{ tg.sendData(payload); tg.showAlert && tg.showAlert('Отправлено в бот ✅'); }
-    catch(e){ tg.showAlert && tg.showAlert('Не удалось отправить: '+(e.message||e)); }
+    try{ tg.sendData(payload); tg.showAlert('Отправлено в бот ✅'); }
+    catch(e){ try{ tg.showAlert('Не удалось отправить: '+e.message); }catch(_){ alert('Не удалось отправить: '+e.message); } }
   }else{
     console.log('Payload for bot:', payload);
     alert('Открыто вне Telegram. JSON показан в консоли и будет скачан.');
     const blob=new Blob([payload],{type:'application/json'}); const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download=`gidcity-${message.type||'data'}.json`; a.click(); URL.revokeObjectURL(url);
+    const a=document.createElement('a'); a.href=url; a.download=`gidcity-${message.type}.json`; a.click(); URL.revokeObjectURL(url);
   }
 }
 
-/* Open/close screens */
-function openScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id)?.classList.add('active');
-}
-function closeScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
-
-/* Export / clear */
-document.getElementById('exportJson').onclick=()=>{
-  const data={orders:Store.getOrders(), profile:Store.getProfile(), wallet:Store.getWallet()};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='gidcity-data.json'; a.click(); URL.revokeObjectURL(url);
-};
-document.getElementById('clearAll').onclick=()=>{ if(confirm('Удалить все локальные данные?')){ localStorage.clear(); location.reload(); } };
-
-/* Open in chat link */
-const BOT_USERNAME='GiDCityBot', STARTAPP_KEY='menu';
-document.getElementById('openInChat').onclick=()=> {
-  const url = `https://t.me/${BOT_USERNAME}?startapp=${encodeURIComponent(STARTAPP_KEY)}`;
-  if(isInTelegram){ tg.openTelegramLink && tg.openTelegramLink(url); } else { window.open(url,'_blank'); }
-};
-
-/* Initial render */
+/* Инициализация */
 function refreshAll(){
   const orders=Store.getOrders();
   renderOrders(findList, orders, 'find');               // «Найти» — общий список
@@ -797,7 +691,12 @@ function refreshAll(){
   else { ordersBadge.style.display='none'; }
   renderWallet();
 }
-refreshAll();
+
+/* Set default deadline input to today on page load */
+document.addEventListener('DOMContentLoaded', ()=> {
+  const dd = document.getElementById('c-deadline'); if(dd) dd.value = todayISO();
+  refreshAll();
+});
 </script>
 </body>
 </html>
