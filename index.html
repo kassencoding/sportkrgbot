@@ -38,15 +38,15 @@ body{
   background-size:cover; background-position:center; background-attachment:fixed;
 }
 
-/* главная */
+/* заголовки */
 h1{margin:0 0 6px; font-weight:800; font-size:38px; color:var(--purple); text-shadow:0 0 14px rgba(179,122,255,.6)}
 .tag{color:var(--green); margin-bottom:16px; text-shadow:0 0 8px rgba(123,255,90,.45)}
 .tiles{display:grid; gap:14px; max-width:860px}
 
-/* кнопки (glass) */
+/* Кнопки (glass) — иконка слева, слово справа */
 .btn{
   position:relative;
-  display:flex; justify-content:center; align-items:center; gap:10px;
+  display:flex; align-items:center; gap:14px;
   width:100%; padding:16px 20px; border-radius:18px; cursor:pointer;
   text-decoration:none; font-size:18px; font-weight:800; letter-spacing:.2px;
   color:#fff; background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.35);
@@ -59,7 +59,10 @@ h1{margin:0 0 6px; font-weight:800; font-size:38px; color:var(--purple); text-sh
 .btn:focus{outline:none; box-shadow:var(--focus)}
 .secondary{background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.25); box-shadow:none}
 
-/* бейдж счетчика */
+.btn .icon{width:28px; height:28px; flex:0 0 28px; filter: drop-shadow(0 0 8px rgba(123,255,90,.55)) drop-shadow(0 0 12px rgba(179,122,255,.45));}
+.btn .btn-text{margin-left:auto; text-align:right;}
+
+/* бейдж */
 .badge-btn{
   position:absolute; top:-8px; right:-8px;
   min-width:24px; height:24px; padding:0 6px;
@@ -67,7 +70,7 @@ h1{margin:0 0 6px; font-weight:800; font-size:38px; color:var(--purple); text-sh
   background:#ff4d4f; color:#fff; border-radius:999px; font-size:12px; border:2px solid rgba(255,255,255,.3);
 }
 
-/* окна-оверлеи с анимацией снизу */
+/* окна-оверлеи + анимация снизу */
 .screen{ display:none; position:fixed; inset:0; padding:20px; overflow-y:auto; background:rgba(0,0,0,0.45); backdrop-filter:blur(16px) }
 .screen.active{ display:block }
 .panel{
@@ -95,6 +98,15 @@ textarea{min-height:120px; resize:vertical}
 .muted{color:var(--muted); font-size:13px}
 .badge{display:inline-block; background:rgba(255,255,255,0.15); padding:4px 10px; border-radius:999px; margin-left:8px; font-size:12px}
 .spacer{height:6px}
+
+/* сворачиваемый фильтр */
+.collapse{overflow:hidden; max-height:0; transition:max-height .25s ease}
+.collapse.open{max-height:500px}
+
+/* модалки */
+.modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(12px); z-index:50}
+.modal.active{display:block}
+.modal .panel{max-width:560px}
 </style>
 </head>
 <body>
@@ -104,42 +116,112 @@ textarea{min-height:120px; resize:vertical}
   <h1>GiDCity</h1>
   <div class="tag">Зашёл • Сделал • Заработал</div>
   <div class="tiles">
-    <button class="btn" onclick="openScreen('find')">🔍 Найти заказы <span id="ordersCountBadge" class="badge-btn" style="display:none">0</span></button>
-    <button class="btn" onclick="openScreen('create')">➕ Создать заказ</button>
-    <button class="btn" onclick="openScreen('exec')">🛠 Стать исполнителем</button>
-    <button class="btn" onclick="openScreen('mine')">📦 Мои заказы</button>
-    <button class="btn secondary" id="openInChat">Открыть в чате</button>
+    <!-- СОЗДАТЬ -->
+    <button class="btn" onclick="openScreen('create')">
+      <!-- иконка: неоновое перо -->
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs>
+          <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/>
+          </linearGradient>
+        </defs>
+        <path d="M3 21l6-1 11-11a3 3 0 10-4.24-4.24L4.76 15.76 3 21z" stroke="url(#grad1)" stroke-width="2" />
+        <path d="M14 6l4 4" stroke="url(#grad1)" stroke-width="2" />
+      </svg>
+      <span class="btn-text">➕ Создать заказ</span>
+    </button>
+
+    <!-- НАЙТИ -->
+    <button class="btn" onclick="openScreen('find')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <circle cx="11" cy="11" r="6.5" stroke="url(#grad2)" stroke-width="2"/>
+        <path d="M16.5 16.5L21 21" stroke="url(#grad2)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="btn-text">🔍 Найти заказы</span>
+      <span id="ordersCountBadge" class="badge-btn" style="display:none">0</span>
+    </button>
+
+    <!-- КОШЕЛЁК -->
+    <button class="btn" onclick="openScreen('wallet')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <rect x="3" y="6" width="18" height="12" rx="3" stroke="url(#grad3)" stroke-width="2"/>
+        <circle cx="17" cy="12" r="1.5" fill="#7BFF5A"/>
+      </svg>
+      <span class="btn-text">💎 Кошелёк</span>
+    </button>
+
+    <!-- МОИ -->
+    <button class="btn" onclick="openScreen('mine')">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <path d="M4 7h16M6 11h12M8 15h8" stroke="url(#grad4)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="btn-text">📦 Мои заказы</span>
+    </button>
+
+    <!-- открыть в чате -->
+    <button class="btn secondary" id="openInChat">
+      <svg class="icon" viewBox="0 0 24 24" fill="none">
+        <defs><linearGradient id="grad5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+        <path d="M21 11c0 4.418-4.03 8-9 8-1.2 0-2.35-.2-3.4-.57L3 20l1.7-4.1A7.6 7.6 0 0 1 3 11c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="url(#grad5)" stroke-width="2"/>
+      </svg>
+      <span class="btn-text">Открыть в чате</span>
+    </button>
   </div>
 </section>
 
-<!-- Найти заказы (показываем все) -->
+<!-- Найти заказы -->
 <section id="find" class="screen" aria-labelledby="findTitle">
   <div class="panel">
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
     <h1 id="findTitle">Найти заказы</h1>
-    <div class="wrap">
-      <form id="filterForm">
-        <div class="row">
-          <div>
-            <label for="f-category">Категория</label>
-            <select id="f-category" name="category">
-              <option value="">Любая</option>
-              <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
-              <option>Дизайн</option><option>IT</option><option>Другое</option>
-            </select>
-          </div>
-          <div>
-            <label for="f-city">Город</label>
-            <input id="f-city" name="city" placeholder="Алматы / Астана" />
-          </div>
-        </div>
-        <div class="row">
-          <div><label for="f-min">Бюджет от (₸)</label><input id="f-min" name="min" type="number" min="0" placeholder="0" /></div>
-          <div><label for="f-max">Бюджет до (₸)</label><input id="f-max" name="max" type="number" min="0" placeholder="100000" /></div>
-        </div>
-        <button class="btn" type="submit">🔎 Применить фильтры</button>
-      </form>
+
+    <!-- Кнопка раскрытия фильтра -->
+    <div style="display:flex; gap:10px; margin-bottom:10px">
+      <button class="btn secondary" id="toggleFilter" type="button">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="grad6" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+          <path d="M4 6h16M6 12h12M8 18h8" stroke="url(#grad6)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-text">⚙️ Фильтр</span>
+      </button>
     </div>
+
+    <!-- Сворачиваемый фильтр -->
+    <div id="filterWrap" class="collapse">
+      <div class="wrap">
+        <form id="filterForm">
+          <div class="row">
+            <div>
+              <label for="f-category">Категория</label>
+              <select id="f-category" name="category">
+                <option value="">Любая</option>
+                <option>Курьер</option><option>Уборка</option><option>Ремонт</option>
+                <option>Дизайн</option><option>IT</option><option>Другое</option>
+              </select>
+            </div>
+            <div>
+              <label for="f-city">Город</label>
+              <input id="f-city" name="city" placeholder="Алматы / Астана" />
+            </div>
+          </div>
+          <div class="row">
+            <div><label for="f-min">Бюджет от (₸)</label><input id="f-min" name="min" type="number" min="0" placeholder="0" /></div>
+            <div><label for="f-max">Бюджет до (₸)</label><input id="f-max" name="max" type="number" min="0" placeholder="100000" /></div>
+          </div>
+          <button class="btn" type="submit">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="grad7" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+              <path d="M10 17l-4-4 1.4-1.4L10 14.2l6.6-6.6L18 9" stroke="url(#grad7)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="btn-text">🔎 Применить</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
     <div class="spacer"></div>
     <div id="findList" class="list" aria-live="polite"></div>
   </div>
@@ -176,48 +258,115 @@ textarea{min-height:120px; resize:vertical}
           <div><label for="c-name">Имя</label><input id="c-name" name="name" placeholder="Имя заказчика" required /></div>
         </div>
         <div class="row" style="grid-template-columns:1fr 1fr">
-          <button class="btn" type="submit">🚀 Создать</button>
-          <button class="btn secondary" type="button" id="sendOrderToBot">📤 Отправить в бот</button>
+          <button class="btn" type="submit">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="grad8" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+              <path d="M12 5v14M5 12h14" stroke="url(#grad8)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="btn-text">🚀 Создать</span>
+          </button>
+          <button class="btn secondary" type="button" id="sendOrderToBot">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <defs><linearGradient id="grad9" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+              <path d="M4 12h10M9 7l5 5-5 5" stroke="url(#grad9)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="btn-text">📤 В бот</span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 </section>
 
-<!-- Мои заказы (локально созданные) -->
+<!-- Мои заказы -->
 <section id="mine" class="screen" aria-labelledby="mineTitle">
   <div class="panel">
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
     <h1 id="mineTitle">Мои заказы</h1>
     <div id="mineList" class="list"><div class="muted">Пока пусто. Создайте первый заказ →</div></div>
     <div class="row" style="grid-template-columns:1fr 1fr; margin-top:10px">
-      <button class="btn secondary" id="exportJson">⬇️ Экспорт JSON</button>
-      <button class="btn secondary" id="clearAll">🗑 Очистить всё</button>
+      <button class="btn secondary" id="exportJson">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="grad10" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" stroke="url(#grad10)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-text">⬇️ Экспорт JSON</span>
+      </button>
+      <button class="btn secondary" id="clearAll">
+        <svg class="icon" viewBox="0 0 24 24" fill="none">
+          <defs><linearGradient id="grad11" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b37aff"/><stop offset="100%" stop-color="#7BFF5A"/></linearGradient></defs>
+          <path d="M4 7h16M9 7v12m6-12v12M6 7l1-3h10l1 3" stroke="url(#grad11)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="btn-text">🗑 Очистить всё</span>
+      </button>
     </div>
   </div>
 </section>
 
-<!-- Анкета исполнителя -->
-<section id="exec" class="screen" aria-labelledby="execTitle">
+<!-- Кошелёк -->
+<section id="wallet" class="screen" aria-labelledby="walletTitle">
   <div class="panel">
     <div class="nav"><a class="back" href="#" onclick="closeScreens()">← Назад</a></div>
-    <h1 id="execTitle">Анкета исполнителя</h1>
+    <h1 id="walletTitle">Кошелёк</h1>
     <div class="wrap">
-      <form id="execForm">
-        <div class="row">
-          <div><label for="e-city">Город</label><input id="e-city" name="city" placeholder="Алматы" required /></div>
-          <div><label for="e-skills">Навыки</label><input id="e-skills" name="skills" placeholder="Курьер, ремонт, уборка…" required /></div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+        <div>
+          <div class="muted">Баланс</div>
+          <div id="balance" style="font-size:28px; font-weight:800; color:var(--green)">₸ 0</div>
         </div>
-        <label for="e-about">О себе</label>
-        <textarea id="e-about" name="about" placeholder="Коротко о вашем опыте и доступности" required></textarea>
+        <div style="display:grid; gap:8px; grid-template-columns:repeat(2,1fr)">
+          <button class="btn" type="button" id="btnTopup"><span class="btn-text">➕ Пополнить</span></button>
+          <button class="btn" type="button" id="btnPay"><span class="btn-text">💳 Оплатить</span></button>
+          <button class="btn" type="button" id="btnTransfer"><span class="btn-text">🔁 Перевести</span></button>
+          <button class="btn" type="button" id="btnWithdraw"><span class="btn-text">↘️ Вывести</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="wrap">
+      <div class="muted" style="margin-bottom:8px">История</div>
+      <div id="history" class="list"><div class="muted">Пока пусто</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Модалка «Предложить цену» -->
+<div id="bidModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bidTitle">
+  <div class="panel">
+    <h2 id="bidTitle" style="margin:0 0 10px; font-size:24px">Предложить цену</h2>
+    <div id="bidOrderInfo" class="muted" style="margin-bottom:10px"></div>
+    <div class="wrap">
+      <form id="bidForm">
+        <div class="row">
+          <div><label for="b-price">Ваша цена (₸)</label><input id="b-price" name="price" type="number" min="0" placeholder="15000" required /></div>
+          <div><label for="b-name">Имя</label><input id="b-name" name="name" placeholder="Ваше имя" required /></div>
+        </div>
+        <label for="b-comment">Комментарий</label>
+        <textarea id="b-comment" name="comment" placeholder="Коротко о сроках, деталях и т.д."></textarea>
         <div class="row" style="grid-template-columns:1fr 1fr">
-          <button class="btn" type="submit">✅ Сохранить анкету</button>
-          <button class="btn secondary" type="button" id="sendProfileToBot">📤 Отправить в бот</button>
+          <button class="btn secondary" type="button" id="bidCancel"><span class="btn-text">Отмена</span></button>
+          <button class="btn" type="submit"><span class="btn-text">💸 Отправить предложение</span></button>
         </div>
       </form>
     </div>
   </div>
-</section>
+</div>
+
+<!-- Модалка кошелька (универсальная) -->
+<div id="walletModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="walletModalTitle">
+  <div class="panel">
+    <h2 id="walletModalTitle" style="margin:0 0 10px; font-size:24px">Операция</h2>
+    <div class="wrap">
+      <form id="walletForm">
+        <div id="walletFields"></div>
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <button class="btn secondary" type="button" id="walletCancel"><span class="btn-text">Отмена</span></button>
+          <button class="btn" type="submit"><span class="btn-text" id="walletSubmitText">Готово</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <script>
 /* Telegram init */
@@ -232,7 +381,7 @@ function openScreen(id){
 }
 function closeScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
 
-/* Deep link (замени, если нужно) */
+/* Deep link (замени при необходимости) */
 const BOT_USERNAME='GiDCityBot', STARTAPP_KEY='menu';
 document.getElementById('openInChat').onclick=()=> {
   const url=`https://t.me/${BOT_USERNAME}?startapp=${encodeURIComponent(STARTAPP_KEY)}`;
@@ -240,47 +389,61 @@ document.getElementById('openInChat').onclick=()=> {
 };
 
 /* Storage */
-const LS_ORDERS='gid_orders_v1', LS_PROFILE='gid_profile_v1';
+const LS_ORDERS='gid_orders_v1', LS_PROFILE='gid_profile_v1', LS_WALLET='gid_wallet_v1';
 const Store={
   getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[]}catch(_){return[]} },
   setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); },
   addOrder(o){ const l=this.getOrders(); l.unshift(o); this.setOrders(l); return l; },
+  updateOrder(id, mutator){ const l=this.getOrders(); const i=l.findIndex(x=>x.id===id); if(i>-1){ mutator(l[i]); this.setOrders(l);} return l; },
   deleteOrder(id){ const l=this.getOrders().filter(x=>x.id!==id); this.setOrders(l); return l; },
   getProfile(){ try{return JSON.parse(localStorage.getItem(LS_PROFILE))||null}catch(_){return null} },
-  setProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); }
+  setProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)); },
+  getWallet(){ try{return JSON.parse(localStorage.getItem(LS_WALLET))||{balance:0,history:[]} }catch(_){return {balance:0,history:[]}} },
+  setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); }
 };
 
-/* Seed данные */
+/* Seed orders */
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function daysFromNow(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
 if(Store.getOrders().length===0){
   Store.setOrders([
-    { id:'seed1', category:'Курьер', city:'Алматы', budget:10000, deadline:daysFromNow(1), desc:'Отвезти документы из А в Б', contact:'@client1', name:'Айдар', isMine:false },
-    { id:'seed2', category:'Уборка', city:'Астана', budget:15000, deadline:todayISO(), desc:'2-х комнатная квартира', contact:'@client2', name:'Салтанат', isMine:false }
+    { id:'seed1', category:'Курьер', city:'Алматы', budget:10000, deadline:daysFromNow(1), desc:'Отвезти документы из А в Б', contact:'@client1', name:'Айдар', bids:[] },
+    { id:'seed2', category:'Уборка', city:'Астана', budget:15000, deadline:todayISO(), desc:'2-х комнатная квартира', contact:'@client2', name:'Салтанат', bids:[] }
   ]);
 }
 
-/* Рендер */
+/* Utils */
 const findList=document.getElementById('findList'), mineList=document.getElementById('mineList'), ordersBadge=document.getElementById('ordersCountBadge');
+const balanceEl=document.getElementById('balance'), histEl=document.getElementById('history');
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function prettyDeadline(iso){
   const d=new Date(iso+'T00:00:00'), t=new Date(todayISO()+'T00:00:00'); const diff=Math.round((d-t)/86400000);
   if(diff===0)return'сегодня'; if(diff===1)return'до завтра'; if(diff<0)return'просрочено'; return `до ${d.toLocaleDateString('ru-KZ')}`;
 }
-function renderOrders(container, list){
+function money(n){ return '₸ ' + Number(n||0).toLocaleString('ru-RU'); }
+
+/* Рендер заказов */
+function renderOrders(container, list, ctx){
   container.innerHTML='';
   if(!list||list.length===0){ container.innerHTML='<div class="muted">Ничего не найдено.</div>'; return; }
   list.forEach(o=>{
     const el=document.createElement('div'); el.className='item';
-    const mineMark = o.isMine ? ' • <span class="muted">мой</span>' : '';
+    const bidsCount = Array.isArray(o.bids)? o.bids.length : 0;
     el.innerHTML=`
-      <div class="title2">${escapeHTML(o.category)} • ${escapeHTML(o.city)} <span class="badge">₸ ${Number(o.budget).toLocaleString('ru-RU')}</span>${mineMark}</div>
-      <div class="muted">${prettyDeadline(o.deadline)}</div>
+      <div class="title2">${escapeHTML(o.category)} • ${escapeHTML(o.city)}
+        <span class="badge">${money(o.budget)}</span>
+      </div>
+      <div class="muted">${prettyDeadline(o.deadline)} • заявок: ${bidsCount}</div>
       <div>${escapeHTML(o.desc)}</div>
       <div class="muted">Контакт: ${escapeHTML(o.contact)} • ${escapeHTML(o.name)}</div>
       <div style="display:flex; gap:8px; margin-top:8px">
-        <button class="btn secondary" data-act="send" data-id="${o.id}">📤 В бот</button>
-        <button class="btn secondary" data-act="delete" data-id="${o.id}">🗑 Удалить</button>
+        ${ctx==='find'
+          ? `<button class="btn" data-act="bid" data-id="${o.id}"><span class="btn-text">💸 Предложить цену</span></button>`
+          : `
+            <button class="btn secondary" data-act="send" data-id="${o.id}"><span class="btn-text">📤 В бот</span></button>
+            <button class="btn secondary" data-act="delete" data-id="${o.id}"><span class="btn-text">🗑 Удалить</span></button>
+          `
+        }
       </div>`;
     container.appendChild(el);
   });
@@ -290,11 +453,15 @@ function renderOrders(container, list){
       const order=Store.getOrders().find(x=>x.id===id);
       if(act==='delete'){ Store.deleteOrder(id); refreshAll(); }
       if(act==='send' && order){ sendToBot({type:'order', payload:order}); }
+      if(act==='bid' && order){ openBidModal(order); }
     };
   });
 }
 
-/* Фильтры в "Найти заказы" (все заказы, не только мои) */
+/* Фильтр в «Найти» */
+const toggleFilterBtn=document.getElementById('toggleFilter');
+const filterWrap=document.getElementById('filterWrap');
+toggleFilterBtn.onclick=()=>{ filterWrap.classList.toggle('open'); };
 document.getElementById('filterForm').addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
@@ -308,10 +475,10 @@ document.getElementById('filterForm').addEventListener('submit',(e)=>{
     if(max) ok=ok&&Number(o.budget)<=max;
     return ok;
   });
-  renderOrders(findList, list);
+  renderOrders(findList, list, 'find');
 });
 
-/* Создание заказа → добавляем, открываем "Найти", показываем все */
+/* Создание заказа */
 document.getElementById('createForm').addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
@@ -320,13 +487,13 @@ document.getElementById('createForm').addEventListener('submit',(e)=>{
     category:fd.get('category'), city:fd.get('city'),
     budget:Number(fd.get('budget')), deadline:fd.get('deadline'),
     desc:fd.get('desc'), contact:fd.get('contact'), name:fd.get('name'),
-    isMine:true
+    isMine:true, bids:[]
   };
   if(!(order.category&&order.city&&order.deadline&&order.desc&&order.contact&&order.name)){ alert('Заполните все поля'); return; }
   if(!(order.budget>=0)){ alert('Бюджет должен быть неотрицательным'); return; }
   Store.addOrder(order);
   e.currentTarget.reset(); document.getElementById('c-deadline').value=todayISO();
-  openScreen('find'); refreshAll(); // открываем "Найти" и показываем весь список
+  openScreen('find'); refreshAll();
 });
 document.getElementById('sendOrderToBot').onclick=()=>{
   const last=Store.getOrders()[0]; if(!last){ alert('Нет заказов для отправки'); return; }
@@ -334,25 +501,171 @@ document.getElementById('sendOrderToBot').onclick=()=>{
 };
 
 /* Анкета */
-document.getElementById('execForm').addEventListener('submit',(e)=>{
+document.getElementById('execForm')?.addEventListener('submit',(e)=>{
   e.preventDefault();
   const fd=new FormData(e.currentTarget);
   const profile={ city:fd.get('city'), skills:fd.get('skills'), about:fd.get('about'), updatedAt:new Date().toISOString() };
   if(!profile.city||!profile.skills||!profile.about){ alert('Заполните все поля анкеты'); return; }
   Store.setProfile(profile); alert('Анкета сохранена ✅');
 });
-document.getElementById('sendProfileToBot').onclick=()=>{
+document.getElementById('sendProfileToBot')?.addEventListener('click',()=>{
   const p=Store.getProfile(); if(!p){ alert('Сначала заполните анкету'); return; }
   sendToBot({type:'profile', payload:p});
-};
+});
 
 /* Экспорт / очистка */
 document.getElementById('exportJson').onclick=()=>{
-  const data={orders:Store.getOrders(), profile:Store.getProfile()};
+  const data={orders:Store.getOrders(), profile:Store.getProfile(), wallet:Store.getWallet()};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='gidcity-data.json'; a.click(); URL.revokeObjectURL(url);
 };
 document.getElementById('clearAll').onclick=()=>{ if(confirm('Удалить все локальные данные?')){ localStorage.clear(); refreshAll(); } };
+
+/* ====== БИДЫ ====== */
+const bidModal=document.getElementById('bidModal');
+const bidForm=document.getElementById('bidForm');
+const bidCancel=document.getElementById('bidCancel');
+const bidInfo=document.getElementById('bidOrderInfo');
+let currentBidOrderId=null;
+
+function openBidModal(order){
+  currentBidOrderId=order.id;
+  bidInfo.innerHTML = `<b>${escapeHTML(order.category)} • ${escapeHTML(order.city)}</b> — бюджет заказчика: ${money(order.budget)}`;
+  bidForm.reset();
+  bidModal.classList.add('active');
+}
+function closeBidModal(){ bidModal.classList.remove('active'); currentBidOrderId=null; }
+
+bidCancel.onclick=closeBidModal;
+bidModal.addEventListener('click', (e)=>{ if(e.target===bidModal) closeBidModal(); });
+
+bidForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  if(!currentBidOrderId) return;
+  const fd=new FormData(bidForm);
+  const price=Number(fd.get('price')||0);
+  const name=(fd.get('name')||'').trim();
+  const comment=(fd.get('comment')||'').trim();
+  if(!(price>0)){ alert('Укажите корректную цену'); return; }
+  if(!name){ alert('Введите имя'); return; }
+
+  Store.updateOrder(currentBidOrderId, (o)=>{
+    if(!Array.isArray(o.bids)) o.bids=[];
+    o.bids.push({ price, name, comment, createdAt:new Date().toISOString() });
+  });
+  closeBidModal();
+  alert('Ваше предложение отправлено ✅');
+  refreshAll();
+});
+
+/* ====== КОШЕЛЁК ====== */
+const walletModal=document.getElementById('walletModal');
+const walletFields=document.getElementById('walletFields');
+const walletCancel=document.getElementById('walletCancel');
+const walletForm=document.getElementById('walletForm');
+const walletSubmitText=document.getElementById('walletSubmitText');
+const walletTitle=document.getElementById('walletModalTitle');
+
+let walletAction=null;
+
+function openWalletModal(action){
+  walletAction=action;
+  walletFields.innerHTML='';
+  if(action==='topup'){
+    walletTitle.textContent='Пополнение';
+    walletFields.innerHTML=`
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="10000" required />
+      <label for="w-note">Комментарий</label><input id="w-note" name="note" placeholder="Источник/метод" />
+    `;
+    walletSubmitText.textContent='Пополнить';
+  } else if(action==='pay'){
+    walletTitle.textContent='Оплата';
+    walletFields.innerHTML=`
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="5000" required />
+      <label for="w-note">Назначение платежа</label><input id="w-note" name="note" placeholder="ID заказа / описание" />
+    `;
+    walletSubmitText.textContent='Оплатить';
+  } else if(action==='transfer'){
+    walletTitle.textContent='Перевод';
+    walletFields.innerHTML=`
+      <label for="w-to">Кому</label><input id="w-to" name="to" placeholder="@username" required />
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="5000" required />
+      <label for="w-note">Комментарий</label><input id="w-note" name="note" placeholder="за услугу / аванс" />
+    `;
+    walletSubmitText.textContent='Перевести';
+  } else if(action==='withdraw'){
+    walletTitle.textContent='Вывод средств';
+    walletFields.innerHTML=`
+      <label for="w-amount">Сумма (₸)</label><input id="w-amount" name="amount" type="number" min="0" placeholder="20000" required />
+      <label for="w-note">Реквизиты</label><input id="w-note" name="note" placeholder="Карта/IBAN/Каспи" required />
+    `;
+    walletSubmitText.textContent='Вывести';
+  }
+  walletForm.reset();
+  walletModal.classList.add('active');
+}
+function closeWalletModal(){ walletModal.classList.remove('active'); walletAction=null; }
+walletCancel.onclick=closeWalletModal;
+walletModal.addEventListener('click', (e)=>{ if(e.target===walletModal) closeWalletModal(); });
+
+document.getElementById('btnTopup').onclick = ()=> openWalletModal('topup');
+document.getElementById('btnPay').onclick = ()=> openWalletModal('pay');
+document.getElementById('btnTransfer').onclick = ()=> openWalletModal('transfer');
+document.getElementById('btnWithdraw').onclick = ()=> openWalletModal('withdraw');
+
+walletForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const fd=new FormData(walletForm);
+  const w=Store.getWallet();
+  const amount=Number(fd.get('amount')||0);
+  const note=(fd.get('note')||'').trim();
+  if(!(amount>0)){ alert('Укажите корректную сумму'); return; }
+
+  const ts=new Date().toISOString();
+
+  if(walletAction==='topup'){
+    w.balance += amount;
+    w.history.unshift({type:'topup', amount, note, ts});
+  }else if(walletAction==='pay'){
+    if(w.balance<amount){ alert('Недостаточно средств'); return; }
+    w.balance -= amount;
+    w.history.unshift({type:'pay', amount, note, ts});
+  }else if(walletAction==='transfer'){
+    const to=(fd.get('to')||'').trim();
+    if(!to){ alert('Укажите получателя'); return; }
+    if(w.balance<amount){ alert('Недостаточно средств'); return; }
+    w.balance -= amount;
+    w.history.unshift({type:'transfer', amount, to, note, ts});
+  }else if(walletAction==='withdraw'){
+    if(w.balance<amount){ alert('Недостаточно средств'); return; }
+    w.balance -= amount;
+    w.history.unshift({type:'withdraw', amount, note, ts});
+  }
+
+  Store.setWallet(w);
+  closeWalletModal();
+  renderWallet();
+});
+
+/* Рендер кошелька */
+function renderWallet(){
+  const w=Store.getWallet();
+  balanceEl.textContent = money(w.balance);
+  if(!w.history.length){ histEl.innerHTML='<div class="muted">Пока пусто</div>'; return; }
+  histEl.innerHTML='';
+  w.history.forEach(h=>{
+    const row=document.createElement('div'); row.className='item';
+    const titleMap={topup:'Пополнение', pay:'Оплата', transfer:'Перевод', withdraw:'Вывод'};
+    const sign = (h.type==='topup')? '+' : '-';
+    const extra = h.to ? ` → ${escapeHTML(h.to)}` : '';
+    row.innerHTML = `
+      <div class="title2">${titleMap[h.type]}${extra} <span class="badge">${sign} ${money(h.amount)}</span></div>
+      <div class="muted">${new Date(h.ts).toLocaleString('ru-KZ')}</div>
+      ${h.note? `<div>${escapeHTML(h.note)}</div>`:''}
+    `;
+    histEl.appendChild(row);
+  });
+}
 
 /* Связка с ботом */
 function sendToBot(message){
@@ -368,14 +681,14 @@ function sendToBot(message){
   }
 }
 
-/* Инициализация списков и бейджа */
+/* Инициализация */
 function refreshAll(){
   const orders=Store.getOrders();
-  renderOrders(findList, orders);              // в «Найти» — все заказы
-  renderOrders(mineList, orders.filter(o=>o.isMine)); // в «Мои» — только мои
-  // бейдж с общим количеством заказов
+  renderOrders(findList, orders, 'find');               // «Найти» — общий список
+  renderOrders(mineList, orders.filter(o=>o.isMine), 'mine'); // «Мои» — только мои
   if(orders.length>0){ ordersBadge.style.display='flex'; ordersBadge.textContent=orders.length; }
   else { ordersBadge.style.display='none'; }
+  renderWallet();
 }
 refreshAll();
 </script>
