@@ -7,338 +7,336 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-start:#0b0b12; --bg-mid:#2b2740; --gold-1:#f5c24a; --accent1:#b37aff; --accent2:#7BFF5A;
-  --card-border: rgba(255,255,255,0.06);
-  --soft-shadow: 0 10px 30px rgba(0,0,0,0.55);
-  --text:#fff; --muted:#9ba0a5;
+  --purple:#6f5bff;
+  --deep:#06060b;
+  --navy:#081228;
+  --accent1:#b37aff;
+  --accent2:#7BFF5A;
+  --gold:#f5c24a;
+  --glass-bg: rgba(255,255,255,0.04);
+  --panel-bg: rgba(6,6,10,0.66);
+  --muted: rgba(255,255,255,0.55);
+  --text:#ffffff;
+  --radius:14px;
 }
-/* page bg */
+
+/* Page background gradient (фиолет -> черный -> темно-синий) */
 body{
-  margin:0; min-height:100vh; font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background: radial-gradient(circle at 10% 10%, rgba(179,122,255,0.06), transparent 8%),
-              linear-gradient(180deg, #0b0b12 0%, #121026 40%, #0f1a25 100%);
-  color:var(--text); -webkit-font-smoothing:antialiased; padding:18px;
+  margin:0; min-height:100vh; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(800px 400px at 10% 10%, rgba(179,122,255,0.08), transparent 8%),
+    linear-gradient(180deg, var(--purple) 0%, black 35%, #06122a 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  padding:18px;
 }
 
-/* header */
+/* Header + logo + city */
 .header{
-  display:flex; align-items:center; gap:12px; margin-bottom:18px;
+  max-width:920px; margin:0 auto 18px; display:flex; align-items:center; gap:14px; justify-content:space-between;
 }
+.header-left{ display:flex; align-items:center; gap:12px; }
 .logo{
-  width:52px; height:52px; border-radius:12px; background:linear-gradient(135deg,var(--accent1),var(--accent2));
-  display:flex;align-items:center;justify-content:center;font-weight:800;color:#061; box-shadow:0 6px 18px rgba(123,255,90,0.06);
-  font-size:18px;
+  width:64px; height:64px; border-radius:12px; overflow:hidden; display:inline-flex; align-items:center; justify-content:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  background:linear-gradient(135deg,var(--accent1),var(--accent2));
 }
-.hwrap h1{ margin:0; font-size:34px; letter-spacing:-1px; color:var(--accent1); text-shadow:0 6px 28px rgba(179,122,255,0.06); font-weight:800;}
-/* slogan removed */
+.logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+.app-title{ font-size:28px; color:var(--accent1); font-weight:800; letter-spacing:-0.6px; }
+.top-right{ font-size:14px; color:var(--muted); }
 
-/* main card (wrap for menu) */
-.menu-card{
-  max-width:900px; margin:auto; border-radius:20px; padding:18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border:1px solid rgba(255,255,255,0.03); box-shadow: var(--soft-shadow);
-}
+/* Card wrapper */
+.container{ max-width:920px; margin:0 auto; border-radius:20px; padding:18px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border:1px solid rgba(255,255,255,0.03); box-shadow:0 30px 60px rgba(0,0,0,0.6); }
 
-/* menu list — unified */
-.menu-list{ display:grid; gap:12px; margin-top:12px; }
+/* Menu list */
+.menu-list{ display:grid; gap:12px; }
 .menu-item{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:18px 20px; border-radius:14px; cursor:pointer; user-select:none;
+  display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-radius:12px; cursor:pointer;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-  border:1px solid var(--card-border);
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.03);
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-.menu-item:active{ transform: translateY(1px) scale(.998); }
-.menu-item:hover{ transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.5); background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.08)); }
+.menu-item:hover{ transform:translateY(-3px); box-shadow: 0 18px 40px rgba(0,0,0,0.5); }
+.menu-title{ font-weight:800; font-size:18px; }
 
-/* menu text */
-.menu-title{ font-weight:800; font-size:18px; letter-spacing:0.2px; color:var(--text); }
-
-/* gold special style */
+/* special (ZAKAZAT') */
 .menu-item.special{
-  background: linear-gradient(180deg, rgba(245,194,74,0.12), rgba(245,194,74,0.06));
-  border:1px solid rgba(245,194,74,0.25);
-  box-shadow: 0 8px 36px rgba(245,194,74,0.06);
+  border-radius:8px; /* more square */
+  border:1px solid rgba(245,194,74,0.22);
+  background: linear-gradient(180deg, rgba(245,194,74,0.06), rgba(255,255,255,0.01));
+  padding-left:22px;
+  padding-right:22px;
 }
 
-/* badge count */
-.badge{
-  min-width:30px; height:30px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
-  background:#ff5b5b; color:white; font-weight:800; font-size:14px; padding:0 8px; box-shadow:0 6px 18px rgba(0,0,0,0.45);
-}
-
-/* screens */
-.screen{ display:none; position:fixed; inset:0; padding:28px; overflow:auto; z-index:50;
-  background: linear-gradient(180deg, rgba(3,3,6,0.6), rgba(0,0,0,0.6));
+/* screens overlay (matte behind glass panels) */
+.screen{
+  display:none; position:fixed; inset:0; padding:28px; z-index:80;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.7));
+  backdrop-filter: blur(4px);
 }
 .screen.active{ display:block; }
 
-/* panel */
+/* panel (glass) */
 .panel{
-  max-width:920px; margin:36px auto; border-radius:18px; padding:18px;
-  background: linear-gradient(180deg, rgba(12,12,18,0.99), rgba(10,10,14,0.99));
-  border:1px solid rgba(255,255,255,0.04);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-  transform-origin:center center; transition: transform .28s cubic-bezier(.2,.9,.22,1), opacity .24s ease;
-  opacity:1;
+  max-width:880px; margin:36px auto; border-radius:18px; padding:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.18));
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 24px 60px rgba(3,3,8,0.7);
+  backdrop-filter: blur(6px);
+  transform-origin:center top; transition: transform .36s cubic-bezier(.2,.9,.22,1), opacity .24s ease;
 }
 
-/* order list items */
-.list{ display:flex; flex-direction:column; gap:12px; margin-top:12px; }
-.item{
-  display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.04));
+/* tabs (square-style) */
+.tabs{ display:flex; gap:10px; align-items:center; padding:8px 0; overflow:auto; }
+.tab{
+  padding:10px 18px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); font-weight:800; cursor:pointer;
+  white-space:nowrap;
+}
+.tab.active{ color:#071; border-color: rgba(123,255,90,0.18); box-shadow: 0 10px 30px rgba(123,255,90,0.04); background: linear-gradient(90deg, rgba(123,255,90,0.06), rgba(179,122,255,0.04)); }
+.tab.gold{ color:var(--gold); border-color: rgba(245,194,74,0.22); background: linear-gradient(90deg, rgba(245,194,74,0.08), rgba(255,255,255,0.01)); }
+
+/* list of cards */
+.list{ display:flex; flex-direction:column; gap:14px; margin-top:14px; }
+.card{
+  display:flex; gap:14px; align-items:flex-start; padding:16px; border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
   border:1px solid rgba(255,255,255,0.03);
 }
-.avatar{ width:52px; height:52px; border-radius:999px; flex:0 0 52px; display:flex;align-items:center;justify-content:center;color:white; font-weight:800; font-size:18px; box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
-.item-body{ flex:1; }
-.item-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.item-title{ font-weight:800; font-size:16px; }
-.item-meta{ color:var(--muted); font-size:13px; margin-top:6px; }
-.item-desc{ margin-top:8px; color:rgba(255,255,255,0.88); }
+.card-left{ width:56px; flex:0 0 56px; display:flex; align-items:center; justify-content:center; }
+.avatar{ width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:white; box-shadow: 0 8px 22px rgba(0,0,0,0.55); }
+.card-body{ flex:1; }
+.card-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.card-title{ font-weight:800; font-size:18px; }
+.card-meta{ color:var(--muted); font-size:13px; margin-top:8px; }
+.card-desc{ margin-top:10px; color:rgba(255,255,255,0.92); }
 
-/* small avatars row (for bids) */
-.avatars-row{ display:flex; gap:8px; margin-top:10px; align-items:center; }
-.small-avatar{ width:32px; height:32px; border-radius:999px; display:inline-flex;align-items:center;justify-content:center; font-weight:700; font-size:13px; border:2px solid rgba(0,0,0,0.38); box-shadow:0 4px 10px rgba(0,0,0,0.45); }
+/* smaller avatar variant for card items */
+.avatar.small{ width:44px; height:44px; font-size:15px; }
 
-/* controls */
-.row{ display:flex; gap:8px; align-items:center; margin-top:12px; }
-.btn-ghost{ padding:8px 12px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); font-weight:700; cursor:pointer; }
-.btn-primary{ padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer; background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#041; border:none; box-shadow: 0 8px 26px rgba(123,122,255,0.08); }
+/* call to action button in card */
+.cta{ margin-top:12px; padding:10px 16px; border-radius:12px; font-weight:800; cursor:pointer; border:none;
+  background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#041; box-shadow: 0 8px 30px rgba(123,122,255,0.06);
+}
 
-/* compact selector (carousel-like row) */
-.selector{ display:flex; gap:10px; margin-top:12px; overflow:auto; padding-bottom:6px; }
-.selector .chip{ padding:8px 14px; border-radius:999px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); cursor:pointer; white-space:nowrap; font-weight:700; }
-.selector .chip.active{ color:#081; border-color:rgba(123,255,90,0.25); box-shadow:0 6px 20px rgba(123,255,90,0.04); }
-.selector .chip.gold{ background: linear-gradient(90deg, rgba(245,194,74,0.12), rgba(245,194,74,0.06)); border:1px solid rgba(245,194,74,0.25); color:var(--gold-1); box-shadow: 0 8px 28px rgba(245,194,74,0.06); }
+/* form standard fields vertical same size (except description) */
+.form-field{ width:100%; margin-top:10px; }
+.input, textarea, select{
+  width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);
+  color:var(--text); font-size:15px;
+}
+textarea{ min-height:120px; resize:vertical; }
+.placeholder-subtle{ color: rgba(255,255,255,0.45); }
 
-/* small screens */
+/* small utility */
+.row{ display:flex; gap:10px; align-items:center; }
+.right-muted{ color:var(--muted); font-weight:700; }
+
+/* responsive */
 @media(max-width:880px){
-  .panel{ margin:10px; padding:12px; }
-  .header h1{ font-size:28px; }
+  .panel{ margin:12px; padding:14px; }
+  .card{ flex-direction:column; align-items:flex-start; }
+  .card-left{ width:100%; }
+  .tabs{ gap:8px; }
 }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div class="logo">GiD</div>
-  <div class="hwrap">
-    <h1>GiDCity</h1>
-    <!-- slogan removed -->
+  <div class="header-left">
+    <div class="logo"><img src="logo.jpg" alt="GiDCity logo" /></div>
+    <div>
+      <div class="app-title">GiDCity</div>
+    </div>
   </div>
+  <div class="top-right" id="topCityDisplay">—</div>
 </div>
 
-<div class="menu-card">
-  <div style="display:flex; gap:12px; align-items:center; justify-content:space-between;">
+<!-- MAIN MENU -->
+<div class="container">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px">
     <div style="font-weight:800; font-size:18px">Меню</div>
-    <!-- removed localStorage label -->
   </div>
 
   <div class="menu-list" id="menuList">
-    <!-- ЗАКАЗАТЬ (было Создать) — делаем заметной -->
     <div class="menu-item special" data-action="create">
       <div class="menu-title">ЗАКАЗАТЬ</div>
-      <div class="muted">новое</div>
+      <div class="right-muted">новое</div>
     </div>
 
     <div class="menu-item" data-action="find">
       <div class="menu-title">Найти заказы</div>
-      <div>
-        <div id="ordersBadge" class="badge" style="display:none">0</div>
-      </div>
+      <div id="ordersBadge" class="right-muted" style="display:inline-block">0</div>
     </div>
 
     <div class="menu-item" data-action="wallet">
       <div class="menu-title">Кошелёк</div>
-      <div class="muted">₸ <span id="balanceTop">0</span></div>
+      <div class="right-muted">₸ <span id="balanceTop">0</span></div>
     </div>
-
-    <!-- Мои заказы moved to bottom; we will render it separately -->
-    <div style="height:8px"></div>
 
     <div class="menu-item" data-action="messenger">
       <div class="menu-title">Мессенджер</div>
-      <div class="muted">Чаты</div>
+      <div class="right-muted">Чаты</div>
     </div>
 
-    <!-- МОИ ЗАКАЗЫ at bottom -->
     <div class="menu-item" data-action="mine" style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.02); padding-top:16px;">
       <div class="menu-title">Мои заказы</div>
-      <div class="muted">Ваши заявки</div>
+      <div class="right-muted">Ваши заявки</div>
     </div>
   </div>
 </div>
 
-<!-- === SCREENS === -->
+<!-- SCREENS: Find / Create / Wallet / Messenger / Mine -->
+<section id="findScreen" class="screen" aria-hidden="true">
+  <div class="panel" id="findPanel">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="font-weight:800; font-size:20px">Найти заказы</div>
+      <button class="cta" onclick="closeScreen('findScreen')">← Назад</button>
+    </div>
 
-<!-- Create / Order screen -->
+    <!-- Tabs on top -->
+    <div class="tabs" style="margin-top:12px" id="findTabs">
+      <div class="tab active" data-tab="all">Все заказы</div>
+      <div class="tab gold" data-tab="spec">СПЕЦ. ЗАКАЗ</div>
+      <div class="tab" data-tab="taxi">Такси</div>
+      <div class="tab" data-tab="food">Доставка еды</div>
+      <div class="tab" data-tab="more">Ещё</div>
+    </div>
+
+    <!-- search row -->
+    <div style="display:flex; gap:10px; margin-top:12px; align-items:center;">
+      <input id="searchInput" class="input" placeholder="Поиск по городу/категории" />
+      <button class="cta" id="applySearch">Поиск</button>
+    </div>
+
+    <!-- list -->
+    <div class="list" id="findList" style="margin-top:14px"></div>
+  </div>
+</section>
+
 <section id="createScreen" class="screen" aria-hidden="true">
   <div class="panel" id="createPanel">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <div style="font-weight:800; font-size:20px">Новый заказ</div>
-      <button class="btn-ghost" onclick="closeScreen('createScreen')">← Назад</button>
+      <button class="cta" onclick="closeScreen('createScreen')">← Назад</button>
     </div>
 
-    <!-- GOLD special criterion + selector chips -->
-    <div style="margin-top:12px;">
-      <div style="font-weight:700; margin-bottom:8px">КАТЕГОРИИ</div>
-      <div class="selector" id="categorySelector">
-        <div class="chip gold" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
-        <div class="chip" data-val="Такси">Такси</div>
-        <div class="chip" data-val="Доставка еды">Доставка еды</div>
-        <div class="chip" data-val="Курьер">Курьер</div>
-        <div class="chip" data-val="Уборка">Уборка</div>
-        <div class="chip" data-val="Ремонт">Ремонт</div>
-        <div class="chip" data-val="Дизайн">Дизайн</div>
-        <div class="chip" data-val="IT">IT</div>
-        <div class="chip" data-val="Другое">Другое</div>
-      </div>
+    <!-- categories chips (no slider) -->
+    <div class="tabs" style="margin-top:12px" id="createTabs">
+      <div class="tab gold active" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
+      <div class="tab" data-val="Такси">Такси</div>
+      <div class="tab" data-val="Доставка еды">Доставка еды</div>
+      <div class="tab" data-val="Курьер">Курьер</div>
+      <div class="tab" data-val="Уборка">Уборка</div>
     </div>
 
     <form id="createForm" style="margin-top:12px">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <input id="c-city" placeholder="Город" required />
-        <input id="c-budget" type="number" min="0" placeholder="Бюджет (₸)" required />
+      <!-- note: city removed from form; displayed in header -->
+      <div class="form-field">
+        <textarea id="c-desc" class="textarea" placeholder="закажи любую услугу и мы найдем исполнителя" ></textarea>
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-        <input id="c-deadline" type="date" required />
-        <input id="c-contact" placeholder="Контакт (@ или телефон)" required />
+      <!-- vertical equal inputs -->
+      <div class="form-field">
+        <input id="c-budget" class="input" type="number" placeholder="Бюджет (₸)" required />
+      </div>
+      <div class="form-field">
+        <input id="c-deadline" class="input" type="date" required />
       </div>
 
-      <textarea id="c-desc" placeholder="Описание — адрес, время, детали..." style="margin-top:10px" required></textarea>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px">
-        <input id="c-name" placeholder="Имя заказчика" required />
-        <div style="display:flex; align-items:center; gap:8px;">
-          <div style="font-size:13px; color:var(--muted)">Выбрано:</div>
-          <div id="selectedCategory" style="font-weight:800">СПЕЦ. ЗАКАЗ</div>
-        </div>
-      </div>
+      <!-- contact/name removed; user data via auth/profile -->
 
       <div style="display:flex; gap:10px; margin-top:12px;">
-        <button class="btn-primary" type="submit">Отправить заказ</button>
-        <button type="button" class="btn-ghost" onclick="closeScreen('createScreen')">Отмена</button>
+        <button class="cta" type="submit">ЗАКАЗАТЬ СЕЙЧАС</button>
+        <button type="button" class="tab" onclick="closeScreen('createScreen')">Отмена</button>
+        <div style="margin-left:auto; color:var(--muted); font-weight:800; align-self:center" id="selectedCategory">СПЕЦ. ЗАКАЗ</div>
       </div>
     </form>
   </div>
 </section>
 
-<!-- Find orders screen -->
-<section id="findScreen" class="screen" aria-hidden="true">
-  <div class="panel" id="findPanel">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
-      <div style="font-weight:800; font-size:20px">Найти заказы</div>
-      <button class="btn-ghost" onclick="closeScreen('findScreen')">← Назад</button>
-    </div>
-
-    <div style="margin-top:12px; display:flex; gap:12px; align-items:center;">
-      <input id="searchInput" class="input" placeholder="Поиск по городу/категории..." style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)" />
-      <button class="btn-primary" id="applySearch">Поиск</button>
-    </div>
-
-    <div class="list" id="findList" style="margin-top:12px"></div>
-  </div>
-</section>
-
-<!-- Wallet -->
 <section id="walletScreen" class="screen" aria-hidden="true">
-  <div class="panel" id="walletPanel">
+  <div class="panel">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <div style="font-weight:800; font-size:20px">Кошелёк</div>
-      <button class="btn-ghost" onclick="closeScreen('walletScreen')">← Назад</button>
+      <button class="cta" onclick="closeScreen('walletScreen')">← Назад</button>
     </div>
-
     <div style="margin-top:12px; display:flex; gap:12px; align-items:center;">
-      <div style="flex:1">
-        <div class="muted">Баланс</div>
-        <div style="font-weight:800; font-size:24px; color:var(--accent2)">₸ <span id="balance">0</span></div>
-      </div>
+      <div style="flex:1"><div class="right-muted">Баланс</div><div style="font-weight:800; font-size:22px">₸ <span id="balance">0</span></div></div>
       <div style="display:flex; flex-direction:column; gap:8px;">
-        <button class="btn-primary" id="topupBtn">Пополнить</button>
-        <button class="btn-ghost" id="withdrawBtn">Вывести</button>
+        <button class="cta" id="topupBtn">Пополнить</button>
+        <button class="tab" id="withdrawBtn">Вывести</button>
       </div>
     </div>
-
-    <div style="margin-top:12px"><button id="exportJson" class="btn-ghost">⬇ Экспорт данных</button></div>
   </div>
 </section>
 
-<!-- Messenger -->
 <section id="messengerScreen" class="screen" aria-hidden="true">
-  <div class="panel" id="messengerPanel" style="display:flex; gap:12px;">
-    <div style="display:flex; flex-direction:column; gap:12px; width:320px;">
-      <div style="display:flex; align-items:center; justify-content:space-between;">
-        <div style="font-weight:800">Мессенджер</div>
-        <button class="btn-ghost" onclick="closeScreen('messengerScreen')">← Назад</button>
-      </div>
-      <div class="chats-list" id="chatsList"></div>
-      <div style="font-size:13px; color:var(--muted)">Чат создаётся при одобрении заявки.</div>
+  <div class="panel" style="display:flex; gap:12px;">
+    <div style="width:320px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-weight:800">Мессенджер</div><button class="tab" onclick="closeScreen('messengerScreen')">← Назад</button></div>
+      <div id="chatsList" style="margin-top:12px"></div>
     </div>
-
-    <div style="flex:1; display:flex; flex-direction:column;">
-      <div id="chatView" class="chat-window hidden">
-        <div style="padding:12px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.02);">
-          <div id="chatHeaderAvatar" class="avatar" style="width:44px;height:44px"></div>
+    <div style="flex:1;">
+      <div id="chatView" style="display:none; flex-direction:column; gap:8px;">
+        <div id="chatHeader" style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+          <div class="avatar small" id="chatAvatar"></div>
           <div>
-            <div id="chatHeaderName" style="font-weight:800"></div>
-            <div id="chatHeaderSub" style="font-size:13px;color:var(--muted)">Чат</div>
+            <div id="chatTitle" style="font-weight:800"></div>
+            <div style="color:var(--muted); font-size:13px;" id="chatSub">Чат</div>
           </div>
         </div>
-        <div id="messages" class="messages" style="padding:12px; overflow:auto;"></div>
-        <div class="chat-input" style="display:flex; gap:8px; padding:12px;">
-          <input id="messageInput" class="input" placeholder="Сообщение..." style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04)" />
-          <button id="sendMsg" class="btn-primary">Отправить</button>
+        <div id="messages" style="max-height:60vh; overflow:auto; padding:8px;"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <input id="messageInput" class="input" placeholder="Сообщение..." />
+          <button class="cta" id="sendMsgBtn">Отправить</button>
         </div>
       </div>
-      <div id="noChat" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--muted)">
-        Выберите чат слева или создайте диалог в разделе «Мои заказы».
-      </div>
+      <div id="noChat" style="color:var(--muted); padding:30px; text-align:center;">Выберите чат слева</div>
     </div>
   </div>
 </section>
 
-<!-- My orders -->
 <section id="mineScreen" class="screen" aria-hidden="true">
-  <div class="panel" id="minePanel">
+  <div class="panel">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <div style="font-weight:800; font-size:20px">Мои заказы</div>
-      <button class="btn-ghost" onclick="closeScreen('mineScreen')">← Назад</button>
+      <button class="tab" onclick="closeScreen('mineScreen')">← Назад</button>
     </div>
-
     <div class="list" id="mineList" style="margin-top:12px"></div>
   </div>
 </section>
 
-<!-- template -->
-<template id="orderTemplate">
-  <div class="item">
-    <div class="avatar"></div>
-    <div class="item-body">
-      <div class="item-top">
-        <div class="item-title"></div>
-        <div class="muted item-price"></div>
+<!-- templates -->
+<template id="cardTpl">
+  <div class="card">
+    <div class="card-left"><div class="avatar small"></div></div>
+    <div class="card-body">
+      <div class="card-top">
+        <div>
+          <div class="card-title"></div>
+          <div class="card-meta"></div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800; font-size:20px">₸ <span class="price"></span></div>
+        </div>
       </div>
-      <div class="item-meta"></div>
-      <div class="item-desc"></div>
-      <div class="avatars-row"></div>
-      <div class="row" style="margin-top:8px"></div>
+      <div class="card-desc"></div>
+      <div class="cta-row"></div>
     </div>
   </div>
 </template>
 
 <script>
-/* storage model */
-const LS_ORDERS='gid_orders_v3', LS_CHATS='gid_chats_v3', LS_WALLET='gid_wallet_v3';
+/* ---------- Storage + init ---------- */
+const LS_ORDERS='gid_orders_v4', LS_CHATS='gid_chats_v4', LS_WALLET='gid_wallet_v4', LS_CITY='gid_city_v1';
 const Store = {
-  getOrders(){ try{ return JSON.parse(localStorage.getItem(LS_ORDERS))||[] }catch(e){return[]} },
+  getOrders(){ try{return JSON.parse(localStorage.getItem(LS_ORDERS))||[];}catch(e){return[]} },
   setOrders(x){ localStorage.setItem(LS_ORDERS, JSON.stringify(x)); },
   addOrder(o){ const arr=this.getOrders(); arr.unshift(o); this.setOrders(arr); return arr; },
   updateOrder(id,mut){ const arr=this.getOrders(); const i=arr.findIndex(x=>x.id===id); if(i>-1){ mut(arr[i]); this.setOrders(arr);} return arr; },
-  deleteOrder(id){ const arr=this.getOrders().filter(x=>x.id!==id); this.setOrders(arr); return arr; },
-  getChats(){ try{ return JSON.parse(localStorage.getItem(LS_CHATS))||[] }catch(e){return[]} },
+  getChats(){ try{return JSON.parse(localStorage.getItem(LS_CHATS))||[];}catch(e){return[]} },
   setChats(x){ localStorage.setItem(LS_CHATS, JSON.stringify(x)); },
   addChat(c){ const arr=this.getChats(); arr.unshift(c); this.setChats(arr); return arr; },
   updateChat(id,mut){ const arr=this.getChats(); const i=arr.findIndex(x=>x.id===id); if(i>-1){ mut(arr[i]); this.setChats(arr);} return arr; },
@@ -346,10 +344,9 @@ const Store = {
   setWallet(w){ localStorage.setItem(LS_WALLET, JSON.stringify(w)); }
 };
 
-/* helper */
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function todayISO(){ return new Date().toISOString().slice(0,10); }
-function initials(name){ if(!name) return '?'; const parts = name.trim().split(/\s+/); if(parts.length===1) return parts[0].slice(0,2).toUpperCase(); return (parts[0][0]+(parts[1]||'')[0]).toUpperCase(); }
+function initials(name){ if(!name) return '?'; const p = name.trim().split(/\s+/); return (p[0].slice(0,2)).toUpperCase(); }
 function avatarStyle(name, el){
   const h = Array.from(name||'').reduce((s,c)=> s + c.charCodeAt(0), 0);
   const pal = ['#b37aff','#8f7bff','#7BFF5A','#61e6ff','#ffaa6b'];
@@ -366,310 +363,267 @@ if(Store.getOrders().length===0){
   ]);
 }
 
-/* UI helpers: open/close screens */
-function openScreenId(id, fromBtn=null){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const screen = document.getElementById(id);
-  screen.classList.add('active');
-  if(fromBtn) animatePanelFromButton(fromBtn, screen.querySelector('.panel'));
-  refreshAll();
-}
-function closeScreen(id){
-  const screen = document.getElementById(id);
-  if(screen) screen.classList.remove('active');
-}
-
-/* animate panel from button */
-function animatePanelFromButton(btn, panel){
-  if(!panel) return;
-  const bRect = btn.getBoundingClientRect();
-  const pRect = panel.getBoundingClientRect();
-  const dx = bRect.left + bRect.width/2 - (pRect.left + pRect.width/2);
-  const dy = bRect.top + bRect.height/2 - (pRect.top + pRect.height/2);
-  panel.style.transition = 'none';
-  panel.style.transform = `translate(${dx}px, ${dy}px) scale(.85)`;
-  panel.style.opacity = '0';
-  requestAnimationFrame(()=> {
-    panel.style.transition = 'transform .36s cubic-bezier(.2,.9,.22,1), opacity .26s ease';
-    panel.style.transform = '';
-    panel.style.opacity = '1';
-  });
-}
-
-/* render menu counts */
-function renderMenuCounts(){
-  const orders = Store.getOrders();
-  const b = document.getElementById('ordersBadge');
-  if(orders.length>0){ b.style.display='inline-flex'; b.textContent = orders.length; } else b.style.display='none';
-  const bal = Store.getWallet().balance || 0;
-  document.getElementById('balanceTop').textContent = bal;
-}
-
-/* render lists */
-function renderFindList(filter=''){
-  const list = document.getElementById('findList'); list.innerHTML='';
-  const orders = Store.getOrders().slice();
-  const q = (filter||'').toLowerCase().trim();
-  const filtered = q ? orders.filter(o=> (o.city||'').toLowerCase().includes(q) || (o.category||'').toLowerCase().includes(q)) : orders;
-  if(filtered.length===0){ list.innerHTML = '<div class="muted">Нет заказов</div>'; return; }
-  const tpl = document.getElementById('orderTemplate');
-  filtered.forEach(o=>{
-    const node = tpl.content.cloneNode(true);
-    const item = node.querySelector('.item');
-    const av = item.querySelector('.avatar');
-    avatarStyle(o.name||o.contact||'?', av);
-    node.querySelector('.item-title').textContent = `${o.category} • ${o.city}`;
-    node.querySelector('.item-price').textContent = '₸ ' + Number(o.budget||0).toLocaleString('ru-RU');
-    node.querySelector('.item-meta').textContent = `Дедлайн: ${o.deadline || ''} • Заказчик: ${o.name || ''}`;
-    node.querySelector('.item-desc').textContent = o.desc || '';
-    const row = node.querySelector('.avatars-row');
-    const small = document.createElement('div'); small.className='small-avatar'; avatarStyle(o.name||o.contact||'?', small); row.appendChild(small);
-    const actionRow = node.querySelector('.row');
-    const bidBtn = document.createElement('button'); bidBtn.className='btn-primary'; bidBtn.textContent='Предложить цену';
-    bidBtn.onclick = (e)=> { openBidModal(o, e.currentTarget); };
-    actionRow.appendChild(bidBtn);
-    list.appendChild(node);
-  });
-}
-
-function renderMineList(){
-  const list = document.getElementById('mineList'); list.innerHTML='';
-  const orders = Store.getOrders().slice();
-  if(orders.length===0){ list.innerHTML = '<div class="muted">Пока пусто. Создайте заказ.</div>'; return; }
-  const tpl = document.getElementById('orderTemplate');
-  orders.forEach(o=>{
-    const node = tpl.content.cloneNode(true);
-    const av = node.querySelector('.avatar'); avatarStyle(o.name||o.contact||'?', av);
-    node.querySelector('.item-title').textContent = `${o.category} • ${o.city}`;
-    node.querySelector('.item-price').textContent = '₸ ' + Number(o.budget||0).toLocaleString('ru-RU');
-    node.querySelector('.item-meta').textContent = `Дедлайн: ${o.deadline || ''}`;
-    node.querySelector('.item-desc').textContent = o.desc || '';
-    const rowAv = node.querySelector('.avatars-row');
-    (o.bids||[]).slice(0,6).forEach(b=>{
-      const s = document.createElement('div'); s.className='small-avatar'; avatarStyle(b.name||b.contact||'?', s);
-      s.title = `${b.name} — ₸ ${b.price}`;
-      rowAv.appendChild(s);
-    });
-    const actionRow = node.querySelector('.row');
-    const viewBtn = document.createElement('button'); viewBtn.className='btn-ghost'; viewBtn.textContent='Просмотр заявок';
-    viewBtn.onclick = ()=> openBidsPanel(o, viewBtn);
-    actionRow.appendChild(viewBtn);
-    list.appendChild(node);
-  });
-}
-
-/* bid modal via simple prompt (performer) */
-function openBidModal(order, fromBtn){
-  const price = prompt('Ваша цена (₸):');
-  if(price===null) return;
-  const name = prompt('Ваше имя (для аватара):','Исполнитель');
-  if(name===null) return;
-  const comment = prompt('Комментарий (опционально):','Готов выполнить на завтра');
-  Store.updateOrder(order.id, (o)=>{
-    if(!Array.isArray(o.bids)) o.bids=[];
-    o.bids.push({ price: Number(price)||0, name: name||'Исполнитель', comment: comment||'', createdAt: new Date().toISOString(), performerId: 'p_'+uid() });
-  });
-  alert('Предложение отправлено ✅');
-  refreshAll();
-}
-
-/* show bids and accept/reject */
-function openBidsPanel(order, fromBtn){
-  openScreenId('mineScreen', fromBtn);
-  const panel = document.getElementById('minePanel');
-  let html = `<div style="margin-top:12px"><strong>Заявки для заказа:</strong></div>`;
-  const bids = order.bids||[];
-  if(bids.length===0){ html += `<div class="muted" style="margin-top:8px">Пока нет заявок</div>`;}
-  else {
-    bids.forEach((b, idx)=>{
-      html += `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,0.02)">
-        <div class="small-avatar" style="width:42px;height:42px">${initials(b.name||'')}</div>
-        <div style="flex:1">
-          <div style="font-weight:800">${b.name} — ₸ ${b.price}</div>
-          <div class="muted" style="font-size:13px">${b.comment||''} • ${new Date(b.createdAt).toLocaleString()}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn-primary" data-accept="${idx}">Принять</button>
-          <button class="btn-ghost" data-reject="${idx}">Отклонить</button>
-        </div>
-      </div>`;
-    });
+/* ---------- UI helpers ---------- */
+const topCity = document.getElementById('topCityDisplay');
+function ensureCity(){
+  let city = localStorage.getItem(LS_CITY);
+  if(!city){
+    // gentle prompt to select city (could be replaced with nicer UI later)
+    city = prompt('Укажите ваш город (например: Алматы):','Алматы') || '—';
+    localStorage.setItem(LS_CITY, city);
   }
-  let exists = panel.querySelector('.bids-block'); if(exists) exists.remove();
-  const wrapper = document.createElement('div'); wrapper.className='bids-block'; wrapper.innerHTML = html;
-  panel.appendChild(wrapper);
-  wrapper.querySelectorAll('[data-accept]').forEach(btn=>{
-    btn.onclick = (e)=>{
-      const idx = Number(e.currentTarget.getAttribute('data-accept'));
-      acceptBid(order.id, idx);
-    };
-  });
-  wrapper.querySelectorAll('[data-reject]').forEach(btn=>{
-    btn.onclick = (e)=>{
-      const idx = Number(e.currentTarget.getAttribute('data-reject'));
-      rejectBid(order.id, idx);
-      openBidsPanel(Store.getOrders().find(x=>x.id===order.id), fromBtn);
-    };
-  });
+  topCity.textContent = city;
 }
-
-/* accept bid -> create chat */
-function acceptBid(orderId, bidIndex){
-  const order = Store.getOrders().find(o=>o.id===orderId);
-  if(!order) return;
-  const bid = (order.bids||[])[bidIndex];
-  if(!bid) return;
-  const chatId = 'chat_'+uid();
-  const chat = {
-    id: chatId,
-    orderId: orderId,
-    participants: [order.ownerId || ('owner_'+uid()), bid.performerId || ('perf_'+uid())],
-    title: `${order.category} • ${order.city}`,
-    meta: {ownerName: order.name, performerName: bid.name},
-    messages: [
-      {from:'system', text:`Чат создан между ${order.name} и ${bid.name}`, ts: new Date().toISOString()},
-      {from:bid.name, text:`Привет! Я принял заказ за ₸ ${bid.price}. Готов обсудить детали.`, ts: new Date().toISOString()}
-    ]
-  };
-  Store.addChat(chat);
-  Store.updateOrder(orderId, (o)=>{ o.bids[bidIndex].accepted = true; o.bids[bidIndex].chatId = chatId; });
-  openScreenId('messengerScreen', document.querySelector('[data-action="messenger"]'));
-  setTimeout(()=>{ refreshChats(); openChat(chatId); alert('Заявка принята — чат создан'); }, 240);
-  refreshAll();
-}
-
-function rejectBid(orderId, idx){
-  Store.updateOrder(orderId, (o)=>{ o.bids = (o.bids||[]).filter((_,i)=>i!==idx); });
-}
-
-/* chats UI */
-function refreshChats(){
-  const list = document.getElementById('chatsList'); list.innerHTML='';
-  const chats = Store.getChats();
-  if(chats.length===0){ list.innerHTML = '<div class="muted" style="padding:8px">Пока нет чатов</div>'; return; }
-  chats.forEach(c=>{
-    const el = document.createElement('div'); el.className='chat-item'; el.style.display='flex'; el.style.gap='10px'; el.style.alignItems='center'; el.style.padding='8px'; el.style.borderRadius='8px'; el.style.cursor='pointer';
-    const av = document.createElement('div'); av.className='small-avatar'; avatarStyle(c.meta.performerName||c.meta.ownerName||'Чат', av);
-    const t = document.createElement('div'); t.innerHTML = `<div style="font-weight:800">${c.title}</div><div style="font-size:13px;color:var(--muted)">${c.meta.performerName || c.meta.ownerName}</div>`;
-    el.appendChild(av); el.appendChild(t);
-    el.onclick = ()=> openChat(c.id);
-    list.appendChild(el);
-  });
-}
-
-/* open chat */
-function openChat(chatId){
-  const chatView = document.getElementById('chatView');
-  const noChat = document.getElementById('noChat');
-  const chat = Store.getChats().find(x=>x.id===chatId);
-  if(!chat) return;
-  noChat.classList.add('hidden'); chatView.classList.remove('hidden');
-  document.getElementById('chatHeaderName').textContent = chat.title;
-  avatarStyle(chat.meta.performerName||chat.meta.ownerName||'Чат', document.getElementById('chatHeaderAvatar'));
-  const msgs = document.getElementById('messages'); msgs.innerHTML='';
-  chat.messages.forEach(m=>{
-    const div = document.createElement('div'); div.className = 'msg ' + (m.from==='me' || m.from==='system' ? 'me' : 'them');
-    div.style.maxWidth='72%'; div.style.padding='10px 12px'; div.style.borderRadius='10px'; div.style.fontSize='14px';
-    if(m.from==='system'){ div.style.alignSelf='center'; div.style.fontStyle='italic'; div.style.background='transparent'; div.style.color='var(--muted)'; div.textContent = m.text; }
-    else if(m.from==='me'){ div.style.alignSelf='flex-end'; div.style.background='linear-gradient(180deg, rgba(123,255,90,0.12), rgba(123,255,90,0.05))'; div.style.color='#e7ffe7'; div.textContent = m.text; }
-    else { div.style.alignSelf='flex-start'; div.style.background='linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))'; div.style.color='#fff'; div.textContent = m.from + ': ' + m.text; }
-    msgs.appendChild(div);
-  });
-  msgs.scrollTop = msgs.scrollHeight;
-  document.getElementById('sendMsg').onclick = ()=>{
-    const val = document.getElementById('messageInput').value.trim();
-    if(!val) return;
-    Store.updateChat(chatId, (c)=>{ c.messages.push({from:'me', text: val, ts: new Date().toISOString()}); });
-    document.getElementById('messageInput').value='';
-    openChat(chatId); refreshChats();
-  };
-}
-
-/* create order */
-document.getElementById('createForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const category = document.getElementById('selectedCategory').textContent || 'Другое';
-  const o = {
-    id: 'o_'+uid(),
-    category: category,
-    city: document.getElementById('c-city').value,
-    budget: Number(document.getElementById('c-budget').value)||0,
-    deadline: document.getElementById('c-deadline').value || todayISO(),
-    desc: document.getElementById('c-desc').value,
-    contact: document.getElementById('c-contact').value,
-    name: document.getElementById('c-name').value,
-    bids: [],
-    ownerId: 'owner_'+uid()
-  };
-  Store.addOrder(o);
-  alert('Заказ создан');
-  closeScreen('createScreen');
-  refreshAll();
-});
+ensureCity();
 
 /* menu wiring */
 document.getElementById('menuList').addEventListener('click', (e)=>{
   const item = e.target.closest('.menu-item');
   if(!item) return;
   const action = item.getAttribute('data-action');
-  if(action==='find') openScreenId('findScreen', item);
-  if(action==='create') openScreenId('createScreen', item);
-  if(action==='wallet') openScreenId('walletScreen', item);
-  if(action==='mine') openScreenId('mineScreen', item);
-  if(action==='messenger') openScreenId('messengerScreen', item);
+  if(action==='find') openScreen('findScreen', item);
+  if(action==='create') openScreen('createScreen', item);
+  if(action==='wallet') openScreen('walletScreen', item);
+  if(action==='mine') openScreen('mineScreen', item);
+  if(action==='messenger') openScreen('messengerScreen', item);
 });
 
-/* search */
-document.getElementById('applySearch').onclick = ()=> {
-  const q = document.getElementById('searchInput').value;
-  renderFindList(q);
-};
+/* open/close screens + animate from button */
+function openScreen(id, fromBtn=null){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const screen = document.getElementById(id);
+  screen.classList.add('active');
+  const panel = screen.querySelector('.panel');
+  if(fromBtn && panel){
+    animateFromButton(fromBtn, panel);
+  }
+  refreshAll();
+}
+function closeScreen(id){
+  const screen = document.getElementById(id);
+  if(screen) screen.classList.remove('active');
+}
+function animateFromButton(btn, panel){
+  // compute centers and animate
+  try{
+    const b = btn.getBoundingClientRect();
+    const p = panel.getBoundingClientRect();
+    const dx = b.left + b.width/2 - (p.left + p.width/2);
+    const dy = b.top + b.height/2 - (p.top + p.height/2);
+    panel.style.transition = 'none';
+    panel.style.transform = `translate(${dx}px, ${dy}px) scale(.86)`;
+    panel.style.opacity = '0';
+    requestAnimationFrame(()=> {
+      panel.style.transition = 'transform .36s cubic-bezier(.2,.9,.22,1), opacity .26s ease';
+      panel.style.transform = '';
+      panel.style.opacity = '1';
+    });
+  }catch(e){}
+}
 
-/* export */
-document.getElementById('exportJson').onclick = ()=>{
-  const data = { orders: Store.getOrders(), chats: Store.getChats(), wallet: Store.getWallet() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='gidcity-data.json'; a.click(); URL.revokeObjectURL(url);
-};
+/* --------- Find screen: tabs and rendering --------- */
+const findTabs = document.getElementById('findTabs');
+findTabs.addEventListener('click', (e)=>{
+  const t = e.target.closest('.tab'); if(!t) return;
+  findTabs.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  renderFindList();
+});
+document.getElementById('applySearch').onclick = ()=> renderFindList();
 
-/* wallet simple */
-document.getElementById('topupBtn').onclick = ()=>{
-  const v = prompt('Сумма для пополнения (₸):', '1000');
-  if(v){ const w = Store.getWallet(); w.balance = (w.balance||0) + Number(v); Store.setWallet(w); refreshAll(); alert('Пополнено'); }
-};
-document.getElementById('withdrawBtn').onclick = ()=>{
-  const v = prompt('Сумма для вывода (₸):', '500');
-  if(v){ const w = Store.getWallet(); if(w.balance < Number(v)){ alert('Недостаточно'); return;} w.balance = w.balance - Number(v); Store.setWallet(w); refreshAll(); alert('Выведено'); }
-};
+function getActiveFindTab(){
+  const t = [...findTabs.querySelectorAll('.tab')].find(x=>x.classList.contains('active'));
+  return t ? t.getAttribute('data-tab') : 'all';
+}
 
-/* category selector */
-document.querySelectorAll('.selector .chip').forEach(ch=>{
-  ch.onclick = (e)=> {
-    document.querySelectorAll('.selector .chip').forEach(x=>x.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    document.getElementById('selectedCategory').textContent = e.currentTarget.getAttribute('data-val') || e.currentTarget.textContent;
+function renderFindList(){
+  const listEl = document.getElementById('findList'); listEl.innerHTML='';
+  const q = (document.getElementById('searchInput').value||'').toLowerCase().trim();
+  const tab = getActiveFindTab();
+  let items = Store.getOrders().slice();
+  if(tab==='spec') items = items.filter(i=> (i.category||'').toLowerCase().includes('спец') || (i.category||'').toLowerCase().includes('спец'));
+  if(tab==='taxi') items = items.filter(i=> (i.category||'').toLowerCase().includes('такси'));
+  if(tab==='food') items = items.filter(i=> (i.category||'').toLowerCase().includes('доставка') || (i.category||'').toLowerCase().includes('еда'));
+  if(q) items = items.filter(i=> (i.city||'').toLowerCase().includes(q) || (i.category||'').toLowerCase().includes(q) || (i.desc||'').toLowerCase().includes(q));
+  document.getElementById('ordersBadge').textContent = Store.getOrders().length;
+  if(items.length===0){ listEl.innerHTML = '<div style="color:var(--muted)">Ничего не найдено</div>'; return; }
+  const tpl = document.getElementById('cardTpl');
+  items.forEach(o=>{
+    const node = tpl.content.cloneNode(true);
+    const card = node.querySelector('.card');
+    node.querySelector('.card-title').textContent = `${o.category} • ${o.city}`;
+    node.querySelector('.card-meta').textContent = `Дедлайн: ${o.deadline} • Заказчик: ${o.name || '---'}`;
+    node.querySelector('.card-desc').textContent = o.desc;
+    node.querySelector('.price').textContent = Number(o.budget||0).toLocaleString('ru-RU');
+    const av = node.querySelector('.avatar');
+    avatarStyle(o.name||o.contact||'Заказчик', av);
+    av.classList.add('small');
+    const ctaRow = node.querySelector('.cta-row');
+    // remove extra avatar near CTA; only CTA button remains
+    const bidBtn = document.createElement('button'); bidBtn.className='cta'; bidBtn.textContent='Предложить цену';
+    bidBtn.onclick = ()=> openBidModal(o);
+    ctaRow.appendChild(bidBtn);
+    listEl.appendChild(node);
+  });
+}
+
+/* -------- Create screen: category selection + submit ---------- */
+const createTabs = document.getElementById('createTabs');
+createTabs.addEventListener('click', (e)=>{
+  const t = e.target.closest('.tab'); if(!t) return;
+  createTabs.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('selectedCategory').textContent = t.getAttribute('data-val') || t.textContent;
+});
+
+document.getElementById('createForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const category = document.getElementById('selectedCategory').textContent || 'Другое';
+  const budget = Number(document.getElementById('c-budget').value) || 0;
+  const deadline = document.getElementById('c-deadline').value || todayISO();
+  const desc = document.getElementById('c-desc').value || '';
+  const city = localStorage.getItem(LS_CITY) || '—';
+  const order = { id: 'o_'+uid(), category, city, budget, deadline, desc, name:'', contact:'', bids:[], ownerId:'owner_'+uid() };
+  Store.addOrder(order);
+  alert('Заказ создан');
+  closeScreen('createScreen');
+  refreshAll();
+});
+
+/* -------- bids (performer) without extra avatar -------- */
+function openBidModal(order){
+  // lightweight modal using prompt for price+name (can be swapped to proper modal later)
+  const price = prompt('Ваша цена (₸):');
+  if(price===null) return;
+  const name = prompt('Ваше имя:', 'Исполнитель') || 'Исполнитель';
+  const comment = prompt('Комментарий (опционально):','') || '';
+  Store.updateOrder(order.id, (o)=>{ if(!Array.isArray(o.bids)) o.bids=[]; o.bids.push({ price: Number(price)||0, name, comment, createdAt: new Date().toISOString(), performerId:'p_'+uid() }); });
+  alert('Предложение отправлено');
+  refreshAll();
+}
+
+/* -------- accept/reject and chat creation -------- */
+function acceptBid(orderId, bidIndex){
+  const order = Store.getOrders().find(o=>o.id===orderId);
+  if(!order) return;
+  const bid = (order.bids||[])[bidIndex];
+  if(!bid) return;
+  const chatId = 'chat_'+uid();
+  const chat = { id: chatId, orderId, participants:[order.ownerId, bid.performerId], title:`${order.category} • ${order.city}`, meta:{ownerName:order.name, performerName:bid.name}, messages:[{from:'system', text:`Чат создан между ${order.name||'Заказчик'} и ${bid.name}`, ts:new Date().toISOString()}] };
+  Store.addChat(chat);
+  Store.updateOrder(orderId, (o)=>{ if(o.bids && o.bids[bidIndex]) o.bids[bidIndex].accepted=true; });
+  openScreen('messengerScreen');
+  setTimeout(()=>{ refreshChats(); openChat(chatId); }, 220);
+}
+
+/* -------- Chats UI -------- */
+function refreshChats(){
+  const list = document.getElementById('chatsList'); list.innerHTML='';
+  const chats = Store.getChats();
+  if(chats.length===0){ list.innerHTML = '<div style="color:var(--muted)">Пока нет чатов</div>'; return; }
+  chats.forEach(c=>{
+    const el = document.createElement('div'); el.style.display='flex'; el.style.gap='10px'; el.style.padding='10px'; el.style.alignItems='center'; el.style.cursor='pointer';
+    const av = document.createElement('div'); av.className='avatar small'; avatarStyle(c.meta.performerName || c.meta.ownerName || 'Чат', av);
+    const t = document.createElement('div'); t.innerHTML = `<div style="font-weight:800">${c.title}</div><div style="color:var(--muted); font-size:13px">${c.meta.performerName||''}</div>`;
+    el.appendChild(av); el.appendChild(t);
+    el.onclick = ()=> openChat(c.id);
+    list.appendChild(el);
+  });
+}
+
+function openChat(chatId){
+  const chat = Store.getChats().find(c=>c.id===chatId); if(!chat) return;
+  document.getElementById('chatView').style.display='flex'; document.getElementById('noChat').style.display='none';
+  document.getElementById('chatTitle').textContent = chat.title;
+  avatarStyle(chat.meta.performerName||chat.meta.ownerName||'Чат', document.getElementById('chatAvatar'));
+  const msgs = document.getElementById('messages'); msgs.innerHTML='';
+  (chat.messages||[]).forEach(m=>{
+    const d = document.createElement('div'); d.style.marginBottom='8px';
+    if(m.from==='system'){ d.style.color='var(--muted)'; d.style.textAlign='center'; d.textContent = m.text; }
+    else if(m.from==='me'){ d.style.alignSelf='flex-end'; d.style.background='linear-gradient(180deg, rgba(123,255,90,0.08), rgba(123,255,90,0.03))'; d.style.padding='8px 12px'; d.style.borderRadius='10px'; d.textContent = m.text; }
+    else { d.style.alignSelf='flex-start'; d.style.background='rgba(255,255,255,0.02)'; d.style.padding='8px 12px'; d.style.borderRadius='10px'; d.textContent = m.from + ': ' + m.text; }
+    msgs.appendChild(d);
+  });
+  msgs.scrollTop = msgs.scrollHeight;
+  document.getElementById('sendMsgBtn').onclick = ()=>{
+    const v = document.getElementById('messageInput').value.trim(); if(!v) return;
+    Store.updateChat(chatId, (c)=>{ c.messages.push({ from:'me', text:v, ts:new Date().toISOString() }); });
+    document.getElementById('messageInput').value = '';
+    openChat(chatId);
   };
-});
-// default select gold
-document.querySelector('.selector .chip.gold')?.classList.add('active');
+}
 
-/* refreshAll */
+/* -------- Mine list rendering (with bids avatars small) -------- */
+function renderMineList(){
+  const list = document.getElementById('mineList'); list.innerHTML='';
+  const orders = Store.getOrders();
+  if(!orders.length){ list.innerHTML = '<div style="color:var(--muted)">Нет ваших заказов</div>'; return; }
+  const tpl = document.getElementById('cardTpl');
+  orders.forEach(o=>{
+    const node = tpl.content.cloneNode(true);
+    node.querySelector('.card-title').textContent = `${o.category} • ${o.city}`;
+    node.querySelector('.card-meta').textContent = `Дедлайн: ${o.deadline}`;
+    node.querySelector('.card-desc').textContent = o.desc;
+    node.querySelector('.price').textContent = Number(o.budget||0).toLocaleString('ru-RU');
+    const av = node.querySelector('.avatar'); avatarStyle(o.name||o.contact||'Заказчик', av); av.classList.add('small');
+    const cta = node.querySelector('.cta-row');
+    const viewBtn = document.createElement('button'); viewBtn.className='tab'; viewBtn.textContent='Просмотр заявок';
+    viewBtn.onclick = ()=> showBidsForOrder(o);
+    cta.appendChild(viewBtn);
+    list.appendChild(node);
+  });
+}
+
+/* show bids for order in mine panel (simple block) */
+function showBidsForOrder(order){
+  openScreen('mineScreen');
+  const panel = document.getElementById('minePanel');
+  // remove existing bids block
+  const existing = panel.querySelector('.bids-block'); if(existing) existing.remove();
+  const block = document.createElement('div'); block.className='bids-block'; block.style.marginTop='12px';
+  block.innerHTML = `<div style="font-weight:800; margin-bottom:8px">Заявки</div>`;
+  const bids = order.bids || [];
+  if(!bids.length){ block.innerHTML += '<div style="color:var(--muted)">Пока нет заявок</div>'; panel.appendChild(block); return; }
+  bids.forEach((b, idx)=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.gap='12px'; row.style.padding='10px 0'; row.style.alignItems='center';
+    const av = document.createElement('div'); av.className='small-avatar'; avatarStyle(b.name||'', av);
+    const body = document.createElement('div'); body.style.flex='1';
+    body.innerHTML = `<div style="font-weight:800">${b.name} — ₸ ${b.price}</div><div style="color:var(--muted);font-size:13px">${b.comment || ''}</div>`;
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.flexDirection='column'; actions.style.gap='8px';
+    const accept = document.createElement('button'); accept.className='cta'; accept.textContent='Принять'; accept.onclick = ()=> acceptBid(order.id, idx);
+    const reject = document.createElement('button'); reject.className='tab'; reject.textContent='Отклонить'; reject.onclick = ()=> { Store.updateOrder(order.id, (o)=>{ o.bids = (o.bids||[]).filter((_,i)=>i!==idx); }); showBidsForOrder(Store.getOrders().find(x=>x.id===order.id)); };
+    actions.appendChild(accept); actions.appendChild(reject);
+    row.appendChild(av); row.appendChild(body); row.appendChild(actions);
+    block.appendChild(row);
+  });
+  panel.appendChild(block);
+}
+
+/* ---------- misc: top balance, counts ---------- */
 function refreshAll(){
-  renderMenuCounts();
+  document.getElementById('balance').textContent = Store.getWallet().balance || 0;
+  document.getElementById('balanceTop').textContent = Store.getWallet().balance || 0;
+  document.getElementById('ordersBadge').textContent = Store.getOrders().length;
   renderFindList();
   renderMineList();
   refreshChats();
-  const bal = Store.getWallet().balance || 0;
-  document.getElementById('balance').textContent = bal;
-  document.getElementById('balanceTop').textContent = bal;
 }
 
-/* chats refresh helper */
-function renderChatsShort(){ refreshChats(); }
+/* top-level simple actions */
+document.getElementById('topupBtn').onclick = ()=> {
+  const v = prompt('Сумма пополнения (₸):','1000'); if(!v) return;
+  const w = Store.getWallet(); w.balance = (w.balance||0) + Number(v); Store.setWallet(w); refreshAll(); alert('Пополнено');
+};
+document.getElementById('withdrawBtn').onclick = ()=> {
+  const v = prompt('Сумма вывода (₸):','500'); if(!v) return;
+  const w = Store.getWallet(); if(w.balance < Number(v)){ alert('Недостаточно средств'); return; } w.balance -= Number(v); Store.setWallet(w); refreshAll(); alert('Выведено');
+};
 
-/* initial */
+/* initial render */
 document.addEventListener('DOMContentLoaded', ()=>{
-  document.getElementById('c-deadline').value = todayISO();
+  // default category selected
+  document.querySelector('#createTabs .tab.gold')?.classList.add('active');
+  document.getElementById('selectedCategory').textContent = document.querySelector('#createTabs .tab.gold')?.getAttribute('data-val') || 'СПЕЦ. ЗАКАЗ';
   refreshAll();
 });
 </script>
