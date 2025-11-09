@@ -3,30 +3,33 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiDCity — Demo</title>
+<title>GiDCity — Обновлённое UI</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-top:#2e1b73; --bg-mid:#0b1220; --bg-bot:#041026;
+  --bg-1:#5a3cff;
+  --bg-2:#071128;
+  --bg-3:#041026;
+  --accent-a:#b37aff;
+  --accent-b:#7BFF5A;
+  --gold:#ffd84d;
+  --panel-light-a:#ffffff;
+  --panel-light-b:#f3f7fb;
+  --text-dark:#0b1220;
+  --text-light:#ffffff;
   --glass-btn: rgba(255,255,255,0.06);
-  --primary-yellow: #ffd84d;
-  --accent1: #b37aff;
-  --accent2: #7BFF5A;
-  --muted: rgba(0,0,0,0.56);
-  --text-dark: #0b1220;
-  --panel-bg: #ffffff;
-  --panel-contrast: #f5f7fb;
-  --card-radius: 12px;
-  --ui-font-size: 14px;
+  --ui-font-size:14px;
+  --radius:12px;
 }
 
-/* base */
+/* base reset */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0; padding:18px; font-family:-apple-system,BlinkMacSystemFont,"Inter","SF Pro Text","Helvetica Neue",Arial,sans-serif;
-  background: linear-gradient(180deg,var(--bg-top) 0%, var(--bg-mid) 50%, var(--bg-bot) 100%);
-  color: #fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  background: linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  color:var(--text-light);
   font-size:var(--ui-font-size);
   display:flex; justify-content:center;
 }
@@ -34,118 +37,138 @@ body{
 /* wrapper */
 .wrapper{ width:100%; max-width:1100px; display:flex; flex-direction:column; gap:14px; }
 
-/* header */
-.header{ display:flex; justify-content:space-between; align-items:center; gap:12px; position:relative; padding:8px 6px;}
-.brand h1{ margin:0; font-weight:800; font-size:20px; color:#fff; }
-.brand .gid{ color:#fff } .brand .city{ color:var(--accent1) }
-
-/* centered role label (semi-transparent, dark text on light panels when opened) */
-.role-center{ position:absolute; left:0; right:0; top:8px; text-align:center; pointer-events:none }
-#roleLabel{ display:inline-block; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.14); color:#fff; opacity:0.9; font-weight:700; font-size:13px; pointer-events:none; }
-
-/* header-right */
-.header-right{ display:flex; align-items:center; gap:10px; z-index:2 }
-.header-right .small{ color:rgba(255,255,255,0.9); font-weight:700; }
-
-/* settings button - only one, textual */
-.btn-settings{ padding:8px 12px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.08); color:#fff; cursor:pointer; font-weight:700; }
-
-/* main panel (light) */
-.container{
-  width:100%; background: linear-gradient(180deg,var(--panel-bg) 0%, var(--panel-contrast) 100%);
-  border-radius:16px; padding:18px; box-shadow:0 20px 50px rgba(2,6,15,0.6); color:var(--text-dark);
+/* Header layout:
+   - left: logo + city beneath
+   - right-top: role label (small) aligned top-right
+   - right-bottom: notif + settings */
+.header{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:12px; position:relative;
+  padding:6px 0;
 }
 
-/* main header row inside panel */
-.panel-top{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
-.panel-top h2{ margin:0; font-size:18px; font-weight:800; color:var(--text-dark) }
+/* logo area */
+.brand{
+  display:flex; flex-direction:column; gap:6px;
+}
+.brand h1{ margin:0; font-weight:800; font-size:20px; color:var(--text-light); letter-spacing:0.2px; }
+.brand .gid{ color:#fff } .brand .city{ color:var(--accent-a) }
+.header-sub{ font-size:13px; color:rgba(255,255,255,0.85); font-weight:700 }
 
-/* menu grid */
+/* right column */
+.header-right{
+  display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+}
+
+/* role label top-right (small, won't obstruct) */
+#roleLabel{
+  background: rgba(255,255,255,0.12); color:var(--text-light); padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+/* controls row under role */
+.controls-row{ display:flex; gap:8px; align-items:center; }
+
+/* notif badge */
+.notif-badge{ background:#ff4d4f; color:#fff; padding:3px 8px; border-radius:999px; font-size:12px }
+
+/* settings button single */
+.btn-settings{ padding:8px 12px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.08); color:var(--text-light); cursor:pointer; font-weight:700 }
+
+/* Main container: use gradient / match background but lighter panels for content */
+.container{
+  width:100%; border-radius:16px; padding:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  box-shadow: 0 24px 60px rgba(1,7,20,0.6);
+  color:var(--text-light);
+}
+
+/* panel header row */
+.panel-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px }
+.panel-top h2{ margin:0; font-size:18px; font-weight:800 }
+
+/* Menu grid — buttons should match background gradient (but slightly brighter) */
 .menu-grid{ display:flex; flex-direction:column; gap:12px; }
 .menu-row{ display:flex; gap:12px; align-items:stretch; }
 
-/* glass buttons (main menu) */
-.glass-btn{
-  flex:1; min-width:130px; border-radius:12px; padding:14px; cursor:pointer; border:1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  box-shadow: 0 8px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);
-  display:flex; flex-direction:column; gap:6px; align-items:flex-start; justify-content:center; transition:transform .14s;
+/* Menu buttons: gradient background similar to page, text light */
+.menu-btn{
+  flex:1; min-width:120px; border-radius:12px; padding:14px; cursor:pointer; border:none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+  display:flex; flex-direction:column; gap:8px; align-items:flex-start; transition:transform .14s, box-shadow .14s;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
-.glass-btn:active{ transform:translateY(1px) }
-.glass-btn .title{ font-weight:800; font-size:15px; color:#fff }
-.glass-btn .note{ font-size:12px; color:rgba(255,255,255,0.8); background:transparent; padding:4px 8px; border-radius:8px }
+.menu-btn:active{ transform:translateY(1px) }
+.menu-btn .title{ font-weight:800; font-size:15px; color:var(--text-light) }
+.menu-btn .note{ font-size:12px; color:rgba(255,255,255,0.85) }
 
-/* primary yellow CTA style */
-.cta-yellow{ background: linear-gradient(90deg,var(--primary-yellow), #ffcf3b); color:var(--text-dark); box-shadow:0 12px 26px rgba(0,0,0,0.25); }
-.cta-yellow .note{ color:var(--text-dark) }
+/* primary (yellow) */
+.menu-btn.primary{
+  background: linear-gradient(90deg, var(--gold), #ffd14a);
+  color:var(--text-dark);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.36);
+}
+.menu-btn.primary .note{ color:var(--text-dark) }
 
-/* Disabled small "скоро" button (Забронировать) */
-.btn-disabled{ opacity:0.7; pointer-events:none; filter:grayscale(.05); }
+/* secondary gradient (violet) */
+.menu-btn.violet{ background: linear-gradient(90deg, var(--accent-a), var(--accent-b)); color:#071317; }
+.menu-btn.violet .note{ color:#071317 }
 
-/* cards/lists */
-.list{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-.card{ background:#fff; color:var(--text-dark); border-radius:12px; padding:12px; display:flex; gap:12px; align-items:flex-start; box-shadow:0 8px 20px rgba(3,10,22,0.06); border:1px solid rgba(2,6,15,0.06) }
-.card .left{ width:56px; flex:0 0 56px; display:flex; align-items:center; justify-content:center }
+/* disabled variant */
+.menu-btn.disabled{ opacity:0.7; pointer-events:none; filter:grayscale(.03) }
+
+/* cards now: light gradient panels for content screens */
+.card{
+  background: linear-gradient(180deg, var(--panel-light-a), var(--panel-light-b));
+  color:var(--text-dark); border-radius:12px; padding:12px; display:flex; gap:12px; align-items:flex-start; border:1px solid rgba(2,6,15,0.06);
+  box-shadow: 0 8px 20px rgba(2,6,15,0.06);
+}
 .avatar{ width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff }
-.card .body{ flex:1 }
-.card .title{ font-weight:800; font-size:15px; color:var(--text-dark) }
-.card .meta{ font-size:12px; color:var(--muted); margin-top:6px }
-.card .desc{ margin-top:8px; color:#222; font-size:13px; }
 
-/* action buttons within cards */
-.card-actions{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap }
-
-/* small utility */
-.small{ font-size:13px; color:var(--muted) }
-
-/* screens (light panels) */
-.screen{ position:fixed; inset:0; display:none; z-index:120; padding:24px; background: rgba(0,0,0,0.45); align-items:center; justify-content:center }
+/* screens / modals — light gradient backgrounds */
+.screen{ position:fixed; inset:0; display:none; z-index:140; padding:24px; background: rgba(0,0,0,0.45); align-items:center; justify-content:center }
 .screen.active{ display:flex }
-.modal{ width:100%; max-width:880px; border-radius:14px; background:#fff; padding:16px; color:var(--text-dark); box-shadow:0 30px 80px rgba(2,6,15,0.6) }
+.modal{
+  width:100%; max-width:920px; border-radius:14px; padding:16px;
+  background: linear-gradient(180deg,var(--panel-light-a), var(--panel-light-b));
+  color:var(--text-dark); box-shadow:0 30px 80px rgba(2,6,15,0.6);
+}
 
-/* form controls (light) */
-.input, textarea, select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(2,6,15,0.06); background:#fff; color:var(--text-dark); font-size:14px }
+/* form controls for light panels */
+.input, textarea, select{ width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(2,6,15,0.06); background:#fff; color:var(--text-dark); font-size:14px }
 textarea{ min-height:110px; resize:vertical }
 
-/* tabs */
-.tabs{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap }
-.tab{ padding:8px 12px; border-radius:8px; border:1px solid rgba(2,6,15,0.06); background:#fff; color:var(--text-dark); cursor:pointer; font-weight:700 }
-
-/* notifications modal list */
-.notif-item{ padding:10px; border-bottom:1px solid rgba(2,6,15,0.04); display:flex; gap:10px; align-items:flex-start; cursor:pointer }
-.notif-item .n-title{ font-weight:800; color:var(--text-dark) }
-.notif-item .n-body{ color:var(--muted); font-size:13px; margin-top:6px }
-
-/* smaller layout control for forms / fields in columns */
-.row{ display:flex; gap:10px }
-.col{ flex:1 }
+/* small helpers */
+.small{ font-size:13px; color:rgba(2,6,15,0.6) }
 
 /* responsive */
 @media(max-width:860px){
   .menu-row{ flex-direction:column }
-  .card{ flex-direction:column; align-items:stretch }
-  .left{ align-self:flex-start }
-  .role-center{ top:6px }
+  .header-right{ align-items:flex-start }
+  .panel-top{ flex-direction:column; align-items:flex-start; gap:8px }
 }
 </style>
 </head>
 <body>
 <div class="wrapper">
-
   <!-- Header -->
   <header class="header">
-    <div class="brand"><h1><span class="gid">GiD</span><span class="city">City</span></h1></div>
+    <!-- left: logo + city under -->
+    <div class="brand">
+      <h1><span class="gid">GiD</span><span class="city"> City</span></h1>
+      <div id="topCity" class="header-sub">Город: —</div>
+    </div>
 
-    <div class="role-center"><div id="roleLabel">—</div></div>
-
+    <!-- right: role top, controls bottom -->
     <div class="header-right">
-      <div id="topCity" class="small">Город: —</div>
-      <button id="openNotifications" class="btn-settings">Уведомления <span id="notifCount" style="display:none; margin-left:8px; background:#ff4d4f; color:#fff; padding:2px 8px; border-radius:999px; font-size:12px;">0</span></button>
-      <button id="openSettings" class="btn-settings">Настройки</button>
+      <div id="roleLabel">—</div>
+      <div class="controls-row">
+        <button id="openNotifications" class="btn-settings">Уведомления <span id="notifCount" class="notif-badge" style="display:none">0</span></button>
+        <button id="openSettings" class="btn-settings">Настройки</button>
+      </div>
     </div>
   </header>
 
-  <!-- Main light container -->
+  <!-- Main container -->
   <main class="container" role="main" aria-live="polite">
     <div class="panel-top">
       <h2>Главное меню</h2>
@@ -154,54 +177,40 @@ textarea{ min-height:110px; resize:vertical }
 
     <div class="menu-grid">
       <div class="menu-row">
-        <!-- ЗАКАЗАТЬ (primary yellow) -->
-        <div id="btnOrder" class="glass-btn cta-yellow" role="button" tabindex="0">
+        <div id="btnOrder" class="menu-btn primary" role="button" tabindex="0">
           <div class="title">ЗАКАЗАТЬ</div>
           <div class="note" id="orderNote">Новая заявка</div>
         </div>
 
-        <!-- ЗАБРОНИРОВАТЬ (disabled today) -->
-        <div id="btnReserve" class="glass-btn btn-disabled" role="button" tabindex="-1" aria-disabled="true">
-          <div class="title" style="opacity:0.92">ЗАБРОНИРОВАТЬ</div>
+        <div id="btnReserve" class="menu-btn disabled" role="button" tabindex="-1">
+          <div class="title">ЗАБРОНИРОВАТЬ</div>
           <div class="note">СКОРО</div>
         </div>
 
-        <!-- ОБЪЯВЛЕНИЕ УСЛУГ -->
-        <div id="btnAds" class="glass-btn" role="button" tabindex="0">
+        <div id="btnAds" class="menu-btn violet" role="button" tabindex="0">
           <div class="title">ОБЪЯВЛЕНИЕ УСЛУГ</div>
-          <div class="note">Смотри объявления исполнителей</div>
+          <div class="note">Объявления исполнителей</div>
         </div>
       </div>
 
       <div class="menu-row">
-        <!-- other actions -->
-        <div id="btnFind" class="glass-btn">
-          <div class="title">Найти заказы</div>
-          <div class="note">Поиск и фильтры</div>
-        </div>
-        <div id="btnMessenger" class="glass-btn">
-          <div class="title">Мессенджер</div>
-          <div class="note">Чаты</div>
-        </div>
-        <div id="btnWallet" class="glass-btn">
-          <div class="title">Кошелёк</div>
-          <div class="note">Баланс и операции</div>
-        </div>
+        <div id="btnFind" class="menu-btn" role="button"><div class="title">Найти заказы</div><div class="note">Для исполнителей</div></div>
+        <div id="btnMessenger" class="menu-btn" role="button"><div class="title">Мессенджер</div><div class="note">Чаты</div></div>
+        <div id="btnWallet" class="menu-btn" role="button"><div class="title">Кошелёк</div><div class="note">Баланс</div></div>
       </div>
 
-      <div class="menu-row" style="justify-content:flex-end;">
-        <div id="btnMine" class="glass-btn" style="max-width:260px;">
-          <div class="title">Мои заказы</div>
-          <div class="note">Список ваших заказов</div>
-        </div>
+      <div class="menu-row" style="justify-content:flex-end">
+        <div id="btnMine" class="menu-btn" style="max-width:260px;"><div class="title">Мои заказы</div><div class="note">Ваши заявки</div></div>
       </div>
     </div>
   </main>
 </div>
 
-<!-- Screens / Modals (light panels) -->
+<!-- ======================
+     Screens / Modals (light panels)
+     ====================== -->
 
-<!-- AUTH (simple) -->
+<!-- AUTH -->
 <section id="authScreen" class="screen">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Вход</h3><button onclick="closeScreen('authScreen')" class="btn">Закрыть</button></div>
@@ -209,18 +218,15 @@ textarea{ min-height:110px; resize:vertical }
       <div class="form-field"><input id="authLogin" class="input" placeholder="Email или телефон" required /></div>
       <div class="form-field"><input id="authPass" class="input" placeholder="Пароль" type="password" required /></div>
       <div style="display:flex; gap:8px; margin-top:12px"><button type="submit" class="btn primary">Войти</button><button type="button" id="registerBtn" class="btn">Регистрация</button></div>
-      <div class="small" style="margin-top:10px">Данные хранятся локально (демо)</div>
+      <div class="small" style="margin-top:10px">Демо: данные хранятся локально</div>
     </form>
   </div>
 </section>
 
-<!-- CREATE (order) -->
+<!-- CREATE -->
 <section id="createScreen" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3>Новый заказ</h3>
-      <div><button onclick="closeScreen('createScreen')" class="btn">Назад</button></div>
-    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Новый заказ</h3><div><button onclick="closeScreen('createScreen')" class="btn">Назад</button></div></div>
     <div style="margin-top:10px;">
       <div class="tabs" id="createTabs">
         <div class="tab active" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
@@ -247,38 +253,26 @@ textarea{ min-height:110px; resize:vertical }
   </div>
 </section>
 
-<!-- FIND orders (for performers) -->
+<!-- FIND -->
 <section id="findScreen" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3>Найти заказы</h3>
-      <div><button onclick="closeScreen('findScreen')" class="btn">Назад</button></div>
-    </div>
-    <div style="margin-top:8px">
-      <div style="display:flex; gap:8px;"><input id="searchInput" class="input" placeholder="Поиск..."><button id="applySearch" class="btn">Поиск</button></div>
-      <div id="findList" class="list" style="margin-top:12px"></div>
-    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Найти заказы</h3><div><button onclick="closeScreen('findScreen')" class="btn">Назад</button></div></div>
+    <div style="margin-top:8px"><div style="display:flex; gap:8px;"><input id="searchInput" class="input" placeholder="Поиск..."><button id="applySearch" class="btn">Поиск</button></div><div id="findList" class="list" style="margin-top:12px"></div></div>
   </div>
 </section>
 
-<!-- MINE (owner) -->
+<!-- MINE -->
 <section id="mineScreen" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3>Мои заказы</h3>
-      <div><button onclick="closeScreen('mineScreen')" class="btn">Назад</button></div>
-    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Мои заказы</h3><div><button onclick="closeScreen('mineScreen')" class="btn">Назад</button></div></div>
     <div style="margin-top:12px"><div id="mineList" class="list"></div></div>
   </div>
 </section>
 
-<!-- BIDS modal (owner sees this when viewing notifications or My orders) -->
+<!-- BIDS (owner) -->
 <section id="bidsModal" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 id="bidsModalTitle">Заявки</h3>
-      <div><button onclick="closeScreen('bidsModal')" class="btn">Закрыть</button></div>
-    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3 id="bidsModalTitle">Заявки</h3><div><button onclick="closeScreen('bidsModal')" class="btn">Закрыть</button></div></div>
     <div id="bidsList" style="margin-top:12px"></div>
   </div>
 </section>
@@ -293,56 +287,38 @@ textarea{ min-height:110px; resize:vertical }
     <div style="flex:1; display:flex; flex-direction:column;">
       <div id="chatHeader" style="display:flex; gap:12px; align-items:center;"><div id="chatAvatar" class="avatar" style="width:48px;height:48px"></div><div><div id="chatTitle" style="font-weight:800"></div><div id="chatSub" class="small"></div></div></div>
       <div id="messages" style="margin-top:12px; flex:1; overflow:auto; padding-right:8px;"></div>
-      <div style="display:flex; gap:8px; margin-top:8px;">
-        <input id="messageInput" class="input" placeholder="Сообщение..." />
-        <button id="sendMsgBtn" class="btn primary">Отправить</button>
-      </div>
+      <div style="display:flex; gap:8px; margin-top:8px;"><input id="messageInput" class="input" placeholder="Сообщение..." /><button id="sendMsgBtn" class="btn primary">Отправить</button></div>
     </div>
   </div>
 </section>
 
-<!-- ADS (announcements) -->
+<!-- ADS -->
 <section id="adsScreen" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3>Объявления услуг</h3>
-      <div><button onclick="closeScreen('adsScreen')" class="btn">Закрыть</button></div>
-    </div>
-
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Объявления услуг</h3><div><button onclick="closeScreen('adsScreen')" class="btn">Закрыть</button></div></div>
     <div style="margin-top:12px; display:flex; gap:12px;">
-      <div style="flex:1">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-weight:800">Доступные объявления</div>
-          <div><button id="createAdBtn" class="btn">Создать объявление</button></div>
-        </div>
-        <div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div>
-      </div>
-
-      <div style="width:320px;">
-        <div style="font-weight:800">Мои объявления</div>
-        <div id="myAdsList" class="list" style="margin-top:8px; max-height:60vh; overflow:auto"></div>
-      </div>
+      <div style="flex:1"><div style="display:flex; justify-content:space-between; align-items:center;"><div style="font-weight:800">Доступные объявления</div><div><button id="createAdBtn" class="btn">Создать объявление</button></div></div><div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div></div>
+      <div style="width:320px;"><div style="font-weight:800">Мои объявления</div><div id="myAdsList" class="list" style="margin-top:8px; max-height:60vh; overflow:auto"></div></div>
     </div>
   </div>
 </section>
 
-<!-- ADS Create Modal -->
 <section id="adCreateModal" class="screen">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Создать объявление</h3><button onclick="closeScreen('adCreateModal')" class="btn">Закрыть</button></div>
     <form id="adForm" style="margin-top:12px">
-      <div class="form-field"><input id="adTitle" class="input" placeholder="Краткое название услуги (например: Уборка квартир)" required /></div>
-      <div class="form-field"><textarea id="adDesc" class="input" placeholder="Описание услуги, условия, примерная цена"></textarea></div>
-      <div style="display:flex; gap:8px; margin-top:8px;"><input id="adPhone" class="input" placeholder="Телефон (опционально)" /><input id="adPrice" class="input" placeholder="Цена (опционально)" /></div>
+      <div class="form-field"><input id="adTitle" class="input" placeholder="Краткое название услуги" required></div>
+      <div class="form-field"><textarea id="adDesc" class="input" placeholder="Описание услуги"></textarea></div>
+      <div style="display:flex; gap:8px; margin-top:8px;"><input id="adPhone" class="input" placeholder="Телефон (опционально)"><input id="adPrice" class="input" placeholder="Цена (опционально)"></div>
       <div style="display:flex; gap:8px; margin-top:10px;"><button class="btn primary" type="submit">Создать</button><button class="btn" type="button" onclick="closeScreen('adCreateModal')">Отмена</button></div>
     </form>
   </div>
 </section>
 
-<!-- Notifications simple modal -->
+<!-- Notifications modal -->
 <section id="notificationsModal" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Уведомления</h3><button onclick="closeScreen('notificationsModal')" class="btn">Закрыть</button></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Уведомления</h3><div><button onclick="closeScreen('notificationsModal')" class="btn">Закрыть</button></div></div>
     <div id="notificationsList" style="margin-top:12px; max-height:58vh; overflow:auto"></div>
     <div style="display:flex; gap:8px; margin-top:12px;"><button id="clearNotifications" class="btn">Очистить</button></div>
   </div>
@@ -351,46 +327,56 @@ textarea{ min-height:110px; resize:vertical }
 <!-- Settings modal -->
 <section id="settingsModal" class="screen">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Настройки</h3><button onclick="closeScreen('settingsModal')" class="btn">Закрыть</button></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>Настройки</h3><div><button onclick="closeScreen('settingsModal')" class="btn">Закрыть</button></div></div>
     <div style="margin-top:10px">
       <div style="font-weight:800">Роль</div>
       <div style="display:flex; gap:8px; margin-top:8px;"><button id="setRoleUser" class="btn primary">Пользователь</button><button id="setRoleWorker" class="btn">Исполнитель</button></div>
-
       <div style="margin-top:12px; font-weight:800">Тема / Шрифт</div>
       <div style="display:flex; gap:8px; margin-top:8px;"><button class="btn theme-btn" data-theme="violet">Фиолет</button><button class="btn theme-btn" data-theme="navy">Тёмно-синяя</button></div>
       <div style="display:flex; gap:8px; margin-top:8px;"><button class="btn font-btn" data-font="small">Мелкий</button><button class="btn font-btn" data-font="normal">Обычный</button><button class="btn font-btn" data-font="large">Крупный</button></div>
-
-      <div style="margin-top:12px;"><button id="settingsBack" class="btn">Назад</button></div>
+      <div style="margin-top:12px"><button id="openProfile" class="btn">Профиль</button></div>
     </div>
   </div>
 </section>
 
+<!-- Profile screen (has Logout) -->
+<section id="profileScreen" class="screen">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3>Профиль</h3>
+      <div><button onclick="closeScreen('profileScreen')" class="btn">Закрыть</button></div>
+    </div>
+    <div id="profileWrap" style="margin-top:12px"></div>
+  </div>
+</section>
+
 <script>
-/* ---------------------------------
-   GiDCity — single-file implementation
-   Implements requested fixes/features
-   --------------------------------- */
+/* ========= GiDCity — updated UI + fixes =========
+   - role label repositioned
+   - role switch triggers logo animation + menu re-render
+   - main menu gradient-style buttons (contrast)
+   - profile has logout
+   - screens are light-gradient panels
+   - notifications / bids flow updated
+*/
 
-/* Local storage keys */
-const LS_ORD = 'gid_orders_v12';
-const LS_CHAT = 'gid_chats_v12';
-const LS_ADS = 'gid_ads_v1';
+/* Storage keys & helpers */
+const LS_ORD = 'gid_orders_v13';
+const LS_CHAT = 'gid_chats_v13';
+const LS_ADS = 'gid_ads_v2';
 const LS_PROFILE = 'gid_profile_v1';
-const LS_CITY = 'gid_city_v1';
 const LS_ROLE = 'gid_role_v1';
+const LS_CITY = 'gid_city_v1';
 const LS_NOTIF = 'gid_notif_v1';
-const LS_THEME = 'gid_theme_v1';
-const LS_FONT = 'gid_font_v1';
 
-/* Utilities */
 const $ = id => document.getElementById(id);
-const uid = () => Math.random().toString(36).slice(2,9);
-const nowISO = () => new Date().toISOString();
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#039;"}[m])); }
-function initials(name){ if(!name) return '??'; const p=(name||'').split(/\s+/); return (p[0]||'').slice(0,2).toUpperCase(); }
-function avatarStyle(name, el){ const pal = ['#b37aff','#8f7bff','#7BFF5A','#61e6ff','#ffaa6b']; let h=0; for(let i=0;i<(name||'').length;i++) h+=name.charCodeAt(i); const a = pal[h%pal.length], b = pal[(h+1)%pal.length]; el.style.background = `linear-gradient(135deg, ${a}, ${b})`; el.textContent = initials(name); }
+const uid = ()=> Math.random().toString(36).slice(2,9);
+const nowISO = ()=> new Date().toISOString();
+function esc(s){ return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#039;"}[m])); }
+function initials(name){ if(!name) return '?'; const p=(name||'').split(/\s+/); return (p[0]||'').slice(0,2).toUpperCase(); }
+function avatarStyle(name, el){ const pal=['#b37aff','#8f7bff','#7BFF5A','#61e6ff','#ffaa6b']; let h=0; for(let i=0;i<(name||'').length;i++) h+=name.charCodeAt(i); const a=pal[h%pal.length], b=pal[(h+1)%pal.length]; el.style.background = `linear-gradient(135deg, ${a}, ${b})`; el.textContent = initials(name); }
 
-/* Storage helpers */
+/* Storage wrapper */
 const Store = {
   getOrders(){ try{ return JSON.parse(localStorage.getItem(LS_ORD))||[] }catch(e){return[]} },
   setOrders(v){ localStorage.setItem(LS_ORD, JSON.stringify(v)) },
@@ -405,406 +391,319 @@ const Store = {
   addAd(a){ const arr=this.getAds(); arr.unshift(a); this.setAds(arr); return arr },
   getProfile(){ try{ return JSON.parse(localStorage.getItem(LS_PROFILE))||null }catch(e){return null} },
   setProfile(p){ localStorage.setItem(LS_PROFILE, JSON.stringify(p)) },
-  getCity(){ return localStorage.getItem(LS_CITY) || null },
-  setCity(c){ localStorage.setItem(LS_CITY, c) },
   getRole(){ return localStorage.getItem(LS_ROLE) || null },
   setRole(r){ localStorage.setItem(LS_ROLE, r) },
+  getCity(){ return localStorage.getItem(LS_CITY) || null },
+  setCity(c){ localStorage.setItem(LS_CITY, c) },
   getNotifs(){ try{ return JSON.parse(localStorage.getItem(LS_NOTIF))||[] }catch(e){return[]} },
   setNotifs(a){ localStorage.setItem(LS_NOTIF, JSON.stringify(a)) }
 };
 
-/* Seed some demo data if empty */
+/* Seed demo orders/ads if none */
 if(!localStorage.getItem(LS_ORD)){
   Store.setOrders([
-    { id:'o1', category:'Такси', city:'Алматы', budget:1200, datetime:new Date().toISOString().slice(0,16), desc:'Поездка в аэропорт', ownerId:'u_owner1', ownerName:'Айдар', bids:[], status:'open', createdAt:nowISO() },
-    { id:'o2', category:'Доставка еды', city:'Астана', budget:900, datetime:new Date().toISOString().slice(0,16), desc:'Доставка обеда', ownerId:'u_owner2', ownerName:'Салтанат', bids:[], status:'open', createdAt:nowISO() }
+    { id:'o1', category:'Такси', city:'Алматы', budget:1200, datetime:new Date().toISOString().slice(0,16), desc:'Поездка в аэропорт', ownerId:'u_owner1', ownerName:'Айдар', bids:[], status:'open', createdAt: nowISO() },
+    { id:'o2', category:'Доставка еды', city:'Астана', budget:900, datetime:new Date().toISOString().slice(0,16), desc:'Доставка обеда', ownerId:'u_owner2', ownerName:'Салтанат', bids:[], status:'open', createdAt: nowISO() }
   ]);
 }
 if(!localStorage.getItem(LS_ADS)) Store.setAds([]);
 
-/* DOM refs */
-const refs = {
-  btnOrder: $('btnOrder'), btnReserve: $('btnReserve'), btnAds: $('btnAds'),
-  btnFind: $('btnFind'), btnMessenger: $('btnMessenger'), btnWallet: $('btnWallet'), btnMine: $('btnMine'),
-  createScreen: $('createScreen'), findScreen: $('findScreen'), mineScreen: $('mineScreen'), messengerScreen: $('messengerScreen'),
-  adsScreen: $('adsScreen'), adCreateModal: $('adCreateModal'),
-  notificationsModal: $('notificationsModal'), notificationsList: $('notificationsList'), notifCount: $('notifCount'),
-  settingsModal: $('settingsModal'), openSettings: $('openSettings'),
-  authScreen: $('authScreen'), createForm: $('createForm'), bidsModal: $('bidsModal'), bidsList: $('bidsList')
-};
-
-/* UI: open/close screen */
-function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el=document.getElementById(id); if(el) el.classList.add('active'); window.scrollTo(0,0); }
+/* UI functions */
+function showRoleLabel(){ const r = Store.getRole() || 'user'; $('roleLabel').textContent = r==='user' ? 'Вы — Пользователь' : 'Вы — Исполнитель'; }
+function updateCityLabel(){ const c = Store.getCity() || '—'; $('topCity').textContent = 'Город: ' + c; }
+function refreshNotifBadge(){ const n = Store.getNotifs().length; if(n>0){ $('notifCount').style.display='inline-block'; $('notifCount').textContent = n; } else $('notifCount').style.display='none'; }
+function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el = document.getElementById(id); if(el) el.classList.add('active'); window.scrollTo(0,0); }
 function closeScreen(id){ const el=document.getElementById(id); if(el) el.classList.remove('active'); }
 
-/* update role label */
-function updateRoleLabel(){ const role = Store.getRole() || 'user'; $('roleLabel').textContent = role==='user' ? 'Вы — Пользователь' : 'Вы — Исполнитель'; }
-
-/* refresh main menu (note: order note contrast) */
-function refreshMain(){
-  updateRoleLabel();
-  // note contrast: make orderNote dark for yellow CTA
-  const orderNote = document.getElementById('orderNote'); if(orderNote) orderNote.style.color = '#222';
-  // update city display
-  const city = Store.getCity() || '—'; $('topCity').textContent = 'Город: ' + city;
-  refreshNotificationsBadge();
+/* build main behavior (hide/show buttons per role) */
+function applyRoleUI(){
+  const role = Store.getRole() || 'user';
+  // if performer -> hide order primary (user-only) and enable Find
+  if(role === 'worker'){
+    $('btnOrder').style.display = 'none';
+    $('btnFind').style.display = 'block';
+    // optionally change notes
+  } else {
+    $('btnOrder').style.display = 'block';
+    $('btnFind').style.display = 'block'; // but user will not be able to open find (checked later)
+  }
+  showRoleLabel();
 }
 
-/* Notifications helpers */
-function getNotifs(){ return Store.getNotifs(); }
-function pushNotif(n){ const arr = getNotifs(); arr.unshift(n); Store.setNotifs(arr); refreshNotificationsBadge(); }
-function clearNotifs(){ Store.setNotifs([]); renderNotifs(); refreshNotificationsBadge(); }
-function refreshNotificationsBadge(){ const n = getNotifs().length; if(n>0){ refs.notifCount.style.display='inline-block'; refs.notifCount.textContent = n; } else refs.notifCount.style.display='none'; }
+/* logo animation when switching role */
+function animateLogoAndApplyRole(newRole){
+  // simple spinner-like animation on brand text (visual feedback)
+  const brand = document.querySelector('.brand h1');
+  if(!brand){ Store.setRole(newRole); applyRoleUI(); return; }
+  brand.style.transition='transform .6s ease';
+  brand.style.transform='rotateY(180deg) scale(.98)';
+  setTimeout(()=>{ Store.setRole(newRole); applyRoleUI(); brand.style.transform='rotateY(0deg) scale(1)'; }, 520);
+}
+
+/* Notifications rendering & interactions */
 function renderNotifs(){
-  const list = $('notificationsList'); list.innerHTML = '';
-  const arr = getNotifs();
-  if(!arr.length){ list.innerHTML = '<div class="small" style="padding:12px;">Уведомлений нет</div>'; return; }
+  const list = $('notificationsList'); list.innerHTML='';
+  const arr = Store.getNotifs();
+  if(!arr.length){ list.innerHTML = '<div class="small" style="padding:12px">Уведомлений нет</div>'; return; }
   arr.forEach((n, idx)=>{
-    const node = document.createElement('div'); node.className='notif-item';
-    node.innerHTML = `<div style="flex:1"><div class="n-title">${escapeHtml(n.title)}</div><div class="n-body">${escapeHtml(n.body)}</div><div class="small">${new Date(n.ts).toLocaleString()}</div></div>`;
+    const node = document.createElement('div'); node.className='card'; node.style.cursor='pointer';
+    node.innerHTML = `<div style="flex:1"><div style="font-weight:800">${esc(n.title)}</div><div class="small" style="margin-top:6px">${esc(n.body)}</div><div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div></div>`;
     node.addEventListener('click', ()=>{
-      // if notification has orderId and type 'bid' -> open bids modal for owner
-      if(n.type==='bid' && n.orderId){
-        openBidsModal(n.orderId);
-      } else if(n.type==='admsg' && n.adId){
-        // open ads and focus ad
-        openScreen('adsScreen'); renderAds(); // user can click ad to chat
-      } else if(n.type==='accepted' && n.chatId){
-        // open messenger and chat
-        openScreen('messengerScreen'); renderChats(); setTimeout(()=> openChat(n.chatId), 200);
-      }
-      // mark as read by removing it from list (optional)
-      const arr2 = getNotifs(); arr2.splice(idx,1); Store.setNotifs(arr2); renderNotifs(); refreshNotificationsBadge();
+      // handle types: bid -> open bidsModal for owner, admsg -> open ads, accepted -> open chat
+      if(n.type === 'bid' && n.orderId){ openBidsModal(n.orderId); }
+      else if(n.type === 'admsg' && n.adId){ openScreen('adsScreen'); renderAds(); }
+      else if(n.type === 'accepted' && n.chatId){ openScreen('messengerScreen'); renderChats(); setTimeout(()=> openChat(n.chatId),200); }
+      // remove notification after click
+      const a = Store.getNotifs(); a.splice(idx,1); Store.setNotifs(a); renderNotifs(); refreshNotifBadge();
     });
     list.appendChild(node);
   });
 }
 
-/* Orders list for performers (find) */
+/* render Find list (for performers) */
 function renderFindList(){
   const wrap = $('findList'); wrap.innerHTML='';
   const items = Store.getOrders().filter(o=>o.status==='open');
   if(!items.length){ wrap.innerHTML = '<div class="small" style="padding:12px">Нет доступных заказов</div>'; return; }
   items.forEach(o=>{
     const card = document.createElement('div'); card.className='card';
-    const left = document.createElement('div'); left.className='left'; const av = document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||'?', av); left.appendChild(av);
-    const body = document.createElement('div'); body.className='body';
-    body.innerHTML = `<div class="title">${escapeHtml(o.category)} • ${escapeHtml(o.city)}</div>
-                      <div class="meta">Дедлайн: ${o.datetime.replace('T',' ')} • ₸ ${Number(o.budget).toLocaleString('ru-RU')}</div>
-                      <div class="desc">${escapeHtml(o.desc)}</div>`;
-    const actions = document.createElement('div'); actions.className='card-actions';
-    const bidBtn = document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену';
-    bidBtn.addEventListener('click', ()=> openBidDialog(o.id));
-    actions.appendChild(bidBtn);
-    body.appendChild(actions);
-    card.appendChild(left); card.appendChild(body);
-    wrap.appendChild(card);
-  });
-}
-
-/* My orders for owner */
-function renderMineList(){
-  const wrap = $('mineList'); wrap.innerHTML='';
-  const profile = Store.getProfile();
-  if(!profile){ wrap.innerHTML = '<div class="small" style="padding:12px">Войдите в профиль</div>'; return; }
-  const items = Store.getOrders().filter(o=>o.ownerId===profile.id).sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-  if(!items.length){ wrap.innerHTML = '<div class="small" style="padding:12px">Пока нет заказов</div>'; return; }
-  items.forEach(o=>{
-    const card = document.createElement('div'); card.className='card';
-    const left = document.createElement('div'); left.className='left'; const av = document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||profile.name, av); left.appendChild(av);
-    const body = document.createElement('div'); body.className='body';
-    const bidsCount = (o.bids||[]).length;
-    body.innerHTML = `<div class="title">${escapeHtml(o.category)} • ${escapeHtml(o.city)} ${bidsCount?(' • <span style="color:#ff4d4f;font-weight:800">'+bidsCount+' заявок</span>'):''}</div>
-                      <div class="meta">Дедлайн: ${o.datetime.replace('T',' ')} • Статус: ${o.status}</div>
-                      <div class="desc">${escapeHtml(o.desc)}</div>`;
-    const actions = document.createElement('div'); actions.className='card-actions';
-    const viewBtn = document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Просмотреть заявки';
-    viewBtn.addEventListener('click', ()=> openBidsModal(o.id));
-    actions.appendChild(viewBtn);
-    body.appendChild(actions);
+    const left = document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||'З', av); left.appendChild(av);
+    const body = document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${esc(o.category)} • ${esc(o.city)} — ₸ ${Number(o.budget).toLocaleString('ru-RU')}</div><div class="small" style="margin-top:6px">Дедлайн: ${o.datetime.replace('T',' ')}</div><div style="margin-top:8px">${esc(o.desc)}</div>`;
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
+    const bidBtn = document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену'; bidBtn.addEventListener('click', ()=> openBidDialog(o.id));
+    actions.appendChild(bidBtn); body.appendChild(actions);
     card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
 
-/* Bids dialog for owner (shows accept/decline buttons) */
+/* render My orders (owner) */
+function renderMineList(){
+  const wrap = $('mineList'); wrap.innerHTML='';
+  const profile = Store.getProfile();
+  if(!profile){ wrap.innerHTML = '<div class="small" style="padding:12px">Войдите в профиль</div>'; return; }
+  const items = Store.getOrders().filter(o=>o.ownerId===profile.id);
+  if(!items.length){ wrap.innerHTML = '<div class="small" style="padding:12px">У вас пока нет заказов</div>'; return; }
+  items.forEach(o=>{
+    const card = document.createElement('div'); card.className='card';
+    const left = document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||profile.name, av); left.appendChild(av);
+    const body = document.createElement('div'); body.style.flex='1';
+    const bidsCount = (o.bids||[]).length;
+    body.innerHTML = `<div style="font-weight:800">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff4d4f">'+bidsCount+' заявок</span>'):''}</div><div class="small" style="margin-top:6px">Дедлайн: ${o.datetime.replace('T',' ')}</div><div style="margin-top:8px">${esc(o.desc)}</div>`;
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
+    const viewBtn = document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Просмотреть заявки'; viewBtn.addEventListener('click', ()=> openBidsModal(o.id));
+    actions.appendChild(viewBtn); body.appendChild(actions);
+    card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
+  });
+}
+
+/* open bids modal for owner (with Accept / Decline) */
 function openBidsModal(orderId){
   const order = Store.getOrders().find(x=>x.id===orderId);
   if(!order) return alert('Заказ не найден');
-  // show bids modal
-  openScreen('bidsModal');
-  const list = $('bidsList'); list.innerHTML = '';
-  const header = document.createElement('div'); header.style.marginBottom='8px'; header.innerHTML = `<div style="font-weight:800">${escapeHtml(order.category)} • ${escapeHtml(order.city)}</div><div class="small">Заказчик: ${escapeHtml(order.ownerName)}</div>`;
-  list.appendChild(header);
+  openScreen('bidsModal'); const list = $('bidsList'); list.innerHTML = '';
+  const header = document.createElement('div'); header.innerHTML = `<div style="font-weight:800">${esc(order.category)} • ${esc(order.city)}</div><div class="small">Заказчик: ${esc(order.ownerName)}</div>`; list.appendChild(header);
   const bids = order.bids || [];
   if(!bids.length){ list.innerHTML += '<div class="small" style="padding:12px">Заявок пока нет</div>'; return; }
   bids.forEach((b, idx)=>{
     const row = document.createElement('div'); row.className='card';
-    const left = document.createElement('div'); left.className='left'; const av = document.createElement('div'); av.className='avatar'; avatarStyle(b.name||'?', av); left.appendChild(av);
-    const body = document.createElement('div'); body.className='body';
-    body.innerHTML = `<div class="title">${escapeHtml(b.name)} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div><div class="meta">Предложено: ${new Date(b.createdAt||'').toLocaleString()}</div><div class="desc">${escapeHtml(b.comment||'')}</div>`;
-    const actions = document.createElement('div'); actions.className='card-actions';
+    const left = document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(b.name||'И', av); left.appendChild(av);
+    const body = document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${esc(b.name)} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div><div class="small" style="margin-top:6px">Предложено: ${new Date(b.createdAt||'').toLocaleString()}</div><div style="margin-top:8px">${esc(b.comment||'')}</div>`;
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
     const accept = document.createElement('button'); accept.className='btn primary'; accept.textContent='Принять';
     accept.addEventListener('click', ()=> {
-      // accept: set order assigned, change status, create chat, notify performer
+      // accept: set assigned, status, create chat, notify performer + owner
       Store.updateOrder(orderId, (o)=>{ o.status='in_progress'; o.assigned = { performerId: b.performerId, performerName: b.name, price: b.price }; });
-      const chat = { id: 'chat_'+uid(), orderId: orderId, title: `${order.category} • ${order.city}`, participants: [order.ownerId, b.performerId], meta:{ownerName: order.ownerName, performerName: b.name}, messages: [{from:'system', text: `Чат создан по заказу`, ts: nowISO()}] };
+      const chat = { id: 'chat_'+uid(), orderId, title: `${order.category} • ${order.city}`, participants: [order.ownerId, b.performerId], meta:{ownerName: order.ownerName, performerName: b.name}, messages:[{from:'system', text:`Чат создан по заказу`, ts: nowISO()}] };
       Store.addChat(chat);
-      // create notifications
-      const notifOwner = { id:'n_'+uid(), type:'accepted', title:'Вы приняли заявку', body:`Вы приняли ${b.name} — открылся чат`, orderId:orderId, chatId:chat.id, ts:nowISO() };
-      const notifPerformer = { id:'n_'+uid(), type:'accepted', title:'Ваша заявка принята', body:`Владелец принял вашу заявку — открылся чат`, orderId:orderId, chatId:chat.id, ts:nowISO() };
-      const arr = Store.getNotifs(); arr.unshift(notifOwner); arr.unshift(notifPerformer); Store.setNotifs(arr);
-      refreshNotificationsBadge();
-      closeScreen('bidsModal');
-      openScreen('messengerScreen');
-      renderChats();
-      setTimeout(()=> openChat(chat.id), 220);
-      renderMineList();
-      renderFindList();
+      // notifications
+      const notifPerformer = { id:'n_'+uid(), type:'accepted', title:'Ваша заявка принята', body:`Заказчик принял ваше предложение — открылся чат`, orderId, chatId:chat.id, ts: nowISO() };
+      const notifOwner = { id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открылся чат с ${b.name}`, orderId, chatId:chat.id, ts: nowISO() };
+      const arr = Store.getNotifs(); arr.unshift(notifPerformer); arr.unshift(notifOwner); Store.setNotifs(arr);
+      refreshNotifBadge();
+      closeScreen('bidsModal'); openScreen('messengerScreen'); renderChats(); setTimeout(()=> openChat(chat.id), 220);
+      renderMineList(); renderFindList();
     });
     const decline = document.createElement('button'); decline.className='btn'; decline.textContent='Отказать';
     decline.addEventListener('click', ()=> {
-      // remove the bid
       Store.updateOrder(orderId, (o)=>{ o.bids = (o.bids||[]).filter((_,i)=>i!==idx); });
-      openBidsModal(orderId);
-      renderMineList();
+      openBidsModal(orderId); renderMineList();
     });
-    actions.appendChild(accept); actions.appendChild(decline);
-    body.appendChild(actions);
-    row.appendChild(left); row.appendChild(body);
-    list.appendChild(row);
+    actions.appendChild(accept); actions.appendChild(decline); body.appendChild(actions);
+    row.appendChild(left); row.appendChild(body); list.appendChild(row);
   });
 }
 
-/* Bid dialog for performer (only creates a bid) */
+/* open bid dialog (performer) */
 function openBidDialog(orderId){
-  const price = prompt('Ваша цена (₸):','1000');
-  if(!price) return;
+  const price = prompt('Ваша цена (₸):','1000'); if(!price) return;
   const comment = prompt('Комментарий (сроки, детали):','Готов выполнить за 2 часа') || '';
   const profile = Store.getProfile() || { id: 'u_guest_'+uid(), name: 'Исполнитель' };
   Store.updateOrder(orderId, (o)=>{ if(!Array.isArray(o.bids)) o.bids=[]; o.bids.push({ price: Number(price), name: profile.name || profile.login, performerId: profile.id, comment, createdAt: nowISO() }); });
-  // create notification for order owner
+  // notify owner
   const order = Store.getOrders().find(x=>x.id===orderId);
   if(order){
     const notif = { id:'n_'+uid(), type:'bid', title:'Новое предложение', body:`На ваш заказ "${order.category}" предложили цену ${price}₸`, orderId: order.id, ts: nowISO() };
     const arr = Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr);
-    refreshNotificationsBadge();
+    refreshNotifBadge();
   }
   alert('Предложение отправлено');
   renderFindList();
 }
 
-/* Chats / Messenger */
+/* Chats */
 function renderChats(){
   const wrap = $('chatsList'); wrap.innerHTML='';
   const chats = Store.getChats();
   if(!chats.length){ wrap.innerHTML = '<div class="small" style="padding:12px">Пока нет чатов</div>'; return; }
   chats.forEach(c=>{
     const node = document.createElement('div'); node.className='card'; node.style.cursor='pointer';
-    const left = document.createElement('div'); left.className='left'; const av = document.createElement('div'); av.className='avatar'; avatarStyle(c.meta?.performerName||c.meta?.ownerName||'Ч', av); left.appendChild(av);
-    const body = document.createElement('div'); body.className='body'; body.innerHTML = `<div class="title">${escapeHtml(c.title)}</div><div class="meta small">${escapeHtml(c.meta?.performerName||'')}</div>`;
-    node.appendChild(left); node.appendChild(body);
-    node.addEventListener('click', ()=> openChat(c.id));
-    wrap.appendChild(node);
+    const left = document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(c.meta?.performerName||c.meta?.ownerName||'Ч', av); left.appendChild(av);
+    const body = document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${esc(c.title)}</div><div class="small" style="margin-top:6px">${esc(c.meta?.performerName||'')}</div>`;
+    node.appendChild(left); node.appendChild(body); node.addEventListener('click', ()=> openChat(c.id)); wrap.appendChild(node);
   });
 }
 
 function openChat(chatId){
-  const chat = Store.getChats().find(c=>c.id===chatId);
-  if(!chat) return alert('Чат не найден');
+  const chat = Store.getChats().find(c=>c.id===chatId); if(!chat) return alert('Чат не найден');
   openScreen('messengerScreen');
-  $('chatTitle').textContent = chat.title;
-  avatarStyle(chat.meta?.performerName||chat.meta?.ownerName||'Ч', $('chatAvatar'));
-  $('chatSub').textContent = `Заказ: ${chat.orderId || '—'}`;
+  $('chatTitle').textContent = chat.title; $('chatSub').textContent = `Заказ: ${chat.orderId || '—'}`; avatarStyle(chat.meta?.performerName||chat.meta?.ownerName||'Ч', $('chatAvatar'));
   const msgs = $('messages'); msgs.innerHTML = '';
   (chat.messages||[]).forEach(m=>{
     const d = document.createElement('div'); d.style.marginBottom='8px';
-    if(m.from==='system'){ d.style.textAlign='center'; d.className='small'; d.textContent = m.text; }
-    else if(m.from==='me'){ d.style.textAlign='right'; d.innerHTML = `<div style="display:inline-block; background:var(--primary-yellow); padding:8px 12px; border-radius:8px;">${escapeHtml(m.text)}</div>`; }
-    else { d.innerHTML = `<div style="display:inline-block; background:#f1f1f1; padding:8px 12px; border-radius:8px;">${escapeHtml(m.text)}</div>`; }
+    if(m.from==='system'){ d.className='small'; d.style.textAlign='center'; d.textContent = m.text; }
+    else if(m.from==='me'){ d.style.textAlign='right'; d.innerHTML = `<div style="display:inline-block; background:var(--gold); padding:8px 12px; border-radius:8px;">${esc(m.text)}</div>`; }
+    else { d.innerHTML = `<div style="display:inline-block; background:#f1f1f1; padding:8px 12px; border-radius:8px;">${esc(m.text)}</div>`; }
     msgs.appendChild(d);
   });
   msgs.scrollTop = msgs.scrollHeight;
-
-  // send message
   $('sendMsgBtn').onclick = ()=>{
     const v = $('messageInput').value.trim(); if(!v) return;
     Store.updateChat(chatId, (c)=>{ c.messages.push({ from:'me', text: v, ts: nowISO() }); });
-    $('messageInput').value = '';
-    openChat(chatId);
+    $('messageInput').value = ''; openChat(chatId);
   };
 }
 
-/* Ads handling */
+/* Ads (announcements) */
 function renderAds(){
-  const ads = Store.getAds();
-  const wrap = $('adsList'); wrap.innerHTML = '';
-  if(!ads.length){ wrap.innerHTML = '<div class="small" style="padding:12px">Объявлений пока нет</div>'; }
+  const ads = Store.getAds(); const wrap = $('adsList'); wrap.innerHTML=''; if(!ads.length) wrap.innerHTML = '<div class="small" style="padding:12px">Объявлений пока нет</div>';
   ads.forEach(ad=>{
     const card = document.createElement('div'); card.className='card';
-    const left = document.createElement('div'); left.className='left'; const av = document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||'?', av); left.appendChild(av);
-    const body = document.createElement('div'); body.className='body';
-    body.innerHTML = `<div class="title">${escapeHtml(ad.title)}</div><div class="meta">${escapeHtml(ad.price?('₸ '+ad.price):'')}</div><div class="desc">${escapeHtml(ad.desc)}</div>`;
-    const actions = document.createElement('div'); actions.className='card-actions';
-    const contactBtn = document.createElement('button'); contactBtn.className='btn'; contactBtn.textContent='Связаться';
-    contactBtn.addEventListener('click', ()=>{
-      // create chat between current user and ad.authorId
+    const left = document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||'?', av); left.appendChild(av);
+    const body = document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${esc(ad.title)}</div><div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div><div style="margin-top:8px">${esc(ad.desc)}</div>`;
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
+    const contactBtn = document.createElement('button'); contactBtn.className='btn'; contactBtn.textContent='Связаться'; contactBtn.addEventListener('click', ()=> {
       const profile = Store.getProfile(); if(!profile) return alert('Войдите чтобы связаться');
-      const chat = { id:'chat_'+uid(), orderId: null, title: `Объявление: ${ad.title}`, participants: [profile.id, ad.authorId], meta: { ownerName: profile.name, performerName: ad.authorName }, messages: [{ from:'system', text:`Чат создан по объявлению "${ad.title}"`, ts: nowISO() }] };
-      Store.addChat(chat);
+      const chat = { id:'chat_'+uid(), orderId:null, title:`Объявление: ${ad.title}`, participants:[profile.id, ad.authorId], meta:{ ownerName: profile.name, performerName: ad.authorName }, messages:[{from:'system', text:`Чат создан по объявлению "${ad.title}"`, ts: nowISO()}] }; Store.addChat(chat);
       // notify ad author
-      const notif = { id:'n_'+uid(), type:'admsg', title:'Кто-то заинтересовался объявлением', body:`Пользователь ${profile.name} пишет по объявлению "${ad.title}"`, adId: ad.id, ts: nowISO() };
-      const arr = Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr);
-      refreshNotificationsBadge();
+      const notif = { id:'n_'+uid(), type:'admsg', title:'Кто-то заинтересовался объявлением', body:`Пользователь ${profile.name} написал по вашему объявлению "${ad.title}"`, adId: ad.id, ts: nowISO() };
+      const arr = Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge();
       openScreen('messengerScreen'); renderChats(); setTimeout(()=> openChat(chat.id), 200);
     });
-    const phoneBtn = document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать контакт';
-    phoneBtn.addEventListener('click', ()=> {
-      if(ad.phone) alert('Телефон: ' + ad.phone);
-      else alert('Телефон не указан');
-    });
-    actions.appendChild(contactBtn); actions.appendChild(phoneBtn);
-    body.appendChild(actions);
-    card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
+    const phoneBtn = document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать контакт'; phoneBtn.addEventListener('click', ()=> alert(ad.phone ? ('Телефон: '+ad.phone) : 'Телефон не указан'));
+    actions.appendChild(contactBtn); actions.appendChild(phoneBtn); body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 
   // my ads
-  const myAdsWrap = $('myAdsList'); myAdsWrap.innerHTML = '';
-  const profile = Store.getProfile();
-  if(profile){
-    const myAds = ads.filter(a=>a.authorId === profile.id);
-    if(!myAds.length) myAdsWrap.innerHTML = '<div class="small" style="padding:12px">У вас ещё нет объявлений</div>';
-    myAds.forEach(ad=>{
-      const card = document.createElement('div'); card.className='card';
-      const left = document.createElement('div'); left.className='left'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||profile.name, av); left.appendChild(av);
-      const body = document.createElement('div'); body.className='body';
-      body.innerHTML = `<div class="title">${escapeHtml(ad.title)}</div><div class="meta">${escapeHtml(ad.price?('₸ '+ad.price):'')}</div><div class="desc">${escapeHtml(ad.desc)}</div>`;
-      const actions = document.createElement('div'); actions.className='card-actions';
-      const edit = document.createElement('button'); edit.className='btn'; edit.textContent='Редактировать'; edit.addEventListener('click', ()=> editAd(ad.id));
-      const del = document.createElement('button'); del.className='btn'; del.textContent='Удалить'; del.addEventListener('click', ()=> { if(confirm('Удалить объявление?')){ const arr=Store.getAds().filter(x=>x.id!==ad.id); Store.setAds(arr); renderAds(); }});
-      actions.appendChild(edit); actions.appendChild(del);
-      body.appendChild(actions);
-      card.appendChild(left); card.appendChild(body); myAdsWrap.appendChild(card);
-    });
-  } else {
-    myAdsWrap.innerHTML = '<div class="small" style="padding:12px">Войдите, чтобы размещать объявления</div>';
-  }
+  const myAdsWrap = $('myAdsList'); myAdsWrap.innerHTML=''; const profile = Store.getProfile();
+  if(profile){ const my = Store.getAds().filter(a=>a.authorId === profile.id); if(!my.length) myAdsWrap.innerHTML = '<div class="small" style="padding:12px">У вас ещё нет объявлений</div>'; my.forEach(ad=>{ const card=document.createElement('div'); card.className='card'; const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||profile.name, av); left.appendChild(av); const body=document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${esc(ad.title)}</div><div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div><div style="margin-top:8px">${esc(ad.desc)}</div>`; const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px'; const edit=document.createElement('button'); edit.className='btn'; edit.textContent='Редактировать'; edit.onclick = ()=> editAd(ad.id); const del=document.createElement('button'); del.className='btn'; del.textContent='Удалить'; del.onclick = ()=> { if(confirm('Удалить объявление?')){ Store.setAds(Store.getAds().filter(x=>x.id!==ad.id)); renderAds(); } }; actions.appendChild(edit); actions.appendChild(del); body.appendChild(actions); card.appendChild(left); card.appendChild(body); myAdsWrap.appendChild(card); }); }
+  else myAdsWrap.innerHTML = '<div class="small" style="padding:12px">Войдите, чтобы размещать объявления</div>';
 }
 
-/* create ad */
-$('createAdBtn').addEventListener('click', ()=>{
-  const profile = Store.getProfile(); if(!profile) return alert('Только для зарегистрированных исполнителей');
+/* ad create & edit */
+$('createAdBtn').addEventListener('click', ()=> {
+  const profile = Store.getProfile(); if(!profile) return alert('Только зарегистрированные исполнители могут создавать объявления');
   openScreen('adCreateModal');
 });
-$('adForm').addEventListener('submit', (e)=>{
+$('adForm').addEventListener('submit', (e)=> {
   e.preventDefault();
   const title = $('adTitle').value.trim(); const desc = $('adDesc').value.trim(); const phone = $('adPhone').value.trim(); const price = $('adPrice').value.trim();
   if(!title) return alert('Введите название');
-  const profile = Store.getProfile();
-  const ad = { id:'ad_'+uid(), title, desc, phone, price, authorId: profile.id, authorName: profile.name || profile.login, createdAt: nowISO() };
+  const profile = Store.getProfile(); const ad = { id:'ad_'+uid(), title, desc, phone, price, authorId: profile.id, authorName: profile.name || profile.login, createdAt: nowISO() };
   Store.addAd(ad); alert('Объявление создано'); closeScreen('adCreateModal'); renderAds();
 });
-
-/* edit ad (open create modal prefilled) */
 function editAd(adId){
   const ad = Store.getAds().find(a=>a.id===adId); if(!ad) return;
-  openScreen('adCreateModal');
-  $('adTitle').value = ad.title; $('adDesc').value = ad.desc; $('adPhone').value = ad.phone||''; $('adPrice').value = ad.price||'';
-  // replace submit to update
-  $('adForm').onsubmit = (e)=>{
-    e.preventDefault();
-    ad.title = $('adTitle').value.trim(); ad.desc = $('adDesc').value.trim(); ad.phone = $('adPhone').value.trim(); ad.price = $('adPrice').value.trim();
-    const arr = Store.getAds().map(x=> x.id===ad.id ? ad : x); Store.setAds(arr);
-    alert('Объявление обновлено'); $('adForm').onsubmit = null; closeScreen('adCreateModal'); renderAds();
-  };
+  openScreen('adCreateModal'); $('adTitle').value = ad.title; $('adDesc').value = ad.desc; $('adPhone').value = ad.phone||''; $('adPrice').value = ad.price||'';
+  $('adForm').onsubmit = (ev)=>{ ev.preventDefault(); ad.title = $('adTitle').value.trim(); ad.desc = $('adDesc').value.trim(); ad.phone = $('adPhone').value.trim(); ad.price = $('adPrice').value.trim(); Store.setAds(Store.getAds().map(x=>x.id===ad.id?ad:x)); alert('Объявление обновлено'); $('adForm').onsubmit = null; closeScreen('adCreateModal'); renderAds(); };
 }
 
-/* Chats storage helper */
-Store.updateChat = function(chatId, fn){
-  const chats = this.getChats(); const i = chats.findIndex(x=>x.id===chatId);
-  if(i>-1){ fn(chats[i]); this.setChats(chats); } return chats;
-};
+/* render notifications UI */
+$('openNotifications').addEventListener('click', ()=> { openScreen('notificationsModal'); renderNotifs(); });
+$('clearNotifications').addEventListener('click', ()=> { if(confirm('Очистить все уведомления?')){ Store.setNotifs([]); renderNotifs(); refreshNotifBadge(); } });
 
-/* Render main flows */
-refs.btnOrder.addEventListener('click', ()=> {
-  const role = Store.getRole()||'user';
-  if(role!=='user'){ alert('Функция доступна только для Пользователей (смените роль в настройках)'); return; }
+/* settings open + role switch with logo animation */
+$('openSettings').addEventListener('click', ()=> openScreen('settingsModal'));
+$('setRoleUser').addEventListener('click', ()=> { animateLogoAndApplyRole('user'); closeScreen('settingsModal'); });
+$('setRoleWorker').addEventListener('click', ()=> { animateLogoAndApplyRole('worker'); closeScreen('settingsModal'); });
+
+/* profile open & logout */
+$('openProfile').addEventListener('click', ()=> { openScreen('profileScreen'); renderProfile(); closeScreen('settingsModal'); });
+function renderProfile(){
+  const wrap = $('profileWrap'); wrap.innerHTML = ''; const p = Store.getProfile();
+  if(!p){ wrap.innerHTML = '<div class="small">Сначала войдите</div>'; return; }
+  const card = document.createElement('div'); card.className='card'; const left = document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(p.name||p.login, av); left.appendChild(av);
+  const body = document.createElement('div'); body.style.flex='1'; body.innerHTML = `<div style="font-weight:800">${esc(p.name||p.login)}</div><div class="small" style="margin-top:6px">${esc(p.login||'')}</div>`;
+  const actions = document.createElement('div'); actions.style.marginTop='10px'; const logout = document.createElement('button'); logout.className='btn'; logout.textContent='Выйти'; logout.addEventListener('click', ()=> { if(confirm('Выйти из аккаунта?')){ localStorage.removeItem(LS_PROFILE); closeScreen('profileScreen'); openScreen('authScreen'); }});
+  actions.appendChild(logout); body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
+}
+
+/* create order */
+document.querySelectorAll('#createTabs .tab').forEach(t => t.addEventListener('click', ()=> { document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); $('selectedCategory').textContent = t.dataset.val || t.textContent; }));
+
+document.getElementById('createForm').addEventListener('submit', (e)=> {
+  e.preventDefault();
+  const profile = Store.getProfile(); if(!profile){ alert('Сначала войдите'); openScreen('authScreen'); return; }
+  const category = document.querySelector('#createTabs .tab.active')?.dataset.val || 'Другое';
+  const desc = $('c-desc').value.trim(); const budget = Number($('c-budget').value||0); const datetime = $('c-datetime').value||'';
+  if(!desc || !datetime){ alert('Заполните описание и дату'); return; }
+  const order = { id:'o_'+uid(), category, desc, budget, datetime, city: Store.getCity()||'—', ownerId: profile.id, ownerName: profile.name||profile.login, bids:[], status:'open', createdAt:nowISO() };
+  Store.addOrder(order);
+  // add notif for owner (self)
+  const notif = { id:'n_'+uid(), type:'created', title:'Заказ создан', body: `Ваш заказ "${category}" опубликован`, orderId:order.id, ts: nowISO() };
+  const arr = Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge();
+  closeScreen('createScreen'); renderMineList(); renderFindList(); alert('Заказ опубликован');
+});
+
+/* initial rendering & profile/login flow */
+function initial(){
+  // ensure role default
+  if(!Store.getRole()) Store.setRole('user');
+  showRoleLabel(); updateCityLabel(); refreshNotifBadge();
+  applyRoleUI(); renderFindList(); renderMineList(); renderAds(); renderNotifs(); renderChats();
+  // sample: if no profile -> open auth
+  if(!Store.getProfile()) openScreen('authScreen');
+}
+initial();
+
+/* auth */
+document.getElementById('authForm').addEventListener('submit', (e)=> {
+  e.preventDefault(); const login = $('authLogin').value.trim(); const pass = $('authPass').value.trim(); if(!login||!pass) return alert('Введите данные');
+  const prof = { id:'u_'+uid(), login, name: login.split('@')[0]||login, createdAt: nowISO() }; Store.setProfile(prof);
+  alert('Вход выполнен'); closeScreen('authScreen'); renderProfile(); initial();
+});
+document.getElementById('registerBtn').addEventListener('click', ()=> { const email = prompt('Email или телефон для регистрации:','user@example.com'); if(!email) return; const prof = { id:'u_'+uid(), login: email, name: email.split('@')[0]||email, createdAt: nowISO() }; Store.setProfile(prof); alert('Зарегистрировано'); closeScreen('authScreen'); initial(); });
+
+/* buttons wiring */
+$('btnOrder').addEventListener('click', ()=> {
+  const role = Store.getRole()||'user'; if(role!=='user'){ alert('Эта функция доступна только Пользователю. Смените роль в Настройках.'); return; }
   openScreen('createScreen');
 });
-refs.btnReserve.addEventListener('click', ()=> alert('Функция скоро будет доступна'));
-refs.btnAds.addEventListener('click', ()=> { openScreen('adsScreen'); renderAds(); });
+$('btnFind').addEventListener('click', ()=> { const role = Store.getRole()||'user'; if(role!=='worker'){ alert('Доступно только исполнителю.'); return; } openScreen('findScreen'); renderFindList(); });
+$('btnMessenger').addEventListener('click', ()=> { openScreen('messengerScreen'); renderChats(); });
+$('btnWallet').addEventListener('click', ()=> alert('Кошелёк — демо'));
+$('btnMine').addEventListener('click', ()=> { openScreen('mineScreen'); renderMineList(); });
+$('btnAds').addEventListener('click', ()=> { openScreen('adsScreen'); renderAds(); });
 
-refs.btnFind.addEventListener('click', ()=> { const role=Store.getRole()||'user'; if(role!=='worker') return alert('Доступно исполнителям'); openScreen('findScreen'); renderFindList(); });
-refs.btnMessenger.addEventListener('click', ()=> { openScreen('messengerScreen'); renderChats(); });
-refs.btnWallet.addEventListener('click', ()=> alert('Кошелёк (демо)'));
-refs.btnMine.addEventListener('click', ()=> { openScreen('mineScreen'); renderMineList(); });
+/* refresh helpers */
+function renderNotifs(){ renderNotifs = renderNotifs /* noop, uses function above */; /* no-op */ }
 
-/* Notifications modal open */
-$('openNotifications').addEventListener('click', ()=> { openScreen('notificationsModal'); renderNotifs(); });
-$('clearNotifications').addEventListener('click', ()=> { if(confirm('Очистить уведомления?')) clearNotifs(); });
-
-/* Settings */
-$('openSettings').addEventListener('click', ()=> openScreen('settingsModal'));
-$('settingsBack').addEventListener('click', ()=> { closeScreen('settingsModal'); });
-$('setRoleUser').addEventListener('click', ()=> { Store.setRole('user'); closeScreen('settingsModal'); refreshMain(); });
-$('setRoleWorker').addEventListener('click', ()=> { Store.setRole('worker'); closeScreen('settingsModal'); refreshMain(); });
-document.querySelectorAll('.theme-btn').forEach(b=> b.addEventListener('click', (e)=> alert('Темы: пока демо - позже добавлю')));
-document.querySelectorAll('.font-btn').forEach(b=> b.addEventListener('click', (e)=> {
-  const key = e.currentTarget.dataset.font; if(key==='small') document.documentElement.style.setProperty('--ui-font-size','13px'); if(key==='normal') document.documentElement.style.setProperty('--ui-font-size','14px'); if(key==='large') document.documentElement.style.setProperty('--ui-font-size','16px');
-}));
-
-/* Create order submission */
-$('createForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const profile = Store.getProfile(); if(!profile) { alert('Войдите в профиль'); openScreen('authScreen'); return; }
-  const category = document.querySelector('#createTabs .tab.active')?.dataset.val || 'Другое';
-  const desc = $('c-desc').value.trim(); const budget = Number($('c-budget').value||0); const datetime = $('c-datetime').value || '';
-  if(!desc || !datetime){ alert('Заполните описание и дату'); return; }
-  const order = { id:'o_'+uid(), category, desc, budget, datetime, city: Store.getCity()||'—', ownerId: profile.id, ownerName: profile.name||profile.login, bids:[], status:'open', createdAt: nowISO() };
-  Store.addOrder(order);
-  // notify owner (self)
-  pushNotif({ id:'n_'+uid(), type:'created', title:'Заказ создан', body: `Ваш заказ "${category}" опубликован`, orderId: order.id, ts: nowISO() });
-  closeScreen('createScreen');
-  renderMineList(); renderFindList(); refreshMain();
-});
-
-/* Auth form simple */
-$('authForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const login = $('authLogin').value.trim(); const pass = $('authPass').value.trim();
-  if(!login||!pass) return alert('Введите данные');
-  const prof = { id:'u_'+uid(), login, name: login.split('@')[0] || login, createdAt: nowISO() };
-  Store.setProfile(prof); alert('Вход выполнен'); closeScreen('authScreen'); refreshMain();
-});
-$('registerBtn').addEventListener('click', ()=> { const email = prompt('Email или телефон для регистрации:','user@example.com'); if(!email) return; const prof = { id:'u_'+uid(), login: email, name: email.split('@')[0]||email, createdAt: nowISO() }; Store.setProfile(prof); alert('Зарегистрировано'); closeScreen('authScreen'); refreshMain(); });
-
-/* Small helpers to populate tabs and extra fields */
-document.querySelectorAll('#createTabs .tab').forEach(t => t.addEventListener('click', (e)=> {
-  document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active'); $('selectedCategory').textContent = t.dataset.val || t.textContent;
-}));
-
-/* Render initial UI */
-function init(){
-  // set order note color contrast (dark on yellow)
-  const orderNote = document.getElementById('orderNote'); if(orderNote) orderNote.style.color = '#0b1220';
-  // set default role if missing
-  if(!Store.getRole()) Store.setRole('user');
-  refreshMain();
-}
-init();
-
-/* Expose render functions to screens */
+/* expose some functions for debugging */
 window.renderFindList = renderFindList;
 window.renderMineList = renderMineList;
 window.renderAds = renderAds;
 window.renderChats = renderChats;
 window.openBidsModal = openBidsModal;
 
-/* Extra: when storage changes (other tab), refresh */
-window.addEventListener('storage', ()=> {
-  refreshMain();
-  renderFindList(); renderMineList(); renderAds(); renderChats(); renderNotifs();
-});
 </script>
 </body>
 </html>
