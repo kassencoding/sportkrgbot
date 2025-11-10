@@ -172,7 +172,6 @@ textarea{ min-height:110px; resize:vertical }
       <div class="header-right">
         <div class="controls-row">
           <button id="openNotifications" class="btn btn-with-badge">Уведомления <span id="notifBadge" class="badge-dot" style="display:none">0</span></button>
-          <button id="syncNowBtn" class="btn">Синхр. сейчас</button>
           <button id="openSettings" class="btn">Настройки</button>
         </div>
       </div>
@@ -352,7 +351,7 @@ textarea{ min-height:110px; resize:vertical }
     <div style="display:flex; gap:8px; margin-top:12px"><button id="clearNotifications" class="btn">Очистить</button></div>
   </div></section>
 
-  <!-- ===== SETTINGS ===== -->
+  <!-- ===== SETTINGS (sync здесь) ===== -->
   <section id="settingsModal" class="screen"><div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <h3 style="margin:0">Настройки</h3>
@@ -378,7 +377,10 @@ textarea{ min-height:110px; resize:vertical }
         <button id="saveCityBtn" class="btn">Сохранить</button>
       </div>
 
-      <div style="margin-top:12px"><button id="openProfile" class="btn">Профиль</button></div>
+      <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="syncNowBtn" class="btn">Синхронизировать сейчас</button>
+        <button id="openProfile" class="btn">Профиль</button>
+      </div>
     </div>
   </div></section>
 
@@ -594,7 +596,7 @@ function openBidsModal(orderId){
     body.innerHTML=`<div style="font-weight:900">${esc(b.name)} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div>
                     <div class="small" style="margin-top:6px">Предложено: ${new Date(b.createdAt||'').toLocaleString()}</div>
                     <div style="margin-top:8px; white-space:pre-wrap">${esc(b.comment||'')}</div>`;
-    const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop:'10px';
+    const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
     const accept=document.createElement('button'); accept.className='btn primary'; accept.textContent='Принять';
     accept.addEventListener('click',()=>{
       Store.updateOrder(orderId,o=>{o.status='in_progress'; o.assigned={performerId:b.performerId, performerName:b.name, price:b.price};});
@@ -711,7 +713,7 @@ function sendChatMessage(){
 /* =================== ADS =================== */
 function renderAds(){
   const ads=Store.getAds(); const wrap=$('adsList'); if(!wrap) return; wrap.innerHTML='';
-  if(!ads.length) wrap.innerHTML='<div class="small" style="padding:12px">Объявлений нет</div>';
+  if(!ads.length){ wrap.innerHTML='<div class="small" style="padding:12px">Объявлений нет</div>'; return; }
   ads.forEach(ad=>{
     const card=document.createElement('div'); card.className='card';
     const left=document.createElement('div'); left.style.flex='0 0 24px';
@@ -720,7 +722,7 @@ function renderAds(){
     body.innerHTML=`<div style="font-weight:900">${esc(ad.title)}</div>
                     <div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div>
                     <div style="margin-top:8px; white-space:pre-wrap">${esc(ad.desc)}</div>`;
-    const actions=document.createElement('div'); actions.style.display='flex'; gap='8px'; actions.style.marginTop='8px';
+    const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
     const contactBtn=document.createElement('button'); contactBtn.className='btn'; contactBtn.textContent='Связаться';
     contactBtn.addEventListener('click',()=>{
       const profile=Store.getProfile()||{id:'u_demo_user', name:'Демо'};
@@ -735,7 +737,8 @@ function renderAds(){
     });
     const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать телефон';
     phoneBtn.addEventListener('click',()=>alert(ad.phone?('Телефон: '+ad.phone):'Телефон не указан'));
-    body.appendChild(contactBtn); body.appendChild(phoneBtn); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
+    actions.appendChild(contactBtn); actions.appendChild(phoneBtn);
+    body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
 function renderMyAds(){
@@ -1049,7 +1052,7 @@ async function loadCloud(){
     cloudCache.ads=Array.isArray(remote.ads)?remote.ads:[];
     cloudCache.cityFeed=remote.cityFeed||{};
 
-    // Приоритет облака: перезаписываем локальные
+    // Приоритет облака
     Store.setOrders(cloudCache.orders);
     Store.setAds(cloudCache.ads);
     localStorage.setItem(LS_CITY_FEED, JSON.stringify(cloudCache.cityFeed));
@@ -1092,7 +1095,6 @@ function initial(){
   updateCityLabel(); refreshNotifBadge();
   applyRoleUI(); renderFindList(); renderMineList(); renderAds(); renderNotifs(); renderChats();
   if(!Store.getProfile()) openScreen('authScreen');
-  // seed один раз если пусто И облако пусто
   if(Store.getOrders().length===0){
     Store.setOrders([
       { id:'o1', category:'Такси', city:'Алматы', budget:1200, datetime:new Date().toISOString().slice(0,16), desc:'Поездка в аэропорт', ownerId:'u_owner1', ownerName:'Айдар', bids:[], status:'open', createdAt: nowISO() },
