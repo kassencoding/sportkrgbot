@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiDCity — Роли, Мессенджер, Чат города</title>
+<title>GiDCity — Роли, Мессенджер, Чат города (обновлено)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== TOKENS / THEMES ===== */
@@ -147,10 +147,12 @@ textarea{ min-height:110px; resize:vertical }
 .chat-badge{ margin-left:auto; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; padding:0 6px; min-width:18px; height:18px; display:flex; align-items:center; justify-content:center }
 .chat-modal-header{ display:flex; gap:10px; align-items:center; }
 .msgs{ margin-top:8px; max-height:58vh; overflow:auto; padding-right:6px }
-.msg-row{ margin-bottom:8px }
+.msg-row{ margin-bottom:10px }
 .msg-me{ text-align:right }
 .msg-me .b{ display:inline-block; background:linear-gradient(90deg, rgba(169,112,255,.9), rgba(50,255,210,.9)); padding:8px 12px; border-radius:10px; color:#0a0f1e; font-weight:700 }
 .msg-other .b{ display:inline-block; background:rgba(255,255,255,.06); border:1px solid rgba(138,165,255,.24); padding:8px 12px; border-radius:10px }
+.msg-system{ text-align:center; margin:10px 0 14px 0; color:var(--text-muted); font-size:13px }
+.msg-img{ display:block; max-width:60%; border-radius:12px; margin-top:6px; border:1px solid rgba(138,165,255,.2) }
 
 /* ===== City Thread ===== */
 .post-card{ background: linear-gradient(180deg, rgba(10,14,30,.86), rgba(6,10,24,.78)); border:1px solid rgba(138,165,255,.22); border-radius:14px; padding:12px; box-shadow: var(--shadow); margin-bottom:10px }
@@ -212,16 +214,15 @@ textarea{ min-height:110px; resize:vertical }
       <div class="tab" data-val="Прочие">Прочие</div>
     </div>
     <form id="createForm" style="margin-top:12px">
-      <div class="form-field"><textarea id="c-desc" class="input" placeholder="закажи любую услугу и мы найдём исполнителя"></textarea></div>
+      <div class="form-field"><textarea id="c-desc" class="input" placeholder="Опишите задачу максимально подробно"></textarea></div>
+      <div id="createExtraFields" class="form-field" style="margin-top:8px"></div>
       <div class="row" style="display:flex; gap:8px; margin-top:8px">
         <div class="col" style="flex:1"><input id="c-budget" class="input" type="number" placeholder="Бюджет (₸)" /></div>
         <div class="col" style="flex:1"><input id="c-datetime" class="input" type="datetime-local" /></div>
       </div>
-      <div id="createExtraFields" class="form-field" style="margin-top:8px"></div>
-      <div style="display:flex; gap:8px; margin-top:12px; align-items:center">
-        <button class="btn primary" id="orderNowBtn" type="submit" style="min-width:160px">ЗАКАЗАТЬ</button>
+      <div style="display:flex; gap:12px; margin-top:14px; align-items:center">
+        <button class="btn primary" id="orderNowBtn" type="submit" style="min-width:200px; padding:14px 18px; font-size:15px">ЗАКАЗАТЬ</button>
         <button class="btn ghost" type="button" onclick="closeScreen('createScreen')">Отмена</button>
-        <div style="margin-left:auto; font-weight:800; color:var(--text-dim)" id="selectedCategory">СПЕЦ. ЗАКАЗ</div>
       </div>
     </form>
   </div>
@@ -256,27 +257,37 @@ textarea{ min-height:110px; resize:vertical }
     <button onclick="closeScreen('chatWindow')" class="btn ghost">Закрыть</button>
   </div>
   <div id="chatWinMsgs" class="msgs"></div>
-  <div style="display:flex; gap:8px; margin-top:8px;">
+  <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+    <label class="btn" title="Прикрепить изображение" style="padding:10px 12px;">
+      📎
+      <input type="file" id="chatAttach" accept="image/*" style="display:none">
+    </label>
     <input id="chatWinInput" class="input" placeholder="Сообщение..." />
     <button id="chatWinSend" class="btn primary" type="button">Отправить</button>
   </div>
 </div></section>
 
 <section id="adsScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Объявления услуг</h3><button onclick="closeScreen('adsScreen')" class="btn ghost">Закрыть</button></div>
-  <div style="margin-top:12px; display:flex; gap:12px;">
-    <div style="flex:1">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-weight:800">Доступные объявления</div>
-        <div><button id="createAdBtn" class="btn">Создать объявление</button></div>
-      </div>
-      <div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div>
-    </div>
-    <div style="width:320px;">
-      <div style="font-weight:800">Мои объявления</div>
-      <div id="myAdsList" class="list" style="margin-top:8px; max-height:60vh; overflow:auto"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Объявления услуг</h3>
+    <div style="display:flex; gap:8px;">
+      <button id="myAdsOpenBtn" class="btn">Мои объявления</button>
+      <button onclick="closeScreen('adsScreen')" class="btn ghost">Закрыть</button>
     </div>
   </div>
+  <div style="margin-top:12px; display:flex; gap:12px; align-items:center; justify-content:space-between;">
+    <div style="font-weight:800">Список объявлений</div>
+    <div><button id="createAdBtn" class="btn">Создать объявление</button></div>
+  </div>
+  <div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div>
+</div></section>
+
+<section id="myAdsScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Мои объявления</h3>
+    <button onclick="closeScreen('myAdsScreen')" class="btn ghost">Закрыть</button>
+  </div>
+  <div id="myAdsList" class="list" style="margin-top:8px; max-height:66vh; overflow:auto"></div>
 </div></section>
 
 <section id="adCreateModal" class="screen"><div class="modal">
@@ -327,7 +338,6 @@ textarea{ min-height:110px; resize:vertical }
   <div id="walletWrap" style="margin-top:12px"></div>
 </div></section>
 
-<!-- Соцсеть: отдельная страница -->
 <section id="cityThreadScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <h3 style="margin:0">Чат твоего города</h3>
@@ -343,7 +353,6 @@ textarea{ min-height:110px; resize:vertical }
   </div>
 </div></section>
 
-<!-- Репост: выбор чата -->
 <section id="repostScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <h3 style="margin:0">Репост в чат</h3>
@@ -445,7 +454,7 @@ function applyRoleUI(){
   const grid=$('menuGrid'); grid.innerHTML='';
   if(role==='user'){ // Сфера услуг
     grid.appendChild(menuBtn('btnOrder','ЗАКАЗАТЬ','Новая заявка','primary'));
-    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЕ УСЛУГ','Объявления исполнителей','violet'));
+    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЕ УСЛУГ','Список объявлений','violet'));
     grid.appendChild(menuBtn('btnReserve','ЗАБРОНИРОВАТЬ','СКОРО','disabled'));
     grid.appendChild(menuBtn('btnCityThread','Чат твоего города','Лента как соцсеть'));
     grid.appendChild(menuBtn('btnMine','Мои заказы','Ваши заявки'));
@@ -453,7 +462,7 @@ function applyRoleUI(){
     grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции'));
   } else { // Подработка
     grid.appendChild(menuBtn('btnFind','Найти заказы','Для исполнителей','primary'));
-    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЕ УСЛУГ','Ваши объявления','violet'));
+    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЕ УСЛУГ','Список объявлений','violet'));
     grid.appendChild(menuBtn('btnCityThread','Чат твоего города','Лента как соцсеть'));
     grid.appendChild(menuBtn('btnMine','Мои заказы','Назначенные/мои'));
     grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги'));
@@ -526,8 +535,7 @@ function renderMineList(){
   if(!items.length){ wrap.innerHTML='<div class="small" style="padding:12px">У вас пока нет заказов</div>'; return; }
   items.forEach(o=>{
     const card=document.createElement('div'); card.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 56px';
-    const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, o.ownerName||displayName(profile), profile.avatarType, profile.avatarData); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, o.ownerName||displayName(profile), profile.avatarType, profile.avatarData); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     const bidsCount=(o.bids||[]).length; const statusLabel=o.status==='open'?'Открыт':o.status==='in_progress'?'В процессе':o.status==='done'?'Завершен':'Отменен';
     body.innerHTML=`<div style="font-weight:800">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div>
@@ -560,7 +568,7 @@ function openBidsModal(orderId){
       const chat={ id:'chat_'+uid(), orderId, title:`${order.category}`, participants:[order.ownerId,b.performerId],
         participantsMeta:{ [order.ownerId]:{id:order.ownerId,name:order.ownerName}, [b.performerId]:{id:b.performerId,name:b.name} },
         meta:{ownerName:order.ownerName, performerName:b.name, context:`${order.category} • ${order.city}`},
-        messages:[{fromId:order.ownerId, text:`Чат создан по заказу`, ts: nowISO()}],
+        messages:[{from:'system', text:`Чат создан по заказу`, ts: nowISO()}],
         unread:{[order.ownerId]:0,[b.performerId]:1} };
       Store.addChat(chat);
       pushNotif({ id:'n_'+uid(), type:'accepted', title:'Ваша заявка принята', body:`Открыт чат по заказу "${order.category}"`, payload:{chatId:chat.id, orderId}, ts:nowISO() });
@@ -621,10 +629,10 @@ function renderChats(){
 }
 
 /* ===== CHAT WINDOW (modal) ===== */
-let __currentChatId=null;
+let __currentChatId=null, __attachDataUrl=null;
 function openChatWindow(chatId){
   const chat=Store.getChats().find(c=>c.id===chatId); if(!chat){ alert('Чат не найден'); return; }
-  __currentChatId=chatId;
+  __currentChatId=chatId; __attachDataUrl=null; $('chatAttach').value='';
   const om=otherMeta(chat);
   renderAvatar($('chatWinAvatar'), om.name, om.avatarType, om.avatarData);
   $('chatWinTitle').textContent=om.name;
@@ -633,13 +641,13 @@ function openChatWindow(chatId){
   const meId=currentUserId();
 
   (chat.messages||[]).forEach(m=>{
+    if(m.from==='system' || m.fromId==='system'){ const d=document.createElement('div'); d.className='msg-system'; d.textContent=m.text; msgsEl.appendChild(d); return; }
     const mine = (m.fromId? m.fromId===meId : m.from==='me');
-    const sys = m.from==='system' || m.fromId==='system';
-    const d=document.createElement('div');
-    if(sys){ d.className='small'; d.style.textAlign='center'; d.textContent=m.text; }
-    else if(mine){ d.className='msg-row msg-me'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; }
-    else { d.className='msg-row msg-other'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; }
-    msgsEl.appendChild(d);
+    const row=document.createElement('div'); row.className='msg-row'+(mine?' msg-me':' msg-other');
+    const bubble=document.createElement('span'); bubble.className='b'; bubble.textContent=m.text||'';
+    row.appendChild(bubble);
+    if(m.image){ const img=document.createElement('img'); img.src=m.image; img.alt='attach'; img.className='msg-img'; if(mine) img.style.marginLeft='auto'; row.appendChild(img); }
+    msgsEl.appendChild(row);
   });
   msgsEl.scrollTop=msgsEl.scrollHeight;
 
@@ -649,21 +657,25 @@ function openChatWindow(chatId){
   // отправка
   $('chatWinSend').onclick=sendChatMessage;
   $('chatWinInput').onkeydown=(e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChatMessage(); } };
+  $('chatAttach').onchange=(e)=>{
+    const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __attachDataUrl=r.result; alert('Изображение прикреплено'); }; r.readAsDataURL(f);
+  };
 
   openScreen('chatWindow');
 }
 function sendChatMessage(){
-  const input=$('chatWinInput'); const v=input.value.trim(); if(!v || !__currentChatId) return;
+  const input=$('chatWinInput'); const v=input.value.trim(); if(!v && !__attachDataUrl || !__currentChatId) return;
   const me=currentUser()||{id:'u_demo_user', name:'Вы'};
-  const meId=me.id; const meName=displayName(me);
+  const meId=me.id;
   Store.updateChat(__currentChatId,c=>{
     c.participantsMeta||(c.participantsMeta={}); c.participantsMeta[meId]=me;
-    c.messages.push({fromId:meId, text:v, ts: nowISO()});
+    c.messages.push({fromId:meId, text:v, image: __attachDataUrl||null, ts: nowISO()});
     const otherId=(c.participants||[]).find(p=>p!==meId);
     if(otherId){ c.unread||(c.unread={}); c.unread[otherId]=(c.unread[otherId]||0)+1; }
   });
   pushNotif({ id:'n_'+uid(), type:'message', title:'Новое сообщение', body:`Сообщение в чате "${chatSubtitle(Store.getChats().find(c=>c.id===__currentChatId)||{})}"`, payload:{chatId:__currentChatId}, ts:nowISO() });
-  input.value=''; openChatWindow(__currentChatId); // перерисовать окно
+  input.value=''; __attachDataUrl=null; $('chatAttach').value='';
+  openChatWindow(__currentChatId); // перерисовать окно
   renderChats(); // обновить бейджи
 }
 
@@ -682,7 +694,7 @@ function renderAds(){
       const chat={ id:'chat_'+uid(), orderId:null, title:`Объявление: ${ad.title}`, participants:[profile.id, ad.authorId||'u_ad_owner'],
         participantsMeta:{ [profile.id]:profile, [ad.authorId||'u_ad_owner']:{id:ad.authorId||'u_ad_owner', name:ad.authorName||'Исполнитель', avatarType:ad.authorAvatarType, avatarData:ad.authorAvatarData } },
         meta:{ ownerName:displayName(profile), performerName:ad.authorName||'Исполнитель', context:`Объявление: ${ad.title}` },
-        messages:[{fromId:profile.id, text:`Чат создан по объявлению "${ad.title}"`, ts:nowISO()}],
+        messages:[{from:'system', text:`Чат создан по объявлению`, ts:nowISO()}],
         unread:{[profile.id]:0,[ad.authorId||'u_ad_owner']:1} };
       Store.addChat(chat);
       pushNotif({ id:'n_'+uid(), type:'admsg', title:'Новый контакт по объявлению', body:`Поступило сообщение по "${ad.title}"`, payload:{chatId:chat.id, adId:ad.id}, ts:nowISO() });
@@ -691,24 +703,27 @@ function renderAds(){
     const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать контакт'; phoneBtn.addEventListener('click',()=>alert(ad.phone?('Телефон: '+ad.phone):'Телефон не указан'));
     actions.appendChild(contactBtn); actions.appendChild(phoneBtn); body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
-
-  const myAdsWrap=$('myAdsList'); myAdsWrap.innerHTML=''; const profile=Store.getProfile();
-  if(profile){
-    const my=Store.getAds().filter(a=>a.authorId===profile.id);
-    if(!my.length) myAdsWrap.innerHTML='<div class="small" style="padding:12px">У вас ещё нет объявлений</div>';
-    my.forEach(ad=>{
-      const card=document.createElement('div'); card.className='card';
-      const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, ad.authorName||displayName(profile), profile.avatarType, profile.avatarData); left.appendChild(av);
-      const body=document.createElement('div'); body.style.flex='1';
-      body.innerHTML=`<div style="font-weight:800">${esc(ad.title)}</div><div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div><div style="margin-top:8px">${esc(ad.desc)}</div>`;
-      const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
-      const edit=document.createElement('button'); edit.className='btn'; edit.textContent='Редактировать'; edit.onclick=()=>editAd(ad.id);
-      const del=document.createElement('button'); del.className='btn'; del.textContent='Удалить'; del.onclick=()=>{ if(confirm('Удалить объявление?')){ Store.setAds(Store.getAds().filter(x=>x.id!==ad.id)); renderAds(); } };
-      actions.appendChild(edit); actions.appendChild(del); body.appendChild(actions);
-      card.appendChild(left); card.appendChild(body); myAdsWrap.appendChild(card);
-    });
-  } else myAdsWrap.innerHTML='<div class="small" style="padding:12px">Войдите, чтобы размещать объявления</div>';
 }
+
+function renderMyAds(){
+  const myAdsWrap=$('myAdsList'); myAdsWrap.innerHTML=''; const profile=Store.getProfile();
+  if(!profile){ myAdsWrap.innerHTML='<div class="small" style="padding:12px">Войдите, чтобы видеть свои объявления</div>'; return; }
+  const my=Store.getAds().filter(a=>a.authorId===profile.id);
+  if(!my.length){ myAdsWrap.innerHTML='<div class="small" style="padding:12px">У вас ещё нет объявлений</div>'; return; }
+  my.forEach(ad=>{
+    const card=document.createElement('div'); card.className='card';
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, ad.authorName||displayName(profile), profile.avatarType, profile.avatarData); left.appendChild(av);
+    const body=document.createElement('div'); body.style.flex='1';
+    body.innerHTML=`<div style="font-weight:800">${esc(ad.title)}</div><div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div><div style="margin-top:8px">${esc(ad.desc)}</div>`;
+    const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
+    const edit=document.createElement('button'); edit.className='btn'; edit.textContent='Редактировать'; edit.onclick=()=>editAd(ad.id);
+    const del=document.createElement('button'); del.className='btn'; del.textContent='Удалить'; del.onclick=()=>{ if(confirm('Удалить объявление?')){ Store.setAds(Store.getAds().filter(x=>x.id!==ad.id)); renderMyAds(); } };
+    actions.appendChild(edit); actions.appendChild(del); body.appendChild(actions);
+    card.appendChild(left); card.appendChild(body); myAdsWrap.appendChild(card);
+  });
+}
+$('myAdsOpenBtn').addEventListener('click',()=>{ openScreen('myAdsScreen'); renderMyAds(); });
+
 $('createAdBtn')?.addEventListener('click',()=>{ const p=Store.getProfile(); if(!p) return alert('Только зарегистрированные исполнители могут создавать объявления'); openScreen('adCreateModal'); });
 $('adForm').addEventListener('submit',e=>{
   e.preventDefault();
@@ -788,16 +803,71 @@ function renderWallet(){
 }
 
 /* ===== CREATE ORDER ===== */
-document.addEventListener('click',e=>{ const t=e.target.closest('#createTabs .tab'); if(!t) return; document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); $('selectedCategory').textContent=t.dataset.val||t.textContent; });
+const CATEGORY_HINTS={
+  'СПЕЦ. ЗАКАЗ':'Опишите любую задачу: что нужно сделать, где, сроки, пожелания.',
+  'Такси':'Укажите маршрут: Откуда → Куда, время подачи, количество пассажиров/багажа.',
+  'Курьер':'Что доставить, откуда → куда, вес/габариты, желаемое время.',
+  'Доставка':'Что купить/забрать, адрес магазина, адрес доставки, комментарии.',
+  'Квартира/Дом':'Адрес, тип работ (уборка/перенос/ремонт мелкий), площадь/комнаты.',
+  'Мастер':'Что требуется починить/установить, модель, симптомы/детали, адрес.',
+  'Прочие':'Опишите задачу подробно, где и когда выполнить.'
+};
+const CATEGORY_FIELDS={
+  'Такси':()=>`
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input class="input" id="f-from" placeholder="Откуда">
+      <input class="input" id="f-to" placeholder="Куда">
+    </div>`,
+  'Курьер':()=>`
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input class="input" id="f-pick" placeholder="Забрать (адрес)">
+      <input class="input" id="f-drop" placeholder="Доставить (адрес)">
+    </div>`,
+  'Доставка':()=>`
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input class="input" id="f-what" placeholder="Что купить/забрать">
+      <input class="input" id="f-daddr" placeholder="Адрес доставки">
+    </div>`,
+  'Квартира/Дом':()=>`
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input class="input" id="f-addr" placeholder="Адрес">
+      <input class="input" id="f-type" placeholder="Тип работ">
+    </div>`,
+  'Мастер':()=>`
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input class="input" id="f-device" placeholder="Что чинить/установить">
+      <input class="input" id="f-model" placeholder="Модель/детали">
+    </div>`
+};
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('#createTabs .tab'); if(!t) return;
+  document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const cat=t.dataset.val||t.textContent;
+  $('c-desc').placeholder=CATEGORY_HINTS[cat] || CATEGORY_HINTS['СПЕЦ. ЗАКАЗ'];
+  $('createExtraFields').innerHTML=(CATEGORY_FIELDS[cat]?.()||'');
+});
+
 $('createForm').addEventListener('submit',e=>{
   e.preventDefault();
   const profile=Store.getProfile(); if(!profile){ alert('Сначала войдите'); openScreen('authScreen'); return; }
-  const category=document.querySelector('#createTabs .tab.active')?.dataset.val||'Другое';
+  const cat=document.querySelector('#createTabs .tab.active')?.dataset.val||'Другое';
   const desc=$('c-desc').value.trim(); const budget=Number($('c-budget').value||0); const datetime=$('c-datetime').value||'';
   if(!desc||!datetime){ alert('Заполните описание и дату'); return; }
-  const order={id:'o_'+uid(), category, desc, budget, datetime, city:Store.getCity()||'—', ownerId:profile.id, ownerName:displayName(profile), bids:[], status:'open', createdAt:nowISO()};
+
+  // соберём доп поля в конец описания
+  let extra='';
+  if(cat==='Такси'){ extra=`\nМаршрут: ${($('f-from')?.value||'')} → ${($('f-to')?.value||'')}`.trim(); }
+  if(cat==='Курьер'){ extra=`\nОткуда: ${($('f-pick')?.value||'')} → Куда: ${($('f-drop')?.value||'')}`.trim(); }
+  if(cat==='Доставка'){ extra=`\nЧто: ${($('f-what')?.value||'')} • Адрес: ${($('f-daddr')?.value||'')}`.trim(); }
+  if(cat==='Квартира/Дом'){ extra=`\nАдрес: ${($('f-addr')?.value||'')} • Работы: ${($('f-type')?.value||'')}`.trim(); }
+  if(cat==='Мастер'){ extra=`\nУстройство: ${($('f-device')?.value||'')} • Модель/детали: ${($('f-model')?.value||'')}`.trim(); }
+  const fullDesc=desc+(extra?('\n'+extra):'');
+
+  const order={id:'o_'+uid(), category:cat, desc:fullDesc, budget, datetime, city:Store.getCity()||'—', ownerId:profile.id, ownerName:displayName(profile), bids:[], status:'open', createdAt:nowISO()};
   Store.addOrder(order);
-  pushNotif({ id:'n_'+uid(), type:'created', title:'Заказ создан', body:`Ваш заказ "${category}" опубликован`, payload:{orderId:order.id}, ts:nowISO() });
+  pushNotif({ id:'n_'+uid(), type:'created', title:'Заказ создан', body:`Ваш заказ "${cat}" опубликован`, payload:{orderId:order.id}, ts:nowISO() });
   closeScreen('createScreen'); renderMineList(); renderFindList(); alert('Заказ опубликован');
 });
 
@@ -807,9 +877,7 @@ function renderCityPosts(){
   const container=$('cityPosts'); container.innerHTML='';
   const city=Store.getCity()||'—';
   const feed=Store.getCityFeed(); const posts=(feed[city]||[]);
-
   if(!posts.length){ container.innerHTML='<div class="small" style="padding:12px">Пока нет публикаций. Будьте первым!</div>'; return; }
-
   posts.forEach(p=>{
     const card=document.createElement('div'); card.className='post-card'; card.dataset.postId=p.id;
     const likesCount=Object.keys(p.likes?.byUser||{}).length;
@@ -835,10 +903,7 @@ function renderCityPosts(){
         <div class="comments-list"></div>
       </div>`;
     container.appendChild(card);
-    // аватар поста
     renderAvatar($('postAv_'+p.id), p.authorName, p.authorAvatarType, p.authorAvatarData);
-
-    // комментарии
     const list=card.querySelector('.comments-list');
     (p.comments||[]).forEach(c=>{
       const cEl=document.createElement('div'); cEl.className='comment';
@@ -851,8 +916,6 @@ function renderCityPosts(){
       list.appendChild(cEl);
       renderAvatar($('cav_'+c.id), c.authorName, c.authorAvatarType, c.authorAvatarData);
     });
-
-    // делегирование
     card.addEventListener('click', (e)=>{
       const btn=e.target.closest('[data-act]'); if(!btn) return;
       const act=btn.dataset.act;
@@ -872,7 +935,6 @@ function sendComment(postId, text, cardEl){
   const c={id:'c_'+uid(), authorName, authorAvatarType:me?.avatarType, authorAvatarData:me?.avatarData, text, ts: nowISO()};
   (post.comments||(post.comments=[])).push(c);
   feed[city]=posts; Store.setCityFeed(feed);
-
   const list=cardEl.querySelector('.comments-list'); const cEl=document.createElement('div'); cEl.className='comment';
   cEl.innerHTML=`<div style="display:flex; gap:8px; align-items:center;">
     <div class="avatar" style="width:28px; height:28px;" id="newc_${c.id}"></div>
@@ -908,20 +970,11 @@ function repostToChat(chatId, post){
     const snippet = `🔁 Репост из "Чат твоего города" — ${Store.getCity()||'—'}:\n${post.text||''}`;
     const me=currentUserId();
     c.messages.push({ fromId:me, text: snippet, ts: nowISO() });
-    if(post.image){ c.messages.push({ fromId:me, text:'[фото прикреплено]', ts: nowISO() }); }
+    if(post.image){ c.messages.push({ fromId:me, text:'[фото]', image: post.image, ts: nowISO() }); }
     const other=(c.participants||[]).find(p=>p!==me); if(other){ c.unread||(c.unread={}); c.unread[other]=(c.unread[other]||0)+1; }
   });
   pushNotif({ id:'n_'+uid(), type:'message', title:'Репост отправлен', body:`Пост отправлен в чат`, payload:{chatId}, ts:nowISO() });
 }
-/* создание поста */
-$('cityPostImage').addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __cityImage=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
-$('cityPostSend').addEventListener('click',()=>{
-  const text=$('cityPostText').value.trim(); if(!text && !__cityImage) return alert('Введите текст или добавьте фото');
-  const city=Store.getCity()||'—'; const feed=Store.getCityFeed(); const me=Store.getProfile();
-  const post={ id:'post_'+uid(), authorName: displayName(me), authorAvatarType:me?.avatarType, authorAvatarData:me?.avatarData, text, image: __cityImage||null, ts: nowISO(), likes:{byUser:{}}, comments:[] };
-  feed[city]=[post].concat(feed[city]||[]); Store.setCityFeed(feed);
-  $('cityPostText').value=''; __cityImage=null; renderCityPosts();
-});
 
 /* ===== INITIAL & AUTH ===== */
 function initial(){
@@ -960,6 +1013,16 @@ $('roleToggle').addEventListener('click',()=>{ const role=Store.getRole()||'user
 $('openNotifications').addEventListener('click',()=>{ openScreen('notificationsModal'); renderNotifs(); });
 $('openSettings').addEventListener('click',()=>{ openScreen('settingsModal'); });
 
+/* ===== CITY POST CREATE ===== */
+let __cityImage=null;
+$('cityPostImage').addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __cityImage=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
+$('cityPostSend').addEventListener('click',()=>{
+  const text=$('cityPostText').value.trim(); if(!text && !__cityImage) return alert('Введите текст или добавьте фото');
+  const city=Store.getCity()||'—'; const feed=Store.getCityFeed(); const me=Store.getProfile();
+  const post={ id:'post_'+uid(), authorName: displayName(me), authorAvatarType:me?.avatarType, authorAvatarData:me?.avatarData, text, image: __cityImage||null, ts: nowISO(), likes:{byUser:{}}, comments:[] };
+  feed[city]=[post].concat(feed[city]||[]); Store.setCityFeed(feed);
+  $('cityPostText').value=''; __cityImage=null; renderCityPosts();
+});
 </script>
 </body>
 </html>
