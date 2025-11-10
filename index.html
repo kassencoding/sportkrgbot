@@ -3,30 +3,27 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiDCity — Roles, Orders, Chats, City Thread</title>
+<title>GiDCity — Меню, Роли, Мессенджер, Городской тред</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ================= TOKENS / THEMES ================= */
+/* ===== TOKENS / THEMES ===== */
 :root{
   --bg-1:#060910; --bg-2:#050815; --bg-3:#030711;
   --radial-a:#121a3a; --radial-b:#09203a;
-  --surface:#0b1020; --surface-2:#0f1630; --line:#1a2346;
+  --surface:#0b1020; --line:#1a2346;
   --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff;
   --danger:#ff4d6d; --gold:#ffd84d;
   --text:#e7ebff; --text-dim:#c7d3ff; --text-muted:#9fb0ff; --text-invert:#0a0f1e;
-  --radius:16px; --radius-sm:12px; --ui-font-size:14px;
-  --glow-1: 0 0 14px rgba(169,112,255,.45);
-  --glow-2: 0 0 22px rgba(50,255,210,.35);
-  --shadow: 0 18px 50px rgba(0,0,0,.55);
+  --radius:16px; --ui-font-size:14px;
+  --glow-1:0 0 14px rgba(169,112,255,.45); --glow-2:0 0 22px rgba(50,255,210,.35); --shadow:0 18px 50px rgba(0,0,0,.55);
 }
-html[data-theme="violet"]{ --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff; --bg-1:#060910; --bg-2:#050815; --bg-3:#030711; --radial-a:#121a3a; --radial-b:#09203a; }
-html[data-theme="navy"]{ --accent-a:#6aa7ff; --accent-b:#7ef3ff; --accent-c:#65d0ff; --bg-1:#04080f; --bg-2:#061225; --bg-3:#07142b; --radial-a:#0c1a3a; --radial-b:#0a523a; }
-html[data-theme="emerald"]{ --accent-a:#3fe0a8; --accent-b:#baff6a; --accent-c:#75ffd9; --bg-1:#04110c; --bg-2:#052017; --bg-3:#05261b; --radial-a:#0d3a2a; --radial-b:#0a5235; }
-html[data-theme="sunset"]{ --accent-a:#ff7ab6; --accent-b:#ffd06a; --accent-c:#ff9f6a; --bg-1:#12080c; --bg-2:#1c0e17; --bg-3:#220f1b; --radial-a:#3a1223; --radial-b:#521a2c; }
+html[data-theme="violet"]{ --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff; }
+html[data-theme="navy"]{ --accent-a:#6aa7ff; --accent-b:#7ef3ff; --accent-c:#65d0ff; }
+html[data-theme="emerald"]{ --accent-a:#3fe0a8; --accent-b:#baff6a; --accent-c:#75ffd9; }
+html[data-theme="sunset"]{ --accent-a:#ff7ab6; --accent-b:#ffd06a; --accent-c:#ff9f6a; }
 
-/* ================= RESET / LAYOUT ================= */
-*{box-sizing:border-box}
-html,body{height:100%}
+/* ===== RESET / LAYOUT ===== */
+*{box-sizing:border-box} html,body{height:100%}
 body{
   margin:0; padding:18px; font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   background:
@@ -36,6 +33,8 @@ body{
   color:var(--text); font-size:var(--ui-font-size); display:flex; justify-content:center;
 }
 .wrapper{ width:100%; max-width:1100px; display:flex; flex-direction:column; gap:16px; }
+
+/* ===== HEADER ===== */
 .header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:8px 4px 6px; }
 .brand{ display:flex; flex-direction:column; gap:6px; }
 .brand h1{
@@ -46,49 +45,49 @@ body{
 .header-sub{ font-size:13px; color:var(--text-muted); font-weight:700 }
 .header-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
 
-/* ================= Buttons + badge ================= */
+/* ===== Buttons + badge ===== */
 .btn{ appearance:none; border:none; cursor:pointer; font-weight:700; color:var(--text);
   padding:10px 14px; border-radius:12px; line-height:1;
   background: linear-gradient(180deg, rgba(169,112,255,.12), rgba(50,255,210,.08));
   border:1px solid rgba(138,165,255,.22);
   box-shadow: var(--shadow), inset 0 0 0 1px rgba(255,255,255,.03);
-  transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+  transition: transform .12s ease, box-shadow .2s, background .2s;
 }
-.btn:hover{ box-shadow: var(--glow-1), var(--shadow); transform: translateY(-1px); }
-.btn:active{ transform: translateY(0); }
+.btn:hover{ box-shadow: var(--glow-1), var(--shadow); transform: translateY(-1px) }
+.btn:active{ transform: translateY(0) }
 .btn.primary{ background: linear-gradient(90deg, rgba(169,112,255,.28), rgba(50,255,210,.28)); border-color: rgba(138,165,255,.38); box-shadow: var(--glow-1), var(--glow-2), var(--shadow); }
-.btn.ghost{ background: transparent; border-color: rgba(138,165,255,.25); }
-.controls-row{ display:flex; gap:8px; }
-.btn-with-badge{ position:relative; }
-.badge-dot{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px; display:flex; align-items:center; justify-content:center; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; box-shadow: 0 0 0 2px rgba(6,9,16,.9); }
+.btn.ghost{ background: transparent; border-color: rgba(138,165,255,.25) }
+.controls-row{ display:flex; gap:8px }
+.btn-with-badge{ position:relative }
+.badge-dot{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px;
+  display:flex; align-items:center; justify-content:center; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; box-shadow:0 0 0 2px rgba(6,9,16,.9);
+}
 
-/* ================= Role switch (Сфера услуг ↔ Подработка) ================= */
+/* ===== Role switch ===== */
 .role-switch{ display:flex; gap:10px; align-items:center; font-weight:700; color:var(--text-dim); }
 .role-label{ font-weight:800; transition:color .2s }
-.role-label.active{ color:var(--gold); } /* подсвечиваем только активную надпись */
+.role-label.active{ color:var(--gold) } /* подсвечиваем только активную надпись */
 .toggle{ width:64px; height:32px; border-radius:999px; padding:3px; position:relative; cursor:pointer;
-  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18)); /* не меняем цвет при переключении */
-  border:1px solid rgba(138,165,255,.28); box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18)); border:1px solid rgba(138,165,255,.28);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
 }
 .toggle .knob{ width:26px; height:26px; border-radius:999px; background:linear-gradient(180deg, #fff, #cfe3ff);
   position:absolute; top:3px; left:3px; transition:left .18s ease;
-  box-shadow: 0 6px 16px rgba(0,0,0,.45), 0 0 12px rgba(169,112,255,.35);
+  box-shadow:0 6px 16px rgba(0,0,0,.45), 0 0 12px rgba(169,112,255,.35);
 }
-.toggle.on .knob{ left:35px; }
+.toggle.on .knob{ left:35px }
 
-/* ================= Main container ================= */
+/* ===== Main container ===== */
 .container{
   width:100%; border-radius:20px; padding:18px;
   background: linear-gradient(180deg, rgba(14,20,46,.72), rgba(10,15,35,.42));
-  border:1px solid var(--line);
-  box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.02) inset;
-  color:var(--text);
+  border:1px solid var(--line); box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.02) inset; color:var(--text);
 }
 .panel-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px }
-.panel-top h2{ margin:0; font-size:18px; font-weight:800; color:var(--text); }
+.panel-top h2{ margin:0; font-size:18px; font-weight:800; color:var(--text) }
 
-/* ================= Menu LIST ================= */
-.menu-grid{ display:flex; flex-direction:column; gap:10px; }
+/* ===== Menu LIST (все одинакового размера) ===== */
+.menu-grid{ display:flex; flex-direction:column; gap:10px }
 .menu-btn{
   width:100%; min-height:64px; border-radius:14px; padding:14px 16px; cursor:pointer;
   background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.22));
@@ -98,22 +97,22 @@ body{
 }
 .menu-btn .title{ font-weight:800; font-size:16px; color:var(--text) }
 .menu-btn .note{ font-size:12px; color:var(--text-muted) }
-.menu-btn:hover{ transform: translateY(-2px); box-shadow: var(--glow-1), var(--shadow); border-color: rgba(169,112,255,.42); }
+.menu-btn:hover{ transform: translateY(-2px); box-shadow: var(--glow-1), var(--shadow); border-color: rgba(169,112,255,.42) }
 .menu-btn:active{ transform:translateY(0) }
-.menu-btn.primary{ background: linear-gradient(135deg, rgba(169,112,255,.18), rgba(50,255,210,.14)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2), var(--shadow); }
-.menu-btn.violet{ background: linear-gradient(135deg, rgba(169,112,255,.24), rgba(106,140,255,.16)); border-color: rgba(138,165,255,.5); box-shadow: var(--glow-1), var(--shadow); }
+.menu-btn.primary{ background: linear-gradient(135deg, rgba(169,112,255,.18), rgba(50,255,210,.14)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2), var(--shadow) }
+.menu-btn.violet{ background: linear-gradient(135deg, rgba(169,112,255,.24), rgba(106,140,255,.16)); border-color: rgba(138,165,255,.5); box-shadow: var(--glow-1), var(--shadow) }
 .menu-btn.disabled{ opacity:.6; pointer-events:none; filter:saturate(.8) }
 
-/* ================= Cards ================= */
+/* ===== Cards ===== */
 .card{
   background: linear-gradient(180deg, rgba(10,14,30,.86), rgba(6,10,24,.78));
   color:var(--text); border-radius:14px; padding:12px; display:flex; gap:12px; align-items:flex-start;
   border:1px solid rgba(138,165,255,.22); box-shadow: var(--shadow);
 }
-.avatar{ width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; overflow:hidden; }
-.avatar img{ width:100%; height:100%; object-fit:cover; border-radius:999px; }
+.avatar{ width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; overflow:hidden }
+.avatar img{ width:100%; height:100%; object-fit:cover; border-radius:999px }
 
-/* ================= Top Sheets ================= */
+/* ===== TOP SHEETS (открываются сверху) ===== */
 .screen{
   position:fixed; inset:0; display:none; z-index:140; padding:0 12px; background: rgba(6,9,16,.64);
   align-items:flex-start; justify-content:center; backdrop-filter: blur(6px);
@@ -126,37 +125,39 @@ body{
   border-radius:0 0 18px 18px; padding:18px 16px; margin-top:12px;
 }
 
-/* ================= Forms ================= */
+/* ===== Inputs ===== */
 .input, textarea, select{
-  width:100%; padding:12px 12px; border-radius:12px; border:1px solid rgba(138,165,255,.24);
+  width:100%; padding:12px; border-radius:12px; border:1px solid rgba(138,165,255,.24);
   background: rgba(12,16,36,.75); color:var(--text); font-size:14px; outline:none; transition: box-shadow .2s, border-color .2s, background .2s;
 }
 textarea{ min-height:110px; resize:vertical }
 .input::placeholder, textarea::placeholder{ color:rgba(184,194,255,.6) }
-.input:focus, textarea:focus, select:focus{ border-color: rgba(169,112,255,.6); box-shadow: 0 0 0 3px rgba(169,112,255,.18), var(--glow-1); background: rgba(16,20,46,.9); }
+.input:focus, textarea:focus, select:focus{ border-color: rgba(169,112,255,.6); box-shadow: 0 0 0 3px rgba(169,112,255,.18), var(--glow-1); background: rgba(16,20,46,.9) }
 .small{ font-size:13px; color:var(--text-muted) }
 
-/* ================= Tabs ================= */
+/* ===== Tabs ===== */
 .tabs{ display:flex; gap:8px; flex-wrap:wrap }
 .tab{ padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; border:1px solid rgba(138,165,255,.25);
-  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.16)); color:var(--text); }
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.16)); color:var(--text) }
 .tab:hover{ box-shadow: var(--glow-1) }
-.tab.active{ background: linear-gradient(90deg, rgba(169,112,255,.32), rgba(50,255,210,.24)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2); }
+.tab.active{ background: linear-gradient(90deg, rgba(169,112,255,.32), rgba(50,255,210,.24)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2) }
 
-/* ================= Messenger (inline chat expander) ================= */
-.chat-item{ position:relative; }
+/* ===== Messenger (inline) ===== */
+.chat-item{ position:relative; cursor:pointer }
 .inline-chat{ margin:10px 0 0 0; border-radius:14px; border:1px solid rgba(138,165,255,.28);
-  background: linear-gradient(180deg, rgba(14,20,46,.92), rgba(10,15,35,.88)); padding:12px; }
-.inline-msgs{ margin-top:8px; max-height:46vh; overflow:auto; padding-right:6px; }
-.msg-row{ margin-bottom:8px; }
-.msg-me{ text-align:right; }
+  background: linear-gradient(180deg, rgba(14,20,46,.92), rgba(10,15,35,.88)); padding:12px }
+.inline-msgs{ margin-top:8px; max-height:46vh; overflow:auto; padding-right:6px }
+.msg-row{ margin-bottom:8px }
+.msg-me{ text-align:right }
 .msg-me .b{ display:inline-block; background:linear-gradient(90deg, rgba(169,112,255,.9), rgba(50,255,210,.9)); padding:8px 12px; border-radius:10px; color:#0a0f1e; font-weight:700 }
-.msg-other .b{ display:inline-block; background:rgba(255,255,255,.06); border:1px solid rgba(138,165,255,.24); padding:8px 12px; border-radius:10px; }
-.chat-badge{ margin-left:auto; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; padding:0 6px; min-width:18px; height:18px; display:flex; align-items:center; justify-content:center; }
+.msg-other .b{ display:inline-block; background:rgba(255,255,255,.06); border:1px solid rgba(138,165,255,.24); padding:8px 12px; border-radius:10px }
+.chat-badge{ margin-left:auto; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; padding:0 6px; min-width:18px; height:18px; display:flex; align-items:center; justify-content:center }
 
-/* ================= City Thread ================= */
-.post-card{ background: linear-gradient(180deg, rgba(10,14,30,.86), rgba(6,10,24,.78)); border:1px solid rgba(138,165,255,.22); border-radius:14px; padding:12px; box-shadow: var(--shadow); }
-.post-img{ width:100%; border-radius:12px; margin-top:8px; max-height:320px; object-fit:cover; }
+/* ===== City Thread ===== */
+.post-card{ background: linear-gradient(180deg, rgba(10,14,30,.86), rgba(6,10,24,.78)); border:1px solid rgba(138,165,255,.22); border-radius:14px; padding:12px; box-shadow: var(--shadow); margin-bottom:10px }
+.post-img{ width:100%; border-radius:12px; margin-top:8px; max-height:360px; object-fit:cover }
+.post-actions{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap }
+.comment{ background:rgba(255,255,255,.04); border:1px solid rgba(138,165,255,.22); border-radius:10px; padding:8px; margin-top:6px }
 </style>
 </head>
 <body>
@@ -168,31 +169,27 @@ textarea{ min-height:110px; resize:vertical }
     </div>
     <div class="header-right">
       <div class="controls-row">
-        <button id="openNotifications" class="btn btn-with-badge">Уведомления<span id="notifBadge" class="badge-dot" style="display:none">0</span></button>
+        <button id="openNotifications" class="btn btn-with-badge">Уведомления <span id="notifBadge" class="badge-dot" style="display:none">0</span></button>
         <button id="openSettings" class="btn">Настройки</button>
       </div>
     </div>
   </header>
 
-  <!-- Переключатель ролей -->
+  <!-- РОЛИ -->
   <div class="role-switch">
     <span id="roleLabelUser" class="role-label">Сфера услуг</span>
     <div id="roleToggle" class="toggle" title="Переключить роль"><div class="knob"></div></div>
     <span id="roleLabelWorker" class="role-label">Подработка</span>
   </div>
 
+  <!-- ГЛАВНОЕ МЕНЮ -->
   <main class="container" role="main" aria-live="polite">
-    <div class="panel-top">
-      <h2>Главное меню</h2>
-      <div style="width:140px"></div>
-    </div>
-    <div class="menu-grid" id="menuGrid">
-      <!-- кнопки генерятся динамически по роли -->
-    </div>
+    <div class="panel-top"><h2>Главное меню</h2><div style="width:140px"></div></div>
+    <div class="menu-grid" id="menuGrid"></div>
   </main>
 </div>
 
-<!-- =================== TOP SHEETS =================== -->
+<!-- ===== TOP SHEETS ===== -->
 <section id="authScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Вход</h3><button onclick="closeScreen('authScreen')" class="btn ghost">Закрыть</button></div>
   <form id="authForm" style="margin-top:12px">
@@ -249,7 +246,6 @@ textarea{ min-height:110px; resize:vertical }
 <section id="messengerScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Мессенджер</h3><button onclick="closeScreen('messengerScreen')" class="btn ghost">Закрыть</button></div>
   <div id="chatsList" style="margin-top:12px"></div>
-  <!-- сюда динамически вставляется inline чат-панель под выбранным чатом -->
 </div></section>
 
 <section id="adsScreen" class="screen"><div class="modal">
@@ -317,11 +313,15 @@ textarea{ min-height:110px; resize:vertical }
   <div id="walletWrap" style="margin-top:12px"></div>
 </div></section>
 
-<section id="cityChatScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Чат твоего города</h3><button onclick="closeScreen('cityChatScreen')" class="btn ghost">Закрыть</button></div>
+<!-- Соцсеть: отдельная страница -->
+<section id="cityThreadScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Чат твоего города</h3>
+    <button onclick="closeScreen('cityThreadScreen')" class="btn ghost">Закрыть</button>
+  </div>
   <div style="margin-top:12px;">
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <input id="cityPostText" class="input" placeholder="Поделитесь мыслью из вашего города..." />
+      <input id="cityPostText" class="input" placeholder="Поделитесь мыслью..." />
       <label class="btn"><input type="file" id="cityPostImage" accept="image/*" style="display:none">Фото</label>
       <button id="cityPostSend" class="btn primary">Опубликовать</button>
     </div>
@@ -329,11 +329,19 @@ textarea{ min-height:110px; resize:vertical }
   </div>
 </div></section>
 
-<script>
-/* ================= KEYS ================= */
-const LS_ORD='gid_orders_v13', LS_CHAT='gid_chats_v13', LS_ADS='gid_ads_v2', LS_PROFILE='gid_profile_v1', LS_ROLE='gid_role_v1', LS_CITY='gid_city_v1', LS_NOTIF='gid_notif_v1', LS_WALLET='gid_wallet_v1', LS_THEME='gid_theme_v1', LS_CITY_FEED='gid_city_feed_v1';
+<!-- Репост: выбор чата -->
+<section id="repostScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Репост в чат</h3>
+    <button onclick="closeScreen('repostScreen')" class="btn ghost">Закрыть</button>
+  </div>
+  <div id="repostList" style="margin-top:12px"></div>
+</div></section>
 
-/* ================= HELPERS ================= */
+<script>
+/* ===== KEYS ===== */
+const LS_ORD='gid_orders_v13', LS_CHAT='gid_chats_v13', LS_ADS='gid_ads_v2', LS_PROFILE='gid_profile_v1', LS_ROLE='gid_role_v1', LS_CITY='gid_city_v1', LS_NOTIF='gid_notif_v1', LS_WALLET='gid_wallet_v1', LS_THEME='gid_theme_v1', LS_CITY_FEED='gid_city_feed_v2';
+/* ===== HELPERS ===== */
 const $=id=>document.getElementById(id);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const nowISO=()=>new Date().toISOString();
@@ -348,8 +356,7 @@ function avatarStyle(name,el){
   const a=pal[h%pal.length], b=pal[(h+1)%pal.length]; el.style.background=`linear-gradient(135deg, ${a}, ${b})`; el.textContent=initials(name||'');
 }
 const currentUserId=()=>Store.getProfile()?.id || 'u_demo_user';
-
-/* ================= STORE ================= */
+/* ===== STORE ===== */
 const Store={
   getOrders(){try{return JSON.parse(localStorage.getItem(LS_ORD))||[]}catch(e){return[]}}, setOrders(v){localStorage.setItem(LS_ORD,JSON.stringify(v))},
   addOrder(o){const a=this.getOrders();a.unshift(o);this.setOrders(a);return a},
@@ -375,8 +382,7 @@ const Store={
 
   getCityFeed(){try{return JSON.parse(localStorage.getItem(LS_CITY_FEED))||{}}catch(e){return{}}}, setCityFeed(obj){localStorage.setItem(LS_CITY_FEED,JSON.stringify(obj))}
 };
-
-/* ================= SEED DEMO ================= */
+/* ===== SEED ===== */
 if(!localStorage.getItem(LS_ORD)){
   Store.setOrders([
     { id:'o1', category:'Такси', city:'Алматы', budget:1200, datetime:new Date().toISOString().slice(0,16), desc:'Поездка в аэропорт', ownerId:'u_owner1', ownerName:'Айдар', bids:[], status:'open', createdAt: nowISO() },
@@ -389,61 +395,48 @@ if(!localStorage.getItem(LS_CHAT)){
     orderId:null,
     title:'Объявление: Починка ноутбуков',
     participants:['u_demo_user','u_master1'],
-    meta:{ownerName:'Игорь', performerName:'Мастер Данил'},
-    messages:[
-      {from:'system', text:'Чат создан', ts:nowISO()},
-      {from:'other', text:'Здравствуйте! Чем могу помочь?', ts:nowISO()}
-    ],
+    meta:{ownerName:'Игорь', performerName:'Мастер Данил', context:'Объявление: Починка ноутбуков'},
+    messages:[{from:'system', text:'Чат создан', ts:nowISO()},{from:'other', text:'Здравствуйте! Чем могу помочь?', ts:nowISO()}],
     unread:{ 'u_demo_user':1, 'u_master1':0 }
   }]);
 }
-if(!localStorage.getItem(LS_ADS)) Store.setAds([]);
-
-/* ================= THEME / CITY / NOTIF BADGE ================= */
+/* ===== THEME / CITY / BADGE ===== */
 function applyTheme(){ document.documentElement.setAttribute('data-theme', Store.getTheme()||'violet'); }
 function updateCityLabel(){ const c=Store.getCity()||'—'; $('topCity').textContent='Город: '+c; const sel=$('citySelect'); if(sel) sel.value=c||''; }
 function refreshNotifBadge(){ const n=Store.getNotifs().length; const b=$('notifBadge'); if(n>0){b.style.display='flex'; b.textContent=n>99?'99+':String(n);} else b.style.display='none'; }
-
-/* ================= SCREENS ================= */
+/* ===== SCREENS ===== */
 function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el=$(id); if(el) el.classList.add('active'); window.scrollTo(0,0); }
 function closeScreen(id){ const el=$(id); if(el) el.classList.remove('active'); }
-
-/* ================= ROLE & MENU ================= */
+/* ===== ROLE & MENU ===== */
 function setRoleLabels(){
   const role=Store.getRole()||'user';
-  const lU=$('roleLabelUser'), lW=$('roleLabelWorker');
-  lU.classList.toggle('active', role==='user');
-  lW.classList.toggle('active', role==='worker');
+  $('roleLabelUser').classList.toggle('active', role==='user');
+  $('roleLabelWorker').classList.toggle('active', role==='worker');
   $('roleToggle').classList.toggle('on', role==='worker');
 }
+function menuBtn(id,title,note,extraClass){ const d=document.createElement('div'); d.id=id; d.className='menu-btn'+(extraClass?(' '+extraClass):''); d.setAttribute('role','button'); d.innerHTML=`<div class="title">${title}</div><div class="note">${note}</div>`; return d; }
 function applyRoleUI(){
   setRoleLabels();
   const role=Store.getRole()||'user';
   const grid=$('menuGrid'); grid.innerHTML='';
   if(role==='user'){ // Сфера услуг
-    // порядок: ЗАКАЗАТЬ, ОБЪЯВЛЕНИЕ УСЛУГ, ЗАБРОНИРОВАТЬ, Мои заказы, Мессенджер, Чат твоего города, Кошелёк
     grid.appendChild(menuBtn('btnOrder','ЗАКАЗАТЬ','Новая заявка','primary'));
     grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЕ УСЛУГ','Объявления исполнителей','violet'));
     grid.appendChild(menuBtn('btnReserve','ЗАБРОНИРОВАТЬ','СКОРО','disabled'));
     grid.appendChild(menuBtn('btnMine','Мои заказы','Ваши заявки'));
     grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги'));
-    grid.appendChild(menuBtn('btnCityChat','Чат твоего города','Общий тред города'));
+    grid.appendChild(menuBtn('btnCityThread','Чат твоего города','Лента как соцсеть'));
     grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции'));
-  }else{ // worker — Подработка
-    // порядок: Найти заказы, Объявление услуг, Мои заказы, Мессенджер, Кошелёк
+  } else { // Подработка
     grid.appendChild(menuBtn('btnFind','Найти заказы','Для исполнителей','primary'));
     grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЕ УСЛУГ','Ваши объявления','violet'));
     grid.appendChild(menuBtn('btnMine','Мои заказы','Назначенные/мои'));
     grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги'));
     grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции'));
   }
-  wireMainButtons(); // перевешиваем хэндлеры
+  wireMainButtons();
 }
-function menuBtn(id,title,note,extraClass){
-  const d=document.createElement('div'); d.id=id; d.className='menu-btn'+(extraClass?(' '+extraClass):''); d.setAttribute('role','button'); d.innerHTML=`<div class="title">${title}</div><div class="note">${note}</div>`; return d;
-}
-
-/* ================= NOTIFICATIONS ================= */
+/* ===== NOTIFICATIONS ===== */
 function pushNotif(n){ const arr=Store.getNotifs(); arr.unshift(n); Store.setNotifs(arr); refreshNotifBadge(); }
 function renderNotifs(){
   const list=$('notificationsList'); list.innerHTML='';
@@ -451,17 +444,8 @@ function renderNotifs(){
   if(!arr.length){ list.innerHTML='<div class="small" style="padding:12px">Уведомлений нет</div>'; return; }
   arr.forEach((n,idx)=>{
     const node=document.createElement('div'); node.className='card'; node.style.cursor='pointer';
-    node.innerHTML=`<div style="flex:1">
-      <div style="font-weight:800">${esc(n.title)}</div>
-      <div class="small" style="margin-top:6px">${esc(n.body)}</div>
-      <div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div>
-    </div>`;
-    node.addEventListener('click',()=>{
-      try{
-        routeByNotification(n);
-        const a=Store.getNotifs(); a.splice(idx,1); Store.setNotifs(a); renderNotifs(); refreshNotifBadge();
-      }catch(e){ alert('Не удалось открыть: '+e.message); }
-    });
+    node.innerHTML=`<div style="flex:1"><div style="font-weight:800">${esc(n.title)}</div><div class="small" style="margin-top:6px">${esc(n.body)}</div><div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div></div>`;
+    node.addEventListener('click',()=>{ try{ routeByNotification(n); const a=Store.getNotifs(); a.splice(idx,1); Store.setNotifs(a); renderNotifs(); refreshNotifBadge(); }catch(e){ alert('Не удалось открыть: '+e.message); } });
     list.appendChild(node);
   });
 }
@@ -469,14 +453,12 @@ function routeByNotification(n){
   const p=n.payload||{};
   switch(n.type){
     case 'bid':
-      if(!p.orderId) throw new Error('Нет orderId');
-      closeScreen('notificationsModal'); openBidsModal(p.orderId); break;
+      if(!p.orderId) throw new Error('Нет orderId'); closeScreen('notificationsModal'); openBidsModal(p.orderId); break;
     case 'accepted':
     case 'accepted_owner':
     case 'message':
     case 'admsg':
-      if(!p.chatId) throw new Error('Нет chatId');
-      closeScreen('notificationsModal'); openScreen('messengerScreen'); renderChats(); expandChatInline(p.chatId); break;
+      if(!p.chatId) throw new Error('Нет chatId'); closeScreen('notificationsModal'); openScreen('messengerScreen'); renderChats(); expandChatInline(p.chatId); break;
     case 'created':
       closeScreen('notificationsModal'); openScreen('mineScreen'); renderMineList(); break;
     case 'wallet':
@@ -484,34 +466,29 @@ function routeByNotification(n){
     default: throw new Error('Неизвестный тип');
   }
 }
-
-/* ================= FIND (для исполнителя) ================= */
+/* ===== FIND (worker) ===== */
 function renderFindList(){
   const wrap=$('findList'); if(!wrap) return; wrap.innerHTML='';
-  const city=Store.getCity();
-  let items=Store.getOrders().filter(o=>o.status==='open');
+  const city=Store.getCity(); let items=Store.getOrders().filter(o=>o.status==='open');
   const q=($('searchInput')?.value||'').toLowerCase().trim();
   if(q) items=items.filter(o=>[o.category,o.desc,o.city].join(' ').toLowerCase().includes(q));
   if(city) items=items.filter(o=>!o.city || o.city===city);
   if(!items.length){ wrap.innerHTML='<div class="small" style="padding:12px">Нет доступных заказов</div>'; return; }
   items.forEach(o=>{
     const card=document.createElement('div'); card.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 56px';
-    const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||'З',av); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||'З',av); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     body.innerHTML=`<div style="font-weight:800">${esc(o.ownerName||'Заказчик')} • ${esc(o.city)} — ₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div>
                     <div class="small" style="margin-top:6px">${esc(o.category)} • Дедлайн: ${o.datetime.replace('T',' ')}</div>
                     <div style="margin-top:8px">${esc(o.desc)}</div>`;
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
-    const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену';
-    bidBtn.addEventListener('click',()=>openBidDialog(o.id));
+    const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену'; bidBtn.addEventListener('click',()=>openBidDialog(o.id));
     actions.appendChild(bidBtn); body.appendChild(actions);
     card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
 $('applySearch')?.addEventListener('click',()=>renderFindList());
-
-/* ================= MINE (для заказчика) ================= */
+/* ===== MINE ===== */
 function renderMineList(){
   const wrap=$('mineList'); if(!wrap) return; wrap.innerHTML='';
   const profile=Store.getProfile();
@@ -520,48 +497,27 @@ function renderMineList(){
   if(!items.length){ wrap.innerHTML='<div class="small" style="padding:12px">У вас пока нет заказов</div>'; return; }
   items.forEach(o=>{
     const card=document.createElement('div'); card.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 56px';
-    const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||profile.name,av); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||profile.name,av); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
-    const bidsCount=(o.bids||[]).length;
-    const statusLabel = o.status==='open' ? 'Открыт' : o.status==='in_progress' ? 'В процессе' : o.status==='done' ? 'Завершен' : 'Отменен';
+    const bidsCount=(o.bids||[]).length; const statusLabel=o.status==='open'?'Открыт':o.status==='in_progress'?'В процессе':o.status==='done'?'Завершен':'Отменен';
     body.innerHTML=`<div style="font-weight:800">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div>
                     <div class="small" style="margin-top:6px">Статус: ${statusLabel} • Дедлайн: ${o.datetime.replace('T',' ')}</div>
                     <div style="margin-top:8px">${esc(o.desc)}</div>`;
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
-    if(o.status==='open'){
-      const viewBtn=document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Просмотреть заявки';
-      viewBtn.addEventListener('click',()=>openBidsModal(o.id));
-      actions.appendChild(viewBtn);
-    }
-    if(o.status==='in_progress' && o.assigned){
-      const openChatBtn=document.createElement('button'); openChatBtn.className='btn'; openChatBtn.textContent='Открыть чат';
-      openChatBtn.addEventListener('click',()=>{
-        const chat=Store.getChats().find(c=>c.orderId===o.id);
-        if(chat){ openScreen('messengerScreen'); renderChats(); expandChatInline(chat.id); }
-        else alert('Чат не найден');
-      });
-      actions.appendChild(openChatBtn);
-    }
-    body.appendChild(actions);
-    card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
+    if(o.status==='open'){ const viewBtn=document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Просмотреть заявки'; viewBtn.addEventListener('click',()=>openBidsModal(o.id)); actions.appendChild(viewBtn); }
+    if(o.status==='in_progress'){ const openChatBtn=document.createElement('button'); openChatBtn.className='btn'; openChatBtn.textContent='Открыть чат'; openChatBtn.addEventListener('click',()=>{ const chat=Store.getChats().find(c=>c.orderId===o.id); if(chat){ openScreen('messengerScreen'); renderChats(); expandChatInline(chat.id); } else alert('Чат не найден'); }); actions.appendChild(openChatBtn); }
+    body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
-
-/* ================= BIDS ================= */
+/* ===== BIDS ===== */
 function openBidsModal(orderId){
   const order=Store.getOrders().find(x=>x.id===orderId); if(!order) return alert('Заказ не найден');
-  openScreen('bidsModal');
-  const list=$('bidsList'); list.innerHTML='';
-  const header=document.createElement('div');
-  header.innerHTML=`<div style="font-weight:800">${esc(order.category)} • ${esc(order.city)}</div><div class="small">Заказчик: ${esc(order.ownerName)}</div>`;
-  list.appendChild(header);
-  const bids=order.bids||[];
-  if(!bids.length){ list.innerHTML+='<div class="small" style="padding:12px">Заявок пока нет</div>'; return; }
+  openScreen('bidsModal'); const list=$('bidsList'); list.innerHTML='';
+  const header=document.createElement('div'); header.innerHTML=`<div style="font-weight:800">${esc(order.category)} • ${esc(order.city)}</div><div class="small">Заказчик: ${esc(order.ownerName)}</div>`; list.appendChild(header);
+  const bids=order.bids||[]; if(!bids.length){ list.innerHTML+='<div class="small" style="padding:12px">Заявок пока нет</div>'; return; }
   bids.forEach((b,idx)=>{
     const row=document.createElement('div'); row.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 56px';
-    const av=document.createElement('div'); av.className='avatar'; avatarStyle(b.name||'И',av); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(b.name||'И',av); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     body.innerHTML=`<div style="font-weight:800">${esc(b.name)} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div>
                     <div class="small" style="margin-top:6px">Предложено: ${new Date(b.createdAt||'').toLocaleString()}</div>
@@ -586,8 +542,7 @@ function openBidsModal(orderId){
     row.appendChild(left); row.appendChild(body); list.appendChild(row);
   });
 }
-
-/* ================= PLACE BID (исполнитель) ================= */
+/* ===== OPEN BID (worker) ===== */
 function openBidDialog(orderId){
   const order=Store.getOrders().find(o=>o.id===orderId); if(!order) return;
   const profile=Store.getProfile()||{id:'u_demo_user', name:'Исполнитель'};
@@ -598,12 +553,10 @@ function openBidDialog(orderId){
   pushNotif({ id:'n_'+uid(), type:'bid', title:'Новое предложение', body:`На ваш заказ "${order.category}" предложили ${price}₸`, payload:{orderId: order.id}, ts:nowISO() });
   alert('Предложение отправлено'); renderFindList();
 }
-
-/* ================= CHATS ================= */
+/* ===== CHATS ===== */
 function otherParticipantName(chat){
   const me=currentUserId(); const otherId=(chat.participants||[]).find(p=>p!==me);
-  // имя для заголовка — показываем "имя собеседника" (жирно), под ним контекст (категория/объявление)
-  return chat.meta?.performerName && chat.participants.includes(otherId) ? (otherId===chat.participants[1] ? chat.meta.performerName : chat.meta.ownerName) : (chat.meta?.ownerName || 'Собеседник');
+  return (chat.meta?.performerName && otherId)? chat.meta.performerName : (chat.meta?.ownerName || 'Собеседник');
 }
 function chatSubtitle(chat){
   if(chat.orderId) return chat.meta?.context || `Заказ • ${chat.title}`;
@@ -616,9 +569,8 @@ function renderChats(){
   if(!chats.length){ wrap.innerHTML='<div class="small" style="padding:12px">Пока нет чатов</div>'; return; }
   chats.forEach(c=>{
     const unread=(c.unread&&me)?(c.unread[me]||0):0;
-    const card=document.createElement('div'); card.className='card chat-item'; card.setAttribute('data-chat-id',c.id);
-    const left=document.createElement('div'); left.style.flex='0 0 56px';
-    const av=document.createElement('div'); av.className='avatar'; avatarStyle(otherParticipantName(c), av); left.appendChild(av);
+    const card=document.createElement('div'); card.className='card chat-item'; card.dataset.chatId=c.id;
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(otherParticipantName(c), av); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     body.innerHTML=`
       <div style="display:flex; align-items:center; gap:8px">
@@ -627,54 +579,57 @@ function renderChats(){
       </div>
       <div class="small" style="margin-top:6px">${esc(chatSubtitle(c))}</div>`;
     card.appendChild(left); card.appendChild(body);
-    // клик — раскрываем inline-панель
-    card.addEventListener('click',()=>expandChatInline(c.id));
     wrap.appendChild(card);
   });
+
+  // ДЕЛЕГИРОВАНИЕ КЛИКОВ — исправляет "не открывается чат"
+  wrap.addEventListener('click', onChatItemClick, { once:true }); // once: навешиваем каждый рендер заново
 }
-// Вставляет/обновляет панель общения под выбранным чатом
+function onChatItemClick(e){
+  const item=e.target.closest('.chat-item'); if(!item) return;
+  const chatId=item.dataset.chatId; expandChatInline(chatId);
+  // снова делегируем после первого срабатывания
+  $('chatsList').addEventListener('click', onChatItemClick, { once:true });
+}
 function expandChatInline(chatId){
   const list=$('chatsList'); if(!list) return;
-  // убрать старую панель, если была
   const old=document.querySelector('.inline-chat'); if(old) old.remove();
-
   const chat=Store.getChats().find(c=>c.id===chatId); if(!chat){ alert('Чат не найден'); return; }
   const host=list.querySelector(`[data-chat-id="${chatId}"]`); if(!host) return;
 
-  // создаём панель
-  const pane=document.createElement('div'); pane.className='inline-chat';
+  const pane=document.createElement('div'); pane.className='inline-chat'; pane.id='inlinePanel_'+chatId;
   pane.innerHTML=`
     <div style="display:flex; gap:10px; align-items:center;">
-      <div class="avatar" id="inlineChatAvatar" style="width:40px; height:40px"></div>
+      <div class="avatar" id="inlineChatAvatar_${chatId}" style="width:40px; height:40px"></div>
       <div style="font-weight:800">${esc(otherParticipantName(chat))}</div>
       <div class="small" style="margin-left:8px">${esc(chatSubtitle(chat))}</div>
     </div>
-    <div id="inlineMsgs" class="inline-msgs"></div>
+    <div id="inlineMsgs_${chatId}" class="inline-msgs"></div>
     <div style="display:flex; gap:8px; margin-top:8px;">
-      <input id="inlineInput" class="input" placeholder="Сообщение..." />
-      <button id="inlineSend" class="btn primary" type="button">Отправить</button>
-    </div>
-  `;
+      <input id="inlineInput_${chatId}" class="input" placeholder="Сообщение..." />
+      <button id="inlineSend_${chatId}" class="btn primary" type="button">Отправить</button>
+    </div>`;
   host.after(pane);
-  avatarStyle(otherParticipantName(chat), $('inlineChatAvatar'));
+  avatarStyle(otherParticipantName(chat), $(`inlineChatAvatar_${chatId}`));
 
-  // сообщения
-  const msgs=$('inlineMsgs'); msgs.innerHTML='';
+  const msgsEl=$(`inlineMsgs_${chatId}`); msgsEl.innerHTML='';
   (chat.messages||[]).forEach(m=>{
-    if(m.from==='system'){ const d=document.createElement('div'); d.className='small'; d.style.textAlign='center'; d.textContent=m.text; msgs.appendChild(d); }
-    else if(m.from==='me'){ const d=document.createElement('div'); d.className='msg-row msg-me'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; msgs.appendChild(d); }
-    else { const d=document.createElement('div'); d.className='msg-row msg-other'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; msgs.appendChild(d); }
+    if(m.from==='system'){ const d=document.createElement('div'); d.className='small'; d.style.textAlign='center'; d.textContent=m.text; msgsEl.appendChild(d); }
+    else if(m.from==='me'){ const d=document.createElement('div'); d.className='msg-row msg-me'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; msgsEl.appendChild(d); }
+    else { const d=document.createElement('div'); d.className='msg-row msg-other'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; msgsEl.appendChild(d); }
   });
-  msgs.scrollTop=msgs.scrollHeight;
+  msgsEl.scrollTop=msgsEl.scrollHeight;
 
   // сброс непрочитанных для меня
   const me=currentUserId();
   Store.updateChat(chatId,c=>{ if(!c.unread) c.unread={}; c.unread[me]=0; });
   renderChats(); // перерисуем список, чтобы пропал бейдж
+  // промотать к панели
+  pane.scrollIntoView({behavior:'smooth', block:'nearest'});
 
   // отправка
-  $('inlineSend').onclick=()=>{
-    const v=$('inlineInput').value.trim(); if(!v) return;
+  $(`inlineSend_${chatId}`).onclick=()=>{
+    const input=$(`inlineInput_${chatId}`); const v=input.value.trim(); if(!v) return;
     const meId=currentUserId();
     Store.updateChat(chatId,c=>{
       c.messages.push({from:'me', text:v, ts:nowISO()});
@@ -682,17 +637,15 @@ function expandChatInline(chatId){
       if(otherId){ if(!c.unread) c.unread={}; c.unread[otherId]=(c.unread[otherId]||0)+1; }
     });
     pushNotif({ id:'n_'+uid(), type:'message', title:'Новое сообщение', body:`Сообщение в чате "${chatSubtitle(chat)}"`, payload:{chatId}, ts:nowISO() });
-    $('inlineInput').value=''; expandChatInline(chatId); // перерисовать панель
+    input.value=''; expandChatInline(chatId); // перерисовать панель
   };
 }
-
-/* ================= ADS ================= */
+/* ===== ADS ===== */
 function renderAds(){
   const ads=Store.getAds(); const wrap=$('adsList'); wrap.innerHTML=''; if(!ads.length) wrap.innerHTML='<div class="small" style="padding:12px">Объявлений пока нет</div>';
   ads.forEach(ad=>{
     const card=document.createElement('div'); card.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 56px';
-    const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||'?',av); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||'?',av); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     body.innerHTML=`<div style="font-weight:800">${esc(ad.title)}</div><div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div><div style="margin-top:8px">${esc(ad.desc)}</div>`;
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
@@ -707,10 +660,8 @@ function renderAds(){
       pushNotif({ id:'n_'+uid(), type:'admsg', title:'Новый контакт по объявлению', body:`Поступило сообщение по "${ad.title}"`, payload:{chatId:chat.id, adId:ad.id}, ts:nowISO() });
       openScreen('messengerScreen'); renderChats(); expandChatInline(chat.id);
     });
-    const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать контакт';
-    phoneBtn.addEventListener('click',()=>alert(ad.phone?('Телефон: '+ad.phone):'Телефон не указан'));
-    actions.appendChild(contactBtn); actions.appendChild(phoneBtn); body.appendChild(actions);
-    card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
+    const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать контакт'; phoneBtn.addEventListener('click',()=>alert(ad.phone?('Телефон: '+ad.phone):'Телефон не указан'));
+    actions.appendChild(contactBtn); actions.appendChild(phoneBtn); body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 
   const myAdsWrap=$('myAdsList'); myAdsWrap.innerHTML=''; const profile=Store.getProfile();
@@ -719,8 +670,7 @@ function renderAds(){
     if(!my.length) myAdsWrap.innerHTML='<div class="small" style="padding:12px">У вас ещё нет объявлений</div>';
     my.forEach(ad=>{
       const card=document.createElement('div'); card.className='card';
-      const left=document.createElement('div'); left.style.flex='0 0 56px';
-      const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||profile.name,av); left.appendChild(av);
+      const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(ad.authorName||profile.name,av); left.appendChild(av);
       const body=document.createElement('div'); body.style.flex='1';
       body.innerHTML=`<div style="font-weight:800">${esc(ad.title)}</div><div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div><div style="margin-top:8px">${esc(ad.desc)}</div>`;
       const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='8px';
@@ -729,7 +679,7 @@ function renderAds(){
       actions.appendChild(edit); actions.appendChild(del); body.appendChild(actions);
       card.appendChild(left); card.appendChild(body); myAdsWrap.appendChild(card);
     });
-  }else myAdsWrap.innerHTML='<div class="small" style="padding:12px">Войдите, чтобы размещать объявления</div>';
+  } else myAdsWrap.innerHTML='<div class="small" style="padding:12px">Войдите, чтобы размещать объявления</div>';
 }
 $('createAdBtn')?.addEventListener('click',()=>{ const p=Store.getProfile(); if(!p) return alert('Только зарегистрированные исполнители могут создавать объявления'); openScreen('adCreateModal'); });
 $('adForm').addEventListener('submit',e=>{
@@ -745,11 +695,9 @@ function editAd(adId){
   openScreen('adCreateModal'); $('adTitle').value=ad.title; $('adDesc').value=ad.desc; $('adPhone').value=ad.phone||''; $('adPrice').value=ad.price||'';
   $('adForm').onsubmit=ev=>{ ev.preventDefault(); ad.title=$('adTitle').value.trim(); ad.desc=$('adDesc').value.trim(); ad.phone=$('adPhone').value.trim(); ad.price=$('adPrice').value.trim(); Store.setAds(Store.getAds().map(x=>x.id===ad.id?ad:x)); alert('Объявление обновлено'); $('adForm').onsubmit=null; closeScreen('adCreateModal'); renderAds(); };
 }
-
-/* ================= SETTINGS / PROFILE / WALLET ================= */
+/* ===== SETTINGS / PROFILE / WALLET ===== */
 $('openNotifications').addEventListener('click',()=>{ openScreen('notificationsModal'); renderNotifs(); });
 $('clearNotifications').addEventListener('click',()=>{ if(confirm('Очистить все уведомления?')){ Store.setNotifs([]); renderNotifs(); refreshNotifBadge(); } });
-
 $('openSettings').addEventListener('click',()=>{ openScreen('settingsModal'); $('citySelect').value=Store.getCity()||''; });
 document.querySelectorAll('.theme-btn').forEach(btn=>btn.addEventListener('click',()=>{ Store.setTheme(btn.dataset.theme); applyTheme(); }));
 $('saveCityBtn').addEventListener('click',()=>{ const v=$('citySelect').value.trim(); if(!v) return alert('Выберите город'); Store.setCity(v); updateCityLabel(); alert('Город сохранён'); });
@@ -759,8 +707,7 @@ function renderProfile(){
   const wrap=$('profileWrap'); wrap.innerHTML=''; const p=Store.getProfile();
   if(!p){ wrap.innerHTML='<div class="small">Сначала войдите</div>'; return; }
   const card=document.createElement('div'); card.className='card';
-  const left=document.createElement('div'); left.style.flex='0 0 56px';
-  const av=document.createElement('div'); av.className='avatar'; avatarStyle(p.name||p.login,av); left.appendChild(av);
+  const left=document.createElement('div'); left.style.flex='0 0 56px'; const av=document.createElement('div'); av.className='avatar'; avatarStyle(p.name||p.login,av); left.appendChild(av);
   const body=document.createElement('div'); body.style.flex='1';
   body.innerHTML=`
     <div style="font-weight:800">${esc(p.name||p.login)}</div>
@@ -787,8 +734,7 @@ function renderProfile(){
   $('logoutBtn').addEventListener('click',()=>{ if(confirm('Выйти из аккаунта?')){ localStorage.removeItem(LS_PROFILE); closeScreen('profileScreen'); openScreen('authScreen'); }});
   $('saveProfileBtn').addEventListener('click',()=>{ const prof=Store.getProfile(); prof.firstName=$('pfName').value.trim(); prof.lastName=$('pfSurname').value.trim(); prof.phone=$('pfPhone').value.trim(); const city=$('pfCity').value.trim(); if(city){ Store.setCity(city); updateCityLabel(); } prof.name=prof.firstName?prof.firstName:prof.name; Store.setProfile(prof); alert('Профиль сохранён'); renderProfile(); });
 }
-
-/* ================= WALLET ================= */
+/* ===== WALLET ===== */
 function renderWallet(){
   const wrap=$('walletWrap'); const w=Store.getWallet(); const p=Store.getProfile();
   wrap.innerHTML=`<div class="card"><div style="flex:1">
@@ -810,12 +756,8 @@ function renderWallet(){
   $('wTransfer').onclick=()=>{ const to=prompt('Получатель (логин/ID):','u_...'); if(!to)return; const amt=Number(prompt('Сумма перевода (₸):','500')||0); if(amt<=0)return; const w=Store.getWallet(); if((w.balance||0)<amt){ alert('Недостаточно средств'); return; } w.balance-=amt; (w.ops||(w.ops=[])).unshift({type:'Перевод',amount:amt,ts:nowISO(),note:`Получатель: ${to}`}); Store.setWallet(w); pushNotif({id:'n_'+uid(), type:'wallet', title:'Перевод выполнен', body:`Вы отправили ₸ ${amt} получателю ${to}`, payload:{}, ts:nowISO()}); renderWallet(); };
   $('wWithdraw').onclick=()=>{ const amt=Number(prompt('Сумма снятия (₸):','500')||0); if(amt<=0)return; const w=Store.getWallet(); if((w.balance||0)<amt){ alert('Недостаточно средств'); return; } w.balance-=amt; (w.ops||(w.ops=[])).unshift({type:'Снятие',amount:amt,ts:nowISO(),note:'Вывод средств'}); Store.setWallet(w); renderWallet(); };
 }
-
-/* ================= CREATE ORDER ================= */
-document.addEventListener('click',e=>{
-  const t=e.target.closest('#createTabs .tab'); if(!t) return;
-  document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); $('selectedCategory').textContent=t.dataset.val||t.textContent;
-});
+/* ===== CREATE ORDER ===== */
+document.addEventListener('click',e=>{ const t=e.target.closest('#createTabs .tab'); if(!t) return; document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); $('selectedCategory').textContent=t.dataset.val||t.textContent; });
 $('createForm').addEventListener('submit',e=>{
   e.preventDefault();
   const profile=Store.getProfile(); if(!profile){ alert('Сначала войдите'); openScreen('authScreen'); return; }
@@ -827,35 +769,121 @@ $('createForm').addEventListener('submit',e=>{
   pushNotif({ id:'n_'+uid(), type:'created', title:'Заказ создан', body:`Ваш заказ "${category}" опубликован`, payload:{orderId:order.id}, ts:nowISO() });
   closeScreen('createScreen'); renderMineList(); renderFindList(); alert('Заказ опубликован');
 });
-
-/* ================= CITY THREAD ================= */
+/* ===== CITY THREAD (соцсеть) ===== */
+let __cityImage=null, __repostPost=null;
 function renderCityPosts(){
   const container=$('cityPosts'); container.innerHTML='';
   const city=Store.getCity()||'—';
-  const feed=Store.getCityFeed(); const posts=feed[city]||[];
-  if(!posts.length){ container.innerHTML='<div class="small" style="padding:12px">Пока никто не написал. Будьте первым!</div>'; return; }
+  const feed=Store.getCityFeed(); const posts=(feed[city]||[]);
+
+  if(!posts.length){ container.innerHTML='<div class="small" style="padding:12px">Пока нет публикаций. Будьте первым!</div>'; return; }
+
   posts.forEach(p=>{
-    const card=document.createElement('div'); card.className='post-card';
-    card.innerHTML=`<div style="display:flex; gap:10px; align-items:center;">
-      <div class="avatar" style="width:40px; height:40px;">${initials(p.author||'?')}</div>
-      <div style="font-weight:800">${esc(p.author||'Гость')}</div>
-      <div class="small" style="margin-left:auto">${new Date(p.ts).toLocaleString()}</div>
-    </div>
-    <div style="margin-top:8px">${esc(p.text||'')}</div>
-    ${p.image?`<img class="post-img" src="${p.image}">`:''}`;
+    const card=document.createElement('div'); card.className='post-card'; card.dataset.postId=p.id;
+    const likesCount=Object.keys(p.likes?.byUser||{}).length;
+    card.innerHTML=`
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="avatar" style="width:40px; height:40px;">${initials(p.author||'?')}</div>
+        <div style="font-weight:800">${esc(p.author||'Гость')}</div>
+        <div class="small" style="margin-left:auto">${new Date(p.ts).toLocaleString()}</div>
+      </div>
+      <div style="margin-top:8px; white-space:pre-wrap">${esc(p.text||'')}</div>
+      ${p.image?`<img class="post-img" src="${p.image}" alt="">`:''}
+      <div class="post-actions">
+        <button class="btn" data-act="like">❤️ Нравится (<span data-likecount>${likesCount}</span>)</button>
+        <button class="btn" data-act="comment">💬 Комментировать</button>
+        <button class="btn" data-act="repost">🔁 Репост</button>
+      </div>
+      <div class="comments" style="margin-top:8px; display:none">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <input class="input" placeholder="Напишите комментарий..." />
+          <button class="btn primary" data-act="sendComment">Отправить</button>
+        </div>
+        <div class="comments-list"></div>
+      </div>
+    `;
+    // существующие комментарии
+    const list=card.querySelector('.comments-list');
+    (p.comments||[]).forEach(c=>{
+      const cEl=document.createElement('div'); cEl.className='comment';
+      cEl.innerHTML=`<div style="display:flex; gap:8px; align-items:center;">
+        <div class="avatar" style="width:28px; height:28px; font-size:11px">${initials(c.author||'?')}</div>
+        <div style="font-weight:800">${esc(c.author||'')}</div>
+        <div class="small" style="margin-left:auto">${new Date(c.ts).toLocaleString()}</div>
+      </div>
+      <div style="margin-top:6px; white-space:pre-wrap">${esc(c.text||'')}</div>`;
+      list.appendChild(cEl);
+    });
+
+    // делегируем клики по кнопкам поста
+    card.addEventListener('click', (e)=>{
+      const btn=e.target.closest('[data-act]'); if(!btn) return;
+      const act=btn.dataset.act;
+      if(act==='like'){ toggleLike(p.id, card); }
+      else if(act==='comment'){ const box=card.querySelector('.comments'); box.style.display=box.style.display==='none'?'block':'none'; }
+      else if(act==='sendComment'){ const input=card.querySelector('.comments input'); sendComment(p.id, input.value.trim(), card); input.value=''; }
+      else if(act==='repost'){ __repostPost=p; openRepostPicker(); }
+    });
+
     container.appendChild(card);
   });
 }
+function sendComment(postId, text, cardEl){
+  if(!text) return;
+  const me=Store.getProfile(); const city=Store.getCity()||'—';
+  const feed=Store.getCityFeed(); const posts=feed[city]||[];
+  const post=posts.find(p=>p.id===postId); if(!post) return;
+  (post.comments||(post.comments=[])).push({id:'c_'+uid(), author: me?.name||me?.login||'Гость', text, ts: nowISO()});
+  feed[city]=posts; Store.setCityFeed(feed);
+  const list=cardEl.querySelector('.comments-list'); const cEl=document.createElement('div'); cEl.className='comment';
+  cEl.innerHTML=`<div style="display:flex; gap:8px; align-items:center;">
+    <div class="avatar" style="width:28px; height:28px; font-size:11px">${initials(me?.name||me?.login||'Гость')}</div>
+    <div style="font-weight:800">${esc(me?.name||me?.login||'Гость')}</div>
+    <div class="small" style="margin-left:auto">${new Date().toLocaleString()}</div>
+  </div>
+  <div style="margin-top:6px; white-space:pre-wrap">${esc(text)}</div>`;
+  list.prepend(cEl);
+}
+function toggleLike(postId, cardEl){
+  const meId=currentUserId(); const city=Store.getCity()||'—';
+  const feed=Store.getCityFeed(); const posts=feed[city]||[]; const post=posts.find(p=>p.id===postId); if(!post) return;
+  if(!post.likes) post.likes={byUser:{}};
+  if(post.likes.byUser[meId]) delete post.likes.byUser[meId]; else post.likes.byUser[meId]=true;
+  feed[city]=posts; Store.setCityFeed(feed);
+  const cnt=Object.keys(post.likes.byUser).length; const span=cardEl.querySelector('[data-likecount]'); if(span) span.textContent=cnt;
+}
+function openRepostPicker(){
+  openScreen('repostScreen');
+  const list=$('repostList'); list.innerHTML='';
+  const chats=Store.getChats();
+  if(!chats.length){ list.innerHTML='<div class="small" style="padding:12px">Нет чатов для репоста</div>'; return; }
+  chats.forEach(c=>{
+    const item=document.createElement('div'); item.className='card'; item.style.cursor='pointer';
+    item.innerHTML=`<div style="font-weight:800">${esc(otherParticipantName(c))}</div><div class="small" style="margin-top:6px">${esc(chatSubtitle(c))}</div>`;
+    item.addEventListener('click',()=>{ if(!__repostPost) return; repostToChat(c.id, __repostPost); closeScreen('repostScreen'); openScreen('messengerScreen'); renderChats(); expandChatInline(c.id); });
+    list.appendChild(item);
+  });
+}
+function repostToChat(chatId, post){
+  Store.updateChat(chatId, c=>{
+    const snippet = `🔁 Репост из "Чат твоего города" — ${Store.getCity()||'—'}:\n${post.text||''}`;
+    c.messages.push({ from:'me', text: snippet, ts: nowISO() });
+    if(post.image){ c.messages.push({ from:'me', text:'[фото прикреплено]', ts: nowISO() }); }
+    // начислить непрочитанное другому участнику
+    const me=currentUserId(); const other=(c.participants||[]).find(p=>p!==me); if(other){ c.unread||(c.unread={}); c.unread[other]=(c.unread[other]||0)+1; }
+  });
+  pushNotif({ id:'n_'+uid(), type:'message', title:'Репост отправлен', body:`Пост отправлен в чат`, payload:{chatId}, ts:nowISO() });
+}
+/* создание поста */
+$('cityPostImage').addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __cityImage=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
 $('cityPostSend').addEventListener('click',()=>{
-  const text=$('cityPostText').value.trim(); if(!text && !window.__cityPostImageData) return alert('Введите текст или добавьте фото');
+  const text=$('cityPostText').value.trim(); if(!text && !__cityImage) return alert('Введите текст или добавьте фото');
   const city=Store.getCity()||'—'; const feed=Store.getCityFeed(); const me=Store.getProfile();
-  const post={ id:'post_'+uid(), author: me?.name||me?.login||'Гость', text, image: window.__cityPostImageData||null, ts: nowISO() };
+  const post={ id:'post_'+uid(), author: me?.name||me?.login||'Гость', text, image: __cityImage||null, ts: nowISO(), likes:{byUser:{}}, comments:[] };
   feed[city]=[post].concat(feed[city]||[]); Store.setCityFeed(feed);
-  $('cityPostText').value=''; window.__cityPostImageData=null; renderCityPosts();
+  $('cityPostText').value=''; __cityImage=null; renderCityPosts();
 });
-$('cityPostImage').addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ window.__cityPostImageData=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
-
-/* ================= INITIAL & AUTH ================= */
+/* ===== INITIAL & AUTH ===== */
 function initial(){
   applyTheme();
   if(!Store.getRole()) Store.setRole('user');
@@ -864,7 +892,6 @@ function initial(){
   if(!Store.getProfile()) openScreen('authScreen');
 }
 initial();
-
 $('authForm').addEventListener('submit',e=>{
   e.preventDefault();
   const login=$('authLogin').value.trim(), pass=$('authPass').value.trim(); if(!login||!pass) return alert('Введите данные');
@@ -872,28 +899,22 @@ $('authForm').addEventListener('submit',e=>{
   alert('Вход выполнен'); closeScreen('authScreen'); renderProfile(); initial();
 });
 $('registerBtn').addEventListener('click',()=>{ const email=prompt('Email или телефон для регистрации:','user@example.com'); if(!email) return; const prof={id:'u_'+uid(), login:email, name:email.split('@')[0]||email, createdAt:nowISO()}; Store.setProfile(prof); alert('Зарегистрировано'); closeScreen('authScreen'); initial(); });
-
-/* ================= MAIN BUTTONS (динамические) ================= */
+/* ===== MAIN BUTTONS ===== */
 function wireMainButtons(){
   const role=Store.getRole()||'user';
   const on=(id,fn)=>{ const el=$(id); if(el){ const clone=el.cloneNode(true); el.parentNode.replaceChild(clone,el); clone.addEventListener('click',fn); } };
-  on('btnOrder',()=>{ if(role!=='user'){ alert('Только для раздела "Сфера услуг". Переключите роль выше.'); return; } openScreen('createScreen'); });
-  on('btnFind',()=>{ if(role!=='worker'){ alert('Доступно только в "Подработка".'); return; } openScreen('findScreen'); renderFindList(); });
+  on('btnOrder',()=>{ if(role!=='user'){ alert('Только для «Сфера услуг».'); return; } openScreen('createScreen'); });
+  on('btnFind',()=>{ if(role!=='worker'){ alert('Доступно только в «Подработка».'); return; } openScreen('findScreen'); renderFindList(); });
   on('btnMessenger',()=>{ openScreen('messengerScreen'); renderChats(); });
   on('btnWallet',()=>{ openScreen('walletScreen'); renderWallet(); });
   on('btnMine',()=>{ openScreen('mineScreen'); renderMineList(); });
   on('btnAds',()=>{ openScreen('adsScreen'); renderAds(); });
-  on('btnCityChat',()=>{ openScreen('cityChatScreen'); renderCityPosts(); });
+  on('btnCityThread',()=>{ openScreen('cityThreadScreen'); renderCityPosts(); });
 }
-
-/* ================= ROLE TOGGLE ================= */
+/* ===== ROLE TOGGLE ===== */
 $('roleToggle').addEventListener('click',()=>{ const role=Store.getRole()||'user'; const next=role==='user'?'worker':'user'; Store.setRole(next); applyRoleUI(); });
-
-/* ================= NOTIFS BTN ================= */
+/* ===== NOTIFS BTN ===== */
 $('openNotifications').addEventListener('click',()=>{ openScreen('notificationsModal'); renderNotifs(); });
-
-/* ================= EXPOSE (debug) ================= */
-window.expandChatInline=expandChatInline;
 </script>
 </body>
 </html>
