@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiDCity — Top Sheets + Stable Messenger</title>
+<title>GiDCity — Roles, Orders, Chats (Top Sheets)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ========= BASE TOKENS ========= */
+/* ================= TOKENS / THEMES ================= */
 :root{
   --bg-1:#060910; --bg-2:#050815; --bg-3:#030711;
   --radial-a:#121a3a; --radial-b:#09203a;
@@ -19,13 +19,12 @@
   --glow-2: 0 0 22px rgba(50,255,210,.35);
   --shadow: 0 18px 50px rgba(0,0,0,.55);
 }
-/* THEMES */
 html[data-theme="violet"]{ --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff; --bg-1:#060910; --bg-2:#050815; --bg-3:#030711; --radial-a:#121a3a; --radial-b:#09203a; }
 html[data-theme="navy"]{ --accent-a:#6aa7ff; --accent-b:#7ef3ff; --accent-c:#65d0ff; --bg-1:#04080f; --bg-2:#061225; --bg-3:#07142b; --radial-a:#0c1a3a; --radial-b:#0a523a; }
 html[data-theme="emerald"]{ --accent-a:#3fe0a8; --accent-b:#baff6a; --accent-c:#75ffd9; --bg-1:#04110c; --bg-2:#052017; --bg-3:#05261b; --radial-a:#0d3a2a; --radial-b:#0a5235; }
 html[data-theme="sunset"]{ --accent-a:#ff7ab6; --accent-b:#ffd06a; --accent-c:#ff9f6a; --bg-1:#12080c; --bg-2:#1c0e17; --bg-3:#220f1b; --radial-a:#3a1223; --radial-b:#521a2c; }
 
-/* RESET */
+/* ================= RESET / LAYOUT ================= */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -36,8 +35,6 @@ body{
     linear-gradient(180deg,var(--bg-1),var(--bg-2) 40%, var(--bg-3) 100%);
   color:var(--text); font-size:var(--ui-font-size); display:flex; justify-content:center;
 }
-
-/* LAYOUT */
 .wrapper{ width:100%; max-width:1100px; display:flex; flex-direction:column; gap:16px; }
 .header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:8px 4px 6px; }
 .brand{ display:flex; flex-direction:column; gap:6px; }
@@ -49,7 +46,7 @@ body{
 .header-sub{ font-size:13px; color:var(--text-muted); font-weight:700 }
 .header-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
 
-/* Buttons + badge */
+/* ================= Buttons + badge ================= */
 .btn{ appearance:none; border:none; cursor:pointer; font-weight:700; color:var(--text);
   padding:10px 14px; border-radius:12px; line-height:1;
   background: linear-gradient(180deg, rgba(169,112,255,.12), rgba(50,255,210,.08));
@@ -65,7 +62,7 @@ body{
 .btn-with-badge{ position:relative; }
 .badge-dot{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px; display:flex; align-items:center; justify-content:center; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; box-shadow: 0 0 0 2px rgba(6,9,16,.9); }
 
-/* Role switch */
+/* ================= Role switch ================= */
 .role-switch{ display:flex; gap:8px; align-items:center; font-weight:700; color:var(--text-dim); }
 .toggle{ width:64px; height:32px; border-radius:999px; padding:3px; position:relative; cursor:pointer;
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.18));
@@ -79,7 +76,7 @@ body{
 .toggle.on{ background:linear-gradient(90deg, rgba(169,112,255,.36), rgba(50,255,210,.26)); border-color: rgba(169,112,255,.5); }
 .toggle.on .knob{ left:35px; }
 
-/* Main container */
+/* ================= Main container ================= */
 .container{
   width:100%; border-radius:20px; padding:18px;
   background: linear-gradient(180deg, rgba(14,20,46,.72), rgba(10,15,35,.42));
@@ -90,7 +87,7 @@ body{
 .panel-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px }
 .panel-top h2{ margin:0; font-size:18px; font-weight:800; color:var(--text); }
 
-/* Menu LIST (вертикально, одинаковая высота) */
+/* ================= Menu LIST ================= */
 .menu-grid{ display:flex; flex-direction:column; gap:10px; }
 .menu-btn{
   width:100%; min-height:64px; border-radius:14px; padding:14px 16px; cursor:pointer;
@@ -107,7 +104,7 @@ body{
 .menu-btn.violet{ background: linear-gradient(135deg, rgba(169,112,255,.24), rgba(106,140,255,.16)); border-color: rgba(138,165,255,.5); box-shadow: var(--glow-1), var(--shadow); }
 .menu-btn.disabled{ opacity:.6; pointer-events:none; filter:saturate(.8) }
 
-/* Cards */
+/* ================= Cards ================= */
 .card{
   background: linear-gradient(180deg, rgba(10,14,30,.86), rgba(6,10,24,.78));
   color:var(--text); border-radius:14px; padding:12px; display:flex; gap:12px; align-items:flex-start;
@@ -116,7 +113,7 @@ body{
 .avatar{ width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; overflow:hidden; }
 .avatar img{ width:100%; height:100%; object-fit:cover; border-radius:999px; }
 
-/* Sheets – сверху */
+/* ================= Sheets (TOP) ================= */
 .screen{
   position:fixed; inset:0; display:none; z-index:140; padding:0 12px; background: rgba(6,9,16,.64);
   align-items:flex-start; justify-content:center; backdrop-filter: blur(6px);
@@ -126,10 +123,10 @@ body{
   width:100%; max-width:1100px; max-height:86vh; overflow:auto;
   background: linear-gradient(180deg, rgba(18,26,56,.96), rgba(12,18,42,.94));
   color:var(--text); box-shadow: var(--glow-1), var(--shadow); border:1px solid rgba(138,165,255,.28);
-  border-radius:0 0 18px 18px; padding:18px 16px; margin-top:12px; /* TOP */
+  border-radius:0 0 18px 18px; padding:18px 16px; margin-top:12px; /* top sheet */
 }
 
-/* Forms */
+/* ================= Forms ================= */
 .input, textarea, select{
   width:100%; padding:12px 12px; border-radius:12px; border:1px solid rgba(138,165,255,.24);
   background: rgba(12,16,36,.75); color:var(--text); font-size:14px; outline:none; transition: box-shadow .2s, border-color .2s, background .2s;
@@ -139,14 +136,14 @@ textarea{ min-height:110px; resize:vertical }
 .input:focus, textarea:focus, select:focus{ border-color: rgba(169,112,255,.6); box-shadow: 0 0 0 3px rgba(169,112,255,.18), var(--glow-1); background: rgba(16,20,46,.9); }
 .small{ font-size:13px; color:var(--text-muted) }
 
-/* Tabs */
+/* ================= Tabs ================= */
 .tabs{ display:flex; gap:8px; flex-wrap:wrap }
 .tab{ padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; border:1px solid rgba(138,165,255,.25);
   background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.16)); color:var(--text); }
 .tab:hover{ box-shadow: var(--glow-1) }
 .tab.active{ background: linear-gradient(90deg, rgba(169,112,255,.32), rgba(50,255,210,.24)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2); }
 
-/* Messenger */
+/* ================= Messenger ================= */
 .messenger{ display:flex; gap:12px; min-height:64vh; }
 .chatlist{ width:340px; max-height:70vh; overflow:auto; }
 .chatpane{ flex:1; display:flex; flex-direction:column; min-width:0; }
@@ -205,7 +202,7 @@ textarea{ min-height:110px; resize:vertical }
   </main>
 </div>
 
-<!-- ===== Sheets сверху ===== -->
+<!-- =================== TOP SHEETS =================== -->
 <section id="authScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Вход</h3><button onclick="closeScreen('authScreen')" class="btn ghost">Закрыть</button></div>
   <form id="authForm" style="margin-top:12px">
@@ -346,9 +343,10 @@ textarea{ min-height:110px; resize:vertical }
 </div></section>
 
 <script>
-/* KEYS */
+/* ================= KEYS ================= */
 const LS_ORD='gid_orders_v13', LS_CHAT='gid_chats_v13', LS_ADS='gid_ads_v2', LS_PROFILE='gid_profile_v1', LS_ROLE='gid_role_v1', LS_CITY='gid_city_v1', LS_NOTIF='gid_notif_v1', LS_WALLET='gid_wallet_v1', LS_THEME='gid_theme_v1';
-/* HELPERS */
+
+/* ================= HELPERS ================= */
 const $=id=>document.getElementById(id);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const nowISO=()=>new Date().toISOString();
@@ -361,23 +359,33 @@ function avatarStyle(name,el){
   const pal=['#a970ff','#6a8cff','#32ffd2','#61e6ff','#ffaa6b']; let h=0; for(let i=0;i<(name||'').length;i++)h+=name.charCodeAt(i);
   const a=pal[h%pal.length], b=pal[(h+1)%pal.length]; el.style.background=`linear-gradient(135deg, ${a}, ${b})`; el.textContent=initials(name||'');
 }
-/* STORE */
+
+/* ================= STORE ================= */
 const Store={
   getOrders(){try{return JSON.parse(localStorage.getItem(LS_ORD))||[]}catch(e){return[]}}, setOrders(v){localStorage.setItem(LS_ORD,JSON.stringify(v))},
   addOrder(o){const a=this.getOrders();a.unshift(o);this.setOrders(a);return a},
   updateOrder(id,fn){const a=this.getOrders();const i=a.findIndex(x=>x.id===id);if(i>-1){fn(a[i]);this.setOrders(a);}return a},
+
   getChats(){try{return JSON.parse(localStorage.getItem(LS_CHAT))||[]}catch(e){return[]}}, setChats(v){localStorage.setItem(LS_CHAT,JSON.stringify(v))},
   addChat(c){const a=this.getChats();a.unshift(c);this.setChats(a);return a},
   updateChat(id,fn){const a=this.getChats();const i=a.findIndex(x=>x.id===id);if(i>-1){fn(a[i]);this.setChats(a);}return a},
+
   getAds(){try{return JSON.parse(localStorage.getItem(LS_ADS))||[]}catch(e){return[]}}, setAds(v){localStorage.setItem(LS_ADS,JSON.stringify(v))},
+
   getProfile(){try{return JSON.parse(localStorage.getItem(LS_PROFILE))||null}catch(e){return null}}, setProfile(p){localStorage.setItem(LS_PROFILE,JSON.stringify(p))},
+
   getRole(){return localStorage.getItem(LS_ROLE)||null}, setRole(r){localStorage.setItem(LS_ROLE,r)},
+
   getCity(){return localStorage.getItem(LS_CITY)||null}, setCity(c){localStorage.setItem(LS_CITY,c)},
+
   getNotifs(){try{return JSON.parse(localStorage.getItem(LS_NOTIF))||[]}catch(e){return[]}}, setNotifs(a){localStorage.setItem(LS_NOTIF,JSON.stringify(a))},
+
   getWallet(){try{return JSON.parse(localStorage.getItem(LS_WALLET))||{balance:0,ops:[]}}catch(e){return{balance:0,ops:[]}}}, setWallet(w){localStorage.setItem(LS_WALLET,JSON.stringify(w))},
+
   getTheme(){return localStorage.getItem(LS_THEME)||'violet'}, setTheme(t){localStorage.setItem(LS_THEME,t)}
 };
-/* SEED DEMO DATA */
+
+/* ================= SEED DEMO ================= */
 if(!localStorage.getItem(LS_ORD)){
   Store.setOrders([
     { id:'o1', category:'Такси', city:'Алматы', budget:1200, datetime:new Date().toISOString().slice(0,16), desc:'Поездка в аэропорт', ownerId:'u_owner1', ownerName:'Айдар', bids:[], status:'open', createdAt: nowISO() },
@@ -385,9 +393,8 @@ if(!localStorage.getItem(LS_ORD)){
   ]);
 }
 if(!localStorage.getItem(LS_ADS)) Store.setAds([]);
-/* ДЕМО-ЧАТ, чтобы можно было сразу проверить */
 if(!localStorage.getItem(LS_CHAT)){
-  const demo = [{
+  const demo=[{
     id:'chat_demo1',
     orderId:null,
     title:'Демо чат • Поддержка',
@@ -402,14 +409,16 @@ if(!localStorage.getItem(LS_CHAT)){
   Store.setChats(demo);
 }
 
-/* UI CORE */
+/* ================= THEME / CITY / BADGE ================= */
 function applyTheme(){ document.documentElement.setAttribute('data-theme', Store.getTheme()||'violet'); }
 function updateCityLabel(){ const c=Store.getCity()||'—'; $('topCity').textContent='Город: '+c; const sel=$('citySelect'); if(sel) sel.value=c||''; }
 function refreshNotifBadge(){ const n=Store.getNotifs().length; const b=$('notifBadge'); if(n>0){b.style.display='flex'; b.textContent=n>99?'99+':String(n);} else b.style.display='none'; }
+
+/* ================= SCREENS ================= */
 function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el=$(id); if(el) el.classList.add('active'); window.scrollTo(0,0); }
 function closeScreen(id){ const el=$(id); if(el) el.classList.remove('active'); }
 
-/* Role toggle */
+/* ================= ROLE ================= */
 function applyRoleUI(){
   const role=Store.getRole()||'user';
   if(role==='worker'){ $('roleToggle').classList.add('on'); $('btnOrder').style.display='none'; $('btnFind').style.display='block'; }
@@ -420,29 +429,63 @@ function animateRole(newRole){
   Store.setRole(newRole); applyRoleUI();
 }
 
-/* NOTIFICATIONS */
+/* ================= NOTIFICATIONS ================= */
+function pushNotif(n){ const arr=Store.getNotifs(); arr.unshift(n); Store.setNotifs(arr); refreshNotifBadge(); }
+
 function renderNotifs(){
   const list=$('notificationsList'); list.innerHTML='';
   const arr=Store.getNotifs();
   if(!arr.length){ list.innerHTML='<div class="small" style="padding:12px">Уведомлений нет</div>'; return; }
   arr.forEach((n,idx)=>{
     const node=document.createElement('div'); node.className='card'; node.style.cursor='pointer';
-    node.innerHTML=`<div style="flex:1"><div style="font-weight:800">${esc(n.title)}</div><div class="small" style="margin-top:6px">${esc(n.body)}</div><div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div></div>`;
+    node.innerHTML=`<div style="flex:1">
+      <div style="font-weight:800">${esc(n.title)}</div>
+      <div class="small" style="margin-top:6px">${esc(n.body)}</div>
+      <div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div>
+    </div>`;
     node.addEventListener('click',()=>{
-      if(n.type==='bid'&&n.orderId){ closeScreen('notificationsModal'); openBidsModal(n.orderId); }
-      else if((n.type==='admsg'||n.type==='accepted')&&n.chatId){ closeScreen('notificationsModal'); openChat(n.chatId); }
-      else if(n.type==='message'){ closeScreen('notificationsModal'); openScreen('messengerScreen'); showChatListOnly(); renderChats(); }
-      const a=Store.getNotifs(); a.splice(idx,1); Store.setNotifs(a); renderNotifs(); refreshNotifBadge();
+      try{
+        routeByNotification(n); // пробуем открыть нужный экран
+        // только при успехе — удаляем уведомление
+        const a=Store.getNotifs(); a.splice(idx,1); Store.setNotifs(a); renderNotifs(); refreshNotifBadge();
+      }catch(e){
+        alert('Не удалось открыть: '+e.message);
+      }
     });
     list.appendChild(node);
   });
 }
-function showChatListOnly(){ const mw=$('messengerWrap'), pane=$('chatPane'); if(mw&&pane){ mw.classList.add('only-list'); mw.classList.remove('has-chat'); pane.classList.add('hidden'); $('messages').innerHTML=''; const mi=$('messageInput'); if(mi) mi.value=''; } }
 
-/* FIND */
+function routeByNotification(n){
+  const p=n.payload||{};
+  switch(n.type){
+    case 'bid':
+      if(!p.orderId) throw new Error('Нет orderId');
+      closeScreen('notificationsModal'); openBidsModal(p.orderId); break;
+    case 'accepted':
+    case 'accepted_owner':
+    case 'message':
+    case 'admsg':
+      if(!p.chatId) throw new Error('Нет chatId');
+      closeScreen('notificationsModal'); openChat(p.chatId); break;
+    case 'created':
+      closeScreen('notificationsModal'); openScreen('mineScreen'); renderMineList(); break;
+    case 'wallet':
+      closeScreen('notificationsModal'); openScreen('walletScreen'); renderWallet(); break;
+    default: throw new Error('Неизвестный тип');
+  }
+}
+
+/* ================= FIND (для исполнителя) ================= */
 function renderFindList(){
   const wrap=$('findList'); if(!wrap) return; wrap.innerHTML='';
-  const items=Store.getOrders().filter(o=>o.status==='open');
+  const city=Store.getCity(); // можно фильтровать по городу
+  let items=Store.getOrders().filter(o=>o.status==='open');
+  // пример простого фильтра по поиску
+  const q=($('searchInput')?.value||'').toLowerCase().trim();
+  if(q) items=items.filter(o=>[o.category,o.desc,o.city].join(' ').toLowerCase().includes(q));
+  if(city) items=items.filter(o=>!o.city || o.city===city);
+
   if(!items.length){ wrap.innerHTML='<div class="small" style="padding:12px">Нет доступных заказов</div>'; return; }
   items.forEach(o=>{
     const card=document.createElement('div'); card.className='card';
@@ -453,13 +496,15 @@ function renderFindList(){
                     <div class="small" style="margin-top:6px">Дедлайн: ${o.datetime.replace('T',' ')}</div>
                     <div style="margin-top:8px">${esc(o.desc)}</div>`;
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
-    const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену'; bidBtn.addEventListener('click',()=>openBidDialog(o.id));
+    const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену';
+    bidBtn.addEventListener('click',()=>openBidDialog(o.id));
     actions.appendChild(bidBtn); body.appendChild(actions);
     card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
+$('applySearch')?.addEventListener('click',()=>renderFindList());
 
-/* MINE */
+/* ================= MINE (для заказчика) ================= */
 function renderMineList(){
   const wrap=$('mineList'); if(!wrap) return; wrap.innerHTML='';
   const profile=Store.getProfile();
@@ -472,17 +517,30 @@ function renderMineList(){
     const av=document.createElement('div'); av.className='avatar'; avatarStyle(o.ownerName||profile.name,av); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     const bidsCount=(o.bids||[]).length;
+    const statusLabel = o.status==='open' ? 'Открыт' : o.status==='in_progress' ? 'В процессе' : o.status==='done' ? 'Завершен' : 'Отменен';
     body.innerHTML=`<div style="font-weight:800">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div>
-                    <div class="small" style="margin-top:6px">Дедлайн: ${o.datetime.replace('T',' ')}</div>
+                    <div class="small" style="margin-top:6px">Статус: ${statusLabel} • Дедлайн: ${o.datetime.replace('T',' ')}</div>
                     <div style="margin-top:8px">${esc(o.desc)}</div>`;
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
-    const viewBtn=document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Просмотреть заявки'; viewBtn.addEventListener('click',()=>openBidsModal(o.id));
-    actions.appendChild(viewBtn); body.appendChild(actions);
+    if(o.status==='open'){
+      const viewBtn=document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Просмотреть заявки';
+      viewBtn.addEventListener('click',()=>openBidsModal(o.id));
+      actions.appendChild(viewBtn);
+    }
+    if(o.status==='in_progress' && o.assigned){
+      const openChatBtn=document.createElement('button'); openChatBtn.className='btn'; openChatBtn.textContent='Открыть чат';
+      openChatBtn.addEventListener('click',()=>{
+        const chat=Store.getChats().find(c=>c.orderId===o.id);
+        if(chat) openChat(chat.id); else alert('Чат не найден');
+      });
+      actions.appendChild(openChatBtn);
+    }
+    body.appendChild(actions);
     card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
 
-/* BIDS */
+/* ================= BIDS ================= */
 function openBidsModal(orderId){
   const order=Store.getOrders().find(x=>x.id===orderId); if(!order) return alert('Заказ не найден');
   openScreen('bidsModal');
@@ -503,13 +561,20 @@ function openBidsModal(orderId){
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
     const accept=document.createElement('button'); accept.className='btn primary'; accept.textContent='Принять';
     accept.addEventListener('click',()=>{
+      // статус + назначение
       Store.updateOrder(orderId,o=>{o.status='in_progress'; o.assigned={performerId:b.performerId, performerName:b.name, price:b.price};});
-      const chat={ id:'chat_'+uid(), orderId, title:`${order.category} • ${order.city}`, participants:[order.ownerId,b.performerId], meta:{ownerName:order.ownerName, performerName:b.name}, messages:[{from:'system', text:`Чат создан по заказу`, ts:nowISO()}], unread:{[order.ownerId]:0,[b.performerId]:1} };
+      // создаём чат (всегда при accept)
+      const chat={ id:'chat_'+uid(), orderId, title:`${order.category} • ${order.city}`, participants:[order.ownerId,b.performerId],
+        meta:{ownerName:order.ownerName, performerName:b.name},
+        messages:[{from:'system', text:`Чат создан по заказу`, ts:nowISO()}],
+        unread:{[order.ownerId]:0,[b.performerId]:1} };
       Store.addChat(chat);
-      const notifPerformer={id:'n_'+uid(), type:'accepted', title:'Ваша заявка принята', body:`Заказчик принял ваше предложение — открылся чат`, orderId, chatId:chat.id, ts:nowISO()};
-      const notifOwner={id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открылся чат с ${b.name}`, orderId, chatId:chat.id, ts:nowISO()};
-      const arr=Store.getNotifs(); arr.unshift(notifPerformer, notifOwner); Store.setNotifs(arr); refreshNotifBadge();
-      closeScreen('bidsModal'); openScreen('messengerScreen'); showChatListOnly(); renderChats();
+      // уведомления участникам
+      pushNotif({ id:'n_'+uid(), type:'accepted', title:'Ваша заявка принята', body:`Открыт чат по заказу "${order.category}"`, payload:{chatId:chat.id, orderId}, ts:nowISO() });
+      pushNotif({ id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открыт чат с ${b.name}`, payload:{chatId:chat.id, orderId}, ts:nowISO() });
+      // открыть чат сразу заказчику
+      closeScreen('bidsModal'); openChat(chat.id);
+      renderMineList(); renderFindList();
     });
     const decline=document.createElement('button'); decline.className='btn'; decline.textContent='Отказать';
     decline.addEventListener('click',()=>{ Store.updateOrder(orderId,o=>{o.bids=(o.bids||[]).filter((_,i)=>i!==idx)}); openBidsModal(orderId); renderMineList(); });
@@ -518,26 +583,28 @@ function openBidsModal(orderId){
   });
 }
 
-/* PLACE BID */
+/* ================= PLACE BID (исполнитель) ================= */
 function openBidDialog(orderId){
+  const order=Store.getOrders().find(o=>o.id===orderId); if(!order) return;
+  const profile=Store.getProfile()||{id:'u_guest_'+uid(), name:'Исполнитель'};
+  if(order.ownerId===profile.id){ alert('Нельзя предлагать цену на свой заказ'); return; }
   const price=prompt('Ваша цена (₸):','1000'); if(!price) return;
   const comment=prompt('Комментарий (сроки, детали):','Готов выполнить за 2 часа')||'';
-  const profile=Store.getProfile()||{id:'u_guest_'+uid(), name:'Исполнитель'};
   Store.updateOrder(orderId,o=>{ if(!Array.isArray(o.bids)) o.bids=[]; o.bids.push({price:Number(price),name:profile.name||profile.login, performerId:profile.id, comment, createdAt:nowISO()}); });
-  const order=Store.getOrders().find(x=>x.id===orderId);
-  if(order){ const notif={id:'n_'+uid(), type:'bid', title:'Новое предложение', body:`На ваш заказ "${order.category}" предложили цену ${price}₸`, orderId:order.id, ts:nowISO()}; const arr=Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge(); }
+  // уведомление владельцу заказа
+  pushNotif({ id:'n_'+uid(), type:'bid', title:'Новое предложение', body:`На ваш заказ "${order.category}" предложили ${price}₸`, payload:{orderId: order.id}, ts:nowISO() });
   alert('Предложение отправлено'); renderFindList();
 }
 
-/* CHATS */
-/* Рендер + ДЕЛЕГИРОВАНИЕ кликов по списку */
+/* ================= CHATS ================= */
 function renderChats(){
   const wrap=$('chatsList'); if(!wrap) return; wrap.innerHTML='';
   const chats=Store.getChats(); const me=Store.getProfile();
   if(!chats.length){ wrap.innerHTML='<div class="small" style="padding:12px">Пока нет чатов</div>'; return; }
   const frag=document.createDocumentFragment();
   chats.forEach(c=>{
-    const unread=(c.unread&&me)?(c.unread[me.id]||0):((c.unread&&c.unread['u_demo_user'])||0);
+    const myId = (me?.id)||'u_demo_user';
+    const unread=(c.unread&&myId)?(c.unread[myId]||0):0;
     const node=document.createElement('div'); node.className='card'; node.style.cursor='pointer';
     node.setAttribute('data-chat-id', c.id);
     const left=document.createElement('div'); left.style.flex='0 0 56px';
@@ -554,17 +621,25 @@ function renderChats(){
   wrap.appendChild(frag);
   showChatListOnly();
 }
-/* Делегирование: ловим клик на любой карточке с data-chat-id */
+
+// делегирование кликов по списку чатов
 $('chatsList').addEventListener('click',(e)=>{
   const card=e.target.closest('[data-chat-id]');
   if(card){ const id=card.getAttribute('data-chat-id'); openChat(id); }
 });
+
+function showChatListOnly(){
+  const mw=$('messengerWrap'), pane=$('chatPane');
+  if(mw&&pane){ mw.classList.add('only-list'); mw.classList.remove('has-chat'); pane.classList.add('hidden'); $('messages').innerHTML=''; $('messageInput').value=''; }
+}
 
 function openChat(chatId){
   const chat=Store.getChats().find(c=>c.id===chatId); if(!chat){ alert('Чат не найден'); return; }
   openScreen('messengerScreen');
   const mw=$('messengerWrap'), pane=$('chatPane'); if(mw&&pane){ mw.classList.remove('only-list'); mw.classList.add('has-chat'); pane.classList.remove('hidden'); }
   $('chatTitle').textContent=chat.title; $('chatSub').textContent=`Заказ: ${chat.orderId||'—'}`; avatarStyle(chat.meta?.performerName||chat.meta?.ownerName||'Ч',$('chatAvatar'));
+
+  // рисуем сообщения
   const msgs=$('messages'); msgs.innerHTML='';
   (chat.messages||[]).forEach(m=>{
     if(m.from==='system'){ const d=document.createElement('div'); d.className='small'; d.style.textAlign='center'; d.textContent=m.text; msgs.appendChild(d); }
@@ -572,26 +647,33 @@ function openChat(chatId){
     else { const d=document.createElement('div'); d.className='msg-row msg-other'; d.innerHTML=`<span class="b">${esc(m.text)}</span>`; msgs.appendChild(d); }
   });
   msgs.scrollTop=msgs.scrollHeight;
+
+  // сбрасываем непрочитанные для меня
   const me=Store.getProfile()||{id:'u_demo_user'};
   Store.updateChat(chatId,c=>{ if(!c.unread) c.unread={}; c.unread[me.id]=0; });
   renderChats();
 
+  // отправка сообщения
   $('sendMsgBtn').onclick=()=>{
     const v=$('messageInput').value.trim(); if(!v) return;
-    const me=Store.getProfile()||{id:'u_demo_user'};
+    const me=Store.getProfile()||{id:'u_demo_user', name:'Вы'};
     Store.updateChat(chatId,c=>{
       c.messages.push({from:'me', text:v, ts:nowISO()});
       const otherId=(c.participants||[]).find(p=>p!==me.id);
-      if(!c.unread) c.unread={}; if(otherId) c.unread[otherId]=(c.unread[otherId]||0)+1;
+      if(otherId){ if(!c.unread) c.unread={}; c.unread[otherId]=(c.unread[otherId]||0)+1; }
     });
+    // уведомление получателю
+    pushNotif({ id:'n_'+uid(), type:'message', title:'Новое сообщение', body:`Сообщение в чате "${chat.title}"`, payload:{chatId}, ts:nowISO() });
     $('messageInput').value=''; openChat(chatId);
   };
+
+  // mobile back
   const back=$('chatBack');
   back.style.display=window.matchMedia('(max-width:920px)').matches?'inline-flex':'none';
   back.onclick=()=>{ showChatListOnly(); };
 }
 
-/* ADS */
+/* ================= ADS ================= */
 function renderAds(){
   const ads=Store.getAds(); const wrap=$('adsList'); wrap.innerHTML=''; if(!ads.length) wrap.innerHTML='<div class="small" style="padding:12px">Объявлений пока нет</div>';
   ads.forEach(ad=>{
@@ -604,10 +686,12 @@ function renderAds(){
     const contactBtn=document.createElement('button'); contactBtn.className='btn'; contactBtn.textContent='Связаться';
     contactBtn.addEventListener('click',()=>{
       const profile=Store.getProfile()||{id:'u_demo_user', name:'Демо'};
-      const chat={ id:'chat_'+uid(), orderId:null, title:`Объявление: ${ad.title}`, participants:[profile.id, ad.authorId||'u_ad_owner'], meta:{ ownerName:profile.name||'Вы', performerName:ad.authorName||'Исполнитель' }, messages:[{from:'system', text:`Чат создан по объявлению "${ad.title}"`, ts:nowISO()}], unread:{[profile.id]:0,[ad.authorId||'u_ad_owner']:1} };
+      const chat={ id:'chat_'+uid(), orderId:null, title:`Объявление: ${ad.title}`, participants:[profile.id, ad.authorId||'u_ad_owner'],
+        meta:{ ownerName:profile.name||'Вы', performerName:ad.authorName||'Исполнитель' },
+        messages:[{from:'system', text:`Чат создан по объявлению "${ad.title}"`, ts:nowISO()}],
+        unread:{[profile.id]:0,[ad.authorId||'u_ad_owner']:1} };
       Store.addChat(chat);
-      const notif={id:'n_'+uid(), type:'admsg', title:'Кто-то заинтересовался объявлением', body:`Пользователь ${profile.name||'Пользователь'} написал по вашему объявлению "${ad.title}"`, adId:ad.id, chatId:chat.id, ts:nowISO()};
-      const arr=Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge();
+      pushNotif({ id:'n_'+uid(), type:'admsg', title:'Новый контакт по объявлению', body:`Поступило сообщение по "${ad.title}"`, payload:{chatId:chat.id, adId:ad.id}, ts:nowISO() });
       openScreen('messengerScreen'); showChatListOnly(); renderChats();
     });
     const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать контакт';
@@ -649,13 +733,12 @@ function editAd(adId){
   $('adForm').onsubmit=ev=>{ ev.preventDefault(); ad.title=$('adTitle').value.trim(); ad.desc=$('adDesc').value.trim(); ad.phone=$('adPhone').value.trim(); ad.price=$('adPrice').value.trim(); Store.setAds(Store.getAds().map(x=>x.id===ad.id?ad:x)); alert('Объявление обновлено'); $('adForm').onsubmit=null; closeScreen('adCreateModal'); renderAds(); };
 }
 
-/* SETTINGS / PROFILE / WALLET */
+/* ================= SETTINGS / PROFILE / WALLET ================= */
 $('openNotifications').addEventListener('click',()=>{ openScreen('notificationsModal'); renderNotifs(); });
 $('clearNotifications').addEventListener('click',()=>{ if(confirm('Очистить все уведомления?')){ Store.setNotifs([]); renderNotifs(); refreshNotifBadge(); } });
 
 $('openSettings').addEventListener('click',()=>{ openScreen('settingsModal'); $('citySelect').value=Store.getCity()||''; });
 document.querySelectorAll('.theme-btn').forEach(btn=>btn.addEventListener('click',()=>{ Store.setTheme(btn.dataset.theme); applyTheme(); }));
-
 $('saveCityBtn').addEventListener('click',()=>{ const v=$('citySelect').value.trim(); if(!v) return alert('Выберите город'); Store.setCity(v); updateCityLabel(); alert('Город сохранён'); });
 $('openProfile').addEventListener('click',()=>{ openScreen('profileScreen'); renderProfile(); closeScreen('settingsModal'); });
 
@@ -692,7 +775,7 @@ function renderProfile(){
   $('saveProfileBtn').addEventListener('click',()=>{ const prof=Store.getProfile(); prof.firstName=$('pfName').value.trim(); prof.lastName=$('pfSurname').value.trim(); prof.phone=$('pfPhone').value.trim(); const city=$('pfCity').value.trim(); if(city){ Store.setCity(city); updateCityLabel(); } prof.name=prof.firstName?prof.firstName:prof.name; Store.setProfile(prof); alert('Профиль сохранён'); renderProfile(); });
 }
 
-/* WALLET */
+/* ================= WALLET ================= */
 function renderWallet(){
   const wrap=$('walletWrap'); const w=Store.getWallet(); const p=Store.getProfile();
   wrap.innerHTML=`<div class="card"><div style="flex:1">
@@ -711,11 +794,11 @@ function renderWallet(){
     w.ops.slice(0,100).forEach(op=>{ const row=document.createElement('div'); row.className='card'; row.innerHTML=`<div style="flex:1"><div style="font-weight:800">${esc(op.type)} • ₸ ${Number(op.amount).toLocaleString('ru-RU')}</div><div class="small" style="margin-top:6px">${new Date(op.ts).toLocaleString()} — ${esc(op.note||'')}</div></div>`; opsList.appendChild(row); });
   }
   $('wTopUp').onclick=()=>{ const amt=Number(prompt('Сумма пополнения (₸):','1000')||0); if(amt<=0)return; const w=Store.getWallet(); w.balance=(w.balance||0)+amt; (w.ops||(w.ops=[])).unshift({type:'Пополнение',amount:amt,ts:nowISO(),note:'Внесение средств'}); Store.setWallet(w); renderWallet(); };
-  $('wTransfer').onclick=()=>{ const to=prompt('Получатель (логин/ID):','u_...'); if(!to)return; const amt=Number(prompt('Сумма перевода (₸):','500')||0); if(amt<=0)return; const w=Store.getWallet(); if((w.balance||0)<amt){ alert('Недостаточно средств'); return; } w.balance-=amt; (w.ops||(w.ops=[])).unshift({type:'Перевод',amount:amt,ts:nowISO(),note:`Получатель: ${to}`}); Store.setWallet(w); const notif={id:'n_'+uid(), type:'wallet', title:'Перевод получен', body:`Вам отправили ₸ ${amt} (${to})`, ts:nowISO()}; const arr=Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge(); renderWallet(); };
+  $('wTransfer').onclick=()=>{ const to=prompt('Получатель (логин/ID):','u_...'); if(!to)return; const amt=Number(prompt('Сумма перевода (₸):','500')||0); if(amt<=0)return; const w=Store.getWallet(); if((w.balance||0)<amt){ alert('Недостаточно средств'); return; } w.balance-=amt; (w.ops||(w.ops=[])).unshift({type:'Перевод',amount:amt,ts:nowISO(),note:`Получатель: ${to}`}); Store.setWallet(w); pushNotif({id:'n_'+uid(), type:'wallet', title:'Перевод выполнен', body:`Вы отправили ₸ ${amt} получателю ${to}`, payload:{}, ts:nowISO()}); renderWallet(); };
   $('wWithdraw').onclick=()=>{ const amt=Number(prompt('Сумма снятия (₸):','500')||0); if(amt<=0)return; const w=Store.getWallet(); if((w.balance||0)<amt){ alert('Недостаточно средств'); return; } w.balance-=amt; (w.ops||(w.ops=[])).unshift({type:'Снятие',amount:amt,ts:nowISO(),note:'Вывод средств'}); Store.setWallet(w); renderWallet(); };
 }
 
-/* CREATE ORDER */
+/* ================= CREATE ORDER ================= */
 document.querySelectorAll('#createTabs .tab').forEach(t=>t.addEventListener('click',()=>{ document.querySelectorAll('#createTabs .tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); $('selectedCategory').textContent=t.dataset.val||t.textContent; }));
 $('createForm').addEventListener('submit',e=>{
   e.preventDefault();
@@ -725,12 +808,11 @@ $('createForm').addEventListener('submit',e=>{
   if(!desc||!datetime){ alert('Заполните описание и дату'); return; }
   const order={id:'o_'+uid(), category, desc, budget, datetime, city:Store.getCity()||'—', ownerId:profile.id, ownerName:profile.name||profile.login, bids:[], status:'open', createdAt:nowISO()};
   Store.addOrder(order);
-  const notif={id:'n_'+uid(), type:'created', title:'Заказ создан', body:`Ваш заказ "${category}" опубликован`, orderId:order.id, ts:nowISO()};
-  const arr=Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge();
+  pushNotif({ id:'n_'+uid(), type:'created', title:'Заказ создан', body:`Ваш заказ "${category}" опубликован`, payload:{orderId:order.id}, ts:nowISO() });
   closeScreen('createScreen'); renderMineList(); renderFindList(); alert('Заказ опубликован');
 });
 
-/* INITIAL & AUTH */
+/* ================= INITIAL & AUTH ================= */
 function initial(){
   applyTheme();
   if(!Store.getRole()) Store.setRole('user');
@@ -739,6 +821,7 @@ function initial(){
   if(!Store.getProfile()) openScreen('authScreen');
 }
 initial();
+
 $('authForm').addEventListener('submit',e=>{
   e.preventDefault();
   const login=$('authLogin').value.trim(), pass=$('authPass').value.trim(); if(!login||!pass) return alert('Введите данные');
@@ -747,7 +830,7 @@ $('authForm').addEventListener('submit',e=>{
 });
 $('registerBtn').addEventListener('click',()=>{ const email=prompt('Email или телефон для регистрации:','user@example.com'); if(!email) return; const prof={id:'u_'+uid(), login:email, name:email.split('@')[0]||email, createdAt:nowISO()}; Store.setProfile(prof); alert('Зарегистрировано'); closeScreen('authScreen'); initial(); });
 
-/* MAIN BUTTONS */
+/* ================= MAIN BUTTONS ================= */
 $('btnOrder').addEventListener('click',()=>{ const role=Store.getRole()||'user'; if(role!=='user'){ alert('Только для Пользователя. Смените роль ползунком выше.'); return; } openScreen('createScreen'); });
 $('btnFind').addEventListener('click',()=>{ const role=Store.getRole()||'user'; if(role!=='worker'){ alert('Доступно только Исполнителю.'); return; } openScreen('findScreen'); renderFindList(); });
 $('btnMessenger').addEventListener('click',()=>{ openScreen('messengerScreen'); showChatListOnly(); renderChats(); });
@@ -755,10 +838,10 @@ $('btnWallet').addEventListener('click',()=>{ openScreen('walletScreen'); render
 $('btnMine').addEventListener('click',()=>{ openScreen('mineScreen'); renderMineList(); });
 $('btnAds').addEventListener('click',()=>{ openScreen('adsScreen'); renderAds(); });
 
-/* ROLE TOGGLE */
+/* ================= ROLE TOGGLE ================= */
 $('roleToggle').addEventListener('click',()=>{ const role=Store.getRole()||'user'; const next=role==='user'?'worker':'user'; animateRole(next); });
 
-/* expose for debug */
+/* ================= EXPOSE (debug) ================= */
 window.renderFindList=renderFindList; window.renderMineList=renderMineList; window.renderAds=renderAds; window.renderChats=renderChats; window.openBidsModal=openBidsModal;
 </script>
 </body>
