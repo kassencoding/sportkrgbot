@@ -4,6 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GiDCity — Роли, Мессенджер, Чат города (обновлено)</title>
+
+<!-- Telegram Mini Apps SDK (обязательно для работы в Telegram) -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== TOKENS / THEMES ===== */
@@ -149,7 +153,7 @@ textarea{ min-height:110px; resize:vertical }
 .msgs{ margin-top:8px; max-height:58vh; overflow:auto; padding-right:6px }
 .msg-row{ margin-bottom:10px }
 .msg-me{ text-align:right }
-.msg-me .b{ display:inline-block; background:linear-gradient(90deg, rgba(169,112,255,.9), rgba(50,255,210,.9)); padding:8px 12px; border-radius:10px; color:#0a0f1e; font-weight:700 }
+.msg-me .b{ display:inline-block; background:linear-gradient(90deg, rgba(169,112,255,.9), rgba(50,255,210,.9)); padding:8px 12px; border-radius:10px; color:var(--text-invert); font-weight:700 }
 .msg-other .b{ display:inline-block; background:rgba(255,255,255,.06); border:1px solid rgba(138,165,255,.24); padding:8px 12px; border-radius:10px }
 .msg-system{ text-align:center; margin:10px 0 14px 0; color:var(--text-muted); font-size:13px }
 .msg-img{ display:block; max-width:60%; border-radius:12px; margin-top:6px; border:1px solid rgba(138,165,255,.2) }
@@ -329,7 +333,13 @@ textarea{ min-height:110px; resize:vertical }
 </div></section>
 
 <section id="profileScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Профиль</h3><button onclick="closeScreen('profileScreen')" class="btn ghost">Закрыть</button></div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Профиль</h3>
+    <div>
+      <button id="backToSettings" class="btn ghost">← Назад</button>
+      <button onclick="closeScreen('profileScreen')" class="btn ghost">Закрыть</button>
+    </div>
+  </div>
   <div id="profileWrap" style="margin-top:12px"></div>
 </div></section>
 
@@ -362,8 +372,16 @@ textarea{ min-height:110px; resize:vertical }
 </div></section>
 
 <script>
+/* ===== Telegram Mini App init ===== */
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) {
+  tg.ready();
+  tg.expand(); // разворачиваем WebView
+}
+
 /* ===== KEYS ===== */
 const LS_ORD='gid_orders_v13', LS_CHAT='gid_chats_v13', LS_ADS='gid_ads_v2', LS_PROFILE='gid_profile_v1', LS_ROLE='gid_role_v1', LS_CITY='gid_city_v1', LS_NOTIF='gid_notif_v1', LS_WALLET='gid_wallet_v1', LS_THEME='gid_theme_v1', LS_CITY_FEED='gid_city_feed_v3';
+
 /* ===== HELPERS ===== */
 const $=id=>document.getElementById(id);
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -669,7 +687,7 @@ function sendChatMessage(){
   const meId=me.id;
   Store.updateChat(__currentChatId,c=>{
     c.participantsMeta||(c.participantsMeta={}); c.participantsMeta[meId]=me;
-    c.messages.push({fromId:meId, text:v, image: __attachDataUrl||null, ts: nowISO()});
+    c.messages.push({ fromId:meId, text: v, image: __attachDataUrl||null, ts: nowISO()});
     const otherId=(c.participants||[]).find(p=>p!==meId);
     if(otherId){ c.unread||(c.unread={}); c.unread[otherId]=(c.unread[otherId]||0)+1; }
   });
@@ -704,7 +722,6 @@ function renderAds(){
     actions.appendChild(contactBtn); actions.appendChild(phoneBtn); body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
 }
-
 function renderMyAds(){
   const myAdsWrap=$('myAdsList'); myAdsWrap.innerHTML=''; const profile=Store.getProfile();
   if(!profile){ myAdsWrap.innerHTML='<div class="small" style="padding:12px">Войдите, чтобы видеть свои объявления</div>'; return; }
@@ -746,6 +763,7 @@ $('openSettings').addEventListener('click',()=>{ openScreen('settingsModal'); $(
 document.querySelectorAll('.theme-btn').forEach(btn=>btn.addEventListener('click',()=>{ Store.setTheme(btn.dataset.theme); applyTheme(); }));
 $('saveCityBtn').addEventListener('click',()=>{ const v=$('citySelect').value.trim(); if(!v) return alert('Выберите город'); Store.setCity(v); updateCityLabel(); alert('Город сохранён'); });
 $('openProfile').addEventListener('click',()=>{ openScreen('profileScreen'); renderProfile(); closeScreen('settingsModal'); });
+$('backToSettings').addEventListener('click',()=>{ closeScreen('profileScreen'); openScreen('settingsModal'); });
 
 function renderProfile(){
   const wrap=$('profileWrap'); wrap.innerHTML=''; const p=Store.getProfile();
@@ -872,7 +890,7 @@ $('createForm').addEventListener('submit',e=>{
 });
 
 /* ===== CITY THREAD (соцсеть) ===== */
-let __cityImage=null, __repostPost=null;
+let __cityImage=null, __repostPost=null; /* <-- единственное объявление (фикс) */
 function renderCityPosts(){
   const container=$('cityPosts'); container.innerHTML='';
   const city=Store.getCity()||'—';
@@ -1009,12 +1027,7 @@ function wireMainButtons(){
 /* ===== ROLE TOGGLE ===== */
 $('roleToggle').addEventListener('click',()=>{ const role=Store.getRole()||'user'; const next=role==='user'?'worker':'user'; Store.setRole(next); applyRoleUI(); });
 
-/* ===== NOTIFS BTN ===== */
-$('openNotifications').addEventListener('click',()=>{ openScreen('notificationsModal'); renderNotifs(); });
-$('openSettings').addEventListener('click',()=>{ openScreen('settingsModal'); });
-
 /* ===== CITY POST CREATE ===== */
-let __cityImage=null;
 $('cityPostImage').addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __cityImage=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
 $('cityPostSend').addEventListener('click',()=>{
   const text=$('cityPostText').value.trim(); if(!text && !__cityImage) return alert('Введите текст или добавьте фото');
