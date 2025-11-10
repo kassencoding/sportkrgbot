@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GiD City — Сфера услуг & Подработка</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-/* =================== ТЕМЫ: тёмные + светлые =================== */
+/* =================== ТЕМЫ =================== */
 :root{
   --bg-1:#0a0f1a; --bg-2:#0b0e1c; --bg-3:#0b0e1e;
   --radial-a:#1e1b3a; --radial-b:#08152a;
@@ -24,12 +23,17 @@
   --ui-font-size:14px;
   --shadow:0 16px 46px rgba(0,0,0,.45);
 }
-
+/* базовые */
 html[data-theme="violet"]{ --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff; --bg-1:#060614; --bg-2:#07081a; --bg-3:#090b22; }
 html[data-theme="navy"]  { --accent-a:#6aa7ff; --accent-b:#7ef3ff; --accent-c:#65d0ff; --bg-1:#04101c; --bg-2:#041426; --bg-3:#061a32; }
 html[data-theme="emerald"]{ --accent-a:#33e09d; --accent-b:#b7ff78; --accent-c:#75ffd9; --bg-1:#081710; --bg-2:#082019; --bg-3:#071a12; }
 html[data-theme="sunset"]{ --accent-a:#ff6dab; --accent-b:#ffcc6d; --accent-c:#ff9b6d; --bg-1:#1a080a; --bg-2:#22090b; --bg-3:#2c0b10; }
-
+/* тёплые/яркие */
+html[data-theme="peach"]{ --accent-a:#ff9e7a; --accent-b:#ffd36d; --accent-c:#ffa07a; --bg-1:#1c0f0a; --bg-2:#24130d; --bg-3:#2a170f; }
+html[data-theme="sunrise"]{ --accent-a:#ff8a5c; --accent-b:#ffd56b; --accent-c:#ffb86b; --bg-1:#140c08; --bg-2:#1b110b; --bg-3:#22150d; }
+html[data-theme="amber"]{ --accent-a:#ffb300; --accent-b:#ffd54f; --accent-c:#ffc107; --bg-1:#100a02; --bg-2:#160d03; --bg-3:#1b1004; }
+html[data-theme="rose"]{ --accent-a:#ff6fa3; --accent-b:#ffc6e0; --accent-c:#ff99c2; --bg-1:#160711; --bg-2:#1e0a16; --bg-3:#250c1a; }
+html[data-theme="mint"]{ --accent-a:#35e0c1; --accent-b:#a7ff83; --accent-c:#6cffdf; --bg-1:#051612; --bg-2:#071d18; --bg-3:#09231d; }
 /* светлые */
 html[data-theme="light1"]{
   --bg-1:#ffffff; --bg-2:#f6f7fb; --bg-3:#eef1f7;
@@ -84,7 +88,7 @@ html[data-theme="light2"] body{ background:linear-gradient(120deg,#e8f3ff,#fffff
 .controls-row{ display:flex; gap:8px }
 .btn-with-badge{ position:relative }
 .badge-dot{ position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px;
-  display:flex; align-items:center; justify-content:center; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; box-shadow:0 0 0 2px rgba(0,0,0,.7);
+  display:flex; align-items:center; justify-content:center; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:900; box-shadow:0 0 0 2px rgba(0,0,0,.7);
 }
 
 /* =================== ROLE =================== */
@@ -100,18 +104,19 @@ html[data-theme="light2"] body{ background:linear-gradient(120deg,#e8f3ff,#fffff
 .toggle.on .knob{ left:35px }
 
 /* =================== КОНТЕЙНЕР / МЕНЮ =================== */
-.container{ width:100%; border-radius:20px; padding:18px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow) }
+.container{ width:100%; border-radius:20px; padding:18px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden }
 .panel-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px }
 .panel-top h2{ margin:0; font-size:18px; font-weight:900 }
 
-.menu-grid{ display:flex; flex-direction:column; gap:10px }
+.menu-grid{ display:flex; flex-direction:column; gap:10px; width:100%; }
 .menu-btn{
-  width:100%; min-height:62px; border-radius:14px; padding:12px 16px;
+  width:100%; min-height:60px; border-radius:14px; padding:12px 16px;
   background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.18)); border:1px solid var(--line); box-shadow:var(--shadow);
   display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer;
+  overflow:hidden; word-wrap:break-word; white-space:nowrap; text-overflow:ellipsis;
 }
-.menu-btn .title{ font-weight:900; font-size:14px } /* уменьшено */
-.menu-btn .note{ font-size:11px; color:var(--text-muted) }
+.menu-btn .title{ font-weight:900; font-size:14px; overflow:hidden; text-overflow:ellipsis }
+.menu-btn .note{ font-size:11px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis }
 .menu-btn.primary{ background:linear-gradient(135deg, rgba(169,112,255,.22), rgba(50,255,210,.16)); }
 .menu-btn.disabled{ opacity:.6; pointer-events:none }
 
@@ -127,11 +132,10 @@ html[data-theme="light2"] body{ background:linear-gradient(120deg,#e8f3ff,#fffff
 }
 .input:focus, textarea:focus, select:focus{ border-color:var(--accent-a); box-shadow:0 0 0 3px rgba(169,112,255,.18) }
 textarea{ min-height:110px; resize:vertical }
-.row{ display:flex; gap:8px } .col{ flex:1 }
+.row{ display:flex; gap:8px; flex-wrap:wrap } .col{ flex:1 1 260px }
 .small{ font-size:12px; color:var(--text-muted) }
-
-/* СИММЕТРИЯ (бюджет/дата-время) */
-#c-budget, #c-datetime{ height:48px; min-height:48px; display:flex; align-items:center; }
+/* СИММЕТРИЯ дедлайн/бюджет */
+.form-stack .input{ height:48px; min-height:48px; display:flex; align-items:center }
 
 /* =================== TABs =================== */
 .tabs{ display:flex; gap:8px; flex-wrap:wrap }
@@ -139,7 +143,7 @@ textarea{ min-height:110px; resize:vertical }
   background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.16)); }
 .tab.active{ background:linear-gradient(90deg, rgba(169,112,255,.32), rgba(50,255,210,.24)); border-color:rgba(169,112,255,.6) }
 
-/* =================== SCREENS (модалки) =================== */
+/* =================== SCREENS =================== */
 .screen{ position:fixed; inset:0; display:none; z-index:120; padding:12px; background:rgba(0,0,0,.55); backdrop-filter:blur(8px); align-items:flex-start; justify-content:center }
 .screen.active{ display:flex }
 .modal{ width:100%; max-width:1100px; max-height:88vh; overflow:auto; background:var(--surface); color:var(--text); box-shadow:var(--shadow); border:1px solid var(--line); border-radius:18px; padding:16px }
@@ -161,271 +165,238 @@ textarea{ min-height:110px; resize:vertical }
 .comment{ background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:10px; padding:8px; margin-top:6px }
 </style>
 </head>
-
 <body>
-  <div class="wrapper">
-    <header class="header">
-      <div class="brand">
-        <h1>GiD City</h1>
-        <div id="topCity" class="header-sub">Город: —</div>
-      </div>
-      <div class="header-right">
-        <div class="controls-row">
-          <button id="openNotifications" class="btn btn-with-badge">Уведомления <span id="notifBadge" class="badge-dot" style="display:none">0</span></button>
-          <button id="openSettings" class="btn">Настройки</button>
-        </div>
-      </div>
-    </header>
-
-    <div class="role-switch" style="justify-content:flex-end">
-      <span id="roleLabelUser" class="role-label">Сфера услуг</span>
-      <div id="roleToggle" class="toggle"><div class="knob"></div></div>
-      <span id="roleLabelWorker" class="role-label">Подработка</span>
+<div class="wrapper">
+  <header class="header">
+    <div class="brand">
+      <h1>GiD City</h1>
+      <div id="topCity" class="header-sub">Город: —</div>
     </div>
+    <div class="header-right">
+      <div class="controls-row">
+        <button id="openNotifications" class="btn btn-with-badge">Уведомления <span id="notifBadge" class="badge-dot" style="display:none">0</span></button>
+        <button id="openSettings" class="btn">Настройки</button>
+      </div>
+    </div>
+  </header>
 
-    <main class="container" role="main" aria-live="polite">
-      <div class="panel-top"><h2>Главное меню</h2><div style="width:140px"></div></div>
-      <div id="menuGrid" class="menu-grid"></div>
-    </main>
+  <div class="role-switch" style="justify-content:flex-end">
+    <span id="roleLabelUser" class="role-label">Сфера услуг</span>
+    <div id="roleToggle" class="toggle"><div class="knob"></div></div>
+    <span id="roleLabelWorker" class="role-label">Подработка</span>
   </div>
 
-  <!-- ===== AUTH ===== -->
-  <section id="authScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Вход</h3>
-      <button onclick="closeScreen('authScreen')" class="btn ghost">Закрыть</button>
+  <main class="container" role="main" aria-live="polite">
+    <div class="panel-top"><h2>Главное меню</h2><div style="width:140px"></div></div>
+    <div class="menu-grid" id="menuGrid"></div>
+  </main>
+</div>
+
+<!-- ===== AUTH ===== -->
+<section id="authScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Вход</h3><button onclick="closeScreen('authScreen')" class="btn ghost">Закрыть</button></div>
+  <form id="authForm" style="margin-top:12px">
+    <input id="authLogin" class="input" placeholder="Email или телефон" required>
+    <input id="authPass" class="input" placeholder="Пароль" type="password" style="margin-top:8px" required>
+    <div style="display:flex; gap:8px; margin-top:12px"><button type="submit" class="btn primary">Войти</button><button type="button" id="registerBtn" class="btn">Регистрация</button></div>
+    <div class="small" style="margin-top:10px">Демо: локально + синхронизация JSONBin</div>
+  </form>
+</div></section>
+
+<!-- ===== CREATE ORDER ===== -->
+<section id="createScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">ЗАКАЗАТЬ</h3><button onclick="closeScreen('createScreen')" class="btn ghost">Назад</button></div>
+  <div style="margin-top:10px;">
+    <div class="tabs" id="createTabs">
+      <div class="tab active" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
+      <div class="tab" data-val="Такси">Такси</div>
+      <div class="tab" data-val="Курьер">Курьер</div>
+      <div class="tab" data-val="Доставка">Доставка</div>
+      <div class="tab" data-val="Квартира/Дом (аренда/продажа)">Квартира/Дом (аренда/продажа)</div>
+      <div class="tab" data-val="Мастер">Мастер</div>
+      <div class="tab" data-val="Прочие">Прочие</div>
     </div>
-    <form id="authForm" style="margin-top:12px">
-      <input id="authLogin" class="input" placeholder="Email или телефон" required>
-      <input id="authPass" class="input" placeholder="Пароль" type="password" style="margin-top:8px" required>
-      <div style="display:flex; gap:8px; margin-top:12px">
-        <button type="submit" class="btn primary">Войти</button>
-        <button type="button" id="registerBtn" class="btn">Регистрация</button>
+
+    <form id="createForm" style="margin-top:12px">
+      <textarea id="c-desc" class="input" placeholder="Закажи любую услугу — мы найдём исполнителя"></textarea>
+
+      <div id="createExtraFields" class="form-field" style="margin-top:8px"></div>
+
+      <!-- Дедлайн над бюджетом, одинаковая высота -->
+      <div class="form-stack" style="display:flex; flex-direction:column; gap:8px; margin-top:8px">
+        <input id="c-datetime" class="input" type="datetime-local" placeholder="Дата и время">
+        <input id="c-budget" class="input" type="number" placeholder="Бюджет (₸)">
       </div>
-      <div class="small" style="margin-top:10px">Демо: данные локально, синхронизация через JSONBin</div>
-    </form>
-  </div></section>
 
-  <!-- ===== CREATE ORDER ===== -->
-  <section id="createScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">ЗАКАЗАТЬ</h3>
-      <button onclick="closeScreen('createScreen')" class="btn ghost">Назад</button>
-    </div>
-    <div style="margin-top:10px;">
-      <div class="tabs" id="createTabs">
-        <div class="tab active" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
-        <div class="tab" data-val="Такси">Такси</div>
-        <div class="tab" data-val="Курьер">Курьер</div>
-        <div class="tab" data-val="Доставка">Доставка</div>
-        <div class="tab" data-val="Квартира/Дом">Квартира/Дом</div>
-        <div class="tab" data-val="Мастер">Мастер</div>
-        <div class="tab" data-val="Прочие">Прочие</div>
-      </div>
-
-      <form id="createForm" style="margin-top:12px">
-        <textarea id="c-desc" class="input" placeholder="Закажи любую услугу — мы найдём исполнителя"></textarea>
-        <div id="createExtraFields" class="form-field" style="margin-top:8px"></div>
-
-        <div class="row" style="margin-top:8px">
-          <div class="col"><input id="c-budget" class="input" type="number" placeholder="Бюджет (₸)"></div>
-          <div class="col"><input id="c-datetime" class="input" type="datetime-local" placeholder="Дата и время"></div>
-        </div>
-
-        <div style="display:flex; gap:12px; margin-top:14px; align-items:center">
-          <button class="btn primary" id="orderNowBtn" type="submit" style="min-width:220px; padding:14px 18px; font-size:15px">ЗАКАЗАТЬ</button>
-          <button class="btn ghost" type="button" onclick="closeScreen('createScreen')">Отмена</button>
-        </div>
-      </form>
-    </div>
-  </div></section>
-
-  <!-- ===== FIND ORDERS ===== -->
-  <section id="findScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; font-size:22px; letter-spacing:.5px">НАЙТИ ЗАКАЗЫ</h3>
-      <button onclick="closeScreen('findScreen')" class="btn ghost">Назад</button>
-    </div>
-    <div style="margin-top:8px">
-      <div style="display:flex; gap:8px;">
-        <input id="searchInput" class="input" placeholder="Поиск...">
-        <button id="applySearch" class="btn">Поиск</button>
-      </div>
-      <div id="findList" class="list" style="margin-top:12px"></div>
-    </div>
-  </div></section>
-
-  <!-- ===== MINE ===== -->
-  <section id="mineScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Мои заказы</h3>
-      <button onclick="closeScreen('mineScreen')" class="btn ghost">Назад</button>
-    </div>
-    <div id="mineList" class="list" style="margin-top:12px"></div>
-  </div></section>
-
-  <!-- ===== BIDS ===== -->
-  <section id="bidsModal" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 id="bidsModalTitle" style="margin:0">Заявки</h3>
-      <button onclick="closeScreen('bidsModal')" class="btn ghost">Закрыть</button>
-    </div>
-    <div id="bidsList" style="margin-top:12px"></div>
-  </div></section>
-
-  <!-- ===== MESSENGER LIST ===== -->
-  <section id="messengerScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Мессенджер</h3>
-      <button onclick="closeScreen('messengerScreen')" class="btn ghost">Закрыть</button>
-    </div>
-    <div id="chatsList" style="margin-top:12px"></div>
-  </div></section>
-
-  <!-- ===== CHAT WINDOW ===== -->
-  <section id="chatWindow" class="screen"><div class="modal">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div id="chatWinAvatar" class="avatar" style="width:24px;height:24px"></div>
-      <div id="chatWinTitle" style="font-weight:900">Чат</div>
-      <div class="small" id="chatWinSub" style="margin-left:auto"></div>
-      <button onclick="closeScreen('chatWindow')" class="btn ghost">Закрыть</button>
-    </div>
-    <div id="chatWinMsgs" class="msgs"></div>
-    <div style="display:flex; gap:8px; margin-top:8px; align-items:center">
-      <label class="btn" title="Прикрепить" style="padding:10px 12px;">📎<input type="file" id="chatAttach" accept="image/*" style="display:none"></label>
-      <input id="chatWinInput" class="input" placeholder="Сообщение...">
-      <button id="chatWinSend" class="btn primary" type="button">Отправить</button>
-    </div>
-  </div></section>
-
-  <!-- ===== ADS ===== -->
-  <section id="adsScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Объявления услуг</h3>
-      <div style="display:flex; gap:8px">
-        <button id="myAdsOpenBtn" class="btn">Мои объявления</button>
-        <button onclick="closeScreen('adsScreen')" class="btn ghost">Закрыть</button>
-      </div>
-    </div>
-    <div style="margin-top:12px; display:flex; gap:12px; align-items:center; justify-content:space-between;">
-      <div style="font-weight:900">Список объявлений</div>
-      <div><button id="createAdBtn" class="btn">Создать объявление</button></div>
-    </div>
-    <div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div>
-  </div></section>
-
-  <section id="myAdsScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Мои объявления</h3>
-      <button onclick="closeScreen('myAdsScreen')" class="btn ghost">Закрыть</button>
-    </div>
-    <div id="myAdsList" class="list" style="margin-top:8px; max-height:66vh; overflow:auto"></div>
-  </div></section>
-
-  <section id="adCreateModal" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Создать объявление</h3>
-      <button onclick="closeScreen('adCreateModal')" class="btn ghost">Закрыть</button>
-    </div>
-    <form id="adForm" style="margin-top:12px">
-      <input id="adTitle" class="input" placeholder="Краткое название услуги" required>
-      <textarea id="adDesc" class="input" placeholder="Описание услуги" style="margin-top:8px"></textarea>
-      <div style="display:flex; gap:8px; margin-top:8px">
-        <input id="adPhone" class="input" placeholder="Телефон (опционально)">
-        <input id="adPrice" class="input" placeholder="Цена (опционально)">
-      </div>
-      <div style="display:flex; gap:8px; margin-top:10px">
-        <button class="btn primary" type="submit">Создать</button>
-        <button class="btn ghost" type="button" onclick="closeScreen('adCreateModal')">Отмена</button>
+      <div style="display:flex; gap:12px; margin-top:14px; align-items:center">
+        <button class="btn primary" id="orderNowBtn" type="submit" style="min-width:220px; padding:14px 18px; font-size:15px">ЗАКАЗАТЬ</button>
+        <button class="btn ghost" type="button" onclick="closeScreen('createScreen')">Отмена</button>
       </div>
     </form>
-  </div></section>
+  </div>
+</div></section>
 
-  <!-- ===== NOTIFICATIONS ===== -->
-  <section id="notificationsModal" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Уведомления</h3>
-      <button onclick="closeScreen('notificationsModal')" class="btn ghost">Закрыть</button>
-    </div>
-    <div id="notificationsList" style="margin-top:12px; max-height:58vh; overflow:auto"></div>
-    <div style="display:flex; gap:8px; margin-top:12px"><button id="clearNotifications" class="btn">Очистить</button></div>
-  </div></section>
+<!-- ===== FIND ORDERS ===== -->
+<section id="findScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; font-size:22px; letter-spacing:.5px">НАЙТИ ЗАКАЗЫ</h3><button onclick="closeScreen('findScreen')" class="btn ghost">Назад</button></div>
+  <div style="margin-top:8px">
+    <div style="display:flex; gap:8px;"><input id="searchInput" class="input" placeholder="Поиск..."><button id="applySearch" class="btn">Поиск</button></div>
+    <div id="findList" class="list" style="margin-top:12px"></div>
+  </div>
+</div></section>
 
-  <!-- ===== SETTINGS (sync здесь) ===== -->
-  <section id="settingsModal" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Настройки</h3>
-      <button onclick="closeScreen('settingsModal')" class="btn ghost">Закрыть</button>
-    </div>
-    <div style="margin-top:10px">
-      <div style="font-weight:900">Тема интерфейса</div>
-      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap">
-        <button class="btn theme-btn" data-theme="violet">Фиолет</button>
-        <button class="btn theme-btn" data-theme="navy">Нэйви</button>
-        <button class="btn theme-btn" data-theme="emerald">Эмералд</button>
-        <button class="btn theme-btn" data-theme="sunset">Сансет</button>
-        <button class="btn theme-btn" data-theme="light1">Light 1</button>
-        <button class="btn theme-btn" data-theme="light2">Light 2</button>
-      </div>
+<!-- ===== MINE ===== -->
+<section id="mineScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Мои заказы</h3><button onclick="closeScreen('mineScreen')" class="btn ghost">Назад</button></div>
+  <div id="mineList" class="list" style="margin-top:12px"></div>
+</div></section>
 
-      <div style="margin-top:16px; font-weight:900">Город</div>
-      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap">
-        <select id="citySelect" class="input" style="max-width:260px">
-          <option value="">— Выберите город —</option>
-          <option>Алматы</option><option>Астана</option><option>Караганда</option><option>Шымкент</option><option>Актобе</option>
-        </select>
-        <button id="saveCityBtn" class="btn">Сохранить</button>
-      </div>
+<!-- ===== BIDS ===== -->
+<section id="bidsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 id="bidsModalTitle" style="margin:0">Заявки</h3><button onclick="closeScreen('bidsModal')" class="btn ghost">Закрыть</button></div>
+  <div id="bidsList" style="margin-top:12px"></div>
+</div></section>
 
-      <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button id="syncNowBtn" class="btn">Синхронизировать сейчас</button>
-        <button id="openProfile" class="btn">Профиль</button>
-      </div>
-    </div>
-  </div></section>
+<!-- ===== MESSENGER LIST ===== -->
+<section id="messengerScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Мессенджер</h3><button onclick="closeScreen('messengerScreen')" class="btn ghost">Закрыть</button></div>
+  <div id="chatsList" style="margin-top:12px"></div>
+</div></section>
 
-  <!-- ===== PROFILE ===== -->
-  <section id="profileScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Профиль</h3>
-      <button onclick="closeScreen('profileScreen'); openScreen('settingsModal');" class="btn ghost">Назад в настройки</button>
-    </div>
-    <div id="profileWrap" style="margin-top:12px"></div>
-  </div></section>
+<!-- ===== CHAT WINDOW ===== -->
+<section id="chatWindow" class="screen"><div class="modal">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <div id="chatWinAvatar" class="avatar" style="width:24px; height:24px"></div>
+    <div id="chatWinTitle" style="font-weight:900">Чат</div>
+    <div class="small" id="chatWinSub" style="margin-left:auto"></div>
+    <button onclick="closeScreen('chatWindow')" class="btn ghost">Закрыть</button>
+  </div>
+  <div id="chatWinMsgs" class="msgs"></div>
+  <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+    <label class="btn" title="Прикрепить" style="padding:10px 12px;">📎<input type="file" id="chatAttach" accept="image/*" style="display:none"></label>
+    <input id="chatWinInput" class="input" placeholder="Сообщение...">
+    <button id="chatWinSend" class="btn primary" type="button">Отправить</button>
+  </div>
+</div></section>
 
-  <!-- ===== WALLET ===== -->
-  <section id="walletScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Кошелёк</h3>
-      <button onclick="closeScreen('walletScreen')" class="btn ghost">Закрыть</button>
-    </div>
-    <div id="walletWrap" style="margin-top:12px"></div>
-  </div></section>
+<!-- ===== ADS ===== -->
+<section id="adsScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Объявления услуг</h3>
+    <button onclick="closeScreen('adsScreen')" class="btn ghost">Закрыть</button>
+  </div>
 
-  <!-- ===== CITY THREAD ===== -->
-  <section id="cityThreadScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Чат твоего города</h3>
-      <button onclick="closeScreen('cityThreadScreen')" class="btn ghost">Закрыть</button>
-    </div>
-    <div style="margin-top:12px">
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <input id="cityPostText" class="input" placeholder="Поделитесь мыслью...">
-        <label class="btn"><input type="file" id="cityPostImage" accept="image/*" style="display:none">Фото</label>
-        <button id="cityPostSend" class="btn primary">Опубликовать</button>
-      </div>
-      <div id="cityPosts" style="margin-top:12px"></div>
-    </div>
-  </div></section>
+  <!-- Переместил сюда -->
+  <div style="margin-top:10px;">
+    <button id="myAdsOpenBtn" class="btn">Мои объявления</button>
+  </div>
 
-  <!-- ===== REPOST PICKER ===== -->
-  <section id="repostScreen" class="screen"><div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0">Репост в чат</h3>
-      <button onclick="closeScreen('repostScreen')" class="btn ghost">Закрыть</button>
+  <div style="margin-top:12px; display:flex; gap:12px; align-items:center; justify-content:space-between;">
+    <div style="font-weight:900">Список объявлений</div>
+    <div><button id="createAdBtn" class="btn">Создать объявление</button></div>
+  </div>
+  <div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div>
+</div></section>
+
+<section id="myAdsScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Мои объявления</h3>
+    <!-- Кнопка назад -->
+    <button onclick="closeScreen('myAdsScreen'); openScreen('adsScreen');" class="btn ghost">Назад</button>
+  </div>
+  <div id="myAdsList" class="list" style="margin-top:12px; max-height:66vh; overflow:auto"></div>
+</div></section>
+
+<section id="adCreateModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Создать объявление</h3><button onclick="closeScreen('adCreateModal')" class="btn ghost">Закрыть</button></div>
+  <form id="adForm" style="margin-top:12px">
+    <input id="adTitle" class="input" placeholder="Краткое название услуги" required>
+    <textarea id="adDesc" class="input" placeholder="Описание услуги" style="margin-top:8px"></textarea>
+    <div style="display:flex; gap:8px; margin-top:8px;"><input id="adPhone" class="input" placeholder="Телефон (опционально)"><input id="adPrice" class="input" placeholder="Цена (опционально)"></div>
+    <div style="display:flex; gap:8px; margin-top:10px;"><button class="btn primary" type="submit">Создать</button><button class="btn ghost" type="button" onclick="closeScreen('adCreateModal')">Отмена</button></div>
+  </form>
+</div></section>
+
+<!-- ===== NOTIFICATIONS ===== -->
+<section id="notificationsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Уведомления</h3><button onclick="closeScreen('notificationsModal')" class="btn ghost">Закрыть</button></div>
+  <div id="notificationsList" style="margin-top:12px; max-height:58vh; overflow:auto"></div>
+  <div style="display:flex; gap:8px; margin-top:12px"><button id="clearNotifications" class="btn">Очистить</button></div>
+</div></section>
+
+<!-- ===== SETTINGS ===== -->
+<section id="settingsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Настройки</h3><button onclick="closeScreen('settingsModal')" class="btn ghost">Закрыть</button></div>
+  <div style="margin-top:10px">
+    <div style="font-weight:900">Тема интерфейса</div>
+    <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+      <button class="btn theme-btn" data-theme="violet">Фиолет</button>
+      <button class="btn theme-btn" data-theme="navy">Нэйви</button>
+      <button class="btn theme-btn" data-theme="emerald">Эмералд</button>
+      <button class="btn theme-btn" data-theme="sunset">Сансет</button>
+      <button class="btn theme-btn" data-theme="peach">Peach</button>
+      <button class="btn theme-btn" data-theme="sunrise">Sunrise</button>
+      <button class="btn theme-btn" data-theme="amber">Amber</button>
+      <button class="btn theme-btn" data-theme="rose">Rose</button>
+      <button class="btn theme-btn" data-theme="mint">Mint</button>
+      <button class="btn theme-btn" data-theme="light1">Light 1</button>
+      <button class="btn theme-btn" data-theme="light2">Light 2</button>
     </div>
-    <div id="repostList" style="margin-top:12px"></div>
-  </div></section>
+
+    <div style="margin-top:16px; font-weight:900">Город</div>
+    <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+      <select id="citySelect" class="input" style="max-width:260px">
+        <option value="">— Выберите город —</option>
+        <option>Алматы</option><option>Астана</option><option>Караганда</option><option>Шымкент</option><option>Актобе</option>
+      </select>
+      <button id="saveCityBtn" class="btn">Сохранить</button>
+    </div>
+
+    <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button id="syncNowBtn" class="btn">Синхронизировать сейчас</button>
+      <button id="openProfile" class="btn">Профиль</button>
+    </div>
+  </div>
+</div></section>
+
+<!-- ===== PROFILE ===== -->
+<section id="profileScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Профиль</h3>
+    <button onclick="closeScreen('profileScreen'); openScreen('settingsModal');" class="btn ghost">Назад в настройки</button>
+  </div>
+  <div id="profileWrap" style="margin-top:12px"></div>
+</div></section>
+
+<!-- ===== WALLET ===== -->
+<section id="walletScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Кошелёк</h3><button onclick="closeScreen('walletScreen')" class="btn ghost">Закрыть</button></div>
+  <div id="walletWrap" style="margin-top:12px"></div>
+</div></section>
+
+<!-- ===== CITY THREAD ===== -->
+<section id="cityThreadScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Чат твоего города</h3>
+    <button onclick="closeScreen('cityThreadScreen')" class="btn ghost">Закрыть</button>
+  </div>
+  <div style="margin-top:12px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input id="cityPostText" class="input" placeholder="Поделитесь мыслью...">
+      <label class="btn"><input type="file" id="cityPostImage" accept="image/*" style="display:none">Фото</label>
+      <button id="cityPostSend" class="btn primary">Опубликовать</button>
+    </div>
+    <div id="cityPosts" style="margin-top:12px;"></div>
+  </div>
+</div></section>
+
+<section id="repostScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Репост в чат</h3>
+    <button onclick="closeScreen('repostScreen')" class="btn ghost">Закрыть</button>
+  </div>
+  <div id="repostList" style="margin-top:12px"></div>
+</div></section>
 
 <script>
 /* =================== CONSTANTS / STORE =================== */
@@ -435,8 +406,16 @@ const $=id=>document.getElementById(id);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const nowISO=()=>new Date().toISOString();
 
+function displayName(p){
+  if(!p) return 'Пользователь';
+  const nm=[p.firstName||'', p.lastName||''].join(' ').trim() || p.name || '';
+  if(nm) return nm;
+  const l=p.login||'';
+  // не показываем «сырой» телефон как имя
+  if(/^\+?\d[\d\s\-()]{6,}$/.test(l)) return 'Пользователь';
+  return l || 'Пользователь';
+}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#039;"}[m]) )}
-function displayName(p){ if(!p) return 'Гость'; const nm=[p.firstName||'',p.lastName||''].join(' ').trim()||p.name||''; if(nm) return nm; const l=p.login||''; return l||'Гость'; }
 
 const Store={
   getOrders(){try{return JSON.parse(localStorage.getItem(LS_ORD))||[]}catch(e){return[]}}, setOrders(v){localStorage.setItem(LS_ORD,JSON.stringify(v))},
@@ -459,7 +438,10 @@ const Store={
 
   getWallet(){try{return JSON.parse(localStorage.getItem(LS_WALLET))||{balance:0,ops:[]}}catch(e){return{balance:0,ops:[]}}}, setWallet(w){localStorage.setItem(LS_WALLET,JSON.stringify(w))},
 
-  getTheme(){return localStorage.getItem(LS_THEME)||'violet'}, setTheme(t){localStorage.setItem(LS_THEME,t); applyTheme();}
+  getTheme(){return localStorage.getItem(LS_THEME)||'violet'}, setTheme(t){localStorage.setItem(LS_THEME,t); applyTheme(); },
+
+  getCityFeed(){ try{return JSON.parse(localStorage.getItem(LS_CITY_FEED))||{} }catch(_){ return {} } },
+  setCityFeed(obj){ localStorage.setItem(LS_CITY_FEED, JSON.stringify(obj)); saveCloudDebounced(); }
 };
 
 /* =================== THEME / CITY / BADGE =================== */
@@ -468,8 +450,8 @@ function updateCityLabel(){ const c=Store.getCity()||'—'; $('topCity').textCon
 function refreshNotifBadge(){ const n=Store.getNotifs().length; const b=$('notifBadge'); if(n>0){b.style.display='flex';b.textContent=n>99?'99+':String(n);}else b.style.display='none'; }
 
 /* =================== SCREENS =================== */
-function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); window.scrollTo(0,0); }
-function closeScreen(id){ $(id).classList.remove('active'); }
+function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el=$(id); if(el) el.classList.add('active'); window.scrollTo(0,0); }
+function closeScreen(id){ const el=$(id); if(el) el.classList.remove('active'); }
 
 /* =================== ROLE & MENU =================== */
 function setRoleLabels(){
@@ -509,11 +491,7 @@ function renderNotifs(){
   if(!arr.length){ list.innerHTML='<div class="small" style="padding:12px">Уведомлений нет</div>'; return; }
   arr.forEach((n,idx)=>{
     const node=document.createElement('div'); node.className='card'; node.style.cursor='pointer';
-    node.innerHTML=`<div style="flex:1">
-      <div style="font-weight:900">${esc(n.title)}</div>
-      <div class="small" style="margin-top:6px">${esc(n.body)}</div>
-      <div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div>
-    </div>`;
+    node.innerHTML=`<div style="flex:1"><div style="font-weight:900">${esc(n.title)}</div><div class="small" style="margin-top:6px">${esc(n.body)}</div><div class="small" style="margin-top:8px">${new Date(n.ts).toLocaleString()}</div></div>`;
     node.addEventListener('click',()=>{ try{ routeByNotification(n); const a=Store.getNotifs(); a.splice(idx,1); Store.setNotifs(a); renderNotifs(); refreshNotifBadge(); }catch(e){ alert('Не открыть: '+e.message); } });
     list.appendChild(node);
   });
@@ -550,8 +528,7 @@ function renderFindList(){
                     <div class="small" style="margin-top:6px">${esc(o.category)} • Дедлайн: ${o.datetime.replace('T',' ')}</div>
                     <div style="margin-top:8px; white-space:pre-wrap">${esc(o.desc)}</div>`;
     const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
-    const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену';
-    bidBtn.addEventListener('click',()=>openBidDialog(o.id));
+    const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену'; bidBtn.addEventListener('click',()=>openBidDialog(o.id));
     actions.appendChild(bidBtn); body.appendChild(actions);
     card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
@@ -567,8 +544,7 @@ function renderMineList(){
   if(!items.length){ wrap.innerHTML='<div class="small" style="padding:12px">У вас нет заказов</div>'; return; }
   items.forEach(o=>{
     const card=document.createElement('div'); card.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 24px'; const av=document.createElement('div'); av.className='avatar';
-    renderAvatar(av, o.ownerName||displayName(profile), profile?.avatarType, profile?.avatarData); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 24px'; const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, o.ownerName||displayName(profile), profile?.avatarType, profile?.avatarData); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     const bidsCount=(o.bids||[]).length; const statusLabel=o.status==='open'?'Открыт':o.status==='in_progress'?'В процессе':o.status==='done'?'Завершён':'Отменён';
     body.innerHTML=`<div style="font-weight:900">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div>
@@ -585,8 +561,7 @@ function renderMineList(){
 function openBidsModal(orderId){
   const order=Store.getOrders().find(x=>x.id===orderId); if(!order) return alert('Заказ не найден');
   openScreen('bidsModal'); const list=$('bidsList'); list.innerHTML='';
-  const header=document.createElement('div'); header.innerHTML=`<div style="font-weight:900">${esc(order.category)} • ${esc(order.city)}</div><div class="small">Заказчик: ${esc(order.ownerName)}</div>`;
-  list.appendChild(header);
+  const header=document.createElement('div'); header.innerHTML=`<div style="font-weight:900">${esc(order.category)} • ${esc(order.city)}</div><div class="small">Заказчик: ${esc(order.ownerName)}</div>`; list.appendChild(header);
   const bids=order.bids||[]; if(!bids.length){ list.innerHTML+='<div class="small" style="padding:12px">Заявок нет</div>'; return; }
   bids.forEach((b,idx)=>{
     const row=document.createElement('div'); row.className='card';
@@ -608,8 +583,7 @@ function openBidsModal(orderId){
       Store.addChat(chat);
       pushNotif({ id:'n_'+uid(), type:'accepted', title:'Ваша заявка принята', body:`Открыт чат по заказу "${order.category}"`, payload:{chatId:chat.id, orderId}, ts:nowISO() });
       pushNotif({ id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открыт чат с ${b.name}`, payload:{chatId:chat.id, orderId}, ts:nowISO() });
-      closeScreen('bidsModal'); openChatWindow(chat.id); renderMineList(); renderFindList();
-      saveCloudDebounced();
+      closeScreen('bidsModal'); openChatWindow(chat.id); renderMineList(); renderFindList(); saveCloudDebounced();
     });
     const decline=document.createElement('button'); decline.className='btn'; decline.textContent='Отказать';
     decline.addEventListener('click',()=>{ Store.updateOrder(orderId,o=>{ o.bids=(o.bids||[]).filter((_,i)=>i!==idx) }); openBidsModal(orderId); renderMineList(); saveCloudDebounced(); });
@@ -633,7 +607,7 @@ function openBidDialog(orderId){
 /* =================== CHATS LIST & WINDOW =================== */
 function otherMeta(chat){
   const me=currentUserId(); const otherId=(chat.participants||[]).find(p=>p!==me);
-  const meta=chat.participantsMeta?.[otherId] || {id:otherId, name: chat.meta?.performerName || chat.meta?.ownerName || 'Собеседник'};
+  const meta=chat.participantsMeta?.[otherId] || {id:otherId, name: chat.meta?.performerName || chat.meta?.ownerName || 'Пользователь'};
   return meta;
 }
 function chatSubtitle(chat){
@@ -735,8 +709,7 @@ function renderAds(){
       pushNotif({ id:'n_'+uid(), type:'admsg', title:'Новый контакт по объявлению', body:`Поступило сообщение по "${ad.title}"`, payload:{chatId:chat.id, adId:ad.id}, ts:nowISO() });
       openChatWindow(chat.id);
     });
-    const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать телефон';
-    phoneBtn.addEventListener('click',()=>alert(ad.phone?('Телефон: '+ad.phone):'Телефон не указан'));
+    const phoneBtn=document.createElement('button'); phoneBtn.className='btn'; phoneBtn.textContent='Показать телефон'; phoneBtn.addEventListener('click',()=>alert(ad.phone?('Телефон: '+ad.phone):'Телефон не указан'));
     actions.appendChild(contactBtn); actions.appendChild(phoneBtn);
     body.appendChild(actions); card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
   });
@@ -748,7 +721,7 @@ function renderMyAds(){
   if(!my.length){ myAdsWrap.innerHTML='<div class="small" style="padding:12px">У вас ещё нет объявлений</div>'; return; }
   my.forEach(ad=>{
     const card=document.createElement('div'); card.className='card';
-    const left=document.createElement('div'); left.style.flex='0 0 24px'; const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, ad.authorName||displayName(profile), profile.avatarType, profile.avatarData); left.appendChild(av);
+    const left=document.createElement('div'); left.style.flex='0 0 24px'; const av=document.createElement('div'); av.className='avatar'; renderAvatar(av, ad.authorName||displayName(profile), profile?.avatarType, profile?.avatarData); left.appendChild(av);
     const body=document.createElement('div'); body.style.flex='1';
     body.innerHTML=`<div style="font-weight:900">${esc(ad.title)}</div>
                     <div class="small" style="margin-top:6px">${esc(ad.price?('₸ '+ad.price):'')}</div>
@@ -766,7 +739,7 @@ $('adForm')?.addEventListener('submit',e=>{
   e.preventDefault();
   const title=$('adTitle').value.trim(), desc=$('adDesc').value.trim(), phone=$('adPhone').value.trim(), price=$('adPrice').value.trim();
   if(!title) return alert('Введите название');
-  const profile=Store.getProfile()||{id:'u_demo_user', name:'Демо'}; const ad={id:'ad_'+uid(), title, desc, phone, price, authorId: profile.id, authorName: displayName(profile), authorAvatarType:profile.avatarType, authorAvatarData:profile.avatarData, createdAt: nowISO()};
+  const profile=Store.getProfile()||{id:'u_demo_user', name:'Демо'}; const ad={id:'ad_'+uid(), title, desc, phone, price, authorId: profile.id, authorName: displayName(profile), authorAvatarType:profile?.avatarType, authorAvatarData:profile?.avatarData, createdAt: nowISO()};
   const arr=Store.getAds(); arr.unshift(ad); Store.setAds(arr);
   alert('Объявление создано'); closeScreen('adCreateModal'); renderAds(); saveCloudDebounced();
 });
@@ -845,7 +818,7 @@ const CATEGORY_HINTS={
   'Такси':'Маршрут: Откуда → Куда, время подачи, пассажиры/багаж.',
   'Курьер':'Что доставить, адреса, вес/габариты, когда.',
   'Доставка':'Что купить/забрать, адрес магазина, доставка.',
-  'Квартира/Дом':'Адрес, тип работ (уборка/ремонт), площадь/комнаты.',
+  'Квартира/Дом (аренда/продажа)':'Тип сделки, район, комнаты, период аренды/бюджет, условия.',
   'Мастер':'Что починить/установить, модель, симптомы, адрес.',
   'Прочие':'Опишите задачу подробно, где и когда.'
 };
@@ -853,7 +826,16 @@ const CATEGORY_FIELDS={
   'Такси':()=>`<div class="row"><input class="input" id="f-from" placeholder="Откуда"><input class="input" id="f-to" placeholder="Куда"></div>`,
   'Курьер':()=>`<div class="row"><input class="input" id="f-pick" placeholder="Забрать (адрес)"><input class="input" id="f-drop" placeholder="Доставить (адрес)"></div>`,
   'Доставка':()=>`<div class="row"><input class="input" id="f-what" placeholder="Что купить/забрать"><input class="input" id="f-daddr" placeholder="Адрес доставки"></div>`,
-  'Квартира/Дом':()=>`<div class="row"><input class="input" id="f-addr" placeholder="Адрес"><input class="input" id="f-type" placeholder="Тип работ"></div>`,
+  'Квартира/Дом (аренда/продажа)':()=>`
+    <div class="row">
+      <select class="input" id="f-deal"><option>Аренда</option><option>Продажа</option></select>
+      <input class="input" id="f-area" placeholder="Район">
+      <input class="input" id="f-rooms" placeholder="Комнат (1,2,3...)">
+    </div>
+    <div class="row">
+      <input class="input" id="f-period" placeholder="Период аренды (если аренда)">
+      <input class="input" id="f-square" placeholder="Площадь (м²)">
+    </div>`,
   'Мастер':()=>`<div class="row"><input class="input" id="f-device" placeholder="Что чинить/установить"><input class="input" id="f-model" placeholder="Модель/детали"></div>`
 };
 document.addEventListener('click',e=>{
@@ -873,7 +855,10 @@ $('createForm').addEventListener('submit',e=>{
   if(cat==='Такси'){ extra=`\nМаршрут: ${($('f-from')?.value||'')} → ${($('f-to')?.value||'')}`.trim(); }
   if(cat==='Курьер'){ extra=`\nОткуда: ${($('f-pick')?.value||'')} → Куда: ${($('f-drop')?.value||'')}`.trim(); }
   if(cat==='Доставка'){ extra=`\nЧто: ${($('f-what')?.value||'')} • Адрес: ${($('f-daddr')?.value||'')}`.trim(); }
-  if(cat==='Квартира/Дом'){ extra=`\nАдрес: ${($('f-addr')?.value||'')} • Работы: ${($('f-type')?.value||'')}`.trim(); }
+  if(cat==='Квартира/Дом (аренда/продажа)'){
+    const deal=$('f-deal')?.value||'', area=$('f-area')?.value||'', rooms=$('f-rooms')?.value||'', period=$('f-period')?.value||'', sq=$('f-square')?.value||'';
+    extra=`\nСделка: ${deal} • Район: ${area} • Комнат: ${rooms} • Период: ${period} • Площадь: ${sq}`.trim();
+  }
   if(cat==='Мастер'){ extra=`\nУстройство: ${($('f-device')?.value||'')} • Модель: ${($('f-model')?.value||'')}`.trim(); }
   const fullDesc=desc+(extra?('\n'+extra):'');
   const order={id:'o_'+uid(), category:cat, desc:fullDesc, budget, datetime, city:Store.getCity()||'—', ownerId:profile.id, ownerName:displayName(profile), bids:[], status:'open', createdAt:nowISO()};
@@ -887,13 +872,12 @@ let __cityImage=null, __repostPost=null;
 function renderCityPosts(){
   const container=$('cityPosts'); if(!container) return; container.innerHTML='';
   const city=Store.getCity()||'—';
-  const feed=Store.getCityFeed?.() || {};
-  const posts=(feed[city]||[]);
+  const feed=Store.getCityFeed(); const posts=(feed[city]||[]);
   if(!posts.length){ container.innerHTML='<div class="small" style="padding:12px">Пока нет публикаций</div>'; return; }
   posts.forEach(p=>{
     const card=document.createElement('div'); card.className='post-card'; card.dataset.postId=p.id;
     const likesCount=Object.keys(p.likes?.byUser||{}).length;
-    const name=p.authorName||'Гость';
+    const name=p.authorName||'Пользователь';
     const top=`<div style="display:flex; gap:8px; align-items:center;">
       <div class="avatar" style="width:24px;height:24px" id="postAv_${p.id}"></div>
       <div style="font-weight:900">${esc(name)}</div>
@@ -1019,27 +1003,20 @@ $('openNotifications').addEventListener('click',()=>{ openScreen('notificationsM
 $('openSettings').addEventListener('click',()=>{ openScreen('settingsModal'); });
 
 /* =================== CITY POST CREATE =================== */
-$('cityPostImage')?.addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __cityImage=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
+let __cityImg=null;
+$('cityPostImage')?.addEventListener('change',e=>{ const f=e.target.files?.[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ __cityImg=r.result; alert('Фото добавлено'); }; r.readAsDataURL(f); });
 $('cityPostSend')?.addEventListener('click',()=>{
-  const text=$('cityPostText').value.trim(); if(!text && !__cityImage) return alert('Введите текст или добавьте фото');
-  const city=Store.getCity()||'—'; const feed=Store.getCityFeed?.()||{}; const me=Store.getProfile();
-  const post={ id:'post_'+uid(), authorName: displayName(me), authorAvatarType:me?.avatarType, authorAvatarData:me?.avatarData, text, image: __cityImage||null, ts: nowISO(), likes:{byUser:{}}, comments:[] };
+  const text=$('cityPostText').value.trim(); if(!text && !__cityImg) return alert('Введите текст или добавьте фото');
+  const city=Store.getCity()||'—'; const feed=Store.getCityFeed(); const me=Store.getProfile();
+  const post={ id:'post_'+uid(), authorName: displayName(me), authorAvatarType:me?.avatarType, authorAvatarData:me?.avatarData, text, image: __cityImg||null, ts: nowISO(), likes:{byUser:{}}, comments:[] };
   (feed[city]||(feed[city]=[])).unshift(post);
   Store.setCityFeed(feed);
-  $('cityPostText').value=''; __cityImage=null; renderCityPosts(); saveCloudDebounced();
+  $('cityPostText').value=''; __cityImg=null; renderCityPosts();
 });
 
 /* =================== CLOUD SYNC (JSONBin) =================== */
-const CLOUD = {
-  ENABLED: true,
-  BIN_ID: '6911fbe843b1c97be9a4dc97',
-  KEY:  '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG',
-  POLL_MS: 8000
-};
-const CloudAPI = {
-  url: id => `https://api.jsonbin.io/v3/b/${id}`,
-  headers: key => ({ 'Content-Type':'application/json','X-Master-Key': key,'X-Bin-Versioning':'false' })
-};
+const CLOUD = { ENABLED: true, BIN_ID: '6911fbe843b1c97be9a4dc97', KEY:  '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG', POLL_MS: 8000 };
+const CloudAPI = { url: id => `https://api.jsonbin.io/v3/b/${id}`, headers: key => ({ 'Content-Type':'application/json','X-Master-Key': key,'X-Bin-Versioning':'false' }) };
 let __cloudLoading=false, __cloudSaving=false, __saveTimer=null, cloudCache={orders:[],ads:[],cityFeed:{}};
 async function loadCloud(){
   if(!CLOUD.ENABLED||__cloudLoading) return; __cloudLoading=true;
@@ -1051,13 +1028,9 @@ async function loadCloud(){
     cloudCache.orders=Array.isArray(remote.orders)?remote.orders:[];
     cloudCache.ads=Array.isArray(remote.ads)?remote.ads:[];
     cloudCache.cityFeed=remote.cityFeed||{};
-
-    // Приоритет облака
     Store.setOrders(cloudCache.orders);
     Store.setAds(cloudCache.ads);
     localStorage.setItem(LS_CITY_FEED, JSON.stringify(cloudCache.cityFeed));
-
-    // UI
     renderFindList(); renderMineList(); renderAds(); renderCityPosts(); renderChats(); renderNotifs();
   }catch(e){ console.warn('Cloud load error:', e); }
   finally{ __cloudLoading=false; }
@@ -1065,11 +1038,7 @@ async function loadCloud(){
 async function saveCloud(){
   if(!CLOUD.ENABLED||__cloudSaving) return; __cloudSaving=true;
   try{
-    const payload={
-      orders: Store.getOrders(),
-      ads: Store.getAds(),
-      cityFeed: (function(){ try{return JSON.parse(localStorage.getItem(LS_CITY_FEED))||{} }catch(_){return{}} })()
-    };
+    const payload={ orders: Store.getOrders(), ads: Store.getAds(), cityFeed: Store.getCityFeed() };
     cloudCache=payload;
     const res=await fetch(CloudAPI.url(CLOUD.BIN_ID),{ method:'PUT', headers: CloudAPI.headers(CLOUD.KEY), body: JSON.stringify(payload) });
     if(!res.ok) throw new Error('PUT '+res.status);
@@ -1078,14 +1047,10 @@ async function saveCloud(){
 }
 function saveCloudDebounced(){ clearTimeout(__saveTimer); __saveTimer=setTimeout(saveCloud, 700); }
 $('syncNowBtn')?.addEventListener('click', async ()=>{ await loadCloud(); alert('Синхронизация завершена'); });
-
-/* перехватываем write-операции для автосохранения */
 (function patchStoresForCloud(){
   const a1=Store.addOrder; Store.addOrder=function(o){ const r=a1.call(Store,o); saveCloudDebounced(); return r; };
   const u1=Store.updateOrder; Store.updateOrder=function(id,fn){ const r=u1.call(Store,id,fn); saveCloudDebounced(); return r; };
   const sAds=Store.setAds; Store.setAds=function(arr){ sAds.call(Store,arr); saveCloudDebounced(); };
-  Store.getCityFeed=function(){ try{return JSON.parse(localStorage.getItem(LS_CITY_FEED))||{} }catch(_){return {}} };
-  Store.setCityFeed=function(feed){ localStorage.setItem(LS_CITY_FEED, JSON.stringify(feed)); saveCloudDebounced(); };
 })();
 
 /* =================== INITIAL =================== */
@@ -1110,8 +1075,6 @@ $('authForm').addEventListener('submit',async e=>{
   alert('Вход выполнен'); closeScreen('authScreen'); renderProfile(); initial(); await loadCloud();
 });
 $('registerBtn').addEventListener('click',async ()=>{ const email=prompt('Email или телефон:','user@example.com'); if(!email) return; const prof={id:'u_'+uid(), login:email, name:email.split('@')[0]||email, createdAt:nowISO()}; Store.setProfile(prof); alert('Зарегистрировано'); closeScreen('authScreen'); initial(); await loadCloud(); });
-
-/* авто-пуллинг */
 setInterval(()=>{ loadCloud(); }, CLOUD.POLL_MS);
 </script>
 </body>
