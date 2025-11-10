@@ -9,6 +9,8 @@
 /* ========= BASE TOKENS (default) ========= */
 :root{
   --bg-1:#060910; --bg-2:#050815; --bg-3:#030711;
+  --radial-a:#121a3a; --radial-b:#09203a;              /* фоновые подсветки */
+
   --surface:#0b1020; --surface-2:#0f1630; --line:#1a2346;
   --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff;
   --danger:#ff4d6d; --gold:#ffd84d;
@@ -23,18 +25,22 @@
 html[data-theme="violet"]{
   --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff;
   --bg-1:#060910; --bg-2:#050815; --bg-3:#030711;
+  --radial-a:#121a3a; --radial-b:#09203a;
 }
 html[data-theme="navy"]{
   --accent-a:#6aa7ff; --accent-b:#7ef3ff; --accent-c:#65d0ff;
   --bg-1:#04080f; --bg-2:#061225; --bg-3:#07142b;
+  --radial-a:#0c1a3a; --radial-b:#0a2a52;
 }
 html[data-theme="emerald"]{
   --accent-a:#3fe0a8; --accent-b:#baff6a; --accent-c:#75ffd9;
   --bg-1:#04110c; --bg-2:#052017; --bg-3:#05261b;
+  --radial-a:#0d3a2a; --radial-b:#0a5235;
 }
 html[data-theme="sunset"]{
   --accent-a:#ff7ab6; --accent-b:#ffd06a; --accent-c:#ff9f6a;
   --bg-1:#12080c; --bg-2:#1c0e17; --bg-3:#220f1b;
+  --radial-a:#3a1223; --radial-b:#521a2c;
 }
 
 /* ========= RESET ========= */
@@ -42,9 +48,10 @@ html[data-theme="sunset"]{
 html,body{height:100%}
 body{
   margin:0; padding:18px; font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  background: radial-gradient(1200px 800px at 20% -10%, #121a3a 0%, transparent 55%),
-              radial-gradient(1000px 700px at 120% 20%, #09203a 0%, transparent 55%),
-              linear-gradient(180deg,var(--bg-1),var(--bg-2) 40%, var(--bg-3) 100%);
+  background:
+    radial-gradient(1200px 800px at 20% -10%, var(--radial-a) 0%, transparent 55%),
+    radial-gradient(1000px 700px at 120% 20%, var(--radial-b) 0%, transparent 55%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2) 40%, var(--bg-3) 100%);
   color:var(--text); font-size:var(--ui-font-size); display:flex; justify-content:center;
 }
 
@@ -62,7 +69,7 @@ body{
 
 .header-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
 
-/* Unified buttons + badge */
+/* ========= Unified buttons + badge ========= */
 .btn{
   appearance:none; border:none; cursor:pointer; font-weight:700;
   color:var(--text); padding:10px 14px; border-radius:12px; line-height:1;
@@ -80,7 +87,7 @@ body{
 }
 .btn.ghost{ background: transparent; border-color: rgba(138,165,255,.25); }
 
-/* Notification button with corner badge */
+.controls-row{ display:flex; gap:8px; }
 .btn-with-badge{ position:relative; }
 .badge-dot{
   position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 5px;
@@ -89,7 +96,7 @@ body{
   box-shadow: 0 0 0 2px rgba(6,9,16,.9);
 }
 
-/* iOS-like role switch on main */
+/* ========= iOS-like role switch ========= */
 .role-switch{ display:flex; gap:8px; align-items:center; font-weight:700; color:var(--text-dim); }
 .toggle{
   width:64px; height:32px; border-radius:999px; padding:3px; position:relative; cursor:pointer;
@@ -197,7 +204,6 @@ textarea{ min-height:110px; resize:vertical }
   .messenger.has-chat .chatlist{ display:none; }     /* на смартфоне – как Telegram/WA */
   .messenger.has-chat .chatpane{ display:flex; }     /* чат на весь экран */
 }
-
 </style>
 </head>
 <body>
@@ -208,10 +214,8 @@ textarea{ min-height:110px; resize:vertical }
       <h1>GiD City</h1>
       <div id="topCity" class="header-sub">Город: —</div>
     </div>
-
     <div class="header-right">
-      <!-- убрали roleLabel -->
-      <div class="controls-row" style="display:flex; gap:8px;">
+      <div class="controls-row">
         <button id="openNotifications" class="btn btn-with-badge">Уведомления<span id="notifBadge" class="badge-dot" style="display:none">0</span></button>
         <button id="openSettings" class="btn">Настройки</button>
       </div>
@@ -567,7 +571,8 @@ function animateRole(newRole){
 
 /* THEME */
 function applyTheme(){
-  const t=Store.getTheme(); document.documentElement.setAttribute('data-theme',t);
+  const t=Store.getTheme()||'violet';
+  document.documentElement.setAttribute('data-theme',t);
 }
 
 /* ========= NOTIFICATIONS ========= */
@@ -587,7 +592,7 @@ function renderNotifs(){
     list.appendChild(node);
   });
 }
-function showChatListOnly(){ const mw=$('messengerWrap'), pane=$('chatPane'); if(mw&&pane){ mw.classList.add('only-list'); mw.classList.remove('has-chat'); pane.classList.add('hidden'); } }
+function showChatListOnly(){ const mw=$('messengerWrap'), pane=$('chatPane'); if(mw&&pane){ mw.classList.add('only-list'); mw.classList.remove('has-chat'); pane.classList.add('hidden'); $('messages').innerHTML=''; $('messageInput').value=''; } }
 
 /* ========= FIND ========= */
 function renderFindList(){
@@ -602,7 +607,7 @@ function renderFindList(){
     body.innerHTML=`<div style="font-weight:800">${esc(o.category)} • ${esc(o.city)} — ₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div>
                     <div class="small" style="margin-top:6px">Дедлайн: ${o.datetime.replace('T',' ')}</div>
                     <div style="margin-top:8px">${esc(o.desc)}</div>`;
-    const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='10px';
+    const actions=document.createElement('div'); actions.style.display='flex'; actions.style.gап='8px'; actions.style.marginTop='10px';
     const bidBtn=document.createElement('button'); bidBtn.className='btn'; bidBtn.textContent='Предложить цену'; bidBtn.addEventListener('click',()=>openBidDialog(o.id));
     actions.appendChild(bidBtn); body.appendChild(actions);
     card.appendChild(left); card.appendChild(body); wrap.appendChild(card);
@@ -727,7 +732,6 @@ function openChat(chatId){
     $('messageInput').value=''; openChat(chatId);
   };
 
-  // мобильная кнопка "назад"
   const back=$('chatBack');
   back.style.display=window.matchMedia('(max-width:920px)').matches?'inline-flex':'none';
   back.onclick=()=>{ showChatListOnly(); };
@@ -746,7 +750,7 @@ function renderAds(){
     const contactBtn=document.createElement('button'); contactBtn.className='btn'; contactBtn.textContent='Связаться';
     contactBtn.addEventListener('click',()=>{
       const profile=Store.getProfile(); if(!profile) return alert('Войдите чтобы связаться');
-      const chat={ id:'chat_'+uid(), orderId:null, title:`Объявление: ${ad.title}`, participants:[profile.id, ad.authorId], meta:{ownerName:profile.name, performerName:ad.authorName}, messages:[{from:'system', text:`Чат создан по объявлению "${ad.title}"`, ts:nowISO()}], unread:{[profile.id]:0,[ad.authorId]:1} };
+      const chat={ id:'chat_'+uid(), orderId:null, title:`Объявление: ${ad.title}`, participants:[profile.id, ad.authorId], meta:{ ownerName:profile.name, performerName:ad.authorName }, messages:[{from:'system', text:`Чат создан по объявлению "${ad.title}"`, ts:nowISO()}], unread:{[profile.id]:0,[ad.authorId]:1} };
       Store.addChat(chat);
       const notif={id:'n_'+uid(), type:'admsg', title:'Кто-то заинтересовался объявлением', body:`Пользователь ${profile.name} написал по вашему объявлению "${ad.title}"`, adId:ad.id, chatId:chat.id, ts:nowISO()};
       const arr=Store.getNotifs(); arr.unshift(notif); Store.setNotifs(arr); refreshNotifBadge();
@@ -876,9 +880,7 @@ $('createForm').addEventListener('submit',e=>{
 
 /* ========= INITIAL & AUTH ========= */
 function initial(){
-  // theme
   applyTheme();
-  // role
   if(!Store.getRole()) Store.setRole('user');
   updateCityLabel(); refreshNotifBadge();
   applyRoleUI(); renderFindList(); renderMineList(); renderAds(); renderNotifs(); renderChats();
