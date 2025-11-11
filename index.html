@@ -525,19 +525,26 @@ $('createForm').addEventListener('submit',e=>{
   const desc=$('c-desc').value.trim(); const budget=Number($('c-budget').value||0); const datetime=$('c-datetime').value||'';
   if(!desc||!datetime){ alert('Заполните описание и дату'); return; }
   let extra='';
-  if(cat==='Такси'){ extra=`\nМаршрут: ${($('f-from')?.value||'')} → ${($('f-to')?.value||'')}`.trim(); }
-  if(cat==='Курьер'){ extra=`\nОткуда: ${($('f-pick')?.value||'')} → Куда: ${($('f-drop')?.value||'')}`.trim(); }
-  if(cat==='Доставка'){ extra=`\nЧто: ${($('f-what')?.value||'')} • Адрес: ${($('f-daddr')?.value||'')}`.trim(); }
+  if(cat==='Такси'){ extra=`
+Маршрут: ${($('f-from')?.value||'')} → ${($('f-to')?.value||'')}`.trim(); }
+  if(cat==='Курьер'){ extra=`
+Откуда: ${($('f-pick')?.value||'')} → Куда: ${($('f-drop')?.value||'')}`.trim(); }
+  if(cat==='Доставка'){ extra=`
+Что: ${($('f-what')?.value||'')} • Адрес: ${($('f-daddr')?.value||'')}`.trim(); }
   if(cat==='Квартира/Дом (аренда/продажа)'){
     const deal=$('f-deal')?.value||'', area=$('f-area')?.value||'', rooms=$('f-rooms')?.value||'', period=$('f-period')?.value||'', sq=$('f-square')?.value||'';
-    extra=`\nСделка: ${deal} • Район: ${area} • Комнат: ${rooms} • Период: ${period} • Площадь: ${sq}`.trim();
+    extra=`
+Сделка: ${deal} • Район: ${area} • Комнат: ${rooms} • Период: ${period} • Площадь: ${sq}`.trim();
   }
-  if(cat==='Мастер/Специалист'){ extra=`\nСпециалист: ${($('f-role')?.value||'')} • Детали: ${($('f-model')?.value||'')}`.trim(); }
+  if(cat==='Мастер/Специалист'){ extra=`
+Специалист: ${($('f-role')?.value||'')} • Детали: ${($('f-model')?.value||'')}`.trim(); }
 
   const crit=Array.from(document.querySelectorAll('#criteriaWrap .crit.active')).map(x=>x.textContent).join(', ');
-  const critLine = crit?`\nКритерии: ${crit}`:'';
+  const critLine = crit?`
+Критерии: ${crit}`:'';
 
-  const fullDesc=desc+(extra?('\n'+extra):'')+critLine;
+  const fullDesc=desc+(extra?('
+'+extra):'')+critLine;
   const order={id:'o_'+uid(), category:cat, desc:fullDesc, budget, datetime, city:Store.getCity()||'—', ownerId:profile.id, ownerName:displayName(profile), bids:[], status:'open', createdAt:nowISO()};
   Store.addOrder(order);
   pushNotif({ id:'n_'+uid(), type:'created', title:'Заказ создан', body:`Ваш заказ "${cat}" опубликован`, payload:{orderId:order.id}, ts:nowISO() });
@@ -664,7 +671,8 @@ function openRepostPicker(){
 function repostToChat(chatId, post){
   Store.updateChat?.(chatId, c=>{
     const me=Store.getProfile()?.id||'u_demo_user';
-    const snippet = `🔁 Репост из "Чат твоего города" — ${Store.getCity()||'—'}:\n${post.text||''}`;
+    const snippet = `🔁 Репост из "Чат твоего города" — ${Store.getCity()||'—'}:
+${post.text||''}`;
     (c.messages||(c.messages=[])).push({ fromId:me, text: snippet, ts: nowISO() });
     if(post.image){ c.messages.push({ fromId:me, text:'[фото]', image: post.image, ts: nowISO() }); }
     const other=(c.participants||[]).find(p=>p!==me); if(other){ c.unread||(c.unread={}); c.unread[other]=(c.unread[other]||0)+1; }
@@ -761,7 +769,7 @@ setInterval(()=>{ loadCloud(); }, CLOUD.POLL_MS);
 /* =================== INLINE TESTS =================== */
 (function runTests(){
   try{
-    console.assert(esc("<b>&'\"") === "&lt;b&gt;&amp;&#039;&quot;", 'esc() should escape HTML special chars');
+    console.assert(esc("<b>&'"") === "&lt;b&gt;&amp;&#039;&quot;", 'esc() should escape HTML special chars');
     console.assert(document.querySelector('#createTabs .create-tab') !== null, 'createTabs exists');
     // Городской чат: публикация добавляет карточку на страницу
     const beforeCount = document.querySelectorAll('#cityPosts .post-card').length;
