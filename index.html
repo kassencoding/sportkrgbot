@@ -3,725 +3,799 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiD City — Сфера услуг & Подработка</title>
+<title>GiD City — прототип</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-1:#060614; --bg-2:#07081a; --bg-3:#090b22;
-  --surface:rgba(20,24,40,.88); --glass:rgba(255,255,255,.06);
-  --line:rgba(160,170,230,.18);
-  --accent-a:#a970ff; --accent-b:#32ffd2;
-  --gold:#ffd84d; --danger:#ff6b70;
-  --text:#fff; --muted:#9aa6d9;
+  --surface:rgba(20,24,40,.92);
+  --line:rgba(160,170,230,.22);
+  --accent:#a970ff;
+  --accent2:#32ffd2;
+  --gold:#ffd84d;
+  --text:#ffffff; --muted:#9aa6d9;
   --radius:14px; --shadow:0 16px 46px rgba(0,0,0,.45);
   --ui-font:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  --ui-font-size:14px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0; font:var(--ui-font-size) var(--ui-font); color:var(--text);
-  background:linear-gradient(180deg,var(--bg-1),var(--bg-2),var(--bg-3));
+  margin:0; font:14px var(--ui-font); color:var(--text);
+  background:
+    radial-gradient(900px at 20% -10%, rgba(30,27,58,.35) 0%, transparent 70%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2),var(--bg-3));
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
 }
-.wrapper{ max-width:980px; margin:16px auto; display:flex; flex-direction:column; gap:12px; padding:0 12px; }
+.wrapper{ max-width:1000px; margin:18px auto; padding:0 14px; display:flex; flex-direction:column; gap:12px; }
 
-/* Header */
-.header{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-.brand{ display:flex; gap:8px; align-items:center; }
-.brand h1{ margin:0; font-size:20px; font-weight:800; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); -webkit-background-clip:text; color:transparent; }
-.buildInfo{ font-size:12px; color:var(--muted); display:flex; gap:8px; align-items:center; margin-left:8px; }
-.buildInfo .weather{ font-size:14px; }
-.header-right{ display:flex; gap:8px; align-items:center; }
+/* header */
+.header{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.brand{ display:flex; gap:12px; align-items:center; }
+.brand h1{ margin:0; font-size:20px; font-weight:900; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; color:transparent; }
+.buildInfo{ font-size:12px; color:var(--muted); display:flex; gap:12px; align-items:center; }
 
-/* Top controls (roles) */
-.topbar{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
-.role-tabs{ display:flex; gap:8px; width:100%; }
-.role-tab{ flex:1; padding:12px 14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); font-weight:900; text-align:center; cursor:pointer; user-select:none; }
-.role-tab.active{ background:var(--gold); color:#0b0f18; border-color:rgba(0,0,0,.08); box-shadow:0 6px 20px rgba(255,216,77,.10) }
+/* role tabs top */
+.role-tabs{ display:flex; gap:8px; margin-top:6px; }
+.role-tab{ padding:10px 18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); font-weight:900; cursor:pointer; user-select:none; min-width:160px; text-align:center; }
+.role-tab.active{ background:var(--gold); color:#081018; border-color:rgba(0,0,0,.08); box-shadow:0 8px 24px rgba(255,200,80,.06); }
 
-/* Container + menu */
-.container{ border-radius:16px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden }
-.panel-top{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.02) }
-.panel-top h2{ margin:0; font-size:16px; font-weight:900; display:flex; gap:8px; align-items:center; }
-#notifBtn{ margin-left:8px; position:relative; }
-#notifBadge{ position:absolute; top:-8px; right:-8px; background:var(--danger); color:#fff; padding:2px 6px; border-radius:999px; font-size:11px; font-weight:900; display:none; }
+/* main container */
+.container{ border-radius:18px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden }
+.panel-top{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid rgba(255,255,255,.02) }
+.panel-top h2{ margin:0; font-weight:900; font-size:18px; display:flex; gap:10px; align-items:center; }
+#notifBtn{ position:relative; }
+#notifBadge{ position:absolute; top:-8px; right:-8px; background:#ff4f6a; color:#fff; padding:2px 6px; border-radius:999px; font-weight:900; display:none; font-size:11px; }
 
-.menu-grid{ padding:14px; display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); align-items:stretch; }
-.menu-btn{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); cursor:pointer; }
-.menu-btn .title{ font-weight:900 }
-.menu-btn.dark{ background:linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.6)); color:var(--muted); border-color:rgba(255,255,255,.02); }
+/* menu grid */
+.menu-grid{ display:grid; gap:10px; padding:16px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); align-items:stretch; }
+.menu-btn{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); cursor:pointer; justify-content:space-between; }
+.menu-btn .title{ font-weight:900; }
+.menu-btn.dark{ background:linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.6)); color:var(--muted); border-color:rgba(255,255,255,.02); }
 
-/* Modal / screen */
-.screen{ position:fixed; inset:0; display:none; z-index:60; align-items:flex-start; justify-content:center; padding:12px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); }
+/* screen/modal */
+.screen{ position:fixed; inset:0; display:none; z-index:90; align-items:flex-start; justify-content:center; padding:18px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); }
 .screen.active{ display:flex; }
-.modal{ width:100%; max-width:980px; max-height:88vh; overflow:auto; background:var(--surface); border-radius:12px; border:1px solid var(--line); padding:14px }
+.modal{ width:100%; max-width:980px; max-height:88vh; overflow:auto; background:var(--surface); color:var(--text); border-radius:12px; border:1px solid var(--line); padding:14px; box-shadow:var(--shadow) }
 
-/* Inputs */
-.input, textarea, select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:rgba(12,16,36,.7); color:var(--text); outline:none; font-size:14px; }
+/* inputs */
+.input, textarea, select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:rgba(12,16,36,.75); color:var(--text); outline:none; font-size:14px; }
 textarea{ min-height:120px; resize:vertical }
 
-/* City thread */
-.city-composer{ position:sticky; top:12px; z-index:10; padding:12px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.03); display:flex; gap:8px; flex-direction:column; transition:all .18s ease; }
-.city-composer.compact{ padding:6px; transform:scale(.99); opacity:.95 }
-.post-card{ background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.04); border-radius:12px; padding:10px; margin-bottom:10px; }
-.post-img{ width:100%; border-radius:8px; margin-top:8px; max-height:360px; object-fit:cover; }
+/* city thread: fixed top composer */
+.city-thread-wrap{ position:relative; }
+.city-composer-top{ position:sticky; top:18px; z-index:30; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid rgba(255,255,255,.03); }
+.city-composer-top .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); font-weight:800; }
+.city-composer-top .placeholder{ padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.02); flex:1; color:var(--muted); cursor:pointer; }
 
-/* Messenger top fixed row */
-.chat-top-row{ display:flex; gap:10px; align-items:center; padding:10px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); width:100%; box-sizing:border-box; position:sticky; top:14px; z-index:20; }
-.chat-top-row .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent-a),var(--accent-b)); color:#fff; font-weight:900; }
-.chat-top-row .share{ flex:1; text-align:left; padding-left:8px; color:var(--muted); cursor:text; }
+/* post card */
+.post-card{ background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.04); border-radius:12px; padding:12px; margin-bottom:10px; }
+.post-top{ display:flex; gap:10px; align-items:center; }
+.post-top .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); font-weight:800; }
+.post-actions{ display:flex; gap:10px; margin-top:8px; align-items:center; }
+.post-actions .act{ background:transparent; border:none; color:var(--muted); cursor:pointer; font-weight:800; padding:6px 8px; border-radius:8px; }
 
-/* Messages: left/right */
-.msgs{ margin-top:12px; max-height:56vh; overflow:auto; padding-right:6px; display:flex; flex-direction:column; gap:8px; }
-.msg{ padding:10px 14px; border-radius:14px; max-width:78%; word-break:break-word; box-shadow:0 8px 18px rgba(0,0,0,.35); }
-.msg.other{ align-self:flex-start; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.06)); border:1px solid var(--line); color:var(--text); }
-.msg.me{ align-self:flex-end; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color:#071020; font-weight:900; }
+/* messenger */
+.chat-screen{ display:flex; gap:12px; }
+.chats-list{ flex:1; }
+.chat-window{ width:420px; border-left:1px solid rgba(255,255,255,.02); padding-left:12px; display:flex; flex-direction:column; gap:8px; }
+.chat-top{ display:flex; gap:10px; align-items:center; padding:8px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); }
+.msgs{ flex:1; overflow:auto; display:flex; flex-direction:column; gap:10px; padding:6px; }
+.msg{ padding:10px 12px; border-radius:12px; max-width:78%; word-break:break-word; box-shadow:0 8px 20px rgba(0,0,0,.35); }
+.msg.me{ align-self:flex-end; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#081018; font-weight:900; }
+.msg.other{ align-self:flex-start; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.06)); color:var(--text); border:1px solid var(--line); }
 
-/* Buttons */
-.btn{ appearance:none; border:none; cursor:pointer; font-weight:800; padding:8px 12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.08)); border:1px solid var(--line); color:var(--text); }
-.btn.primary{ background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color:#081018; }
-.btn.ghost{ background:transparent; border:1px dashed var(--line); }
+/* small */
+.small{ font-size:12px; color:var(--muted) }
 
-/* Welcome overlay tweaks */
-#welcomeOverlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:80; background:rgba(0,0,0,.6); backdrop-filter:blur(6px); }
-#welcomeCard{ width:92%; max-width:540px; padding:18px; border-radius:18px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); box-shadow:var(--shadow); text-align:center; }
-#welcomeOk{ min-width:220px; padding:12px 18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08); font-weight:900; }
+/* footer note */
+.footer-note{ text-align:center; font-size:11px; color:var(--muted); margin-top:6px }
 
-/* small footer */
-.footer-note{ font-size:11px; color:var(--muted); text-align:center; margin-top:10px; opacity:0.85; }
-@media (max-width:720px){
-  .role-tab{ font-size:13px; padding:10px; }
-  #welcomeOk{ width:100%; }
+/* responsive */
+@media (max-width:900px){
+  .menu-grid{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+  .chat-window{ width:320px; display:none; } /* on mobile open separate screen */
 }
 </style>
 </head>
 <body>
 <div class="wrapper">
+
   <header class="header">
     <div class="brand">
       <h1>GiDCity</h1>
-      <div class="buildInfo" id="buildInfo">
-        <div id="dateTime">--.--.-- --:--</div>
-        <div class="weather" id="weather">☀️ 18°C</div>
+      <div class="buildInfo">
+        <div id="dateTime">—</div>
+        <div id="weather"><span>⛅</span> —</div>
       </div>
     </div>
-
-    <div class="header-right">
-      <button id="openSettings" class="btn">Настройки</button>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button id="openSettings" class="menu-btn" title="Настройки">⚙️</button>
     </div>
   </header>
 
-  <div class="topbar">
-    <div id="roleTabs" class="role-tabs"></div>
-  </div>
+  <div id="roleTabs" class="role-tabs"></div>
 
   <main class="container" role="main" aria-live="polite">
     <div class="panel-top">
       <h2>Главное меню</h2>
       <div>
-        <button id="notifBtn" class="btn">Уведомления <span id="notifBadge">0</span></button>
+        <button id="notifBtn" class="btn" title="Уведомления">🔔 <span id="notifBadge">0</span></button>
       </div>
     </div>
 
     <div id="menuGrid" class="menu-grid"></div>
   </main>
 
-  <div class="footer-note" id="footerNote">KASSEN Technology Inc</div>
+  <div class="footer-note">KASSEN Technology Inc</div>
 </div>
 
-<!-- WELCOME -->
-<div id="welcomeOverlay" style="display:none">
-  <div id="welcomeCard">
-    <h2 style="margin:0 0 8px 0; font-weight:900; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); -webkit-background-clip:text; color:transparent">GiDCity-ға қош келдіңіз!</h2>
-    <div style="color:var(--muted); margin-bottom:14px">Добро пожаловать в GiDCity!</div>
-    <button id="welcomeOk" class="btn primary">Начать</button>
-  </div>
-</div>
-
-<!-- NOTIFICATIONS -->
+<!-- NOTIFICATIONS modal -->
 <section id="notificationsModal" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Уведомления</h3><button onclick="closeScreen('notificationsModal')" class="btn ghost">Закрыть</button></div>
-  <div id="notificationsList" style="margin-top:12px"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Уведомления</h3>
+    <button onclick="closeScreen('notificationsModal')" class="btn">Закрыть</button>
+  </div>
+  <div id="notificationsList" style="margin-top:12px; max-height:66vh; overflow:auto;"></div>
 </div></section>
 
-<!-- CITY THREAD -->
-<section id="cityThreadScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Чат твоего города</h3><button onclick="closeScreen('cityThreadScreen')" class="btn ghost">Закрыть</button></div>
-  <div id="cityScroll" style="margin-top:10px; max-height:74vh; overflow:auto; padding-right:8px;">
-    <div id="cityComposer" class="city-composer">
-      <textarea id="cityPostText" class="input" placeholder="Поделитесь мыслью..." style="min-height:140px"></textarea>
-      <div style="display:flex; gap:8px; justify-content:flex-end; align-items:center">
-        <label class="btn">📷<input type="file" id="cityPostImage" accept="image/*" style="display:none"></label>
-        <button id="cityPostSend" class="btn primary">Опубликовать</button>
-      </div>
+<!-- SETTINGS modal -->
+<section id="settingsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Настройки</h3>
+    <button onclick="closeScreen('settingsModal')" class="btn">Назад</button>
+  </div>
+
+  <div style="margin-top:12px; display:flex; gap:12px; flex-direction:column;">
+    <div style="font-weight:900">Синхронизация (JSONBin)</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <label class="small">Авто-синхронизация</label>
+      <input id="syncToggle" type="checkbox">
+      <button id="syncNowBtn" class="btn">Синхронизировать сейчас</button>
     </div>
-    <div id="cityPosts" style="margin-top:12px"></div>
+    <div class="small" style="color:var(--muted)">Bin ID и ключ используются из шаблона. Меняйте в коде при необходимости.</div>
+
+    <div style="margin-top:12px; font-weight:900">Тема</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn theme-btn" data-theme="violet">Violet</button>
+      <button class="btn theme-btn" data-theme="navy">Navy</button>
+      <button class="btn theme-btn" data-theme="emerald">Emerald</button>
+      <button class="btn theme-btn" data-theme="sunset">Sunset</button>
+      <button class="btn theme-btn" data-theme="mint">Mint</button>
+    </div>
   </div>
 </div></section>
 
 <!-- CREATE ORDER -->
 <section id="createScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h3 style="margin:0">ЗАКАЗАТЬ</h3><button onclick="closeScreen('createScreen')" class="btn ghost">Назад</button>
+    <h3 style="margin:0">Создать заказ</h3>
+    <button onclick="closeScreen('createScreen')" class="btn">Отмена</button>
   </div>
-  <div style="margin-top:10px;">
+  <div style="margin-top:12px;">
     <div id="createTabs" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px"></div>
     <form id="createForm">
-      <textarea id="c-desc" class="input" placeholder="Опишите задачу: что, где, сроки, пожелания"></textarea>
-      <div style="margin-top:8px;" id="criteriaWrap"></div>
-      <div id="createExtraFields" style="margin-top:8px"></div>
-      <div style="display:flex; gap:8px; align-items:flex-end; margin-top:8px; flex-wrap:wrap">
+      <textarea id="c-desc" class="input" placeholder="Опишите задачу (что нужно сделать, адрес, условия)"></textarea>
+
+      <div id="createExtraFields" style="margin-top:8px;"></div>
+
+      <div style="display:flex; gap:8px; margin-top:8px; align-items:flex-end; flex-wrap:wrap;">
         <div style="flex:1; min-width:220px">
-          <label style="font-size:12px; color:var(--muted)">Дедлайн (дата и время)</label>
+          <label class="small">Дедлайн (дата и время)</label>
           <input id="c-datetime" class="input" type="datetime-local">
         </div>
         <div style="width:160px">
-          <label style="font-size:12px; color:var(--muted)">Бюджет (₸)</label>
+          <label class="small">Бюджет (₸)</label>
           <input id="c-budget" class="input" type="number" required>
         </div>
       </div>
-      <div style="display:flex; gap:8px; margin-top:12px">
-        <button class="btn primary" type="submit">ЗАКАЗАТЬ</button>
-        <button class="btn ghost" type="button" onclick="closeScreen('createScreen')">Отмена</button>
+
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button class="btn" type="submit" style="min-width:160px; font-weight:900; white-space:nowrap;">СПЕЦ. ЗАКАЗ</button>
+        <button class="btn primary" type="button" id="submitOrderBtn">ЗАКАЗАТЬ</button>
       </div>
     </form>
   </div>
 </div></section>
 
-<!-- FIND ORDERS -->
+<!-- FIND orders -->
 <section id="findScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">НАЙТИ ЗАКАЗЫ</h3><button onclick="closeScreen('findScreen')" class="btn ghost">Назад</button></div>
-  <div style="margin-top:10px;">
-    <div style="display:flex; gap:8px; flex-wrap:wrap">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Найти заказы</h3>
+    <button onclick="closeScreen('findScreen')" class="btn">Назад</button>
+  </div>
+  <div style="margin-top:12px;">
+    <div style="display:flex; gap:8px; align-items:center;">
       <input id="searchInput" class="input" placeholder="Поиск...">
-      <select id="filterCat" class="input" style="max-width:240px">
-        <option value="">Все категории</option>
-      </select>
+      <select id="filterCat" class="input" style="max-width:240px"></select>
       <button id="applySearch" class="btn">Фильтр</button>
     </div>
-    <div id="findList" style="margin-top:12px"></div>
+    <div id="findList" style="margin-top:12px; max-height:64vh; overflow:auto;"></div>
   </div>
 </div></section>
 
-<!-- OFFER modal (Предложить услугу) -->
+<!-- OFFER modal -->
 <section id="offerModal" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Предложить услугу</h3><button onclick="closeScreen('offerModal')" class="btn ghost">Закрыть</button></div>
-  <form id="offerForm" style="margin-top:12px; display:grid; gap:8px;">
-    <div><label style="font-size:12px; color:var(--muted)">Цена (₸)</label><input id="offerPrice" class="input" type="number" required></div>
-    <div><label style="font-size:12px; color:var(--muted)">Комментарий (необязательно)</label><textarea id="offerComment" class="input"></textarea></div>
-    <div style="display:flex; gap:8px">
-      <button class="btn primary" type="submit">Отправить предложение</button>
-      <button class="btn ghost" type="button" onclick="closeScreen('offerModal')">Отмена</button>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Предложить услугу</h3>
+    <button onclick="closeScreen('offerModal')" class="btn">Закрыть</button>
+  </div>
+  <form id="offerForm" style="margin-top:12px;">
+    <div><label class="small">Цена (₸)</label><input id="offerPrice" class="input" type="number" required></div>
+    <div style="margin-top:8px;"><label class="small">Комментарий (необязательно)</label><textarea id="offerComment" class="input"></textarea></div>
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button class="btn primary" type="submit">Отправить</button>
+      <button class="btn" type="button" onclick="closeScreen('offerModal')">Отмена</button>
     </div>
   </form>
 </div></section>
 
 <!-- BIDS modal -->
 <section id="bidsModal" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 id="bidsTitle" style="margin:0">Заявки</h3><button onclick="closeScreen('bidsModal')" class="btn ghost">Закрыть</button></div>
-  <div id="bidsList" style="margin-top:12px"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 id="bidsTitle" style="margin:0">Заявки</h3>
+    <button onclick="closeScreen('bidsModal')" class="btn">Закрыть</button>
+  </div>
+  <div id="bidsList" style="margin-top:12px; max-height:66vh; overflow:auto;"></div>
 </div></section>
 
-<!-- MESSENGER -->
-<section id="messengerScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-direction:column; gap:8px;">
-    <div style="width:100%;" class="chat-top-row">
-      <div style="display:flex; gap:10px; align-items:center;">
-        <div id="myChatAvatar" class="avatar">Я</div>
-        <div style="display:flex; flex-direction:column">
-          <div id="myChatName" style="font-weight:900">Пользователь</div>
-          <div style="font-size:12px; color:var(--muted)">Нажмите, чтобы поделиться</div>
-        </div>
-      </div>
-      <div class="share" id="chatSharePlaceholder">Поделитесь...</div>
+<!-- CITY THREAD screen -->
+<section id="cityThreadScreen" class="screen"><div class="modal" style="width:100%; max-width:980px; height:88vh; overflow:hidden;">
+  <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
+    <h3 style="margin:0">Чат твоего города</h3>
+    <button onclick="closeScreen('cityThreadScreen')" class="btn">Закрыть</button>
+  </div>
+
+  <div class="city-thread-wrap" style="height:calc(100% - 48px); display:flex; flex-direction:column;">
+    <div class="city-composer-top">
+      <div class="avatar" id="topComposerAvatar">Я</div>
+      <div class="placeholder" id="topComposerPlaceholder">Нажмите чтобы поделиться...</div>
+      <div style="margin-left:auto" class="small" id="cityLabel">Город: —</div>
     </div>
 
-    <div style="width:100%; display:flex; gap:12px;">
-      <div style="flex:1;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="margin:0">Мессенджер</h3>
-          <div>
-            <button id="createChatBtn" class="btn">Создать чат</button>
-          </div>
-        </div>
-        <div id="chatsList" style="margin-top:12px"></div>
-      </div>
-      <div style="width:340px;">
-        <h4 style="margin:0 0 8px 0">Текущий чат</h4>
-        <div id="chatWindowArea" style="border:1px solid var(--line); border-radius:10px; padding:10px; min-height:220px; display:flex; flex-direction:column;">
-          <div id="chatWinMsgs" class="msgs"></div>
-          <div style="display:flex; gap:8px; margin-top:8px;">
-            <input id="chatWinInput" class="input" placeholder="Сообщение...">
-            <button id="chatWinSend" class="btn primary">Отправить</button>
-          </div>
-        </div>
-      </div>
+    <div id="cityScroll" style="overflow:auto; padding:12px; flex:1;">
+      <div id="cityPosts"></div>
     </div>
-
-    <div style="width:100%; display:flex; justify-content:flex-end;"><button onclick="closeScreen('messengerScreen')" class="btn ghost">Закрыть</button></div>
   </div>
 </div></section>
 
-<!-- Quick post modal -->
+<!-- QUICK POST modal -->
 <section id="quickPostModal" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center"><h3 style="margin:0">Быстрое сообщение</h3><button onclick="closeScreen('quickPostModal')" class="btn ghost">Закрыть</button></div>
-  <div style="margin-top:10px;">
-    <textarea id="quickPostText" class="input" placeholder="Напишите сообщение..."></textarea>
-    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;">
-      <button id="quickPostSend" class="btn primary">Отправить</button>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Опубликовать в ленте</h3>
+    <button onclick="closeScreen('quickPostModal')" class="btn">Отмена</button>
+  </div>
+  <div style="margin-top:12px;">
+    <textarea id="quickPostText" class="input" placeholder="О чём хотите рассказать?"></textarea>
+    <div style="margin-top:8px;">
+      <input id="quickPostImage" type="file" accept="image/*">
+      <div id="quickPostPreview" style="margin-top:8px;"></div>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+      <button id="quickPostSend" class="btn primary">Опубликовать</button>
     </div>
   </div>
 </div></section>
 
-<!-- Chat create picker -->
-<section id="createChatScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Создать чат</h3><button onclick="closeScreen('createChatScreen')" class="btn ghost">Закрыть</button></div>
-  <div id="chatPicker" style="margin-top:12px"></div>
+<!-- MESSENGER screen -->
+<section id="messengerScreen" class="screen"><div class="modal" style="width:100%; max-width:980px; height:88vh; overflow:hidden;">
+  <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
+    <h3 style="margin:0">Мессенджер</h3>
+    <button onclick="closeScreen('messengerScreen')" class="btn">Закрыть</button>
+  </div>
+
+  <div style="display:flex; height:calc(100% - 48px); gap:12px;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-weight:900">Диалоги</div>
+        <button id="createChatBtn" class="btn">Создать чат</button>
+      </div>
+      <div id="chatsList" style="overflow:auto; flex:1; padding-right:6px;"></div>
+    </div>
+
+    <div id="chatPane" style="width:420px; border-left:1px solid rgba(255,255,255,.02); padding-left:12px; display:flex; flex-direction:column;">
+      <div id="chatWindowHeader" class="chat-top" style="display:none;">
+        <div class="avatar" id="chatHeaderAvatar">Б</div>
+        <div>
+          <div id="chatHeaderName" style="font-weight:900">Собеседник</div>
+          <div class="small" id="chatHeaderSub">Инфо</div>
+        </div>
+      </div>
+
+      <div id="chatWindow" style="display:none; flex:1; flex-direction:column;">
+        <div id="chatMsgs" class="msgs"></div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <input id="chatInput" class="input" placeholder="Сообщение...">
+          <button id="chatSend" class="btn primary">Отправить</button>
+        </div>
+      </div>
+
+      <div id="chatEmpty" style="display:flex; align-items:center; justify-content:center; flex:1; color:var(--muted);">Выберите чат или создайте новый</div>
+    </div>
+  </div>
 </div></section>
 
-<div style="height:20px"></div>
+<!-- bids/create-chat picker -->
+<section id="createChatScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Создать чат</h3>
+    <button onclick="closeScreen('createChatScreen')" class="btn">Закрыть</button>
+  </div>
+  <div id="chatPicker" style="margin-top:12px; max-height:72vh; overflow:auto;"></div>
+</div></section>
 
 <script>
-/* ====== Simple state and helpers ====== */
-const LS='gid_state_v4';
-const JSONBIN = { ENABLED:true, BIN_ID:'6911fbe843b1c97be9a4dc97', KEY:'$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG' };
+/* ================= CONSTANTS / STORE ================= */
+const JSONBIN = {
+  ENABLED: true,
+  BIN_ID: '6911fbe843b1c97be9a4dc97',
+  KEY: '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG',
+  URL: id => `https://api.jsonbin.io/v3/b/${id}`
+};
+
+const LS_KEY = 'gid_state_v10';
 const $ = id => document.getElementById(id);
 const uid = () => Math.random().toString(36).slice(2,9);
 const nowISO = () => new Date().toISOString();
 
+/* Default state */
 let STATE = {
+  profile: { id:'u_me', name:'Вы', avatarType:'emoji', avatarData:'🤖' },
   city: 'Караганда',
-  role: 'user', // user | worker
+  role: 'user',
   theme: 'violet',
-  profile: { id: 'u_me', name: 'Вы', avatarType:'emoji', avatarData:'🤖' },
   orders: [],
-  feed: {},
+  feed: {}, // {city: [posts]}
+  chats: [], // {id, participants:[ids], messages:[{from,fromName,text,ts}], title, orderId}
   notifs: [],
-  chats: []
+  syncEnabled: true
 };
 
-/* ====== date/time + simple weather emoji (local) ====== */
-function updateDateTimeWeather(){
+/* city coordinates for weather */
+const CITY_COORDS = {
+  'Алматы': {lat:43.2383, lon:76.9450},
+  'Астана': {lat:51.1605, lon:71.4704},
+  'Караганда': {lat:49.8064, lon:73.0851},
+  'Шымкент': {lat:42.3417, lon:69.5901},
+  'Актобе': {lat:50.2839, lon:57.1669}
+};
+
+/* load/save local */
+function loadState(){ try{ const s = localStorage.getItem(LS_KEY); if(s) STATE = Object.assign(STATE, JSON.parse(s)); }catch(e){ console.warn(e); } }
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(STATE)); }catch(e){ console.warn(e); } }
+loadState();
+
+/* =========== UI helpers =========== */
+function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el=$(id); if(el) el.classList.add('active'); }
+function closeScreen(id){ const el=$(id); if(el) el && el.classList.remove('active'); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+
+/* update header date/time + weather */
+async function updateDateTimeWeather(){
   const dt = new Date();
-  const hh = dt.getHours();
-  const mins = String(dt.getMinutes()).padStart(2,'0');
-  $('dateTime').textContent = dt.toLocaleDateString('ru-RU') + ' ' + hh + ':' + mins;
-  const icon = hh>=6 && hh<18 ? '☀️' : '🌙';
-  $('weather').textContent = icon + ' ' + (18 + (hh%6)) + '°C';
+  $('dateTime').textContent = dt.toLocaleString('ru-RU', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'});
+  const city = STATE.city || 'Караганда';
+  const coords = CITY_COORDS[city] || CITY_COORDS['Караганда'];
+  try{
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true&timezone=auto`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('weather fetch failed');
+    const j = await r.json();
+    if(j && j.current_weather){
+      const t = Math.round(j.current_weather.temperature);
+      const code = j.current_weather.weathercode;
+      const icon = weatherIcon(code);
+      $('weather').textContent = `${icon} ${t}°C`;
+    }
+  }catch(e){
+    console.warn('weather error',e);
+    // fallback: static
+    $('weather').textContent = '⛅ —';
+  }
 }
-setInterval(updateDateTimeWeather, 30*1000);
+function weatherIcon(code){
+  // simple mapping
+  if(code>=0 && code<=3) return '☀️';
+  if(code>=45 && code<=48) return '🌫️';
+  if((code>=51 && code<=67) || (code>=80 && code<=82)) return '🌧️';
+  if(code>=71 && code<=77) return '❄️';
+  if(code>=95) return '⛈️';
+  return '⛅';
+}
 updateDateTimeWeather();
+setInterval(updateDateTimeWeather, 60*1000);
 
-/* ====== storage ====== */
-function saveLocal(){ try{ localStorage.setItem(LS, JSON.stringify(STATE)); }catch(e){console.warn(e);} }
-function loadLocal(){ try{ const v=localStorage.getItem(LS); if(v) STATE=Object.assign(STATE, JSON.parse(v)); }catch(e){console.warn(e);} }
-loadLocal();
-
-/* ====== theme / roles UI ====== */
-function setRoleTabs(){
-  const wrap = $('roleTabs'); wrap.innerHTML='';
-  const roles = [{k:'user', t:'СФЕРА УСЛУГ'}, {k:'worker', t:'ПОДРАБОТКА'}];
-  roles.forEach(r=>{
-    const el = document.createElement('div'); el.className='role-tab'; el.textContent=r.t; el.dataset.role=r.k;
-    if(STATE.role===r.k) el.classList.add('active');
-    el.onclick = ()=>{ STATE.role = r.k; saveLocal(); setRoleTabs(); renderMenu(); };
-    wrap.appendChild(el);
+/* ====== roles and menu ====== */
+const ROLES = [{k:'user', label:'СФЕРА УСЛУГ'}, {k:'worker', label:'ПОДРАБОТКА'}];
+function renderRoleTabs(){
+  const wrap = document.createElement('div');
+  const container = document.getElementById('roleTabs');
+  container.innerHTML='';
+  ROLES.forEach(r=>{
+    const d = document.createElement('div'); d.className='role-tab'; d.textContent=r.label; d.dataset.role=r.k;
+    if(STATE.role===r.k) d.classList.add('active');
+    d.onclick = ()=>{
+      STATE.role = r.k; saveState(); renderRoleTabs(); renderMenu();
+    };
+    container.appendChild(d);
   });
 }
-setRoleTabs();
+renderRoleTabs();
 
-/* ====== menu rendering ====== */
 function menuBtn(id, title, note, extraClass=''){
-  const d=document.createElement('div'); d.className='menu-btn '+extraClass; d.id=id;
-  d.innerHTML = `<div style="flex:1"><div class="title">${title}</div><div class="note">${note||''}</div></div>`;
-  return d;
+  const el = document.createElement('div'); el.className = 'menu-btn '+extraClass; el.id=id;
+  el.innerHTML = `<div style="display:flex;flex-direction:column;flex:1;align-items:flex-start"><div class="title">${title}</div><div class="small">${note||''}</div></div><div style="margin-left:12px">›</div>`;
+  return el;
 }
+
 function renderMenu(){
-  const grid=$('menuGrid'); grid.innerHTML='';
+  const grid = $('menuGrid'); grid.innerHTML='';
   if(STATE.role==='user'){
-    grid.appendChild(menuBtn('btnOrder','ЗАКАЗАТЬ','Создать заявку'));
-    const btnBook = menuBtn('btnBook','Забронировать (скоро)','Скоро','dark');
-    grid.appendChild(btnBook);
-    grid.appendChild(menuBtn('btnCity','ЧАТ ТВОЕГО ГОРОДА','Лента как соцсеть'));
-    grid.appendChild(menuBtn('btnMine','МОИ ЗАКАЗЫ','Ваши заявки'));
-    grid.appendChild(menuBtn('btnMessenger','МЕССЕНДЖЕР','Диалоги'));
-    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЯ УСЛУГ','Список объявлений'));
-    grid.appendChild(menuBtn('btnWallet','КОШЕЛЁК','Баланс и операции'));
+    // top: make two big tabs symmetrical
+    const orderBtn = menuBtn('btnOrder','ЗАКАЗАТЬ','Создать заявку'); orderBtn.style.flexBasis='50%';
+    const bookBtn = menuBtn('btnBook','Забронировать (скоро)','Скоро','dark'); bookBtn.style.flexBasis='50%';
+    grid.appendChild(orderBtn); grid.appendChild(bookBtn);
+
+    grid.appendChild(menuBtn('btnCity','Чат твоего города','Лента как соцсеть'));
+    grid.appendChild(menuBtn('btnMine','Мои заказы','Ваши заявки'));
+    grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги'));
+    grid.appendChild(menuBtn('btnAds','Объявления услуг','Список объявлений'));
+    grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции'));
   } else {
-    grid.appendChild(menuBtn('btnFind','НАЙТИ ЗАКАЗЫ','Для исполнителей'));
-    grid.appendChild(menuBtn('btnCity','ЧАТ ТВОЕГО ГОРОДА','Лента как соцсеть'));
-    grid.appendChild(menuBtn('btnMine','МОИ ЗАКАЗЫ','Назначенные/мои'));
-    grid.appendChild(menuBtn('btnMessenger','МЕССЕНДЖЕР','Диалоги'));
-    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЯ УСЛУГ','Список объявлений'));
-    grid.appendChild(menuBtn('btnWallet','КОШЕЛЁК','Баланс и операции'));
+    const findBtn = menuBtn('btnFind','НАЙТИ ЗАКАЗЫ','Для исполнителей'); findBtn.style.flexBasis='50%';
+    const cityBtn = menuBtn('btnCity','Чат твоего города','Лента как соцсеть'); cityBtn.style.flexBasis='50%';
+    grid.appendChild(findBtn); grid.appendChild(cityBtn);
+
+    grid.appendChild(menuBtn('btnMine','Мои заказы','Назначенные/мои'));
+    grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги'));
+    grid.appendChild(menuBtn('btnAds','Объявления услуг','Список объявлений'));
+    grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции'));
   }
 
+  // attach handlers
   grid.querySelectorAll('.menu-btn').forEach(el=>{
     el.onclick = ()=>{
       const id = el.id;
-      if(id==='btnOrder') openScreen('createScreen');
-      if(id==='btnBook') alert('Забронировать — пока недоступно (скоро)');
-      if(id==='btnCity') { renderCityPosts(); openScreen('cityThreadScreen'); }
-      if(id==='btnFind') { renderFindList(); openScreen('findScreen'); }
-      if(id==='btnMine') { renderMineList(); openScreen('mineScreen'); }
-      if(id==='btnMessenger') { renderChats(); openScreen('messengerScreen'); }
-      if(id==='btnAds') alert('Объявления - демо');
-      if(id==='btnWallet') alert('Кошелёк - демо');
+      if(id==='btnOrder'){ initCreate(); openScreen('createScreen'); }
+      if(id==='btnBook'){ alert('Скоро...'); }
+      if(id==='btnCity'){ renderCity(); openScreen('cityThreadScreen'); }
+      if(id==='btnMine'){ renderMine(); openScreen('bidsModal'); } // reuse bidsModal for listing owner's orders
+      if(id==='btnMessenger'){ renderChats(); openScreen('messengerScreen'); }
+      if(id==='btnFind'){ renderFind(); openScreen('findScreen'); }
+      if(id==='btnAds'){ alert('Объявления — демо'); }
+      if(id==='btnWallet'){ alert('Кошелёк — демо'); }
     };
   });
 }
 renderMenu();
 
-/* ====== notifications center ====== */
-function refreshNotifs(){
-  const b = $('notifBadge'); const n = STATE.notifs.length;
+/* ============== Notifications ============== */
+function refreshNotifBadge(){
+  const n = STATE.notifs.length;
+  const b = $('notifBadge');
   if(n>0){ b.style.display='inline-block'; b.textContent = n>99 ? '99+' : String(n); } else b.style.display='none';
 }
-function renderNotifsList(){
+function renderNotifications(){
   const wrap = $('notificationsList'); wrap.innerHTML='';
-  if(!STATE.notifs.length) { wrap.innerHTML='<div style="padding:8px;color:var(--muted)">Уведомлений нет</div>'; return; }
+  if(!STATE.notifs.length){ wrap.innerHTML='<div class="small">Уведомлений нет</div>'; return; }
   STATE.notifs.forEach((n, idx)=>{
-    const c = document.createElement('div'); c.className='post-card'; c.style.cursor='pointer';
-    c.innerHTML = `<div style="font-weight:900">${n.title}</div><div style="margin-top:6px;color:var(--muted)">${new Date(n.ts).toLocaleString()}</div><div style="margin-top:8px">${n.body||''}</div>`;
-    c.onclick = ()=>{ alert(n.title + "\n\n" + (n.body||'')); closeScreen('notificationsModal'); };
-    wrap.appendChild(c);
-  });
-}
-$('notifBtn').addEventListener('click', ()=>{ renderNotifsList(); openScreen('notificationsModal'); });
-
-/* ====== create order UI ====== */
-const CATS = ['СПЕЦ. ЗАКАЗ','Такси','Курьер','Доставка','Квартира/Дом (аренда/продажа)','Мастер/Специалист','Прочие'];
-function initCreateTabs(){
-  const wrap = $('createTabs'); wrap.innerHTML='';
-  CATS.forEach(c=>{
-    const el = document.createElement('div'); el.className='role-tab'; el.textContent=c; el.dataset.cat=c;
-    el.onclick = ()=>{
-      wrap.querySelectorAll('.role-tab').forEach(x=>x.classList.remove('active'));
-      el.classList.add('active');
-      renderCriteria(c);
-    };
+    const el = document.createElement('div'); el.className='post-card'; el.style.cursor='pointer';
+    el.innerHTML = `<div style="font-weight:900">${esc(n.title)}</div><div class="small" style="margin-top:6px">${new Date(n.ts).toLocaleString()}</div><div style="margin-top:8px">${esc(n.body||'')}</div>`;
+    el.onclick = ()=>{ alert(`${n.title}\n\n${n.body||''}`); };
     wrap.appendChild(el);
   });
-  wrap.firstChild.classList.add('active');
-  renderCriteria(CATS[0]);
 }
-initCreateTabs();
+$('notifBtn').addEventListener('click', ()=>{ renderNotifications(); openScreen('notificationsModal'); });
+refreshNotifBadge();
 
-const CRITERIA = {
-  'СПЕЦ. ЗАКАЗ':['Срочно','Сегодня','Опыт обязателен'],
-  'Такси':['Город','Межгород','Багаж'],
-  'Курьер':['До 5 кг','Документы','Сегодня'],
-  'Доставка':['Купить','Забрать','Хрупкое'],
-  'Квартира/Дом (аренда/продажа)':['Аренда','Продажа','1к','2к','3к'],
-  'Мастер/Специалист':['Няня','Психолог','Электрик','Сантехник'],
-  'Прочие':['Разовое','Постоянно']
-};
-function renderCriteria(cat){
-  const wrap = $('criteriaWrap'); wrap.innerHTML='';
-  (CRITERIA[cat]||[]).forEach(x=>{
-    const ch = document.createElement('div'); ch.className='chip'; ch.style.display='inline-block'; ch.style.margin='4px'; ch.style.padding='6px 10px'; ch.style.borderRadius='999px'; ch.style.border='1px solid var(--line)'; ch.style.cursor='pointer'; ch.textContent=x;
-    ch.onclick = ()=> ch.classList.toggle('active');
-    wrap.appendChild(ch);
+/* ============== CREATE ORDER UI ============== */
+const CATS = ['СПЕЦ. ЗАКАЗ','Такси','Курьер','Доставка','Квартира/Дом','Мастер/Специалист','Прочие'];
+function initCreate(){
+  const wrap = $('createTabs'); wrap.innerHTML='';
+  CATS.forEach((c,i)=>{
+    const d = document.createElement('div'); d.className='role-tab'; d.textContent=c; d.dataset.cat=c;
+    if(i===0) d.classList.add('active');
+    d.onclick = ()=>{ wrap.querySelectorAll('.role-tab').forEach(x=>x.classList.remove('active')); d.classList.add('active'); renderCreateExtra(c); };
+    wrap.appendChild(d);
   });
+  renderCreateExtra(CATS[0]);
+}
+function renderCreateExtra(cat){
   const extra = $('createExtraFields'); extra.innerHTML='';
-  if(cat==='Такси') extra.innerHTML = '<div style="display:flex;gap:8px;margin-top:8px"><input class="input" id="f-from" placeholder="Откуда"><input class="input" id="f-to" placeholder="Куда"></div>';
-  if(cat==='Курьер') extra.innerHTML = '<div style="display:flex;gap:8px;margin-top:8px"><input class="input" id="f-pick" placeholder="Забрать (адрес)"><input class="input" id="f-drop" placeholder="Доставить (адрес)"></div>';
-  if(cat==='Мастер/Специалист') extra.innerHTML = '<div style="display:flex;gap:8px;margin-top:8px"><input class="input" id="f-person" placeholder="Кого ищем (няня/психолог...)"><input class="input" id="f-details" placeholder="Детали"></div>';
+  if(cat==='Такси') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-from" class="input" placeholder="Откуда"><input id="f-to" class="input" placeholder="Куда"></div>';
+  else if(cat==='Курьер') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-pick" class="input" placeholder="Забрать (адрес)"><input id="f-drop" class="input" placeholder="Доставить (адрес)"></div>';
+  else if(cat==='Квартира/Дом') extra.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="input" id="f-area" placeholder="Район"><input class="input" id="f-rooms" placeholder="Комнат (1,2...)"></div><div style="display:flex;gap:8px;margin-top:8px"><input class="input" id="f-square" placeholder="Площадь (м²)"><input class="input" id="f-period" placeholder="Период/даты"></div>';
+  else if(cat==='Мастер/Специалист') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-person" class="input" placeholder="Кого ищем (няня, психолог...)"><input id="f-details" class="input" placeholder="Краткие детали"></div>';
 }
 
 /* submit order */
-$('createForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
+document.getElementById('submitOrderBtn').addEventListener('click', ()=>{
   const cat = document.querySelector('#createTabs .role-tab.active')?.dataset.cat || 'СПЕЦ. ЗАКАЗ';
-  const desc = $('c-desc').value.trim();
-  const dt = $('c-datetime').value;
-  const budget = Number($('c-budget').value||0);
+  const desc = $('c-desc').value.trim(); const dt = $('c-datetime').value; const budget = Number($('c-budget').value||0);
   if(!desc || !dt) return alert('Заполните описание и дату/время');
-  const order = { id:'o_'+uid(), category:cat, desc, datetime:dt, budget, city: STATE.city, ownerId: STATE.profile.id, ownerName: STATE.profile.name, bids:[], status:'open', createdAt:nowISO() };
-  STATE.orders.unshift(order); saveLocal();
-  alert('Заказ опубликован'); closeScreen('createScreen'); renderMineList(); renderFindList();
+  const order = { id:'o_'+uid(), category:cat, desc, datetime:dt, budget, city: STATE.city, ownerId: STATE.profile.id, ownerName: STATE.profile.name, bids:[], status:'open', createdAt: nowISO() };
+  STATE.orders.unshift(order); saveState(); alert('Заказ опубликован'); closeScreen('createScreen');
 });
 
-/* ====== find orders (with "Предложить услугу") ====== */
+/* ====== FIND orders ====== */
+function renderFind(){
+  const sel = $('filterCat'); sel.innerHTML = '<option value="">Все категории</option>';
+  CATS.forEach(c=>{ const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  renderFindList();
+}
 function renderFindList(){
   const wrap = $('findList'); wrap.innerHTML='';
-  const q = ($('searchInput')?.value||'').toLowerCase();
-  const cat = ($('filterCat')?.value||'');
-  if($('filterCat').children.length<=1){
-    CATS.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; $('filterCat').appendChild(o); });
-  }
+  const q = ($('searchInput').value||'').toLowerCase(); const cat = $('filterCat').value;
   let items = STATE.orders.filter(o=>o.status==='open' && o.city===STATE.city);
   if(cat) items = items.filter(x=>x.category===cat);
-  if(q) items = items.filter(o=> (o.category+' '+o.desc+' '+o.ownerName).toLowerCase().includes(q));
-  if(!items.length) { wrap.innerHTML='<div style="color:var(--muted)">Нет заказов</div>'; return; }
+  if(q) items = items.filter(o=> (o.category+' '+o.desc+' '+(o.ownerName||'')).toLowerCase().includes(q));
+  if(!items.length){ wrap.innerHTML = '<div class="small">Нет заказов</div>'; return; }
   items.forEach(o=>{
     const card = document.createElement('div'); card.className='post-card';
-    card.innerHTML = `<div style="font-weight:900">${o.category} • <span style="font-weight:600">${o.city}</span> • ₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div>
-      <div style="margin-top:6px;color:var(--muted)">Дедлайн: ${(o.datetime||'').replace('T',' ')}</div>
-      <div style="margin-top:8px; white-space:pre-wrap">${o.desc}</div>
-      <div style="display:flex; gap:8px; margin-top:8px"><button class="btn" data-act="offer">Предложить услугу</button></div>`;
+    card.innerHTML = `<div class="post-top"><div class="avatar">${(o.ownerName||'П')[0]}</div><div style="display:flex;flex-direction:column;"><div style="font-weight:900">${esc(o.category)}</div><div class="small">${esc(o.ownerName)} • ${esc(o.city)} • ₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div></div></div>
+      <div style="margin-top:8px; white-space:pre-wrap">${esc(o.desc)}</div>
+      <div class="post-actions">
+        <button class="act" data-act="offer">Предложить услугу</button>
+      </div>`;
     card.querySelector('[data-act="offer"]').addEventListener('click', ()=>{
-      $('offerModal').dataset.orderId = o.id;
-      $('offerPrice').value=''; $('offerComment').value='';
-      openScreen('offerModal');
+      $('offerModal').dataset.orderId = o.id; openScreen('offerModal');
     });
     wrap.appendChild(card);
   });
 }
 $('applySearch').addEventListener('click', renderFindList);
 
-/* offer form submit */
+/* offer submit */
 $('offerForm').addEventListener('submit', (e)=>{
   e.preventDefault();
-  const price = Number($('offerPrice').value||0);
+  const price = Number($('offerPrice').value||0); if(!price) return alert('Введите цену');
   const comment = $('offerComment').value.trim();
-  if(!price) return alert('Введите цену');
   const orderId = $('offerModal').dataset.orderId;
-  const order = STATE.orders.find(x=>x.id===orderId);
-  if(!order) return alert('Заказ не найден');
+  const order = STATE.orders.find(x=>x.id===orderId); if(!order) return alert('Заказ не найден');
   const bid = { performerId: STATE.profile.id, name: STATE.profile.name, price, comment, createdAt: nowISO() };
   order.bids = order.bids||[]; order.bids.push(bid);
-  saveLocal(); closeScreen('offerModal'); alert('Предложение отправлено'); renderFindList();
   STATE.notifs.unshift({ id:'n_'+uid(), type:'bid', title:'Новое предложение', body:`На ваш заказ "${order.category}" предложили ₸ ${price}`, ts: nowISO(), payload:{orderId} });
-  refreshNotifs();
+  saveState(); closeScreen('offerModal'); alert('Предложение отправлено'); renderFindList(); refreshNotifBadge();
 });
 
-/* ====== mine orders + bids modal (owner) ====== */
-function renderMineList(){
-  const holder = $('mineList'); if(!holder) {
-    // create container on the fly if missing (some flows open mineScreen via modal)
-    return;
-  }
-  holder.innerHTML='';
-  const me = STATE.profile.id;
-  const mine = STATE.orders.filter(o=>o.ownerId===me);
-  if(!mine.length){ holder.innerHTML = '<div style="color:var(--muted)">У вас нет заказов</div>'; return; }
+/* ====== MINE orders & bids viewing (owner) ====== */
+function renderMine(){
+  const wrap = $('bidsList'); wrap.innerHTML='';
+  const mine = STATE.orders.filter(o=>o.ownerId===STATE.profile.id);
+  if(!mine.length){ wrap.innerHTML = '<div class="small">У вас нет заказов</div>'; openScreen('bidsModal'); return; }
   mine.forEach(o=>{
     const card = document.createElement('div'); card.className='post-card';
     const bidsCount = (o.bids||[]).length;
-    card.innerHTML = `<div style="font-weight:900">${o.category} • ${o.city} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div>
-      <div style="margin-top:6px;color:var(--muted)">Статус: ${o.status} • Дедлайн: ${(o.datetime||'').replace('T',' ')}</div>
-      <div style="margin-top:8px; white-space:pre-wrap">${o.desc}</div>
-      <div style="display:flex; gap:8px; margin-top:8px"></div>`;
-    const actions = card.querySelector('div:last-child');
-    if(o.status==='open' && bidsCount){
-      const view = document.createElement('button'); view.className='btn'; view.textContent='Посмотреть заявки';
-      view.addEventListener('click', ()=> openBidsModal(o.id) );
-      actions.appendChild(view);
-    }
-    holder.appendChild(card);
+    card.innerHTML = `<div style="font-weight:900">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div>
+      <div class="small" style="margin-top:6px">Статус: ${esc(o.status)} • Дедлайн: ${(o.datetime||'').replace('T',' ')}</div>
+      <div style="margin-top:8px">${esc(o.desc)}</div>`;
+    const actions = document.createElement('div'); actions.style.marginTop='10px';
+    const viewBtn = document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Посмотреть заявки';
+    viewBtn.addEventListener('click', ()=> openBidsModal(o.id) );
+    actions.appendChild(viewBtn);
+    card.appendChild(actions); wrap.appendChild(card);
   });
+  openScreen('bidsModal');
 }
+
 function openBidsModal(orderId){
-  const order = STATE.orders.find(x=>x.id===orderId); if(!order) return;
+  const order = STATE.orders.find(x=>x.id===orderId); if(!order) return alert('Заказ не найден');
   const list = $('bidsList'); list.innerHTML='';
-  if(!(order.bids && order.bids.length)) { list.innerHTML = '<div style="color:var(--muted)">Заявок нет</div>'; openScreen('bidsModal'); return; }
+  if(!(order.bids && order.bids.length)){ list.innerHTML = '<div class="small">Заявок нет</div>'; openScreen('bidsModal'); return; }
   order.bids.forEach((b, idx)=>{
     const row = document.createElement('div'); row.className='post-card';
-    row.innerHTML = `<div style="font-weight:900">${b.name} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div>
-      <div style="margin-top:6px;color:var(--muted)">${new Date(b.createdAt).toLocaleString()}</div>
-      <div style="margin-top:8px">${b.comment||''}</div>
-      <div style="display:flex; gap:8px; margin-top:8px">
-        <button class="btn primary" data-act="accept">Принять</button>
-        <button class="btn" data-act="decline">Отказать</button>
-      </div>`;
-    row.addEventListener('click', (e)=>{
-      const a = e.target.closest('[data-act]'); if(!a) return;
-      const act = a.dataset.act;
-      if(act==='accept'){
-        const chat = { id:'chat_'+uid(), orderId: order.id, title: order.category + ' — чат', participants:[order.ownerId, b.performerId], messages:[{ from:'system', text:'Чат создан по заказу', ts: nowISO() }] };
-        STATE.chats.unshift(chat);
-        order.status='in_progress';
-        STATE.notifs.unshift({ id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открыт чат с ${b.name}`, ts:nowISO(), payload:{chatId:chat.id, orderId:order.id} });
-        saveLocal();
-        closeScreen('bidsModal');
-        renderMineList(); renderChats();
-        openChatInPanel(chat.id);
-      } else if(act==='decline'){
-        order.bids.splice(idx,1); saveLocal(); openBidsModal(orderId);
-      }
+    row.innerHTML = `<div style="font-weight:900">${esc(b.name)} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div>
+      <div class="small" style="margin-top:6px">${new Date(b.createdAt).toLocaleString()}</div>
+      <div style="margin-top:8px">${esc(b.comment||'')}</div>`;
+    const actions = document.createElement('div'); actions.style.marginTop='8px';
+    const accept = document.createElement('button'); accept.className='btn primary'; accept.textContent='Принять';
+    const decline = document.createElement('button'); decline.className='btn'; decline.textContent='Отказать';
+    accept.addEventListener('click', ()=>{
+      // create chat, change status
+      const chat = { id:'chat_'+uid(), orderId: order.id, title: order.category, participants:[order.ownerId, b.performerId], messages:[{from:'system',text:'Чат создан по заказу',ts:nowISO()}] };
+      STATE.chats.unshift(chat);
+      order.status='in_progress';
+      STATE.notifs.unshift({ id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открыт чат с ${b.name}`, ts:nowISO(), payload:{chatId:chat.id, orderId:order.id} });
+      saveState(); renderMine(); renderChats(); openChat(chat.id);
     });
+    decline.addEventListener('click', ()=>{ order.bids.splice(idx,1); saveState(); openBidsModal(orderId); });
+    actions.appendChild(accept); actions.appendChild(decline); row.appendChild(actions);
     list.appendChild(row);
   });
   $('bidsTitle').textContent = `Заявки — ${order.category}`;
   openScreen('bidsModal');
 }
 
-/* ====== messenger / chats ====== */
-function renderChats(){
-  const wrap = $('chatsList'); wrap.innerHTML='';
-  if(!STATE.chats.length) { wrap.innerHTML = '<div style="padding:8px;color:var(--muted)">Чатов пока нет</div>'; return; }
-  STATE.chats.forEach(c=>{
-    const row = document.createElement('div'); row.className='post-card'; row.style.cursor='pointer';
-    row.innerHTML = `<div style="font-weight:900">${c.title||'Чат'}</div><div style="margin-top:6px;color:var(--muted)">${c.orderId?('По заказу: '+c.orderId):'Диалог'}</div>`;
-    row.onclick = ()=> openChatInPanel(c.id);
-    wrap.appendChild(row);
+/* ====== CITY THREAD & quick post ====== */
+function renderCity(){
+  $('cityLabel').textContent = 'Город: ' + (STATE.city || '—');
+  renderCityPosts();
+}
+function renderCityPosts(){
+  const wrap = $('cityPosts'); wrap.innerHTML='';
+  const posts = STATE.feed[STATE.city] || [];
+  if(!posts.length){ wrap.innerHTML = '<div class="small">Пока нет публикаций</div>'; return; }
+  posts.forEach(p=>{
+    const el = document.createElement('div'); el.className='post-card';
+    const likesCount = Object.keys(p.likes?.byUser||{}).length;
+    el.innerHTML = `<div class="post-top"><div class="avatar">${(p.authorName||'П')[0]}</div><div style="display:flex;flex-direction:column;"><div style="font-weight:900">${esc(p.authorName)}</div><div class="small">${new Date(p.ts).toLocaleString()}</div></div></div>
+      <div style="margin-top:8px; white-space:pre-wrap">${esc(p.text)}</div>
+      ${p.image?`<img class="post-img" src="${p.image}" alt="image" style="margin-top:8px;max-width:100%;border-radius:8px">`:''}
+      <div class="post-actions">
+        <button class="act" data-act="like">❤️ <span data-likecount>${likesCount}</span></button>
+        <button class="act" data-act="comment">💬</button>
+        <button class="act" data-act="repost">🔁</button>
+      </div>
+      <div class="comments" style="display:none; margin-top:8px;">
+        <div style="display:flex;gap:8px;"><input class="input comment-input" placeholder="Написать комментарий..."><button class="btn primary comment-send">Отправить</button></div>
+        <div class="comments-list" style="margin-top:8px;"></div>
+      </div>`;
+    wrap.appendChild(el);
+
+    // events handling inline to avoid full rerender
+    const likeBtn = el.querySelector('[data-act="like"]');
+    likeBtn.addEventListener('click', ()=>{
+      const me = STATE.profile.id; p.likes = p.likes || { byUser:{} }; if(p.likes.byUser[me]) delete p.likes.byUser[me]; else p.likes.byUser[me]=true;
+      const cnt = Object.keys(p.likes.byUser||{}).length;
+      el.querySelector('[data-likecount]').textContent = cnt;
+      saveState();
+    });
+    const commentBtn = el.querySelector('[data-act="comment"]');
+    const commentsBox = el.querySelector('.comments');
+    commentBtn.addEventListener('click', ()=> commentsBox.style.display = commentsBox.style.display==='none'?'block':'none');
+    const sendBtn = el.querySelector('.comment-send');
+    sendBtn.addEventListener('click', ()=>{
+      const input = el.querySelector('.comment-input'); const txt = input.value.trim(); if(!txt) return;
+      p.comments = p.comments || []; p.comments.push({ id:'c_'+uid(), authorName:STATE.profile.name, text:txt, ts:nowISO() });
+      input.value=''; saveState(); // update comments list visually
+      const list = el.querySelector('.comments-list'); const node = document.createElement('div'); node.className='comment'; node.innerHTML = `<div style="font-weight:800">${esc(STATE.profile.name)}</div><div class="small">${new Date().toLocaleString()}</div><div style="margin-top:6px">${esc(txt)}</div>`; list.appendChild(node);
+    });
+    const repostBtn = el.querySelector('[data-act="repost"]');
+    repostBtn.addEventListener('click', ()=> alert('Репост — в демо отправляется в чат (реализация далее)'));
   });
 }
 
-/* ====== Core change: render chat messages with left/right alignment ====== */
-function openChatInPanel(id){
-  const chat = STATE.chats.find(x=>x.id===id); if(!chat) return alert('Чат не найден');
-  const msgs = $('chatWinMsgs'); msgs.innerHTML='';
-  (chat.messages||[]).forEach(m=>{
-    const isSystem = (m.from === 'system' || m.from === 'system');
-    const isMe = (!isSystem) && (m.from === STATE.profile.id);
-    const d = document.createElement('div');
-    d.className = 'msg ' + (isSystem ? '' : (isMe ? 'me' : 'other'));
-    if(isSystem){
-      d.style.fontStyle='italic'; d.style.color='var(--muted)'; d.textContent = m.text;
-    } else {
-      // show name for others, for me optionally hide name (we keep name for clarity)
-      if(isMe){
-        d.innerHTML = `<div style="white-space:pre-wrap">${escapeHtml(m.text||'')}</div>`;
-      } else {
-        d.innerHTML = `<div style="font-weight:800; margin-bottom:6px">${escapeHtml(m.fromName||'Пользователь')}</div><div style="white-space:pre-wrap">${escapeHtml(m.text||'')}</div>`;
-      }
-    }
-    msgs.appendChild(d);
-  });
-  msgs.scrollTop = msgs.scrollHeight;
+/* Quick post modal handling */
+$('topComposerPlaceholder').addEventListener('click', ()=>{ $('quickPostText').value=''; $('quickPostPreview').innerHTML=''; $('quickPostImage').value=''; openScreen('quickPostModal'); });
+$('quickPostImage').addEventListener('change', (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader(); r.onload = ()=>{ $('quickPostPreview').innerHTML = `<img src="${r.result}" style="max-width:100%;border-radius:8px">`; $('quickPostPreview').dataset.img = r.result; }; r.readAsDataURL(f);
+});
+$('quickPostSend').addEventListener('click', ()=>{
+  const text = $('quickPostText').value.trim(); const img = $('quickPostPreview').dataset.img || null;
+  if(!text && !img) return alert('Введите текст или добавьте фото');
+  const post = { id:'post_'+uid(), authorId:STATE.profile.id, authorName:STATE.profile.name, text, image:img, ts: nowISO(), likes:{byUser:{}}, comments:[] };
+  (STATE.feed[STATE.city] = STATE.feed[STATE.city]||[]).unshift(post);
+  saveState(); closeScreen('quickPostModal'); renderCityPosts();
+});
 
-  // set send handler for this chat
-  $('chatWinSend').onclick = ()=>{
-    const v = $('chatWinInput').value.trim(); if(!v) return;
-    const message = { from: STATE.profile.id, fromName: STATE.profile.name, text: v, ts: nowISO() };
-    chat.messages.push(message);
-    saveLocal();
-    $('chatWinInput').value='';
-    openChatInPanel(id); // re-render
+/* composer shrink behavior: keep top composer sticky; ensure it doesn't block scroll */
+const cityScroll = $('cityScroll');
+if(cityScroll){
+  cityScroll.addEventListener('scroll', ()=> {
+    const comp = document.querySelector('.city-composer-top');
+    if(cityScroll.scrollTop > 40) comp.classList.add('small'); else comp.classList.remove('small');
+  }, { passive:true });
+}
+
+/* ====== MESSENGER functions ====== */
+function renderChats(){
+  const wrap = $('chatsList'); wrap.innerHTML='';
+  if(!STATE.chats.length){ wrap.innerHTML = '<div class="small">Чатов пока нет</div>'; $('chatPane').classList.remove('active'); $('chatWindow').style.display='none'; $('chatEmpty').style.display='block'; return; }
+  STATE.chats.forEach(c=>{
+    const el = document.createElement('div'); el.className='post-card'; el.style.cursor='pointer';
+    el.innerHTML = `<div style="font-weight:900">${esc(c.title || 'Чат')}</div><div class="small" style="margin-top:6px">${c.orderId?('Заказ: '+c.orderId):'Диалог'}</div>`;
+    el.addEventListener('click', ()=> openChat(c.id));
+    wrap.appendChild(el);
+  });
+}
+
+function openChat(chatId){
+  const chat = STATE.chats.find(x=>x.id===chatId); if(!chat) return;
+  $('chatWindowHeader').style.display='flex'; $('chatWindow').style.display='flex'; $('chatEmpty').style.display='none';
+  $('chatHeaderName').textContent = chat.title || 'Чат';
+  $('chatHeaderAvatar').textContent = (chat.title||'Ч')[0];
+  const msgsWrap = $('chatMsgs'); msgsWrap.innerHTML='';
+  (chat.messages||[]).forEach(m=>{
+    const d = document.createElement('div'); d.className = 'msg ' + ((m.from === STATE.profile.id)?'me':'other');
+    if(m.from === 'system'){ d.style.fontStyle='italic'; d.style.color='var(--muted)'; d.textContent = m.text; }
+    else {
+      if(m.from === STATE.profile.id) d.innerHTML = `<div>${esc(m.text)}</div>`;
+      else d.innerHTML = `<div style="font-weight:800; margin-bottom:6px">${esc(m.fromName||'')}</div><div>${esc(m.text)}</div>`;
+    }
+    msgsWrap.appendChild(d);
+  });
+  msgsWrap.scrollTop = msgsWrap.scrollHeight;
+
+  // send message
+  $('chatSend').onclick = ()=>{
+    const v = $('chatInput').value.trim(); if(!v) return;
+    const msg = { from: STATE.profile.id, fromName: STATE.profile.name, text: v, ts: nowISO() };
+    chat.messages = chat.messages||[]; chat.messages.push(msg);
+    saveState(); $('chatInput').value=''; openChat(chatId); // rerender
   };
 }
 
-/* Quick post and messenger top */
-function setupMessengerTop(){
-  const avatar = $('myChatAvatar'); avatar.textContent = STATE.profile.avatarData || STATE.profile.name[0];
-  $('myChatName').textContent = STATE.profile.name;
-  document.querySelector('.chat-top-row').addEventListener('click', ()=>{
-    openScreen('quickPostModal');
-    $('quickPostText').value='';
-  });
-  $('quickPostSend').addEventListener('click', ()=>{
-    const txt = $('quickPostText').value.trim(); if(!txt) return alert('Введите сообщение');
-    const post = { id:'post_'+uid(), authorName: STATE.profile.name, text: txt, ts: nowISO(), likes:{byUser:{}}, comments:[] };
-    (STATE.feed[STATE.city] = STATE.feed[STATE.city]||[]).unshift(post);
-    saveLocal(); closeScreen('quickPostModal');
-    alert('Сообщение отправлено в ленту города');
-  });
-}
-setupMessengerTop();
-
-/* ====== city feed rendering ====== */
-function renderCityPosts(){
-  const cont = $('cityPosts'); if(!cont) return;
-  cont.innerHTML = '';
-  const posts = STATE.feed[STATE.city] || [];
-  if(!posts.length) { cont.innerHTML = '<div style="color:var(--muted)">Пока нет публикаций</div>'; return; }
-  posts.forEach(p=>{
-    const card = document.createElement('div'); card.className='post-card';
-    const likesCount = Object.keys(p.likes?.byUser||{}).length;
-    card.innerHTML = `<div style="display:flex;gap:8px;align-items:center">
-        <div class="avatar">${(p.authorName||'Пользователь')[0] || 'П'}</div>
-        <div style="font-weight:900">${escapeHtml(p.authorName||'Пользователь')}</div>
-        <div style="margin-left:auto;color:var(--muted)">${new Date(p.ts).toLocaleString()}</div>
-      </div>
-      <div style="margin-top:8px; white-space:pre-wrap">${escapeHtml(p.text||'')}</div>
-      ${p.image?('<img class="post-img" src="'+p.image+'" alt="">'):''}
-      <div class="post-actions" style="margin-top:8px">
-        <button class="btn" data-act="like">❤️ (<span data-likecount>${likesCount}</span>)</button>
-        <button class="btn" data-act="comment">💬 Комментировать</button>
-      </div>
-      <div class="comments" style="margin-top:8px; display:none">
-        <div style="display:flex;gap:8px;margin-bottom:8px;"><input class="input" placeholder="Напишите комментарий..."><button class="btn primary" data-act="sendComment">Отправить</button></div>
-        <div class="comments-list"></div>
-      </div>`;
-    cont.appendChild(card);
-    card.addEventListener('click', (e)=>{
-      const btn = e.target.closest('[data-act]'); if(!btn) return;
-      const act = btn.dataset.act;
-      if(act==='like'){ toggleLike(p.id, card); }
-      else if(act==='comment'){ const box = card.querySelector('.comments'); box.style.display = box.style.display==='none' ? 'block' : 'none'; }
-      else if(act==='sendComment'){ const input = card.querySelector('.comments input'); const txt = input.value.trim(); if(!txt) return; p.comments = p.comments||[]; p.comments.push({ id:'c_'+uid(), authorName: STATE.profile.name, text: txt, ts: nowISO() }); saveLocal(); renderCityPosts(); }
-    });
-  });
-}
-function toggleLike(postId, cardEl){
-  const posts = STATE.feed[STATE.city] || []; const p = posts.find(x=>x.id===postId); if(!p) return;
-  p.likes = p.likes || { byUser:{} }; const me = STATE.profile.id;
-  if(p.likes.byUser[me]) delete p.likes.byUser[me]; else p.likes.byUser[me]=true;
-  saveLocal(); renderCityPosts();
-}
-
-/* add city post (from city composer) */
-document.getElementById('cityPostSend').addEventListener('click', ()=>{
-  const text = $('cityPostText').value.trim();
-  if(!text && !document.getElementById('cityPostImage').files.length) return alert('Введите текст или добавьте фото');
-  const imgFile = document.getElementById('cityPostImage').files[0];
-  if(imgFile){
-    const fr = new FileReader();
-    fr.onload = ()=> {
-      const post = { id:'post_'+uid(), authorName: STATE.profile.name, text, image: fr.result, ts: nowISO(), likes:{byUser:{}}, comments:[] };
-      (STATE.feed[STATE.city]=STATE.feed[STATE.city]||[]).unshift(post);
-      saveLocal(); $('cityPostText').value=''; document.getElementById('cityPostImage').value=''; renderCityPosts();
-    };
-    fr.readAsDataURL(imgFile);
-  } else {
-    const post = { id:'post_'+uid(), authorName: STATE.profile.name, text, ts: nowISO(), likes:{byUser:{}}, comments:[] };
-    (STATE.feed[STATE.city]=STATE.feed[STATE.city]||[]).unshift(post);
-    saveLocal(); $('cityPostText').value=''; renderCityPosts();
-  }
-});
-
-/* composer shrink on scroll + prevent composer from blocking scroll */
-(function composerScrollBehavior(){
-  const scroll = $('cityScroll'); const comp = $('cityComposer');
-  if(!scroll || !comp) return;
-  scroll.addEventListener('scroll', ()=> {
-    if(scroll.scrollTop > 60) comp.classList.add('compact'); else comp.classList.remove('compact');
-  }, { passive:true });
-  comp.addEventListener('wheel', (e)=>{ if(e.target.tagName.toLowerCase()!=='textarea') e.stopPropagation(); }, { passive:false });
-})();
-
-/* ====== chats create picker ====== */
+/* create chat picker */
 $('createChatBtn').addEventListener('click', ()=>{
-  const wrap = $('chatPicker'); wrap.innerHTML='';
-  const map = new Map();
-  STATE.orders.forEach(o=>{ map.set(o.ownerId, o.ownerName||'Заказчик'); (o.bids||[]).forEach(b=>map.set(b.performerId, b.name||'Исполнитель')); });
-  if(!map.size) { wrap.innerHTML = '<div style="color:var(--muted)">Нет кандидатов</div>'; openScreen('createChatScreen'); return; }
-  map.forEach((name,id)=>{
-    const r = document.createElement('div'); r.className='post-card'; r.style.cursor='pointer';
-    r.innerHTML = `<div style="font-weight:900">${name}</div><div style="margin-top:6px;color:var(--muted)">${id}</div>`;
-    r.onclick = ()=> {
-      const chat = { id:'chat_'+uid(), orderId:null, title:'Диалог с '+name, participants:[STATE.profile.id, id], messages:[{from:'system', text:'Чат создан', ts: nowISO()}] };
-      STATE.chats.unshift(chat); saveLocal(); closeScreen('createChatScreen'); renderChats(); openChatInPanel(chat.id);
-    };
-    wrap.appendChild(r);
+  const picker = $('chatPicker'); picker.innerHTML='';
+  const users = new Map();
+  // collect owners and bidders
+  STATE.orders.forEach(o=>{ users.set(o.ownerId, o.ownerName||('user_'+o.ownerId)); (o.bids||[]).forEach(b=>users.set(b.performerId, b.name||('user_'+b.performerId))); });
+  if(!users.size){ picker.innerHTML = '<div class="small">Нет доступных контактов</div>'; openScreen('createChatScreen'); return; }
+  users.forEach((name,id)=>{
+    const el = document.createElement('div'); el.className='post-card'; el.style.cursor='pointer';
+    el.innerHTML = `<div style="font-weight:900">${esc(name)}</div><div class="small" style="margin-top:6px">${esc(id)}</div>`;
+    el.addEventListener('click', ()=>{
+      const chat = { id:'chat_'+uid(), orderId:null, title:'Диалог с '+name, participants:[STATE.profile.id, id], messages:[{from:'system', text:'Чат создан', ts:nowISO()}] };
+      STATE.chats.unshift(chat); saveState(); closeScreen('createChatScreen'); renderChats(); openChat(chat.id);
+    });
+    picker.appendChild(el);
   });
   openScreen('createChatScreen');
 });
 
-/* ====== simple helpers ====== */
-function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el = $(id); if(el) el.classList.add('active'); }
-function closeScreen(id){ const el = $(id); if(el) el.classList.remove('active'); }
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
-
-/* ====== init small ====== */
-function init(){
-  const greeted = localStorage.getItem('gid_greeted_v1');
-  if(!greeted){
-    $('welcomeOverlay').style.display='flex';
-    $('welcomeOk').onclick = ()=>{ $('welcomeOverlay').style.display='none'; localStorage.setItem('gid_greeted_v1','1'); };
+/* ============== SYNC with JSONBin (auto every 1s if enabled) ============== */
+let __syncRunning = false;
+async function loadCloud(){
+  if(!JSONBIN.ENABLED) return;
+  try{
+    const res = await fetch(JSONBIN.URL(JSONBIN.BIN_ID), { headers: { 'X-Master-Key': JSONBIN.KEY } });
+    if(!res.ok) throw new Error('GET failed '+res.status);
+    const j = await res.json();
+    const rec = j.record || {};
+    // merge basic data: orders, feed, chats, notifs
+    if(Array.isArray(rec.orders)) STATE.orders = rec.orders;
+    if(rec.feed) STATE.feed = rec.feed;
+    if(Array.isArray(rec.chats)) STATE.chats = rec.chats;
+    if(Array.isArray(rec.notifs)) STATE.notifs = rec.notifs;
+    saveState();
+    renderCityPosts(); renderFindList(); renderChats(); renderMine();
+  }catch(e){
+    console.warn('cloud load error', e);
   }
+}
+async function saveCloud(){
+  if(!JSONBIN.ENABLED) return;
+  try{
+    const payload = { orders: STATE.orders, feed: STATE.feed, chats: STATE.chats, notifs: STATE.notifs, meta:{ts: nowISO()} };
+    const res = await fetch(JSONBIN.URL(JSONBIN.BIN_ID), {
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json', 'X-Master-Key': JSONBIN.KEY },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error('PUT failed '+res.status);
+  }catch(e){
+    console.warn('cloud save error', e);
+  }
+}
 
-  renderMenu(); setRoleTabs(); renderCityPosts(); renderFindList(); renderMineList(); renderChats(); refreshNotifs();
-  $('openSettings').addEventListener('click', ()=>{ alert('Откроются настройки (демо)'); });
-  // sync button stub (if you have sync modal, wire here)
+/* toggle / manual sync controls */
+$('syncToggle').addEventListener('change', (e)=>{ STATE.syncEnabled = !!e.target.checked; saveState(); });
+$('syncNowBtn').addEventListener('click', async ()=>{
+  try{ await loadCloud(); alert('Синхронизация выполнена'); }catch(e){ alert('Ошибка синхронизации: '+e.message); }
+});
+
+/* autorun sync loop every 1s if enabled */
+setInterval(async ()=>{
+  if(STATE.syncEnabled && !__syncRunning){
+    __syncRunning = true;
+    try{ await saveCloud(); await loadCloud(); }catch(e){ /* ignore errors */ } finally{ __syncRunning = false; }
+  }
+}, 1000);
+
+/* ============== INIT / bootstrap ============== */
+function init(){
+  // set sync toggle initial value
+  $('syncToggle').checked = !!STATE.syncEnabled;
+  renderRoleTabs(); renderMenu(); renderCity(); refreshNotifBadge(); renderChats();
+  // set profile avatar/name
+  $('topComposerAvatar').textContent = STATE.profile.avatarData || (STATE.profile.name[0]||'Я');
 }
 init();
 
-/* expose for debug */
-window.GIDCITY = { STATE, saveLocal };
+/* expose debugging */
+window.GIDCITY = { STATE, saveState, loadState, loadCloud, saveCloud };
+
 </script>
 </body>
 </html>
