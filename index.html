@@ -8,16 +8,28 @@
 <style>
 :root{
   --bg-1:#060614; --bg-2:#07081a; --bg-3:#090b22;
-  --surface:rgba(20,24,40,.92);
-  --line:rgba(160,170,230,.22);
+  --surface:rgba(20,24,40,.76);
+  --surface-2:rgba(30,34,60,.48);
+  --line:rgba(160,170,230,.18);
   --accent:#a970ff;
   --accent2:#32ffd2;
   --gold:#ffd84d;
   --text:#ffffff; --muted:#9aa6d9;
   --radius:14px; --shadow:0 16px 46px rgba(0,0,0,.45);
   --ui-font:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --glass-border: rgba(255,255,255,.06);
+  --glass-bg: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06));
   --neon: drop-shadow(0 0 8px rgba(169,112,255,.6));
+  --glass-strong: rgba(255,255,255,.03);
 }
+/* THEME VARIANTS */
+[data-theme="violet"]{ --accent:#a970ff; --accent2:#32ffd2; --line:rgba(160,170,230,.22); --surface:rgba(20,24,40,.92); }
+[data-theme="navy"]{ --accent:#44a0ff; --accent2:#76f1ff; --line:rgba(120,170,235,.18); --surface:rgba(10,18,34,.9); }
+[data-theme="emerald"]{ --accent:#2fe4a3; --accent2:#27d8ff; --line:rgba(120,230,200,.16); --surface:rgba(5,28,20,.88); }
+[data-theme="sunset"]{ --accent:#ff7a5c; --accent2:#ffd471; --line:rgba(255,180,140,.12); --surface:rgba(30,18,12,.86); }
+[data-theme="mint"]{ --accent:#5ef2c6; --accent2:#6bd1ff; --line:rgba(140,240,220,.14); --surface:rgba(8,22,18,.88); }
+
+/* base */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -29,17 +41,57 @@ body{
 }
 .wrapper{ max-width:1000px; margin:18px auto; padding:0 14px; display:flex; flex-direction:column; gap:12px; }
 
+/* glass basics */
+.modal, .menu-btn, .btn, .input, textarea, select, .post-card, .city-composer-top {
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06));
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  backdrop-filter: blur(8px) saturate(120%);
+}
+.btn{
+  padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:900; border:1px solid var(--glass-border);
+  background: linear-gradient(180deg, rgba(255,255,255,.018), rgba(0,0,0,.06));
+  color:var(--text);
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+.btn.primary{
+  background: linear-gradient(90deg,var(--accent),var(--accent2));
+  color:#061018; border:none; box-shadow: 0 10px 30px rgba(100,50,160,.12);
+}
+.btn.ghost{ background:transparent; border:1px solid var(--glass-border); color:var(--muted); }
+.btn:active{ transform: translateY(1px); }
+
+/* large glass order buttons */
+.glass-large{ padding:14px 20px; font-size:15px; border-radius:16px; min-width:160px; display:inline-flex; align-items:center; justify-content:center; gap:10px; }
+.glass-large.cancel{ background: linear-gradient(180deg, rgba(255,255,255,.018), rgba(0,0,0,.06)); color:var(--text); border:1px solid rgba(255,255,255,.04); }
+.glass-large.order{
+  background: linear-gradient(90deg,var(--accent),var(--accent2)); color:#061018; border:none;
+  position:relative; overflow:visible;
+}
+.glass-large.order:active{ animation: pulseYellow .6s ease; box-shadow: 0 12px 40px rgba(255,216,93,.16); }
+@keyframes pulseYellow{
+  0%{ box-shadow: 0 0 0 rgba(255,216,93,0); filter: drop-shadow(0 0 0 rgba(255,216,93,0)); }
+  50%{ box-shadow: 0 0 24px rgba(255,216,93,.9); filter: drop-shadow(0 0 18px rgba(255,216,93,.6)); }
+  100%{ box-shadow: 0 0 0 rgba(255,216,93,0); filter: drop-shadow(0 0 0 rgba(255,216,93,0)); }
+}
+
 /* header */
 .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.brand{ display:flex; gap:12px; align-items:center; }
+.brand{ display:flex; gap:12px; align-items:center; flex-direction:column; }
+.brand-row{ display:flex; gap:12px; align-items:center; width:100%; justify-content:flex-start; }
 .brand h1{ margin:0; font-size:20px; font-weight:900; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; color:transparent; }
 .buildInfo{ font-size:12px; color:var(--muted); display:flex; gap:12px; align-items:center; }
 #time { font-weight:900; font-size:14px; }
 #date { font-size:12px; color:var(--muted); }
 
+/* top small row: city scroller */
+.city-picker{ display:flex; gap:8px; width:100%; overflow:auto; padding:6px 2px; align-items:center; }
+.city-chip{ flex:0 0 auto; padding:8px 12px; border-radius:999px; border:1px solid var(--glass-border); background:rgba(255,255,255,.01); cursor:pointer; font-weight:800; color:var(--muted); }
+.city-chip.active{ background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#061018; box-shadow: 0 8px 26px rgba(100,70,180,.08); }
+
 /* role tabs top */
 .role-tabs{ display:flex; gap:8px; margin-top:6px; }
-.role-tab{ padding:10px 18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); font-weight:900; cursor:pointer; user-select:none; min-width:160px; text-align:center; }
+.role-tab{ padding:12px 20px; border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); font-weight:900; cursor:pointer; user-select:none; min-width:220px; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px; }
 .role-tab.active{ background:var(--gold); color:#081018; border-color:rgba(0,0,0,.08); box-shadow:0 8px 24px rgba(255,200,80,.06); }
 
 /* main container */
@@ -47,20 +99,25 @@ body{
 .panel-top{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid rgba(255,255,255,.02) }
 .panel-top h2{ margin:0; font-weight:900; font-size:18px; display:flex; gap:10px; align-items:center; }
 
-/* neon notification button */
-#notifBtn{
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:#061018; border-radius:10px; padding:8px 10px; border:none; cursor:pointer; box-shadow:0 6px 18px rgba(50,200,200,.06);
-  display:inline-flex; align-items:center; gap:6px; font-weight:900;
-  filter:drop-shadow(0 0 8px rgba(169,112,255,.35));
-}
-#notifBadge{ background:#ff4f6a; color:#fff; padding:2px 6px; border-radius:999px; font-weight:900; font-size:11px; display:none; }
+/* notification inline */
+.panel-notif{ display:flex; gap:8px; align-items:center; }
+#panelNotifBtn{ background:transparent; border-radius:10px; padding:8px 10px; border:1px solid var(--glass-border); cursor:pointer; display:inline-flex; align-items:center; gap:8px; font-weight:800; color:var(--muted); }
+#panelNotifBtn .badge{ background:#ff4f6a; color:#fff; padding:2px 6px; border-radius:999px; font-weight:900; font-size:11px; display:none; }
 
 /* menu grid */
 .menu-grid{ display:grid; gap:10px; padding:16px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); align-items:stretch; }
-.menu-btn{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); cursor:pointer; justify-content:space-between; }
-.menu-btn .title{ font-weight:900; }
+.menu-btn{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); cursor:pointer; justify-content:space-between; transition:transform .12s ease; }
+.menu-btn:hover{ transform: translateY(-4px); }
+.menu-btn .title{ font-weight:900; display:flex; gap:10px; align-items:center; }
+.menu-btn .small{ color:var(--muted); font-weight:700; font-size:12px; }
 .menu-btn.dark{ background:linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.6)); color:var(--muted); border-color:rgba(255,255,255,.02); }
+
+/* neon icons for menu */
+.neon-icon{
+  width:28px; height:28px; display:inline-grid; place-items:center; border-radius:8px;
+  color:var(--accent2); filter: drop-shadow(0 0 8px rgba(50,255,200,.08));
+  background: linear-gradient(90deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid rgba(255,255,255,.02);
+}
 
 /* screen/modal */
 .screen{ position:fixed; inset:0; display:none; z-index:90; align-items:flex-start; justify-content:center; padding:18px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); }
@@ -94,8 +151,8 @@ textarea{ min-height:120px; resize:vertical }
 .msg.me{ align-self:flex-end; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#081018; font-weight:900; }
 .msg.other{ align-self:flex-start; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.06)); color:var(--text); border:1px solid var(--line); }
 
-/* create chat btn style */
-#createChatBtn{ margin-left:auto; background:linear-gradient(90deg,var(--accent),var(--accent2)); border:none; color:#061018; padding:8px 12px; border-radius:10px; font-weight:900; cursor:pointer; box-shadow:0 8px 30px rgba(169,112,255,.12); }
+/* file-icon button */
+.file-ic{ width:44px; height:44px; border-radius:10px; display:inline-grid; place-items:center; border:1px solid var(--glass-border); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); cursor:pointer; color:var(--muted); }
 
 /* small */
 .small{ font-size:12px; color:var(--muted) }
@@ -115,15 +172,30 @@ textarea{ min-height:120px; resize:vertical }
 
   <header class="header">
     <div class="brand">
-      <h1>GiDCity</h1>
-      <div class="buildInfo">
-        <div id="dateTime"><span id="time">—</span> <span id="date">—</span></div>
-        <div id="weather"><span>⛅</span> —</div>
+      <div class="brand-row">
+        <h1>GiDCity</h1>
+        <div class="buildInfo" style="margin-left:8px;">
+          <div id="dateTime"><span id="time">—</span> <span id="date">—</span></div>
+          <div id="weather"><span>⛅</span> —</div>
+        </div>
       </div>
+
+      <!-- city display + picker scroller -->
+      <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="font-weight:900; color:var(--muted); font-size:13px">Город:</div>
+          <div id="currentCity" style="font-weight:900"></div>
+        </div>
+        <div style="flex:1; margin-left:12px;">
+          <div class="city-picker" id="cityPicker" aria-label="Выберите город"></div>
+        </div>
+      </div>
+
     </div>
+
     <div style="display:flex; gap:8px; align-items:center;">
-      <button id="openSettings" class="menu-btn" title="Настройки">⚙️</button>
-      <button id="notifBtn" title="Уведомления">🔔 <span id="notifBadge">0</span></button>
+      <button id="openSettings" class="btn" title="Настройки">⚙️</button>
+      <button id="notifBtnTop" class="btn ghost" title="Уведомления">🔔 <span id="notifBadgeTop" class="badge">0</span></button>
     </div>
   </header>
 
@@ -132,7 +204,9 @@ textarea{ min-height:120px; resize:vertical }
   <main class="container" role="main" aria-live="polite">
     <div class="panel-top">
       <h2>Главное меню</h2>
-      <div></div>
+      <div class="panel-notif">
+        <div id="panelNotifBtn" title="Уведомления">🔔 <span class="badge" id="panelNotifCnt">0</span></div>
+      </div>
     </div>
 
     <div id="menuGrid" class="menu-grid"></div>
@@ -145,7 +219,7 @@ textarea{ min-height:120px; resize:vertical }
 <section id="notificationsModal" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <h3 style="margin:0">Уведомления</h3>
-    <button onclick="closeScreen('notificationsModal')" class="btn">Закрыть</button>
+    <button onclick="closeScreen('notificationsModal')" class="btn">Назад</button>
   </div>
   <div id="notificationsList" style="margin-top:12px; max-height:66vh; overflow:auto;"></div>
 </div></section>
@@ -157,20 +231,32 @@ textarea{ min-height:120px; resize:vertical }
     <button onclick="closeScreen('settingsModal')" class="btn">Назад</button>
   </div>
   <div style="margin-top:12px; display:flex; gap:12px; flex-direction:column;">
-    <div style="font-weight:900">Синхронизация (JSONBin)</div>
+    <div style="font-weight:900">Профиль</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <label class="small">Имя</label>
+      <input id="profileName" class="input" placeholder="Ваше имя">
+      <label class="small">Аватар (emoji)</label>
+      <input id="profileAvatar" class="input" placeholder="🤖">
+      <button id="saveProfileBtn" class="btn">Сохранить профиль</button>
+    </div>
+
+    <div style="margin-top:12px; font-weight:900">Синхронизация (JSONBin)</div>
     <div style="display:flex; gap:8px; align-items:center;">
       <label class="small">Авто-синхронизация</label>
       <input id="syncToggle" type="checkbox">
       <button id="syncNowBtn" class="btn">Синхронизировать сейчас</button>
     </div>
-    <div style="margin-top:12px; font-weight:900">Тема</div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn theme-btn" data-theme="violet">Violet</button>
-      <button class="btn theme-btn" data-theme="navy">Navy</button>
-      <button class="btn theme-btn" data-theme="emerald">Emerald</button>
-      <button class="btn theme-btn" data-theme="sunset">Sunset</button>
-      <button class="btn theme-btn" data-theme="mint">Mint</button>
+
+    <div style="margin-top:12px; font-weight:900">Тема (переключатель)</div>
+    <!-- theme scroller -->
+    <div id="themeScroller" style="display:flex; gap:8px; overflow:auto; padding:8px 6px;">
+      <div class="theme-chip" data-theme="violet" style="min-width:110px;padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:1px solid var(--glass-border);">Violet</div>
+      <div class="theme-chip" data-theme="navy" style="min-width:110px;padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:1px solid var(--glass-border);">Navy</div>
+      <div class="theme-chip" data-theme="emerald" style="min-width:110px;padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:1px solid var(--glass-border);">Emerald</div>
+      <div class="theme-chip" data-theme="sunset" style="min-width:110px;padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:1px solid var(--glass-border);">Sunset</div>
+      <div class="theme-chip" data-theme="mint" style="min-width:110px;padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:1px solid var(--glass-border);">Mint</div>
     </div>
+    <div class="small">Темы меняют цвета линий, акценты и поверхности</div>
   </div>
 </div></section>
 
@@ -178,29 +264,42 @@ textarea{ min-height:120px; resize:vertical }
 <section id="createScreen" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <h3 style="margin:0">Создать заказ</h3>
-    <button onclick="closeScreen('createScreen')" class="btn">Отмена</button>
+    <!-- Верхняя кнопка заменена на Назад -->
+    <button onclick="closeScreen('createScreen')" class="btn">Назад</button>
   </div>
   <div style="margin-top:12px;">
     <div id="createTabs" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px"></div>
+
+    <!-- критерии — аккуратный горизонтальный скроллер (chips) -->
+    <div style="margin-bottom:12px;">
+      <div style="font-weight:900; margin-bottom:8px;">Критерии</div>
+      <div id="criteriaScroller" style="display:flex; gap:8px; overflow:auto; padding:8px 2px;">
+        <!-- chips добавятся JS -->
+      </div>
+      <div class="small" style="margin-top:6px; color:var(--muted)">Выберите критерии — прокрутите влево/вправо</div>
+    </div>
+
     <form id="createForm">
       <textarea id="c-desc" class="input" placeholder="Опишите задачу (что нужно сделать, адрес, условия)"></textarea>
 
       <div id="createExtraFields" style="margin-top:8px;"></div>
 
-      <div style="display:flex; gap:8px; margin-top:8px; align-items:flex-end; flex-wrap:wrap;">
+      <!-- дедлайн и бюджет одного размера -->
+      <div style="display:flex; gap:8px; margin-top:12px; align-items:flex-end; flex-wrap:wrap;">
         <div style="flex:1; min-width:220px">
           <label class="small">Дедлайн (дата и время)</label>
           <input id="c-datetime" class="input" type="datetime-local">
         </div>
-        <div style="width:160px">
+        <div style="flex:1; min-width:220px">
           <label class="small">Бюджет (₸)</label>
-          <input id="c-budget" class="input" type="number" required>
+          <input id="c-budget" class="input" type="number" required placeholder="0">
         </div>
       </div>
 
-      <div style="display:flex; gap:8px; margin-top:12px;">
-        <button class="btn" type="button" id="specOrderBtn" style="min-width:160px; font-weight:900; white-space:nowrap;">СПЕЦ. ЗАКАЗ</button>
-        <button class="btn primary" type="button" id="submitOrderBtn">ЗАКАЗАТЬ</button>
+      <!-- большие стеклянные кнопки — только Заказать и Отмена -->
+      <div style="display:flex; gap:12px; margin-top:18px; justify-content:flex-end; flex-wrap:wrap;">
+        <button id="cancelCreate" type="button" class="glass-large cancel" onclick="closeScreen('createScreen')">Отмена</button>
+        <button id="submitOrderBtn" class="glass-large order" type="button">Заказать</button>
       </div>
     </form>
   </div>
@@ -258,8 +357,10 @@ textarea{ min-height:120px; resize:vertical }
     <div class="city-composer-top">
       <div class="avatar" id="topComposerAvatar">Я</div>
       <div class="placeholder" id="topComposerPlaceholder">Нажмите чтобы поделиться...</div>
-      <!-- city label removed as requested -->
-      <div style="margin-left:auto"></div>
+      <!-- файл-иконка (стеклянная) -->
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div id="quickFileBtn" class="file-ic" title="Добавить фото">📎</div>
+      </div>
     </div>
 
     <div id="cityScroll" style="overflow:auto; padding:12px; flex:1;">
@@ -276,9 +377,11 @@ textarea{ min-height:120px; resize:vertical }
   </div>
   <div style="margin-top:12px;">
     <textarea id="quickPostText" class="input" placeholder="О чём хотите рассказать?"></textarea>
-    <div style="margin-top:8px;">
-      <input id="quickPostImage" type="file" accept="image/*">
-      <div id="quickPostPreview" style="margin-top:8px;"></div>
+    <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+      <!-- Скрытое поле file, управляется иконкой -->
+      <input id="quickPostImage" type="file" accept="image/*" style="display:none">
+      <div id="quickPostFileBtn" class="file-ic" title="Выбрать файл">📷</div>
+      <div id="quickPostPreview" style="margin-top:8px; flex:1;"></div>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
       <button id="quickPostSend" class="btn primary">Опубликовать</button>
@@ -363,17 +466,29 @@ function loadState(){ try{ const s = localStorage.getItem(LS_KEY); if(s) Object.
 function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(STATE)); }catch(e){ console.warn(e); } }
 loadState();
 
-/* city coords for weather */
+/* ===== city list (major Казахстан) ===== */
+/* список крупных городов Казахстана (частичный, но охватывает основные) */
+const KZ_CITIES = [
+  'Алматы','Астана','Шымкент','Караганда','Актобе','Павлодар','Усть-Каменогорск','Семей','Костанай','Кокшетау',
+  'Петропавловск','Тараз','Уральск','Атырау','Кызылорда','Балхаш','Актау','Талдыкорган','Кентау','Екибастуз',
+  'Рудный','Темиртау','Жезказган','Степногорск','Экибастуз','Коскелен'
+];
+
+/* небольшой набор координат для погоды, остальные будут fallback на Караганду */
 const CITY_COORDS = {
   'Алматы': {lat:43.2383, lon:76.9450}, 'Астана': {lat:51.1605, lon:71.4704},
-  'Караганда': {lat:49.8064, lon:73.0851}, 'Шымкент': {lat:42.3417, lon:69.5901}, 'Актобе': {lat:50.2839, lon:57.1669}
+  'Караганда': {lat:49.8064, lon:73.0851}, 'Шымкент': {lat:42.3417, lon:69.5901}, 'Актобе': {lat:50.2839, lon:57.1669},
+  'Павлодар': {lat:52.2896, lon:76.9644}, 'Усть-Каменогорск': {lat:49.95, lon:82.62}, 'Семей': {lat:50.4, lon:80.26},
+  'Костанай': {lat:53.2138, lon:63.6242}, 'Кокшетау': {lat:53.2833, lon:69.4}, 'Петропавловск': {lat:54.8758, lon:69.1261},
+  'Тараз': {lat:42.8986, lon:71.3667}, 'Уральск': {lat:51.23, lon:51.38}, 'Атырау': {lat:47.1031, lon:51.8797},
+  'Кызылорда': {lat:44.85, lon:65.5}, 'Актау': {lat:43.65, lon:51.1667}, 'Талдыкорган': {lat:45.0, lon:78.37}
 };
 
 /* ===== header: date/time & weather ===== */
 async function updateDateTimeWeather(){
   const now = new Date();
   const hh = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  $('time').textContent = hh; // bold via CSS (font-weight)
+  $('time').textContent = hh;
   const dateStr = now.toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' });
   $('date').textContent = dateStr;
   // weather via open-meteo
@@ -409,13 +524,22 @@ function renderRoleTabs(){
 }
 renderRoleTabs();
 
-function menuBtn(id,title,note,extra=''){ const el=document.createElement('div'); el.className='menu-btn '+extra; el.id=id; el.innerHTML = `<div style="display:flex;flex-direction:column;flex:1;align-items:flex-start"><div class="title">${title}</div><div class="small">${note||''}</div></div><div style="margin-left:12px">›</div>`; return el; }
+function menuBtn(id,title,note,extra=''){ const el=document.createElement('div'); el.className='menu-btn '+extra; el.id=id; 
+  // add a small neon icon (minimal)
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex:1;">
+    <div class="neon-icon" aria-hidden>✨</div>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;">
+      <div class="title">${title}</div>
+      <div class="small">${note||''}</div>
+    </div>
+  </div><div style="margin-left:12px">›</div>`;
+  return el; }
 
 function renderMenu(){
   const grid = $('menuGrid'); grid.innerHTML='';
   if(STATE.role==='user'){
     const orderBtn = menuBtn('btnOrder','ЗАКАЗАТЬ','Создать заявку'); orderBtn.style.flexBasis='50%';
-    const bookBtn = menuBtn('btnBook','Забронировать (скоро)','Скоро','dark'); bookBtn.style.flexBasis='50%';
+    const bookBtn = menuBtn('btnBook','Забронировать','Бронирование услуг','dark'); bookBtn.style.flexBasis='50%';
     grid.appendChild(orderBtn); grid.appendChild(bookBtn);
     grid.appendChild(menuBtn('btnCity','Чат твоего города','Лента как соцсеть'));
     grid.appendChild(menuBtn('btnMine','Мои заказы','Ваши заявки'));
@@ -436,7 +560,7 @@ function renderMenu(){
     el.onclick = ()=>{
       const id = el.id;
       if(id==='btnOrder'){ initCreate(); openScreen('createScreen'); }
-      if(id==='btnBook'){ alert('Скоро...'); }
+      if(id==='btnBook'){ /* теперь не "(скоро)" */ alert('Бронирование — демо'); }
       if(id==='btnCity'){ renderCity(); openScreen('cityThreadScreen'); }
       if(id==='btnMine'){ renderMine(); openScreen('bidsModal'); }
       if(id==='btnMessenger'){ renderChats(); openScreen('messengerScreen'); }
@@ -449,17 +573,19 @@ function renderMenu(){
 renderMenu();
 
 /* ===== notifications ===== */
-function refreshNotifBadge(){ const n = STATE.notifs.length; const b = $('notifBadge'); if(n>0){ b.style.display='inline-block'; b.textContent = n>99?'99+':String(n);} else b.style.display='none'; }
+function refreshNotifBadge(){ const n = STATE.notifs.length; const b = $('notifBadgeTop'); const p = $('panelNotifCnt'); if(b){ if(n>0){ b.style.display='inline-block'; b.textContent = n>99?'99+':String(n);} else b.style.display='none'; } if(p){ if(n>0){ p.style.display='inline-block'; p.textContent = n>99?'99+':String(n);} else p.style.display='none'; } }
 function renderNotifications(){ const wrap = $('notificationsList'); wrap.innerHTML=''; if(!STATE.notifs.length){ wrap.innerHTML='<div class="small">Уведомлений нет</div>'; return; } STATE.notifs.forEach((n,idx)=>{ const el=document.createElement('div'); el.className='post-card'; el.innerHTML=`<div style="font-weight:900">${esc(n.title)}</div><div class="small" style="margin-top:6px">${new Date(n.ts).toLocaleString()}</div><div style="margin-top:8px">${esc(n.body||'')}</div>`; el.onclick=()=>{ alert(`${n.title}\n\n${n.body||''}`); }; wrap.appendChild(el); }); }
-$('notifBtn').addEventListener('click', ()=>{ renderNotifications(); openScreen('notificationsModal'); });
+$('notifBtnTop').addEventListener('click', ()=>{ renderNotifications(); openScreen('notificationsModal'); });
+$('panelNotifBtn').addEventListener('click', ()=>{ renderNotifications(); openScreen('notificationsModal'); });
 refreshNotifBadge();
 
 /* ===== create order ===== */
 const CATS = ['СПЕЦ. ЗАКАЗ','Такси','Курьер','Доставка','Квартира/Дом','Мастер/Специалист','Прочие'];
 function initCreate(){
   const wrap = $('createTabs'); wrap.innerHTML='';
-  CATS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='role-tab'; d.textContent=c; d.dataset.cat=c; if(i===0) d.classList.add('active'); d.onclick=(()=>{ document.querySelectorAll('#createTabs .role-tab').forEach(x=>x.classList.remove('active')); d.classList.add('active'); renderCreateExtra(c); }); wrap.appendChild(d); });
+  CATS.forEach((c,i)=>{ const d = document.createElement('div'); d.className='role-tab'; d.textContent=c; d.dataset.cat=c; if(i===0) d.classList.add('active'); d.onclick=(()=>{ document.querySelectorAll('#createTabs .role-tab').forEach(x=>x.classList.remove('active')); d.classList.add('active'); renderCreateExtra(c); }); wrap.appendChild(d); });
   renderCreateExtra(CATS[0]);
+  renderCriteriaScroller();
 }
 function renderCreateExtra(cat){
   const extra = $('createExtraFields'); extra.innerHTML='';
@@ -469,12 +595,24 @@ function renderCreateExtra(cat){
   else if(cat==='Мастер/Специалист') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-person" class="input" placeholder="Кого ищем (няня, психолог...)"><input id="f-details" class="input" placeholder="Краткие детали"></div>';
 }
 
+/* критерии (примерные) */
+const CRITERIA = ['Срочно','Вежливо','С опытом','Официально','Ночью возможно','Без предоплаты','С гарантией','Нужно с инструментом'];
+function renderCriteriaScroller(){
+  const sc = $('criteriaScroller'); sc.innerHTML='';
+  CRITERIA.forEach(c=>{
+    const chip = document.createElement('div'); chip.className='city-chip'; chip.textContent = c;
+    chip.onclick = ()=> chip.classList.toggle('active');
+    sc.appendChild(chip);
+  });
+}
+
 /* submit order */
 $('submitOrderBtn').addEventListener('click', ()=>{
   const cat = document.querySelector('#createTabs .role-tab.active')?.dataset.cat || 'СПЕЦ. ЗАКАЗ';
   const desc = $('c-desc').value.trim(); const dt = $('c-datetime').value; const budget = Number($('c-budget').value||0);
   if(!desc || !dt) return alert('Заполните описание и дату/время');
-  const order = { id:'o_'+uid(), category:cat, desc, datetime:dt, budget, city: STATE.city, ownerId: STATE.profile.id, ownerName: STATE.profile.name, bids:[], status:'open', createdAt: nowISO() };
+  const selectedCriteria = Array.from(document.querySelectorAll('#criteriaScroller .city-chip.active')).map(x=>x.textContent);
+  const order = { id:'o_'+uid(), category:cat, desc, datetime:dt, budget, city: STATE.city, ownerId: STATE.profile.id, ownerName: STATE.profile.name, bids:[], status:'open', createdAt: nowISO(), criteria:selectedCriteria };
   STATE.orders.unshift(order); saveState(); alert('Заказ опубликован'); closeScreen('createScreen');
 });
 
@@ -593,9 +731,16 @@ function renderCityPosts(){
   });
 }
 
-/* quick post */
+/* quick post: open modal from composer */
 $('topComposerPlaceholder').addEventListener('click', ()=>{ $('quickPostText').value=''; $('quickPostPreview').innerHTML=''; $('quickPostImage').value=''; openScreen('quickPostModal'); });
+
+/* file icon opens file picker */
+$('quickPostFileBtn').addEventListener('click', ()=> $('quickPostImage').click());
 $('quickPostImage').addEventListener('change', (e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ $('quickPostPreview').innerHTML = `<img src="${r.result}" style="max-width:100%;border-radius:8px">`; $('quickPostPreview').dataset.img = r.result; }; r.readAsDataURL(f); });
+
+/* also top composer file button */
+$('quickFileBtn').addEventListener('click', ()=>{ $('quickPostImage').click(); openScreen('quickPostModal'); });
+
 $('quickPostSend').addEventListener('click', ()=>{ const text = $('quickPostText').value.trim(); const img = $('quickPostPreview').dataset.img || null; if(!text && !img) return alert('Введите текст или добавьте фото'); const post = { id:'post_'+uid(), authorId:STATE.profile.id, authorName:STATE.profile.name, text, image:img, ts: nowISO(), likes:{byUser:{}}, comments:[] }; (STATE.feed[STATE.city] = STATE.feed[STATE.city]||[]).unshift(post); saveState(); closeScreen('quickPostModal'); renderCityPosts(); });
 
 /* keep composer sticky shrink behavior but no scroll blocking */
@@ -618,6 +763,25 @@ $('syncNowBtn').addEventListener('click', async ()=>{ try{ await loadCloud(); al
 let __syncRunning = false;
 setInterval(async ()=>{ if(STATE.syncEnabled && !__syncRunning){ __syncRunning=true; try{ await saveCloud(); await loadCloud(); }catch(e){} finally{ __syncRunning=false; } } }, 1000);
 
+/* ===== settings: theme switching & profile save ===== */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  STATE.theme = theme; saveState();
+  // tweak some variables visually (lines/windows) - done via [data-theme] CSS
+}
+document.querySelectorAll('.theme-chip').forEach(ch=>{
+  ch.addEventListener('click', ()=>{ document.querySelectorAll('.theme-chip').forEach(x=>x.style.boxShadow=''); ch.style.boxShadow='0 8px 30px rgba(0,0,0,.25)'; applyTheme(ch.dataset.theme); });
+});
+// initialize theme based on state
+applyTheme(STATE.theme || 'violet');
+
+$('saveProfileBtn').addEventListener('click', ()=>{
+  const name = $('profileName').value.trim(); const avatar = $('profileAvatar').value.trim();
+  if(name) STATE.profile.name = name;
+  if(avatar) STATE.profile.avatarData = avatar;
+  saveState(); init(); alert('Профиль сохранён');
+});
+
 /* ===== helpers & init ===== */
 function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el = document.getElementById(id); if(el) el.classList.add('active'); }
 function closeScreen(id){ const el = document.getElementById(id); if(el) el.classList.remove('active'); }
@@ -626,10 +790,31 @@ function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'
 function init(){
   // populate basic UI
   $('syncToggle').checked = !!STATE.syncEnabled;
-  renderRoleTabs(); renderMenu(); renderCity(); refreshNotifBadge(); renderChats();
+  renderRoleTabs(); renderMenu(); renderCity(); renderCriteriaScroller(); refreshNotifBadge(); renderChats();
   $('topComposerAvatar').textContent = STATE.profile.avatarData || (STATE.profile.name[0]||'Я');
+  // settings inputs
+  $('profileName').value = STATE.profile.name || '';
+  $('profileAvatar').value = STATE.profile.avatarData || '';
   // attach settings button
   $('openSettings').addEventListener('click', ()=>{ openScreen('settingsModal'); });
+
+  // render city picker chips
+  const picker = $('cityPicker'); picker.innerHTML='';
+  KZ_CITIES.forEach(c=>{
+    const chip = document.createElement('div'); chip.className='city-chip'; chip.textContent = c;
+    if(c===STATE.city) chip.classList.add('active');
+    chip.addEventListener('click', ()=>{ document.querySelectorAll('#cityPicker .city-chip').forEach(x=>x.classList.remove('active')); chip.classList.add('active'); STATE.city = c; saveState(); $('currentCity').textContent = c; updateDateTimeWeather(); renderCity(); renderFindList(); });
+    picker.appendChild(chip);
+  });
+  $('currentCity').textContent = STATE.city;
+
+  // attach panel notif count
+  refreshNotifBadge();
+
+  // hook notifications top btn to modal
+  $('notifBtnTop').addEventListener('click', ()=>{ renderNotifications(); openScreen('notificationsModal'); });
+
+  // ensure quickPostFile button opens file (already wired earlier)
 }
 init();
 
