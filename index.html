@@ -3,191 +3,258 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiD City — прототип</title>
+<title>GiD City — прототип (SVJ minimal neon)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg-1:#060614; --bg-2:#07081a; --bg-3:#090b22;
-  --surface:rgba(20,24,40,.76);
-  --line:rgba(160,170,230,.18);
+  --surface:rgba(20,24,40,.72);
+  --line:rgba(160,170,230,.12);
   --accent:#a970ff; --accent2:#32ffd2; --gold:#ffd84d;
-  --text:#ffffff; --muted:#9aa6d9;
+  --text:#ffffff; --muted:#9aa6d9; --radius:14px; --shadow:0 16px 46px rgba(0,0,0,.45);
   --ui-font:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  --glass-border: rgba(255,255,255,.06);
 }
-[data-theme="violet"]{ --accent:#a970ff; --accent2:#32ffd2; --line:rgba(160,170,230,.22); --surface:rgba(20,24,40,.92); }
-[data-theme="navy"]{ --accent:#44a0ff; --accent2:#76f1ff; --line:rgba(120,170,235,.18); --surface:rgba(10,18,34,.9); }
-[data-theme="emerald"]{ --accent:#2fe4a3; --accent2:#27d8ff; --line:rgba(120,230,200,.16); --surface:rgba(5,28,20,.88); }
-[data-theme="sunset"]{ --accent:#ff7a5c; --accent2:#ffd471; --line:rgba(255,180,140,.12); --surface:rgba(30,18,12,.86); }
-[data-theme="mint"]{ --accent:#5ef2c6; --accent2:#6bd1ff; --line:rgba(140,240,220,.14); --surface:rgba(8,22,18,.88); }
-[data-theme="coral"]{ --accent:#ff6b6b; --accent2:#ffd08a; --line:rgba(255,150,120,.12); --surface:rgba(28,18,20,.88); }
-[data-theme="cyan"]{ --accent:#2be7ff; --accent2:#2b9eff; --line:rgba(120,230,255,.12); --surface:rgba(6,18,20,.88); }
-[data-theme="indigo"]{ --accent:#6b5cff; --accent2:#9a8bff; --line:rgba(150,130,255,.12); --surface:rgba(8,10,28,.9); }
-[data-theme="rose"]{ --accent:#ff8ab3; --accent2:#ff6f8f; --line:rgba(255,140,180,.12); --surface:rgba(28,12,16,.9); }
-[data-theme="lime"]{ --accent:#c6ff4d; --accent2:#8cff6b; --line:rgba(200,255,120,.12); --surface:rgba(12,20,8,.9); }
-
-/* base */
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-  margin:0; font:14px var(--ui-font); color:var(--text);
-  background:
-    radial-gradient(900px at 20% -10%, rgba(30,27,58,.35) 0%, transparent 70%),
-    linear-gradient(180deg,var(--bg-1),var(--bg-2),var(--bg-3));
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-}
+body{ margin:0; font:14px var(--ui-font); color:var(--text); background: radial-gradient(900px at 20% -10%, rgba(30,27,58,.35) 0%, transparent 70%), linear-gradient(180deg,var(--bg-1),var(--bg-2),var(--bg-3)); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
 .wrapper{ max-width:1000px; margin:18px auto; padding:0 14px; display:flex; flex-direction:column; gap:12px; }
-
-/* glass basics */
-.modal, .menu-btn, .btn, .input, textarea, select, .post-card, .city-composer-top {
-  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06));
-  border:1px solid var(--glass-border);
-  border-radius:12px;
-  backdrop-filter: blur(8px) saturate(120%);
-}
-.btn{ padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:900; border:1px solid var(--glass-border); color:var(--text); }
-.btn.primary{ background: linear-gradient(90deg,var(--accent),var(--accent2)); color:#061018; border:none; }
-
+/* glass card + neon */
+.container{ border-radius:18px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); border:1px solid var(--line); box-shadow:var(--shadow); overflow:hidden; backdrop-filter: blur(8px); }
+.modal{ width:100%; max-width:980px; max-height:88vh; overflow:auto; background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.22)); color:var(--text); border-radius:12px; border:1px solid var(--line); padding:14px; box-shadow:var(--shadow); backdrop-filter: blur(6px); }
+.btn{ padding:10px 12px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.06)); border:1px solid var(--line); color:var(--text); font-weight:800; cursor:pointer; min-width:44px; }
+.primary{ background: linear-gradient(90deg,var(--accent),var(--accent2)); color:#061018; border:none; filter:drop-shadow(0 6px 18px rgba(50,200,200,.06)); }
+/* big glass action buttons */
+.glass-actions{ display:flex; gap:12px; }
+.glass-btn{ flex:1; padding:14px; border-radius:16px; font-weight:900; font-size:15px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.08)); border:1px solid var(--line); backdrop-filter: blur(6px); cursor:pointer; position:relative; overflow:hidden; }
+.glass-btn:active{ transform:translateY(1px); }
+/* yellow pulse */
+.glass-btn.glow::after{ content:''; position:absolute; inset:0; box-shadow:0 0 40px rgba(255,216,77,.35), inset 0 0 24px rgba(255,216,77,.08); mix-blend-mode:screen; pointer-events:none; animation:fadeGlow .9s ease-out forwards; }
+@keyframes fadeGlow{ from{opacity:1} to{opacity:0} }
 /* header */
 .header{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.brand{ display:flex; gap:12px; align-items:center; flex-direction:column; }
-.brand-row{ display:flex; gap:12px; align-items:center; width:100%; justify-content:flex-start; }
+.brand{ display:flex; gap:12px; align-items:center; }
 .brand h1{ margin:0; font-size:20px; font-weight:900; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; color:transparent; }
 .buildInfo{ font-size:12px; color:var(--muted); display:flex; gap:12px; align-items:center; }
 #time { font-weight:900; font-size:14px; }
-
-/* main container */
-.container{ border-radius:18px; background:var(--surface); border:1px solid var(--line); box-shadow:0 16px 46px rgba(0,0,0,.45); overflow:hidden }
+#date { font-size:12px; color:var(--muted); }
+.current-city{ font-size:13px; color:var(--muted); padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.02); }
+/* role tabs top */
+.role-tabs{ display:flex; gap:8px; margin-top:6px; }
+.role-tab{ padding:10px 18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); font-weight:900; cursor:pointer; user-select:none; min-width:220px; text-align:center; display:flex; align-items:center; gap:8px; }
+.role-tab .icon{ width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; filter:drop-shadow(0 0 8px rgba(169,112,255,.35)); }
+.role-tab.active{ background:var(--gold); color:#081018; border-color:rgba(0,0,0,.08); box-shadow:0 8px 24px rgba(255,200,80,.06); }
+/* panel top */
 .panel-top{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid rgba(255,255,255,.02) }
 .panel-top h2{ margin:0; font-weight:900; font-size:18px; display:flex; gap:10px; align-items:center; }
-
-/* current city (static) */
-.current-city { font-weight:900; color:var(--muted); font-size:13px; margin-left:8px; }
-
+/* notification button near panel-top right */
+#panelNotif{ background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#061018; border-radius:10px; padding:8px 10px; border:none; cursor:pointer; box-shadow:0 6px 18px rgba(50,200,200,.06); display:inline-flex; align-items:center; gap:6px; font-weight:900; filter:drop-shadow(0 0 8px rgba(169,112,255,.35)); }
+#panelNotif .badge{ background:#ff4f6a; color:#fff; padding:2px 6px; border-radius:999px; font-weight:900; font-size:11px; display:none; }
 /* menu grid */
 .menu-grid{ display:grid; gap:10px; padding:16px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); align-items:stretch; }
-.menu-btn{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); cursor:pointer; justify-content:space-between; transition:transform .12s ease; }
-.menu-btn:hover{ transform: translateY(-4px); }
-.menu-btn .title{ font-weight:900; display:flex; gap:10px; align-items:center; }
-.menu-btn .small{ color:var(--muted); font-weight:700; font-size:12px; }
-.neon-icon{ width:34px; height:34px; display:inline-grid; place-items:center; border-radius:10px; color:var(--accent2); filter: drop-shadow(0 0 8px rgba(50,255,200,.08)); }
-
-/* screen/modal */
-.screen{ position:fixed; inset:0; display:none; z-index:90; align-items:flex-start; justify-content:center; padding:18px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); }
-.screen.active{ display:flex; }
-.modal{ width:100%; max-width:980px; max-height:88vh; overflow:auto; background:var(--surface); color:var(--text); border-radius:12px; border:1px solid var(--line); padding:14px; box-shadow:0 16px 46px rgba(0,0,0,.45) }
-
+.menu-btn{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.12)); cursor:pointer; justify-content:space-between; }
+.menu-btn .title{ font-weight:900; }
+.menu-btn .meta{ color:var(--muted); font-size:12px }
+.menu-btn .icon{ width:36px; height:36px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); font-weight:800; filter:drop-shadow(0 0 12px rgba(169,112,255,.25)); }
+.menu-btn.dark{ background:linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.6)); color:var(--muted); border-color:rgba(255,255,255,.02); }
 /* inputs */
 .input, textarea, select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:rgba(12,16,36,.75); color:var(--text); outline:none; font-size:14px; }
 textarea{ min-height:120px; resize:vertical }
-
-/* city composer */
+/* city thread */
+.city-thread-wrap{ position:relative; }
 .city-composer-top{ position:sticky; top:18px; z-index:30; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid rgba(255,255,255,.03); }
 .city-composer-top .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); font-weight:800; }
 .city-composer-top .placeholder{ padding:10px 12px; border-radius:10px; background:rgba(255,255,255,.02); flex:1; color:var(--muted); cursor:pointer; }
-
 /* post card */
 .post-card{ background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.04); border-radius:12px; padding:12px; margin-bottom:10px; }
 .post-top{ display:flex; gap:10px; align-items:center; }
 .post-top .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--accent2)); font-weight:800; }
 .post-actions{ display:flex; gap:10px; margin-top:8px; align-items:center; }
 .post-actions .act{ background:transparent; border:none; color:var(--muted); cursor:pointer; font-weight:800; padding:6px 8px; border-radius:8px; }
-
-/* file icon */
-.file-ic{ width:44px; height:44px; border-radius:10px; display:inline-grid; place-items:center; border:1px solid var(--glass-border); background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); cursor:pointer; color:var(--muted); }
-
+/* messenger */
+.chat-screen{ display:flex; gap:12px; }
+.chats-list{ flex:1; }
+.chat-window{ width:420px; border-left:1px solid rgba(255,255,255,.02); padding-left:12px; display:flex; flex-direction:column; gap:8px; }
+.chat-top{ display:flex; gap:10px; align-items:center; padding:8px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); }
+.msgs{ flex:1; overflow:auto; display:flex; flex-direction:column; gap:10px; padding:6px; }
+.msg{ padding:10px 12px; border-radius:12px; max-width:78%; word-break:break-word; box-shadow:0 8px 20px rgba(0,0,0,.35); }
+.msg.me{ align-self:flex-end; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#081018; font-weight:900; }
+.msg.other{ align-self:flex-start; background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.06)); color:var(--text); border:1px solid var(--line); }
 /* small */
 .small{ font-size:12px; color:var(--muted) }
-
+.footer-note{ text-align:center; font-size:11px; color:var(--muted); margin-top:6px }
+/* scrollbars (neon minimal) */
+::-webkit-scrollbar{ width:10px; height:10px }
+::-webkit-scrollbar-track{ background:transparent }
+::-webkit-scrollbar-thumb{ background: linear-gradient(180deg, rgba(169,112,255,.18), rgba(50,255,210,.12)); border-radius:999px; border:2px solid rgba(0,0,0,.12) }
+/* settings theme list scrollable vertical */
+.theme-list{ max-height:220px; overflow:auto; display:flex; flex-direction:column; gap:8px; padding-right:6px }
+.theme-item{ display:flex; gap:10px; align-items:center; padding:8px; border-radius:10px; border:1px solid var(--line); cursor:pointer; }
+.theme-swatch{ width:40px; height:28px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,.2); }
+/* file icon button */
+.file-icon-btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:8px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06)); border:1px solid var(--line); cursor:pointer; }
 /* responsive */
-@media (max-width:900px){
-  .menu-grid{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
-}
+@media (max-width:900px){ .menu-grid{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); } .chat-window{ width:320px; display:none; } }
 </style>
 </head>
 <body>
 <div class="wrapper">
-
   <header class="header">
     <div class="brand">
-      <div class="brand-row">
-        <h1>GiDCity</h1>
-        <div class="buildInfo" style="margin-left:8px;">
-          <div id="dateTime"><span id="time">—</span> <span id="date">—</span></div>
-          <div id="weather"><span>⛅</span> —</div>
-        </div>
-        <div class="current-city" id="currentCity">Караганда</div>
+      <h1>GiDCity</h1>
+      <div class="buildInfo">
+        <div id="dateTime"><span id="time">—</span> <span id="date">—</span></div>
+        <div id="weather"><span>⛅</span> —</div>
       </div>
+      <div class="current-city" id="currentCity">Караганда</div>
     </div>
-
     <div style="display:flex; gap:8px; align-items:center;">
       <button id="openSettings" class="btn" title="Настройки">⚙️</button>
-      <button id="notifBtnTop" class="btn" title="Уведомления">🔔 <span id="notifBadgeTop" class="small" style="margin-left:6px;display:none">0</span></button>
+      <!-- panel notif is moved into panel-top to align with "Главное меню" but keep this for fallback -->
     </div>
   </header>
 
-  <div id="roleTabs" class="role-tabs" style="display:flex;gap:8px;"></div>
+  <div id="roleTabs" class="role-tabs"></div>
 
   <main class="container" role="main" aria-live="polite">
     <div class="panel-top">
       <h2>Главное меню</h2>
-      <div></div>
+      <div id="panelControls"></div>
     </div>
 
     <div id="menuGrid" class="menu-grid"></div>
   </main>
 
-  <div class="footer-note small">KASSEN Technology Inc</div>
+  <div class="footer-note">KASSEN Technology Inc</div>
 </div>
 
-<!-- settings modal: CITY & THEMES scrollers -->
+<!-- notifications modal -->
+<section id="notificationsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Уведомления</h3>
+    <button onclick="closeScreen('notificationsModal')" class="btn">Закрыть</button>
+  </div>
+  <div id="notificationsList" style="margin-top:12px; max-height:66vh; overflow:auto;"></div>
+</div></section>
+
+<!-- settings modal -->
 <section id="settingsModal" class="screen"><div class="modal">
   <div style="display:flex; justify-content:space-between; align-items:center;">
     <h3 style="margin:0">Настройки</h3>
     <button onclick="closeScreen('settingsModal')" class="btn">Назад</button>
   </div>
-
   <div style="margin-top:12px; display:flex; gap:12px; flex-direction:column;">
+
     <div style="font-weight:900">Профиль</div>
-    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-      <input id="profileName" class="input" placeholder="Ваше имя" style="max-width:220px">
-      <input id="profileAvatar" class="input" placeholder="Аватар (emoji)" style="max-width:140px">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <input id="profileName" class="input" placeholder="Имя" style="max-width:240px">
+      <input id="profileAvatar" class="input" placeholder="Аватар (emoji)" style="width:120px">
       <button id="saveProfileBtn" class="btn">Сохранить</button>
     </div>
 
-    <div style="margin-top:12px; font-weight:900">Выбор города</div>
-    <div style="display:flex; gap:8px; overflow:auto; padding:8px 4px;" id="cityScroller"></div>
-    <div class="small">Выберите город — это влияет на ленту и погоду</div>
+    <div style="margin-top:12px; font-weight:900">Город (выбор только в настройках)</div>
+    <select id="citySelect" class="input" style="max-width:320px"></select>
 
     <div style="margin-top:12px; font-weight:900">Тема</div>
-    <div style="display:flex; gap:8px; overflow:auto; padding:8px 4px;" id="themeScroller"></div>
-    <div class="small">10 тем — нажмите, чтобы применить</div>
+    <div class="theme-list" id="themeList">
+      <!-- theme items injected by JS -->
+    </div>
 
     <div style="margin-top:12px; font-weight:900">Синхронизация (JSONBin)</div>
     <div style="display:flex; gap:8px; align-items:center;">
-      <label class="small">Авто</label>
+      <label class="small">Авто-синхронизация</label>
       <input id="syncToggle" type="checkbox">
       <button id="syncNowBtn" class="btn">Синхронизировать сейчас</button>
     </div>
   </div>
 </div></section>
 
+<!-- create order modal -->
+<section id="createScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Создать заказ</h3>
+    <button onclick="closeScreen('createScreen')" class="btn">Назад</button>
+  </div>
+  <div style="margin-top:12px;">
+    <div id="createTabs" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px"></div>
+    <form id="createForm">
+      <textarea id="c-desc" class="input" placeholder="Опишите задачу (что нужно сделать, адрес, условия)"></textarea>
+      <div id="createExtraFields" style="margin-top:8px;"></div>
+
+      <div style="display:flex; gap:8px; margin-top:8px; align-items:flex-end; flex-wrap:wrap;">
+        <div style="flex:1; min-width:220px">
+          <label class="small">Дедлайн (дата и время)</label>
+          <input id="c-datetime" class="input" type="datetime-local">
+        </div>
+        <div style="flex:1; min-width:160px">
+          <label class="small">Бюджет (₸)</label>
+          <input id="c-budget" class="input" type="number" required>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:18px;">
+        <!-- removed old SPETC button. Only two big glass buttons -->
+        <div class="glass-actions" style="width:100%">
+          <button id="submitOrderBtn" type="button" class="glass-btn">Заказать</button>
+          <button id="cancelOrderBtn" type="button" class="glass-btn">Отмена</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div></section>
+
+<!-- find orders -->
+<section id="findScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Найти заказы</h3>
+    <button onclick="closeScreen('findScreen')" class="btn">Назад</button>
+  </div>
+  <div style="margin-top:12px;">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <input id="searchInput" class="input" placeholder="Поиск...">
+      <select id="filterCat" class="input" style="max-width:240px"></select>
+      <button id="applySearch" class="btn">Фильтр</button>
+    </div>
+    <div id="findList" style="margin-top:12px; max-height:64vh; overflow:auto;"></div>
+  </div>
+</div></section>
+
+<!-- offer modal -->
+<section id="offerModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Предложить услугу</h3>
+    <button onclick="closeScreen('offerModal')" class="btn">Закрыть</button>
+  </div>
+  <form id="offerForm" style="margin-top:12px;">
+    <div><label class="small">Цена (₸)</label><input id="offerPrice" class="input" type="number" required></div>
+    <div style="margin-top:8px;"><label class="small">Комментарий (необязательно)</label><textarea id="offerComment" class="input"></textarea></div>
+    <div style="display:flex; gap:8px; margin-top:12px;">
+      <button class="btn primary" type="submit">Отправить</button>
+      <button class="btn" type="button" onclick="closeScreen('offerModal')">Отмена</button>
+    </div>
+  </form>
+</div></section>
+
+<!-- bids modal -->
+<section id="bidsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 id="bidsTitle" style="margin:0">Мои заказы</h3>
+    <button onclick="closeScreen('bidsModal')" class="btn">Закрыть</button>
+  </div>
+  <div id="bidsList" style="margin-top:12px; max-height:66vh; overflow:auto;"></div>
+</div></section>
+
 <!-- city thread -->
 <section id="cityThreadScreen" class="screen"><div class="modal" style="width:100%; max-width:980px; height:88vh; overflow:hidden;">
   <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
-    <h3 style="margin:0">Чат города — <span id="cityThreadTitle">Караганда</span></h3>
+    <h3 style="margin:0">Чат твоего города</h3>
     <button onclick="closeScreen('cityThreadScreen')" class="btn">Закрыть</button>
   </div>
-
   <div class="city-thread-wrap" style="height:calc(100% - 48px); display:flex; flex-direction:column;">
     <div class="city-composer-top">
       <div class="avatar" id="topComposerAvatar">Я</div>
-      <div class="placeholder" id="topComposerPlaceholder">Нажмите, чтобы написать пост...</div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <div id="quickFileBtn" class="file-ic" title="Добавить фото">📎</div>
-      </div>
+      <div class="placeholder" id="topComposerPlaceholder">Нажмите чтобы поделиться...</div>
+      <div style="margin-left:auto"></div>
     </div>
-
     <div id="cityScroll" style="overflow:auto; padding:12px; flex:1;">
       <div id="cityPosts"></div>
     </div>
@@ -204,7 +271,7 @@ textarea{ min-height:120px; resize:vertical }
     <textarea id="quickPostText" class="input" placeholder="О чём хотите рассказать?"></textarea>
     <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
       <input id="quickPostImage" type="file" accept="image/*" style="display:none">
-      <div id="quickPostFileBtn" class="file-ic" title="Выбрать файл">📷</div>
+      <button id="quickPostFileBtn" class="file-icon-btn" title="Добавить фото">📎</button>
       <div id="quickPostPreview" style="margin-top:8px; flex:1;"></div>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
@@ -213,34 +280,12 @@ textarea{ min-height:120px; resize:vertical }
   </div>
 </div></section>
 
-<!-- create order (kept minimal for demo) -->
-<section id="createScreen" class="screen"><div class="modal">
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h3 style="margin:0">Создать заказ</h3>
-    <button onclick="closeScreen('createScreen')" class="btn">Назад</button>
-  </div>
-  <div style="margin-top:12px;">
-    <div id="createTabs" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px"></div>
-    <form id="createForm">
-      <textarea id="c-desc" class="input" placeholder="Опишите задачу"></textarea>
-      <div style="display:flex; gap:8px; margin-top:12px;">
-        <input id="c-datetime" class="input" type="datetime-local" style="flex:1">
-        <input id="c-budget" class="input" type="number" style="width:160px" placeholder="₸">
-      </div>
-      <div style="display:flex; gap:12px; margin-top:18px; justify-content:flex-end;">
-        <button class="btn" type="button" onclick="closeScreen('createScreen')">Отмена</button>
-        <button id="submitOrderBtn" class="btn primary" type="button">Заказать</button>
-      </div>
-    </form>
-  </div>
-</div></section>
-
-<!-- messenger (kept) -->
+<!-- messenger -->
 <section id="messengerScreen" class="screen"><div class="modal" style="width:100%; max-width:980px; height:88vh; overflow:hidden;">
   <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px;">
     <h3 style="margin:0">Мессенджер</h3>
     <div>
-      <button id="createChatBtn" class="btn">Создать чат</button>
+      <button id="createChatBtn" class="btn" style="background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#061018; font-weight:900; border-radius:10px;">Создать чат</button>
       <button onclick="closeScreen('messengerScreen')" class="btn">Закрыть</button>
     </div>
   </div>
@@ -269,193 +314,145 @@ textarea{ min-height:120px; resize:vertical }
   </div>
 </div></section>
 
+<!-- create chat picker -->
+<section id="createChatScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Создать чат</h3>
+    <button onclick="closeScreen('createChatScreen')" class="btn">Закрыть</button>
+  </div>
+  <div id="chatPicker" style="margin-top:12px; max-height:72vh; overflow:auto;"></div>
+</div></section>
+
 <script>
-/* state */
-const LS_KEY = 'gid_state_v12';
-const $ = id=>document.getElementById(id);
-const uid = ()=> Math.random().toString(36).slice(2,9);
-const nowISO = ()=> new Date().toISOString();
-
-let STATE = {
-  profile:{id:'u_me',name:'Вы',avatar:'🤖'},
-  city:'Караганда',
-  theme:'violet',
-  orders:[], feed:{}, chats:[], notifs:[], syncEnabled:true
+/* ======= Constants & state ======= */
+const JSONBIN = { ENABLED: true, BIN_ID: '6911fbe843b1c97be9a4dc97', KEY: '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG', URL: id => `https://api.jsonbin.io/v3/b/${id}` };
+const LS_KEY = 'gid_state_v11'; const $ = id => document.getElementById(id); const uid = ()=> Math.random().toString(36).slice(2,9); const nowISO = ()=> new Date().toISOString();
+let STATE = { profile: { id:'u_me', name:'Вы', avatarType:'emoji', avatarData:'🤖' }, city: 'Караганда', role: 'user', theme: 'violet', orders: [], feed: {}, chats: [], notifs: [], syncEnabled: true };
+function loadState(){ try{ const s = localStorage.getItem(LS_KEY); if(s) Object.assign(STATE, JSON.parse(s)); }catch(e){ console.warn(e); } }
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(STATE)); }catch(e){ console.warn(e); } }
+loadState();
+/* city coords for weather — expanded list of Kazakh cities (Russian names) */
+const CITY_COORDS = {
+  'Алматы': {lat:43.2383, lon:76.9450}, 'Астана': {lat:51.1605, lon:71.4704}, 'Нур-Султан':{lat:51.1605,lon:71.4704}, 'Караганда': {lat:49.8064, lon:73.0851}, 'Шымкент': {lat:42.3417, lon:69.5901}, 'Актобе': {lat:50.2839, lon:57.1669}, 'Павлодар':{lat:52.2860,lon:76.9759}, 'Усть-Каменогорск':{lat:49.9721,lon:82.6275}, 'Петропавл':{lat:53.2789,lon:69.3841}, 'Тараз':{lat:42.8975,lon:71.3661}, 'Костанай':{lat:53.2194,lon:63.6243}, 'Семей':{lat:50.4114,lon:80.2341}, 'Кызылорда':{lat:44.8518,lon:65.4826}, 'Атырау':{lat:47.0951,lon:51.9236}, 'Актау':{lat:43.6500,lon:51.2000}, 'Талдыкорган':{lat:45.0000,lon:78.3756}, 'Темиртау':{lat:50.0706,lon:72.9583}, 'Жезказган':{lat:47.7772,lon:67.7063}, 'Экибастуз':{lat:51.7167,lon:75.3167}, 'Кокшетау':{lat:53.2833,lon:69.4000}, 'Шахтинск':{lat:49.7847,lon:73.7722}
 };
-try{ const s=localStorage.getItem(LS_KEY); if(s) STATE=Object.assign(STATE,JSON.parse(s)); }catch(e){}
 
-/* helpers */
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(STATE)); }
-function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el=$(id); if(el) el.classList.add('active'); }
-function closeScreen(id){ const el=$(id); if(el) el.classList.remove('active'); }
-function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+/* ===== header: date/time & weather ===== */
+async function updateDateTimeWeather(){ const now = new Date(); const hh = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0'); $('time').textContent = hh; const dateStr = now.toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }); $('date').textContent = dateStr; $('currentCity').textContent = STATE.city || '—'; try{ const coords = CITY_COORDS[STATE.city] || CITY_COORDS['Караганда']; const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true&timezone=auto`; const r = await fetch(url); if(!r.ok) throw new Error('weather fetch failed'); const j = await r.json(); if(j.current_weather){ const t = Math.round(j.current_weather.temperature); const icon = weatherIcon(j.current_weather.weathercode); $('weather').textContent = `${icon} ${t}°C`; } }catch(e){ console.warn('weather error',e); $('weather').textContent = '⛅ —'; } }
+function weatherIcon(code){ if(code>=0 && code<=3) return '☀️'; if(code>=45 && code<=48) return '🌫️'; if((code>=51 && code<=67) || (code>=80 && code<=82)) return '🌧️'; if(code>=71 && code<=77) return '❄️'; if(code>=95) return '⛈️'; return '⛅'; }
+updateDateTimeWeather(); setInterval(updateDateTimeWeather, 60*1000);
 
-/* date/time + weather (simple) */
-function updateDateTime(){ const now=new Date(); $('time').textContent = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0'); $('date').textContent = now.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}); }
-updateDateTime(); setInterval(updateDateTime,60000);
-
-/* render role tabs */
-const ROLES=[{k:'user',label:'СФЕРА УСЛУГ'},{k:'worker',label:'ПОДРАБОТКА'}];
-function renderRoleTabs(){ const container = document.getElementById('roleTabs'); container.innerHTML=''; ROLES.forEach(r=>{ const d=document.createElement('div'); d.className='role-tab'; d.textContent=r.label; d.style.padding='10px 18px'; d.style.borderRadius='12px'; d.style.cursor='pointer'; d.style.fontWeight='900'; if(STATE.role===r.k) d.style.background='var(--gold)'; d.onclick=()=>{ STATE.role=r.k; save(); renderRoleTabs(); renderMenu(); }; container.appendChild(d); }); }
-STATE.role = STATE.role || 'user';
+/* ===== role tabs & menu ===== */
+const ROLES = [{k:'user', label:'СФЕРА УСЛУГ', icon:'💼'}, {k:'worker', label:'ПОДРАБОТКА', icon:'🔧'}];
+function renderRoleTabs(){ const container = $('roleTabs'); container.innerHTML=''; ROLES.forEach(r=>{ const d = document.createElement('div'); d.className='role-tab'; d.innerHTML = `<span class="icon">${r.icon}</span><span>${r.label}</span>`; d.dataset.role=r.k; if(STATE.role===r.k) d.classList.add('active'); d.onclick = ()=>{ STATE.role=r.k; saveState(); renderRoleTabs(); renderMenu(); }; container.appendChild(d); }); }
 renderRoleTabs();
-
-/* menu with unique icons */
-function menuBtn(id,title,note,icon){
-  const el=document.createElement('div'); el.className='menu-btn'; el.id=id;
-  el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;">
-    <div class="neon-icon" aria-hidden style="font-size:18px">${icon}</div>
-    <div style="display:flex;flex-direction:column;">
-      <div class="title">${title}</div>
-      <div class="small">${note||''}</div>
-    </div></div><div style="margin-left:12px">›</div>`;
-  return el;
-}
-function renderMenu(){
-  const grid=$('menuGrid'); grid.innerHTML='';
-  if(STATE.role==='user'){
-    grid.appendChild(menuBtn('btnOrder','ЗАКАЗАТЬ','Создать заявку','📝'));
-    grid.appendChild(menuBtn('btnBook','ЗАБРОНИРОВАТЬ','Бронирование','📅'));
-    grid.appendChild(menuBtn('btnCity','ЧАТ ГОРОДА','Лента города','🏙️'));
-    grid.appendChild(menuBtn('btnMine','МОИ ЗАКАЗЫ','Ваши заявки','📂'));
-    grid.appendChild(menuBtn('btnMessenger','МЕССЕНДЖЕР','Диалоги','💬'));
-    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЯ','Список','📣'));
-    grid.appendChild(menuBtn('btnWallet','КОШЕЛЁК','Баланс','💳'));
-  } else {
-    grid.appendChild(menuBtn('btnFind','НАЙТИ ЗАКАЗЫ','Для исполнителей','🔎'));
-    grid.appendChild(menuBtn('btnCity','ЧАТ ГОРОДА','Лента города','🏙️'));
-    grid.appendChild(menuBtn('btnMine','МОИ ЗАКАЗЫ','Назначенные/мои','📂'));
-    grid.appendChild(menuBtn('btnMessenger','МЕССЕНДЖЕР','Диалоги','💬'));
-    grid.appendChild(menuBtn('btnAds','ОБЪЯВЛЕНИЯ','Список','📣'));
-    grid.appendChild(menuBtn('btnWallet','КОШЕЛЁК','Баланс','💳'));
-  }
-  grid.querySelectorAll('.menu-btn').forEach(el=>{
-    el.onclick=()=>{
-      const id=el.id;
-      if(id==='btnOrder'){ openScreen('createScreen'); initCreate(); }
-      if(id==='btnBook'){ alert('Бронирование — демо'); }
-      if(id==='btnCity'){ renderCity(); openScreen('cityThreadScreen'); }
-      if(id==='btnMine'){ renderMine(); openScreen('bidsModal'); }
-      if(id==='btnMessenger'){ renderChats(); openScreen('messengerScreen'); }
-      if(id==='btnFind'){ renderFind(); openScreen('findScreen'); }
-      if(id==='btnAds'){ alert('Объявления — демо'); }
-      if(id==='btnWallet'){ alert('Кошелёк — демо'); }
-    };
-  });
-}
+function menuBtn(id,title,note,extra='', icon='⭐'){ const el=document.createElement('div'); el.className='menu-btn '+extra; el.id=id; el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex:1"><div class="icon">${icon}</div><div style="display:flex;flex-direction:column;flex:1;align-items:flex-start"><div class="title">${title}</div><div class="meta">${note||''}</div></div></div><div style="margin-left:12px">›</div>`; return el; }
+function renderMenu(){ const grid = $('menuGrid'); grid.innerHTML=''; if(STATE.role==='user'){ const orderBtn = menuBtn('btnOrder','ЗАКАЗАТЬ','Создать заявку','', '✚'); orderBtn.style.flexBasis='50%'; const bookBtn = menuBtn('btnBook','Забронировать','Записаться','dark','📅'); bookBtn.style.flexBasis='50%'; grid.appendChild(orderBtn); grid.appendChild(bookBtn); grid.appendChild(menuBtn('btnCity','Чат твоего города','Лента как соцсеть','','💬')); grid.appendChild(menuBtn('btnMine','Мои заказы','Ваши заявки','','📂')); grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги','','✉️')); grid.appendChild(menuBtn('btnAds','Объявления услуг','Список объявлений','','📢')); grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции','','💳')); } else { const findBtn = menuBtn('btnFind','НАЙТИ ЗАКАЗЫ','Для исполнителей','','🔎'); findBtn.style.flexBasis='50%'; const cityBtn = menuBtn('btnCity','Чат твоего города','Лента как соцсеть','','💬'); cityBtn.style.flexBasis='50%'; grid.appendChild(findBtn); grid.appendChild(cityBtn); grid.appendChild(menuBtn('btnMine','Мои заказы','Назначенные/мои','','📂')); grid.appendChild(menuBtn('btnMessenger','Мессенджер','Диалоги','','✉️')); grid.appendChild(menuBtn('btnAds','Объявления услуг','Список объявлений','','📢')); grid.appendChild(menuBtn('btnWallet','Кошелёк','Баланс и операции','','💳')); }
+// attach actions
+grid.querySelectorAll('.menu-btn').forEach(el=>{ el.onclick = ()=>{ const id = el.id; if(id==='btnOrder'){ initCreate(); openScreen('createScreen'); } if(id==='btnBook'){ alert('Запись — демо'); } if(id==='btnCity'){ renderCity(); openScreen('cityThreadScreen'); } if(id==='btnMine'){ renderMine(); openScreen('bidsModal'); } if(id==='btnMessenger'){ renderChats(); openScreen('messengerScreen'); } if(id==='btnFind'){ renderFind(); openScreen('findScreen'); } if(id==='btnAds'){ alert('Объявления — демо'); } if(id==='btnWallet'){ alert('Кошелёк — демо'); } }; }); }
 renderMenu();
 
-/* SETTINGS: CITY scroller and THEME scroller */
-const KZ_CITIES = ['Алматы','Астана','Шымкент','Караганда','Актобе','Павлодар','Усть-Каменогорск','Семей','Костанай','Кокшетау','Петропавловск','Тараз','Уральск','Атырау','Кызылорда','Актау','Талдыкорган','Кентау','Екибастуз','Рудный'];
-function renderSettingsPickers(){
-  const cityWrap = $('cityScroller'); cityWrap.innerHTML='';
-  KZ_CITIES.forEach(c=>{
-    const chip=document.createElement('div'); chip.className='city-chip'; chip.textContent=c;
-    chip.style.padding='10px 14px'; chip.style.borderRadius='12px'; chip.style.cursor='pointer'; chip.style.border='1px solid rgba(255,255,255,.04)'; chip.style.whiteSpace='nowrap';
-    if(c===STATE.city){ chip.style.background='linear-gradient(90deg,var(--accent),var(--accent2))'; chip.style.color='#061018'; }
-    chip.onclick=()=>{ STATE.city=c; save(); $('currentCity').textContent=c; document.querySelectorAll('#cityScroller .city-chip').forEach(x=>x.style.background=''); renderSettingsPickers(); renderCity(); renderFindList(); };
-    cityWrap.appendChild(chip);
-  });
+/* place notification icon on panel-top right */
+function ensurePanelNotif(){ const parent = $('panelControls'); parent.innerHTML = `<button id="panelNotif" title="Уведомления">🔔 <span class="badge" id="panelNotifBadge">0</span></button>`; $('panelNotif').addEventListener('click', ()=>{ renderNotifications(); openScreen('notificationsModal'); }); }
+ensurePanelNotif();
 
-  const THEMES = ['violet','navy','emerald','sunset','mint','coral','cyan','indigo','rose','lime'];
-  const themeWrap = $('themeScroller'); themeWrap.innerHTML='';
-  THEMES.forEach(t=>{
-    const chip=document.createElement('div'); chip.className='theme-chip'; chip.textContent=t.charAt(0).toUpperCase()+t.slice(1);
-    chip.style.padding='12px 16px'; chip.style.borderRadius='12px'; chip.style.cursor='pointer'; chip.style.border='1px solid rgba(255,255,255,.04)'; chip.style.whiteSpace='nowrap'; chip.style.marginRight='8px';
-    if(t===STATE.theme){ chip.style.boxShadow='0 8px 30px rgba(0,0,0,.25)'; chip.style.background='linear-gradient(90deg,var(--accent),var(--accent2))'; chip.style.color='#061018'; }
-    chip.onclick=()=>{ applyTheme(t); renderSettingsPickers(); };
-    themeWrap.appendChild(chip);
-  });
-}
-function applyTheme(t){ document.documentElement.setAttribute('data-theme', t); STATE.theme=t; save(); }
-applyTheme(STATE.theme || 'violet');
+/* ===== notifications ===== */
+function refreshNotifBadge(){ const n = STATE.notifs.length; const b = $('panelNotifBadge'); if(n>0){ b.style.display='inline-block'; b.textContent = n>99?'99+':String(n);} else b.style.display='none'; }
+function renderNotifications(){ const wrap = $('notificationsList'); wrap.innerHTML=''; if(!STATE.notifs.length){ wrap.innerHTML='<div class="small">Уведомлений нет</div>'; return; } STATE.notifs.forEach((n,idx)=>{ const el=document.createElement('div'); el.className='post-card'; el.innerHTML=`<div style="font-weight:900">${esc(n.title)}</div><div class="small" style="margin-top:6px">${new Date(n.ts).toLocaleString()}</div><div style="margin-top:8px">${esc(n.body||'')}</div>`; el.onclick=()=>{ alert(`${n.title}\n\n${n.body||''}`); }; wrap.appendChild(el); }); }
+refreshNotifBadge();
 
-/* notifications */
-function refreshNotif(){ const n = (STATE.notifs||[]).length; const b=$('notifBadgeTop'); if(n>0){ b.style.display='inline-block'; b.textContent = n>99?'99+':String(n);} else b.style.display='none'; }
-refreshNotif();
-
-/* CREATE order (minimal) */
+/* ===== create order ===== */
 const CATS = ['СПЕЦ. ЗАКАЗ','Такси','Курьер','Доставка','Квартира/Дом','Мастер/Специалист','Прочие'];
-function initCreate(){ const wrap=$('createTabs'); wrap.innerHTML=''; CATS.forEach((c,i)=>{ const d=document.createElement('div'); d.textContent=c; d.style.padding='8px 12px'; d.style.cursor='pointer'; d.style.borderRadius='10px'; d.style.border='1px solid rgba(255,255,255,.04)'; if(i===0) d.style.background='var(--gold)'; d.onclick=()=>{ Array.from(wrap.children).forEach(x=>x.style.background=''); d.style.background='var(--gold)'; }; wrap.appendChild(d); }); }
+function initCreate(){ const wrap = $('createTabs'); wrap.innerHTML=''; CATS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='role-tab'; d.textContent=c; d.dataset.cat=c; if(i===0) d.classList.add('active'); d.onclick=(()=>{ document.querySelectorAll('#createTabs .role-tab').forEach(x=>x.classList.remove('active')); d.classList.add('active'); renderCreateExtra(c); }); wrap.appendChild(d); }); renderCreateExtra(CATS[0]); }
+function renderCreateExtra(cat){ const extra = $('createExtraFields'); extra.innerHTML=''; if(cat==='Такси') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-from" class="input" placeholder="Откуда"><input id="f-to" class="input" placeholder="Куда"></div>'; else if(cat==='Курьер') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-pick" class="input" placeholder="Забрать (адрес)"><input id="f-drop" class="input" placeholder="Доставить (адрес)"></div>'; else if(cat==='Квартира/Дом') extra.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="input" id="f-area" placeholder="Район"><input class="input" id="f-rooms" placeholder="Комнат (1,2...)"></div><div style="display:flex;gap:8px;margin-top:8px"><input class="input" id="f-square" placeholder="Площадь (м²)"><input class="input" id="f-period" placeholder="Период/даты"></div>'; else if(cat==='Мастер/Специалист') extra.innerHTML = '<div style="display:flex;gap:8px"><input id="f-person" class="input" placeholder="Кого ищем (няня, психолог...)"><input id="f-details" class="input" placeholder="Краткие детали"></div>'; }
 
-/* FIND orders (placeholder) */
-function renderFind(){ const sel = document.getElementById('filterCat'); if(sel){ sel.innerHTML='<option value="">Все</option>'; CATS.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); }); } renderFindList(); }
-function renderFindList(){ const wrap=document.getElementById('findList'); if(!wrap) return; wrap.innerHTML=''; const items = (STATE.orders||[]).filter(o=>o.city===STATE.city); if(!items.length){ wrap.innerHTML='<div class="small">Нет заказов</div>'; return; } items.forEach(o=>{ const card=document.createElement('div'); card.className='post-card'; card.innerHTML=`<div style="font-weight:900">${esc(o.category)} • ${esc(o.city)}</div><div class="small" style="margin-top:6px">${esc(o.desc)}</div>`; wrap.appendChild(card); }); }
+/* submit order */
+$('submitOrderBtn').addEventListener('click', ()=>{ const cat = document.querySelector('#createTabs .role-tab.active')?.dataset.cat || 'СПЕЦ. ЗАКАЗ'; const desc = $('c-desc').value.trim(); const dt = $('c-datetime').value; const budget = Number($('c-budget').value||0); if(!desc || !dt) return alert('Заполните описание и дату/время'); const order = { id:'o_'+uid(), category:cat, desc, datetime:dt, budget, city: STATE.city, ownerId: STATE.profile.id, ownerName: STATE.profile.name, bids:[], status:'open', createdAt: nowISO() }; STATE.orders.unshift(order); saveState(); alert('Заказ опубликован'); closeScreen('createScreen'); renderFindList(); });
+$('cancelOrderBtn').addEventListener('click', ()=>{ closeScreen('createScreen'); });
 
-/* MINE orders (placeholder) */
-function renderMine(){ const wrap=document.getElementById('bidsList'); if(!wrap) return; wrap.innerHTML=''; const mine=(STATE.orders||[]).filter(o=>o.ownerId===STATE.profile.id); if(!mine.length){ wrap.innerHTML='<div class="small">У вас нет заказов</div>'; return; } mine.forEach(o=>{ const card=document.createElement('div'); card.className='post-card'; card.innerHTML=`<div style="font-weight:900">${esc(o.category)}</div><div class="small">${esc(o.desc)}</div>`; wrap.appendChild(card); }); }
+/* ===== find orders ===== */
+function renderFind(){ const sel = $('filterCat'); sel.innerHTML = '<option value="">Все категории</option>'; CATS.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); }); renderFindList(); }
+function renderFindList(){ const wrap = $('findList'); wrap.innerHTML=''; const q = ($('searchInput').value||'').toLowerCase(); const cat = $('filterCat').value; let items = STATE.orders.filter(o=>o.status==='open' && o.city===STATE.city); if(cat) items = items.filter(x=>x.category===cat); if(q) items = items.filter(o=> (o.category+' '+o.desc+' '+(o.ownerName||'')).toLowerCase().includes(q)); if(!items.length){ wrap.innerHTML = '<div class="small">Нет заказов</div>'; return; } items.forEach(o=>{ const card = document.createElement('div'); card.className='post-card'; card.innerHTML = `<div class="post-top"><div class="avatar">${(o.ownerName||'П')[0]}</div><div style="display:flex;flex-direction:column;"><div style="font-weight:900">${esc(o.category)}</div><div class="small">${esc(o.ownerName)} • ${esc(o.city)} • ₸ ${Number(o.budget||0).toLocaleString('ru-RU')}</div></div></div><div style="margin-top:8px; white-space:pre-wrap">${esc(o.desc)}</div><div class="post-actions"><button class="act" data-act="offer">Предложить услугу</button></div>`; card.querySelector('[data-act="offer"]').addEventListener('click', ()=>{ $('offerModal').dataset.orderId = o.id; openScreen('offerModal'); }); wrap.appendChild(card); }); }
+$('applySearch').addEventListener('click', renderFindList);
 
-/* CITY THREAD: render posts */
-function renderCity(){
-  $('cityThreadTitle').textContent = STATE.city;
-  const wrap = $('cityPosts'); wrap.innerHTML='';
-  const posts = (STATE.feed[STATE.city] || []);
-  if(!posts.length){ wrap.innerHTML = '<div class="small">Пока нет публикаций</div>'; return; }
-  posts.forEach(p=>{
-    const el=document.createElement('div'); el.className='post-card';
-    el.innerHTML = `<div class="post-top"><div class="avatar">${(p.authorName||'П')[0]}</div>
-      <div style="display:flex;flex-direction:column;"><div style="font-weight:900">${esc(p.authorName)}</div><div class="small">${new Date(p.ts).toLocaleString()}</div></div></div>
-      <div style="margin-top:8px;white-space:pre-wrap">${esc(p.text)}</div>
-      ${p.image?`<img src="${p.image}" style="max-width:100%;margin-top:8px;border-radius:8px">`:''}
-      <div class="post-actions"><button class="act">❤️</button><button class="act">💬</button></div>`;
-    wrap.appendChild(el);
-  });
-}
+/* offer submit */
+$('offerForm').addEventListener('submit', (e)=>{ e.preventDefault(); const price = Number($('offerPrice').value||0); if(!price) return alert('Введите цену'); const comment = $('offerComment').value.trim(); const orderId = $('offerModal').dataset.orderId; const order = STATE.orders.find(x=>x.id===orderId); if(!order) return alert('Заказ не найден'); const bid = { performerId: STATE.profile.id, name: STATE.profile.name, price, comment, createdAt: nowISO() }; order.bids = order.bids||[]; order.bids.push(bid); STATE.notifs.unshift({ id:'n_'+uid(), type:'bid', title:'Новое предложение', body:`На ваш заказ "${order.category}" предложили ₸ ${price}`, ts: nowISO(), payload:{orderId} }); saveState(); closeScreen('offerModal'); alert('Предложение отправлено'); renderFindList(); refreshNotifBadge(); });
 
-/* QUICK POST (text + image) — fixed and closes modal on success */
+/* ===== mine orders (owner) */
+function renderMine(){ const wrap = $('bidsList'); wrap.innerHTML=''; const mine = STATE.orders.filter(o=>o.ownerId===STATE.profile.id); if(!mine.length){ wrap.innerHTML = '<div class="small">У вас нет заказов</div>'; return; } mine.forEach(o=>{ const card = document.createElement('div'); card.className='post-card'; const bidsCount = (o.bids||[]).length; card.innerHTML = `<div style="font-weight:900">${esc(o.category)} • ${esc(o.city)} ${bidsCount?(' • <span style="color:#ff9bb0">'+bidsCount+' заявок</span>'):''}</div><div class="small" style="margin-top:6px">Статус: ${esc(o.status)} • Дедлайн: ${(o.datetime||'').replace('T',' ')}</div><div style="margin-top:8px">${esc(o.desc)}</div>`; const actions = document.createElement('div'); actions.style.marginTop='10px'; const viewBtn = document.createElement('button'); viewBtn.className='btn'; viewBtn.textContent='Посмотреть заявки'; viewBtn.addEventListener('click', ()=> openBidsModal(o.id) ); actions.appendChild(viewBtn); card.appendChild(actions); wrap.appendChild(card); }); }
+
+function openBidsModal(orderId){ const order = STATE.orders.find(x=>x.id===orderId); if(!order) return alert('Заказ не найден'); const list = $('bidsList'); list.innerHTML=''; if(!(order.bids && order.bids.length)){ list.innerHTML = '<div class="small">Заявок нет</div>'; openScreen('bidsModal'); return; } order.bids.forEach((b, idx)=>{ const row = document.createElement('div'); row.className='post-card'; row.innerHTML = `<div style="font-weight:900">${esc(b.name)} — ₸ ${Number(b.price).toLocaleString('ru-RU')}</div><div class="small" style="margin-top:6px">${new Date(b.createdAt).toLocaleString()}</div><div style="margin-top:8px">${esc(b.comment||'')}</div>`; const actions = document.createElement('div'); actions.style.marginTop='8px'; const accept = document.createElement('button'); accept.className='btn primary'; accept.textContent='Принять'; const decline = document.createElement('button'); decline.className='btn'; decline.textContent='Отказать'; accept.addEventListener('click', ()=>{ const chat = { id:'chat_'+uid(), orderId: order.id, title: order.category, participants:[order.ownerId, b.performerId], messages:[{from:'system',text:'Чат создан по заказу',ts:nowISO()}] }; STATE.chats.unshift(chat); order.status='in_progress'; STATE.notifs.unshift({ id:'n_'+uid(), type:'accepted_owner', title:'Вы приняли заявку', body:`Открыт чат с ${b.name}`, ts:nowISO(), payload:{chatId:chat.id, orderId:order.id} }); saveState(); renderChats(); openChat(chat.id); closeScreen('bidsModal'); }); decline.addEventListener('click', ()=>{ order.bids.splice(idx,1); saveState(); openBidsModal(orderId); }); actions.appendChild(accept); actions.appendChild(decline); row.appendChild(actions); list.appendChild(row); }); $('bidsTitle').textContent = `Заявки — ${order.category}`; openScreen('bidsModal'); }
+
+/* ===== city thread & quick post ===== */
+function renderCity(){ renderCityPosts(); }
+function renderCityPosts(){ const wrap = $('cityPosts'); wrap.innerHTML=''; const posts = STATE.feed[STATE.city] || []; if(!posts.length){ wrap.innerHTML = '<div class="small">Пока нет публикаций</div>'; return; } posts.forEach(p=>{ const el = document.createElement('div'); el.className='post-card'; const likesCount = Object.keys(p.likes?.byUser||{}).length; el.innerHTML = `<div class="post-top"><div class="avatar">${(p.authorName||'П')[0]}</div><div style="display:flex;flex-direction:column;"><div style="font-weight:900">${esc(p.authorName)}</div><div class="small">${new Date(p.ts).toLocaleString()}</div></div></div><div style="margin-top:8px; white-space:pre-wrap">${esc(p.text)}</div>${p.image?`<img class="post-img" src="${p.image}" alt="image" style="margin-top:8px;max-width:100%;border-radius:8px">`:''}<div class="post-actions"><button class="act" data-act="like">❤️ <span data-likecount>${likesCount}</span></button><button class="act" data-act="comment">💬</button><button class="act" data-act="repost">🔁</button></div><div class="comments" style="display:none; margin-top:8px;"><div style="display:flex;gap:8px;"><input class="input comment-input" placeholder="Написать комментарий..."><button class="btn primary comment-send">Отправить</button></div><div class="comments-list" style="margin-top:8px;"></div></div>`; wrap.appendChild(el);
+    const likeBtn = el.querySelector('[data-act="like"]'); likeBtn.addEventListener('click', ()=>{ const me = STATE.profile.id; p.likes = p.likes||{byUser:{}}; if(p.likes.byUser[me]) delete p.likes.byUser[me]; else p.likes.byUser[me]=true; el.querySelector('[data-likecount]').textContent = Object.keys(p.likes.byUser||{}).length; saveState(); });
+    const commentBtn = el.querySelector('[data-act="comment"]'); const commentsBox = el.querySelector('.comments'); commentBtn.addEventListener('click', ()=> commentsBox.style.display = commentsBox.style.display==='none'?'block':'none');
+    const sendBtn = el.querySelector('.comment-send'); sendBtn.addEventListener('click', ()=>{ const input = el.querySelector('.comment-input'); const txt = input.value.trim(); if(!txt) return; p.comments = p.comments||[]; p.comments.push({id:'c_'+uid(), authorName:STATE.profile.name, text:txt, ts:nowISO()}); input.value=''; saveState(); const list = el.querySelector('.comments-list'); const node = document.createElement('div'); node.className='comment'; node.innerHTML = `<div style="font-weight:800">${esc(STATE.profile.name)}</div><div class="small">${new Date().toLocaleString()}</div><div style="margin-top:6px">${esc(txt)}</div>`; list.appendChild(node); });
+    el.querySelector('[data-act="repost"]').addEventListener('click', ()=> alert('Репост: демо'));
+  }); }
+
+/* make top composer open quick post modal */
 $('topComposerPlaceholder').addEventListener('click', ()=>{ $('quickPostText').value=''; $('quickPostPreview').innerHTML=''; $('quickPostImage').value=''; openScreen('quickPostModal'); });
-$('quickPostFileBtn').addEventListener('click', ()=> $('quickPostImage').click());
-$('quickFileBtn')?.addEventListener('click', ()=>{ $('quickPostImage').click(); openScreen('quickPostModal'); });
 
-$('quickPostImage').addEventListener('change', (e)=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
-  const r = new FileReader();
-  r.onload = ()=>{ $('quickPostPreview').innerHTML = `<img src="${r.result}" style="max-width:100%;border-radius:8px">`; $('quickPostPreview').dataset.img = r.result; };
-  r.readAsDataURL(f);
-});
+/* file input via icon button */
+$('quickPostFileBtn').addEventListener('click', ()=>{ $('quickPostImage').click(); });
+$('quickPostImage').addEventListener('change', (e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ $('quickPostPreview').innerHTML = `<img src="${r.result}" style="max-width:100%;border-radius:8px">`; $('quickPostPreview').dataset.img = r.result; }; r.readAsDataURL(f); });
 
-$('quickPostSend').addEventListener('click', ()=>{
-  const text = $('quickPostText').value.trim();
-  const img = $('quickPostPreview').dataset.img || null;
-  if(!text && !img){ alert('Введите текст или добавьте фото'); return; }
-  const post = { id:'post_'+uid(), authorId:STATE.profile.id, authorName:STATE.profile.name||'Вы', text, image:img, ts: nowISO() };
-  STATE.feed[STATE.city] = STATE.feed[STATE.city]||[]; STATE.feed[STATE.city].unshift(post);
-  save();
-  closeScreen('quickPostModal');
-  closeScreen('createScreen'); // ensure create closed if open
-  renderCity();
-  alert('Пост опубликован');
-});
+/* publishing fix: ensure post uses STATE.city and immediate render */
+$('quickPostSend').addEventListener('click', ()=>{ const text = $('quickPostText').value.trim(); const img = $('quickPostPreview').dataset.img || null; if(!text && !img) return alert('Введите текст или добавьте фото'); const post = { id:'post_'+uid(), authorId:STATE.profile.id, authorName:STATE.profile.name, text, image:img, ts: nowISO(), likes:{byUser:{}}, comments:[] }; (STATE.feed[STATE.city] = STATE.feed[STATE.city]||[]).unshift(post); saveState(); closeScreen('quickPostModal'); renderCityPosts(); alert('Публикация добавлена'); });
 
-/* SETTINGS: save profile */
-$('saveProfileBtn').addEventListener('click', ()=>{
-  const name = $('profileName').value.trim(); const avat = $('profileAvatar').value.trim();
-  if(name) STATE.profile.name = name;
-  if(avat) STATE.profile.avatar = avat;
-  save();
-  alert('Профиль сохранён');
-});
+const cityScroll = $('cityScroll'); if(cityScroll){ cityScroll.addEventListener('scroll', ()=>{ const comp = document.querySelector('.city-composer-top'); if(cityScroll.scrollTop > 40) comp.classList.add('small'); else comp.classList.remove('small'); }, { passive:true }); }
 
-/* INITIALIZATION */
-function init(){
-  if(STATE.profile) $('topComposerAvatar').textContent = STATE.profile.avatar || 'Я';
-  $('currentCity').textContent = STATE.city;
-  renderSettingsPickers();
-  renderMenu();
-  renderCity();
-  renderFindList();
-  refreshNotif();
+/* ===== messenger ===== */
+function renderChats(){ const wrap = $('chatsList'); wrap.innerHTML=''; if(!STATE.chats.length){ wrap.innerHTML = '<div class="small">Чатов пока нет</div>'; $('chatWindow').style.display='none'; $('chatEmpty').style.display='block'; return; } STATE.chats.forEach(c=>{ const el=document.createElement('div'); el.className='post-card'; el.style.cursor='pointer'; el.innerHTML = `<div style="font-weight:900">${esc(c.title || 'Чат')}</div><div class="small" style="margin-top:6px">${c.orderId?('Заказ: '+c.orderId):'Диалог'}</div>`; el.addEventListener('click', ()=> openChat(c.id)); wrap.appendChild(el); }); }
+function openChat(chatId){ const chat = STATE.chats.find(x=>x.id===chatId); if(!chat) return; $('chatWindowHeader').style.display='flex'; $('chatWindow').style.display='flex'; $('chatEmpty').style.display='none'; $('chatHeaderName').textContent = chat.title || 'Чат'; $('chatHeaderAvatar').textContent = (chat.title||'Ч')[0]; const msgsWrap = $('chatMsgs'); msgsWrap.innerHTML=''; (chat.messages||[]).forEach(m=>{ const d = document.createElement('div'); d.className = 'msg ' + ((m.from === STATE.profile.id)?'me':'other'); if(m.from === 'system'){ d.style.fontStyle='italic'; d.style.color='var(--muted)'; d.textContent = m.text; } else { if(m.from === STATE.profile.id) d.innerHTML = `<div>${esc(m.text)}</div>`; else d.innerHTML = `<div style="font-weight:800; margin-bottom:6px">${esc(m.fromName||'')}</div><div>${esc(m.text)}</div>`; } msgsWrap.appendChild(d); }); msgsWrap.scrollTop = msgsWrap.scrollHeight; $('chatSend').onclick = ()=>{ const v = $('chatInput').value.trim(); if(!v) return; const msg = { from: STATE.profile.id, fromName: STATE.profile.name, text: v, ts: nowISO() }; chat.messages = chat.messages||[]; chat.messages.push(msg); saveState(); $('chatInput').value=''; openChat(chatId); }; }
+
+/* create chat picker */
+$('createChatBtn').addEventListener('click', ()=>{ const picker = $('chatPicker'); picker.innerHTML=''; const users = new Map(); STATE.orders.forEach(o=>{ users.set(o.ownerId, o.ownerName||('user_'+o.ownerId)); (o.bids||[]).forEach(b=>users.set(b.performerId, b.name||('user_'+b.performerId))); }); if(!users.size){ picker.innerHTML = '<div class="small">Нет доступных контактов</div>'; openScreen('createChatScreen'); return; } users.forEach((name,id)=>{ const el=document.createElement('div'); el.className='post-card'; el.style.cursor='pointer'; el.innerHTML = `<div style="font-weight:900">${esc(name)}</div><div class="small" style="margin-top:6px">${esc(id)}</div>`; el.addEventListener('click', ()=>{ const chat = { id:'chat_'+uid(), orderId:null, title:'Диалог с '+name, participants:[STATE.profile.id, id], messages:[{from:'system', text:'Чат создан', ts:nowISO()}] }; STATE.chats.unshift(chat); saveState(); closeScreen('createChatScreen'); renderChats(); openChat(chat.id); }); picker.appendChild(el); }); openScreen('createChatScreen'); });
+
+/* ===== JSONBin sync ===== */
+async function loadCloud(){ if(!JSONBIN.ENABLED) return; try{ const res = await fetch(JSONBIN.URL(JSONBIN.BIN_ID), { headers:{ 'X-Master-Key': JSONBIN.KEY } }); if(!res.ok) throw new Error('GET failed '+res.status); const j = await res.json(); const rec = j.record || {}; if(Array.isArray(rec.orders)) STATE.orders = rec.orders; if(rec.feed) STATE.feed = rec.feed; if(Array.isArray(rec.chats)) STATE.chats = rec.chats; if(Array.isArray(rec.notifs)) STATE.notifs = rec.notifs; saveState(); renderCityPosts(); renderFindList(); renderChats(); }catch(e){ console.warn('cloud load error', e); } }
+async function saveCloud(){ if(!JSONBIN.ENABLED) return; try{ const payload = { orders: STATE.orders, feed: STATE.feed, chats: STATE.chats, notifs: STATE.notifs, meta:{ts: nowISO()} }; const res = await fetch(JSONBIN.URL(JSONBIN.BIN_ID), { method:'PUT', headers:{ 'Content-Type':'application/json', 'X-Master-Key': JSONBIN.KEY }, body: JSON.stringify(payload) }); if(!res.ok) throw new Error('PUT failed '+res.status); }catch(e){ console.warn('cloud save error', e); } }
+$('syncToggle').addEventListener('change', (e)=>{ STATE.syncEnabled = !!e.target.checked; saveState(); });
+$('syncNowBtn').addEventListener('click', async ()=>{ try{ await loadCloud(); alert('Синхронизация выполнена'); }catch(e){ alert('Ошибка синхронизации: '+(e.message||e)); } });
+let __syncRunning = false; setInterval(async ()=>{ if(STATE.syncEnabled && !__syncRunning){ __syncRunning=true; try{ await saveCloud(); await loadCloud(); }catch(e){} finally{ __syncRunning=false; } } }, 1000);
+
+/* ===== themes & settings population ===== */
+const THEMES = [ {k:'violet', name:'Violet', accent:'#a970ff', accent2:'#32ffd2', line:'rgba(160,170,230,.22)'}, {k:'navy', name:'Navy', accent:'#6ea8ff', accent2:'#4dd0e1', line:'rgba(120,140,200,.14)'}, {k:'emerald', name:'Emerald', accent:'#00d084', accent2:'#32ffd2', line:'rgba(80,220,200,.12)'}, {k:'sunset', name:'Sunset', accent:'#ff7a59', accent2:'#ffd84d', line:'rgba(255,140,100,.12)'}, {k:'mint', name:'Mint', accent:'#6ef0c0', accent2:'#7bd3ff', line:'rgba(120,220,200,.12)'} ];
+function applyTheme(theme){ document.documentElement.setAttribute('data-theme', theme.k); document.documentElement.style.setProperty('--accent', theme.accent); document.documentElement.style.setProperty('--accent2', theme.accent2); document.documentElement.style.setProperty('--line', theme.line); STATE.theme = theme.k; saveState(); }
+function renderThemeList(){ const wrap = $('themeList'); wrap.innerHTML=''; THEMES.forEach(t=>{ const el = document.createElement('div'); el.className='theme-item'; el.innerHTML = `<div class="theme-swatch" style="background:linear-gradient(90deg, ${t.accent}, ${t.accent2})"></div><div style="flex:1;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:800">${t.name}</div><button class="btn" data-theme="${t.k}">Выбрать</button></div>`; el.querySelector('button').addEventListener('click', ()=> applyTheme(t)); wrap.appendChild(el); }); }
+renderThemeList();
+
+/* populate city select with all keys */
+function populateCitySelect(){ const sel = $('citySelect'); sel.innerHTML=''; Object.keys(CITY_COORDS).forEach(c=>{ const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); }); sel.value = STATE.city || 'Караганда'; sel.addEventListener('change', ()=>{ STATE.city = sel.value; saveState(); $('currentCity').textContent = STATE.city; renderCityPosts(); updateDateTimeWeather(); }); }
+populateCitySelect();
+
+/* profile saving */
+$('saveProfileBtn').addEventListener('click', ()=>{ const name = $('profileName').value.trim(); const avatar = $('profileAvatar').value.trim(); if(name) STATE.profile.name = name; if(avatar) STATE.profile.avatarData = avatar; saveState(); $('topComposerAvatar').textContent = STATE.profile.avatarData || (STATE.profile.name[0]||'Я'); alert('Профиль сохранён'); });
+
+/* ===== helpers & init ===== */
+function openScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el = document.getElementById(id); if(el) el.classList.add('active'); }
+function closeScreen(id){ const el = document.getElementById(id); if(el) el.classList.remove('active'); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+
+function init(){ // populate basic UI
+  $('syncToggle').checked = !!STATE.syncEnabled; renderRoleTabs(); renderMenu(); renderCity(); refreshNotifBadge(); renderChats(); $('topComposerAvatar').textContent = STATE.profile.avatarData || (STATE.profile.name[0]||'Я'); // attach settings button
+  $('openSettings').addEventListener('click', ()=>{ // prefill settings fields
+    $('profileName').value = STATE.profile.name || '';
+    $('profileAvatar').value = STATE.profile.avatarData || '';
+    $('citySelect').value = STATE.city || 'Караганда';
+    openScreen('settingsModal');
+  });
+  // attach panel notif exists already
+  // attach click effects for glass buttons (yellow glow)
+  document.addEventListener('click', (e)=>{ const t = e.target.closest('.glass-btn'); if(t){ t.classList.remove('glow'); void t.offsetWidth; t.classList.add('glow'); setTimeout(()=>t.classList.remove('glow'), 900); } });
+  // ensure panel notif badge state
+  refreshNotifBadge();
 }
 init();
 
-/* small helpers for screens */
-document.querySelectorAll('.screen').forEach(s=>{
-  s.addEventListener('click', (e)=>{ if(e.target===s) s.classList.remove('active'); });
-});
-
-/* expose debug */
-window.GIDCITY = { STATE, save };
+/* expose for debug */
+window.GIDCITY = { STATE, saveState, loadState, loadCloud, saveCloud };
 </script>
 </body>
 </html>
