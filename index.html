@@ -1,3 +1,502 @@
+<!doctype html>
+<html lang="ru" data-theme="violet">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GiDCity — облако, роли, мессенджер</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ================= TOKENS / THEMES ================= */
+:root{
+  --bg-1:#060910; --bg-2:#050815; --bg-3:#030711;
+  --radial-a:#121a3a; --radial-b:#09203a;
+  --surface:#0b1020; --line:#1a2346;
+  --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff;
+  --danger:#ff4d6d; --gold:#ffd84d;
+  --text:#e7ebff; --text-dim:#c7d3ff; --text-muted:#9fb0ff; --text-invert:#0a0f1e;
+  --radius:16px; --ui-font-size:14px;
+  --glow-1:0 0 14px rgba(169,112,255,.45); --glow-2:0 0 22px rgba(50,255,210,.35); --shadow:0 18px 50px rgba(0,0,0,.55);
+  --btn-press: 0 0 0 6px rgba(169,112,255,.18);
+}
+
+html[data-theme="violet"]{
+  --accent-a:#a970ff; --accent-b:#32ffd2; --accent-c:#6a8cff;
+  --bg-1:#0a0f24; --bg-2:#090e22; --bg-3:#070c20;
+  --radial-a:#201c52; --radial-b:#0f2446;
+  --text:#e7ebff; --text-invert:#0a0f1e;
+}
+
+html[data-theme="navy"]{
+  --accent-a:#6aa7ff; --accent-b:#7ef3ff; --accent-c:#65d0ff;
+  --bg-1:#07101e; --bg-2:#071426; --bg-3:#07182e;
+  --radial-a:#0e2a4c; --radial-b:#0a3152;
+  --text:#e7f2ff; --text-invert:#06101d;
+}
+
+html[data-theme="emerald"]{
+  --accent-a:#3fe0a8; --accent-b:#baff6a; --accent-c:#75ffd9;
+  --bg-1:#071a14; --bg-2:#051f17; --bg-3:#04241a;
+  --radial-a:#0d3c2d; --radial-b:#0a503a;
+  --text:#eafff7; --text-invert:#05120e;
+}
+
+/* — новые тёплые/яркие — */
+html[data-theme="sunset"]{
+  --accent-a:#ff7ab6; --accent-b:#ffd06a; --accent-c:#ff9f6a;
+  --bg-1:#1b0a12; --bg-2:#200d16; --bg-3:#240f18;
+  --radial-a:#551a2c; --radial-b:#66331e;
+  --text:#ffeef6; --text-invert:#1a0a10;
+}
+html[data-theme="lava"]{
+  --accent-a:#ff5a37; --accent-b:#ffc34d; --accent-c:#ff7a5c;
+  --bg-1:#120707; --bg-2:#1a0a08; --bg-3:#210d0a;
+  --radial-a:#4a1410; --radial-b:#5a1a12;
+  --text:#fff2ec; --text-invert:#160806;
+}
+html[data-theme="ocean"]{
+  --accent-a:#44e1ff; --accent-b:#68ffa9; --accent-c:#7bd7ff;
+  --bg-1:#041319; --bg-2:#051720; --bg-3:#061c27;
+  --radial-a:#093747; --radial-b:#0b4558;
+  --text:#e9fbff; --text-invert:#031116;
+}
+
+/* — светлые темы: текст тёмный — */
+html[data-theme="paper"]{
+  --accent-a:#6b7cff; --accent-b:#51d6a6; --accent-c:#8aa8ff;
+  --bg-1:#f6f7fb; --bg-2:#f4f6fb; --bg-3:#f1f4fa;
+  --radial-a:#ffffff; --radial-b:#ffffff;
+  --surface:#ffffff; --line:#dbe1ff;
+  --text:#0d1326; --text-dim:#2a3a5f; --text-muted:#51618f; --text-invert:#f7f9ff;
+}
+html[data-theme="cream"]{
+  --accent-a:#ff8aa0; --accent-b:#ffd26a; --accent-c:#ffaf6d;
+  --bg-1:#fff8ee; --bg-2:#fff4e6; --bg-3:#fff1df;
+  --radial-a:#ffffff; --radial-b:#ffffff;
+  --surface:#ffffff; --line:#f0e2c8;
+  --text:#2b1a10; --text-dim:#4a2f1f; --text-muted:#6a4a30; --text-invert:#fff7ea;
+}
+
+/* ================= RESET / LAYOUT ================= */
+*{box-sizing:border-box} html,body{height:100%}
+body{
+  margin:0; padding:18px; font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 800px at 20% -10%, var(--radial-a) 0%, transparent 55%),
+    radial-gradient(1000px 700px at 120% 20%, var(--radial-b) 0%, transparent 55%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2) 40%, var(--bg-3) 100%);
+  color:var(--text); font-size:var(--ui-font-size); display:flex; justify-content:center;
+}
+.wrapper{ width:100%; max-width:1100px; display:flex; flex-direction:column; gap:16px; }
+
+/* ================= HEADER ================= */
+.header{ display:grid; grid-template-columns: 1fr auto; align-items:start; gap:12px; padding:6px 4px 4px; }
+.brand{ display:flex; flex-direction:column; gap:4px; }
+.brand h1{
+  margin:0; font-weight:800; font-size:22px; letter-spacing:.4px;
+  background: linear-gradient(90deg, var(--text) 0%, var(--accent-a) 55%, var(--accent-b) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow: 0 0 24px rgba(169,112,255,.25);
+}
+.header-sub{ font-size:13px; color:var(--text-muted); font-weight:700 }
+.header-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; }
+.controls-row{ display:flex; gap:8px }
+
+/* ================= BUTTONS ================= */
+.btn{
+  appearance:none; border:none; cursor:pointer; font-weight:700; color:var(--text);
+  padding:10px 14px; border-radius:12px; line-height:1;
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.22));
+  border:1px solid rgba(138,165,255,.22);
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(255,255,255,.03);
+  transition: transform .12s ease, box-shadow .2s, background .2s;
+}
+.btn:hover{ box-shadow: var(--glow-1), var(--shadow); transform: translateY(-1px) }
+.btn:active{ transform: translateY(0); box-shadow: var(--btn-press), var(--shadow) }
+.btn.primary{ background: linear-gradient(90deg, rgba(169,112,255,.28), rgba(50,255,210,.28)); border-color: rgba(169,112,255,.5); box-shadow: var(--glow-1), var(--glow-2), var(--shadow) }
+.btn.ghost{ background: transparent; border-color: rgba(138,165,255,.25) }
+.btn.disabled{ opacity:.6; pointer-events:none; filter:saturate(.8) }
+.btn.pulse:active{ box-shadow: 0 0 0 10px rgba(169,112,255,.12), var(--shadow) }
+
+/* ================= ROLE TOGGLE (металлический шар) ================= */
+.role-switch{ display:flex; gap:10px; align-items:center; font-weight:700; color:var(--text-dim); justify-self:end }
+.role-label{ font-weight:800; transition:color .2s }
+.role-label.active{ color:var(--gold) }
+.toggle{
+  width:74px; height:36px; border-radius:999px; padding:3px; position:relative; cursor:pointer;
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18)); border:1px solid rgba(138,165,255,.28);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.06), inset 0 -3px 0 rgba(0,0,0,.2);
+}
+.toggle .knob{
+  width:30px; height:30px; border-radius:999px; position:absolute; top:3px; left:3px; transition:left .18s ease, box-shadow .2s;
+  background: radial-gradient(40% 40% at 35% 30%, #ffffff 0%, #e6eefc 35%, #b2c4e6 70%, #8799bb 90%),
+              radial-gradient(80% 80% at 70% 70%, rgba(255,255,255,.7), rgba(255,255,255,0));
+  box-shadow: 0 10px 18px rgba(0,0,0,.45), 0 0 12px rgba(169,112,255,.35);
+}
+.toggle.on .knob{ left:41px }
+
+/* ================= MAIN CONTAINER & MENU ================= */
+.container{
+  width:100%; border-radius:20px; padding:18px;
+  background: linear-gradient(180deg, rgba(14,20,46,.72), rgba(10,15,35,.42));
+  border:1px solid var(--line); box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.02) inset; color:var(--text);
+}
+.panel-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px }
+.panel-top h2{ margin:0; font-size:18px; font-weight:800; color:var(--text) }
+
+.menu-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:10px;
+}
+@media (min-width:900px){
+  .menu-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+.menu-btn{
+  min-height:64px; border-radius:14px; padding:14px 16px; cursor:pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.22));
+  border:1px solid rgba(138,165,255,.22);
+  display:flex; flex-direction:column; gap:6px; justify-content:center; align-items:flex-start;
+  transition: transform .14s, box-shadow .14s, border-color .2s;
+  box-shadow: var(--shadow);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.menu-btn .title{ font-weight:800; font-size:15px; color:var(--text); text-transform:uppercase }
+.menu-btn .note{ font-size:12px; color:var(--text-muted); white-space:normal }
+.menu-btn:hover{ transform: translateY(-2px); box-shadow: var(--glow-1), var(--shadow); border-color: rgba(169,112,255,.42) }
+.menu-btn:active{ transform:translateY(0); box-shadow: var(--btn-press), var(--shadow) }
+.menu-btn.primary{ background: linear-gradient(135deg, rgba(169,112,255,.18), rgba(50,255,210,.14)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2), var(--shadow) }
+.menu-btn.violet{ background: linear-gradient(135deg, rgba(169,112,255,.24), rgba(106,140,255,.16)); border-color: rgba(138,165,255,.5); box-shadow: var(--glow-1), var(--shadow) }
+
+/* ================= CARDS / LISTS ================= */
+.card{
+  background: linear-gradient(180deg, rgba(10,14,30,.92), rgba(6,10,24,.88));
+  color:var(--text); border-radius:14px; padding:12px; display:flex; gap:12px; align-items:flex-start;
+  border:1px solid rgba(138,165,255,.22); box-shadow: var(--shadow);
+}
+.avatar{ width:40px; height:40px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; overflow:hidden; flex:0 0 40px }
+.avatar img{ width:100%; height:100%; object-fit:cover; border-radius:999px }
+
+/* ================= SCREENS / MODALS ================= */
+.screen{
+  position:fixed; inset:0; display:none; z-index:140; padding:0 12px; background: rgba(6,9,16,.64);
+  align-items:flex-start; justify-content:center; backdrop-filter: blur(6px);
+}
+.screen.active{ display:flex }
+.modal{
+  width:100%; max-width:1100px; max-height:86vh; overflow:auto;
+  background: linear-gradient(180deg, rgba(18,26,56,.98), rgba(12,18,42,.96));
+  color:var(--text); box-shadow: var(--glow-1), var(--shadow); border:1px solid rgba(138,165,255,.28);
+  border-radius:0 0 18px 18px; padding:18px 16px; margin-top:12px;
+}
+
+/* ================= INPUTS ================= */
+.input, textarea, select{
+  width:100%; padding:12px; border-radius:12px; border:1px solid rgba(138,165,255,.24);
+  background: rgba(12,16,36,.9); color:var(--text); font-size:14px; outline:none;
+  transition: box-shadow .2s, border-color .2s, background .2s;
+}
+textarea{ min-height:110px; resize:vertical }
+.input::placeholder, textarea::placeholder{ color:rgba(184,194,255,.6) }
+.input:focus, textarea:focus, select:focus{ border-color: rgba(169,112,255,.6); box-shadow: 0 0 0 3px rgba(169,112,255,.18), var(--glow-1); background: rgba(16,20,46,.95) }
+.small{ font-size:13px; color:var(--text-muted) }
+
+/* ================= TABS ================= */
+.tabs{ display:flex; gap:8px; flex-wrap:wrap }
+.tab{
+  padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; border:1px solid rgba(138,165,255,.25);
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.16)); color:var(--text)
+}
+.tab:hover{ box-shadow: var(--glow-1) }
+.tab.active{ background: linear-gradient(90deg, rgba(169,112,255,.32), rgba(50,255,210,.24)); border-color: rgba(169,112,255,.6); box-shadow: var(--glow-1), var(--glow-2) }
+
+/* ================= CHAT ================= */
+.chat-item{ position:relative; cursor:pointer }
+.chat-badge{ margin-left:auto; background:var(--danger); color:#fff; border-radius:999px; font-size:12px; font-weight:800; padding:0 6px; min-width:18px; height:18px; display:flex; align-items:center; justify-content:center }
+.chat-modal-header{ display:flex; gap:10px; align-items:center; }
+.msgs{ margin-top:8px; max-height:58vh; overflow:auto; padding-right:6px }
+.msg-row{ margin-bottom:10px }
+.msg-me{ text-align:right }
+.msg-me .b{ display:inline-block; background:linear-gradient(90deg, rgba(169,112,255,.95), rgba(50,255,210,.95)); padding:8px 12px; border-radius:10px; color:#0a0f1e; font-weight:800 }
+.msg-other .b{ display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(138,165,255,.24); padding:8px 12px; border-radius:10px }
+.msg-system{ text-align:center; margin:10px 0 14px 0; color:var(--text-muted); font-size:13px }
+.msg-img{ display:block; max-width:60%; border-radius:12px; margin-top:6px; border:1px solid rgba(138,165,255,.2) }
+
+/* ================= CITY THREAD ================= */
+.post-card{ background: linear-gradient(180deg, rgba(10,14,30,.92), rgba(6,10,24,.88)); border:1px solid rgba(138,165,255,.22); border-radius:14px; padding:12px; box-shadow: var(--shadow); margin-bottom:10px }
+.post-img{ width:100%; border-radius:12px; margin-top:8px; max-height:360px; object-fit:cover }
+.post-actions{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap }
+.comment{ background:rgba(255,255,255,.06); border:1px solid rgba(138,165,255,.22); border-radius:10px; padding:8px; margin-top:6px }
+
+/* ================= CLICK FX ================= */
+.btn, .menu-btn, .tab{
+  position:relative;
+}
+.btn:focus-visible, .menu-btn:focus-visible, .tab:focus-visible{
+  outline:none; box-shadow: 0 0 0 3px rgba(169,112,255,.25), var(--shadow);
+}
+.btn::after, .menu-btn::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; opacity:0; transition:opacity .15s;
+  box-shadow: 0 0 24px rgba(169,112,255,.5), 0 0 18px rgba(50,255,210,.35) inset;
+}
+.btn:active::after, .menu-btn:active::after{ opacity:.35 }
+
+/* ================= LIGHT THEMES VISUAL ================= */
+html[data-theme="paper"] body,
+html[data-theme="cream"] body{
+  background:
+    radial-gradient(1200px 800px at 20% -10%, var(--bg-2) 0%, transparent 55%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2) 40%, var(--bg-3) 100%);
+}
+html[data-theme="paper"] .container,
+html[data-theme="cream"] .container{
+  background: #ffffff; color: var(--text);
+  border-color: var(--line);
+}
+html[data-theme="paper"] .modal,
+html[data-theme="cream"] .modal{
+  background:#ffffff; color:var(--text); border-color:var(--line);
+}
+html[data-theme="paper"] .input, html[data-theme="cream"] .input,
+html[data-theme="paper"] textarea, html[data-theme="cream"] textarea,
+html[data-theme="paper"] select, html[data-theme="cream"] select{
+  background:#fff; color:var(--text); border-color:#d8e0f5;
+}
+html[data-theme="paper"] .menu-btn, html[data-theme="cream"] .menu-btn{
+  background:#fff; border-color:#e6e9f6;
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header class="header">
+    <div class="brand">
+      <h1>GiD <span style="color:var(--accent-a)">City</span></h1>
+      <div id="topCity" class="header-sub">Город: —</div>
+    </div>
+    <div class="header-right">
+      <div class="controls-row">
+        <button id="openNotifications" class="btn btn-with-badge">Уведомления <span id="notifBadge" class="chat-badge" style="display:none">0</span></button>
+        <button id="openSettings" class="btn">Настройки</button>
+      </div>
+      <div class="role-switch">
+        <span id="roleLabelUser" class="role-label">Сфера услуг</span>
+        <div id="roleToggle" class="toggle" title="Переключить роль"><div class="knob"></div></div>
+        <span id="roleLabelWorker" class="role-label">Подработка</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ГЛАВНОЕ МЕНЮ -->
+  <main class="container" role="main" aria-live="polite">
+    <div class="panel-top"><h2>Главное меню</h2><div></div></div>
+    <div class="menu-grid" id="menuGrid"></div>
+  </main>
+</div>
+
+<!-- ================= SCREENS ================= -->
+
+<!-- Вход -->
+<section id="authScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Вход</h3><button onclick="closeScreen('authScreen')" class="btn ghost">Закрыть</button></div>
+  <form id="authForm" style="margin-top:12px">
+    <div class="form-field"><input id="authLogin" class="input" placeholder="Email или телефон" required /></div>
+    <div class="form-field" style="margin-top:8px"><input id="authPass" class="input" placeholder="Пароль" type="password" required /></div>
+    <div style="display:flex; gap:8px; margin-top:12px"><button type="submit" class="btn primary">Войти</button><button type="button" id="registerBtn" class="btn">Регистрация</button></div>
+    <div class="small" style="margin-top:10px">Демо: данные локальны + синхронизация в JSONBin</div>
+  </form>
+</div></section>
+
+<!-- Создать заказ -->
+<section id="createScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Новый заказ</h3><button onclick="closeScreen('createScreen')" class="btn ghost">Назад</button></div>
+  <div style="margin-top:10px;">
+    <div class="tabs" id="createTabs">
+      <div class="tab active" data-val="СПЕЦ. ЗАКАЗ">СПЕЦ. ЗАКАЗ</div>
+      <div class="tab" data-val="Такси">Такси</div>
+      <div class="tab" data-val="Курьер">Курьер</div>
+      <div class="tab" data-val="Доставка">Доставка</div>
+      <div class="tab" data-val="Аренда/Продажа">Аренда/Продажа</div>
+      <div class="tab" data-val="Мастер">Мастер</div>
+      <div class="tab" data-val="Прочие">Прочие</div>
+    </div>
+    <form id="createForm" style="margin-top:12px">
+      <div class="form-field">
+        <textarea id="c-desc" class="input" placeholder="закажи любую услугу и мы найдем исполнителя"></textarea>
+      </div>
+      <div id="createExtraFields" class="form-field" style="margin-top:8px"></div>
+
+      <!-- дедлайн сверху, тот же размер, симметрично -->
+      <div class="col" style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap">
+        <div style="flex:1; min-width:240px"><input id="c-datetime" class="input" type="datetime-local" placeholder="Дата и время" /></div>
+        <div style="flex:1; min-width:240px"><input id="c-budget" class="input" type="number" placeholder="Бюджет (₸)" /></div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:14px; align-items:center">
+        <button class="btn primary pulse" id="orderNowBtn" type="submit" style="min-width:240px; padding:14px 18px; font-size:15px; background:linear-gradient(90deg,#ffd84d,#ffb34d); color:#2b1a10; border-color:#ffd84d">ЗАКАЗАТЬ</button>
+        <button class="btn ghost" type="button" onclick="closeScreen('createScreen')">Отмена</button>
+      </div>
+    </form>
+  </div>
+</div></section>
+
+<!-- Найти заказы -->
+<section id="findScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">НАЙТИ ЗАКАЗЫ</h3><button onclick="closeScreen('findScreen')" class="btn ghost">Назад</button></div>
+  <div style="margin-top:8px">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input id="searchInput" class="input" placeholder="Поиск...">
+      <button id="applySearch" class="btn">Поиск</button>
+    </div>
+    <div id="findList" class="list" style="margin-top:12px"></div>
+  </div>
+</div></section>
+
+<!-- Мои заказы -->
+<section id="mineScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Мои заказы</h3><button onclick="closeScreen('mineScreen')" class="btn ghost">Назад</button></div>
+  <div style="margin-top:12px"><div id="mineList" class="list"></div></div>
+</div></section>
+
+<!-- Модалка заявок -->
+<section id="bidsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 id="bidsModalTitle" style="margin:0">Заявки</h3><button onclick="closeScreen('bidsModal')" class="btn ghost">Закрыть</button></div>
+  <div id="bidsList" style="margin-top:12px"></div>
+</div></section>
+
+<!-- Мессенджер -->
+<section id="messengerScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Мессенджер</h3><button onclick="closeScreen('messengerScreen')" class="btn ghost">Закрыть</button></div>
+  <div id="chatsList" style="margin-top:12px"></div>
+</div></section>
+
+<!-- Окно чата -->
+<section id="chatWindow" class="screen"><div class="modal">
+  <div class="chat-modal-header">
+    <div id="chatWinAvatar" class="avatar"></div>
+    <div style="font-weight:800" id="chatWinTitle">Чат</div>
+    <div class="small" id="chatWinSub" style="margin-left:auto"></div>
+    <button onclick="closeScreen('chatWindow')" class="btn ghost">Закрыть</button>
+  </div>
+  <div id="chatWinMsgs" class="msgs"></div>
+  <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+    <label class="btn" title="Прикрепить изображение" style="padding:10px 12px;">
+      📎
+      <input type="file" id="chatAttach" accept="image/*" style="display:none">
+    </label>
+    <input id="chatWinInput" class="input" placeholder="Сообщение..." />
+    <button id="chatWinSend" class="btn primary" type="button">Отправить</button>
+  </div>
+</div></section>
+
+<!-- Объявления услуг -->
+<section id="adsScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <h3 style="margin:0">Объявления услуг</h3>
+      <div style="margin-top:6px"><button id="myAdsOpenBtn" class="btn">Мои объявления</button></div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button onclick="closeScreen('adsScreen')" class="btn ghost">Закрыть</button>
+    </div>
+  </div>
+  <div style="margin-top:12px; display:flex; gap:12px; align-items:center; justify-content:space-between;">
+    <div style="font-weight:800">Список объявлений</div>
+    <div><button id="createAdBtn" class="btn">Создать объявление</button></div>
+  </div>
+  <div id="adsList" class="list" style="margin-top:12px; max-height:60vh; overflow:auto"></div>
+</div></section>
+
+<section id="myAdsScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Мои объявления</h3>
+    <button onclick="closeScreen('myAdsScreen'); openScreen('adsScreen');" class="btn ghost">Назад</button>
+  </div>
+  <div id="myAdsList" class="list" style="margin-top:8px; max-height:66vh; overflow:auto"></div>
+</div></section>
+
+<section id="adCreateModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Создать объявление</h3><button onclick="closeScreen('adCreateModal')" class="btn ghost">Закрыть</button></div>
+  <form id="adForm" style="margin-top:12px">
+    <div class="form-field"><input id="adTitle" class="input" placeholder="Краткое название услуги" required></div>
+    <div class="form-field" style="margin-top:8px"><textarea id="adDesc" class="input" placeholder="Описание услуги"></textarea></div>
+    <div style="display:flex; gap:8px; margin-top:8px;"><input id="adPhone" class="input" placeholder="Телефон (опционально)"><input id="adPrice" class="input" placeholder="Цена (опционально)"></div>
+    <div style="display:flex; gap:8px; margin-top:10px;"><button class="btn primary" type="submit">Создать</button><button class="btn ghost" type="button" onclick="closeScreen('adCreateModal')">Отмена</button></div>
+  </form>
+</div></section>
+
+<!-- Уведомления -->
+<section id="notificationsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Уведомления</h3><button onclick="closeScreen('notificationsModal')" class="btn ghost">Закрыть</button></div>
+  <div id="notificationsList" style="margin-top:12px; max-height:58vh; overflow:auto"></div>
+  <div style="display:flex; gap:8px; margin-top:12px;"><button id="clearNotifications" class="btn">Очистить</button></div>
+</div></section>
+
+<!-- Настройки -->
+<section id="settingsModal" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Настройки</h3><button onclick="closeScreen('settingsModal')" class="btn ghost">Закрыть</button></div>
+  <div style="margin-top:10px">
+    <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+      <button id="openThemes" class="btn">Темы</button>
+      <select id="citySelect" class="input" style="max-width:260px">
+        <option value="">— Выберите город —</option>
+        <option>Алматы</option><option>Астана</option><option>Караганда</option><option>Шымкент</option><option>Актобе</option>
+      </select>
+      <button id="saveCityBtn" class="btn">Сохранить город</button>
+    </div>
+    <div style="margin-top:8px"><button id="openProfile" class="btn">Профиль</button></div>
+  </div>
+</div></section>
+
+<!-- Профиль -->
+<section id="profileScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Профиль</h3><button onclick="closeScreen('profileScreen'); openScreen('settingsModal');" class="btn ghost">Назад</button></div>
+  <div id="profileWrap" style="margin-top:12px"></div>
+</div></section>
+
+<!-- Темы (скроллер) -->
+<section id="themesScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Темы</h3><button onclick="closeScreen('themesScreen')" class="btn ghost">Назад</button></div>
+  <div style="margin-top:12px; max-height:66vh; overflow:auto; display:grid; gap:8px;">
+    <div class="btn theme-opt" data-theme="violet">Фиолет</div>
+    <div class="btn theme-opt" data-theme="navy">Нэйви</div>
+    <div class="btn theme-opt" data-theme="emerald">Эмералд</div>
+    <div class="btn theme-opt" data-theme="sunset">Сансет</div>
+    <div class="btn theme-opt" data-theme="lava">Лава</div>
+    <div class="btn theme-opt" data-theme="ocean">Океан</div>
+    <div class="btn theme-opt" data-theme="paper" style="color:#0d1326;">Paper (светлая)</div>
+    <div class="btn theme-opt" data-theme="cream" style="color:#2b1a10;">Cream (светлая)</div>
+  </div>
+</div></section>
+
+<!-- Кошелёк -->
+<section id="walletScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0">Кошелёк</h3><button onclick="closeScreen('walletScreen')" class="btn ghost">Закрыть</button></div>
+  <div id="walletWrap" style="margin-top:12px"></div>
+</div></section>
+
+<!-- Чат города -->
+<section id="cityThreadScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Чат твоего города</h3>
+    <button onclick="closeScreen('cityThreadScreen')" class="btn ghost">Закрыть</button>
+  </div>
+  <div style="margin-top:12px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input id="cityPostText" class="input" placeholder="Поделитесь мыслью..." />
+      <label class="btn"><input type="file" id="cityPostImage" accept="image/*" style="display:none">Фото</label>
+      <button id="cityPostSend" class="btn primary">Опубликовать</button>
+    </div>
+    <div id="cityPosts" style="margin-top:12px;"></div>
+  </div>
+</div></section>
+
+<!-- Репост -->
+<section id="repostScreen" class="screen"><div class="modal">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h3 style="margin:0">Репост в чат</h3>
+    <button onclick="closeScreen('repostScreen')" class="btn ghost">Закрыть</button>
+  </div>
+  <div id="repostList" style="margin-top:12px"></div>
+</div></section>
 <script>
 /* ================== JSONBIN CLOUD ================== */
 /* Внимание: ключ в клиенте — только для демо! Для продакшена делайте прокси. */
