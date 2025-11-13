@@ -2,435 +2,959 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiDCity — Мини-приложение</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>GiDCity — прототип мобильного приложения</title>
+<meta name="description" content="Прототип мобильного приложения GiDCity — интерфейс, модалки, автосохранение в JSONBin (демо).">
+
 <style>
+  /* --- Базовые стили / мобильный фрейм --- */
   :root{
-    --bg:#0f1724; --card:#0b1220; --accent:#ffcc00; --muted:#9aa4b2; --glass: rgba(255,255,255,0.03);
-    --radius:12px; --maxw:1200px;
+    --bg1: #5b2cff; /* фиолетовый */
+    --bg2: #0a0a0a; /* черный */
+    --accent: #ffd54a; /* желтый для активной кнопки */
+    --glass-bg: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.12);
+    --neon: rgba(91,44,255,0.9);
+    --text: #f2f2f2;
+    --muted: rgba(242,242,242,0.6);
   }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,Segoe UI,Arial;color:#e6eef6;background:linear-gradient(180deg,#071022 0%, #081226 100%);padding:20px;display:flex;justify-content:center}
-  .app{width:100%;max-width:var(--maxw);}
-  header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-  .logo{min-width:120px;height:56px;background:linear-gradient(135deg,#2b2b2b,#111);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800;font-size:20px;padding:8px 12px;letter-spacing:0.6px}
-  h1{font-size:18px;margin:0}
-  .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
-  nav{display:flex;gap:8px;margin:12px 0}
-  .tab{background:var(--glass);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
-  .tab.active{background:linear-gradient(90deg, rgba(255,204,0,0.18), rgba(255,204,0,0.08));color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
-  main{display:grid;grid-template-columns:1fr 360px;gap:16px}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);min-height:420px}
-  .sidebar{position:sticky;top:20px;height:fit-content}
-  .search{display:flex;gap:8px;margin-bottom:12px}
-  .search input{flex:1;padding:10px;border-radius:10px;border:0;background:#071826;color:#fff}
-  .categories{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-  .cat{padding:8px 12px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));font-size:14px;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-  .cat.active{background:var(--accent);color:#081018;font-weight:700; box-shadow:0 6px 18px rgba(255,204,0,0.12); transform:translateY(-1px)}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  .card{background:#071f2b;padding:14px;border-radius:12px;box-shadow:0 6px 10px rgba(2,6,10,0.6)}
-  .card h3{margin:0;font-size:15px}
-  .card p{margin:6px 0 10px;color:var(--muted);font-size:13px}
-  .btn{background:var(--accent);color:#081018;padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600;padding:8px 10px}
-  .small{font-size:13px;color:var(--muted)}
-  .announce{display:flex;flex-direction:column;gap:8px}
-  .announce .item{background:#071826;padding:10px;border-radius:10px}
-  .form-row{display:flex;gap:8px;margin-bottom:8px}
-  .form-row input, .form-row textarea, .form-row select{flex:1;padding:10px;border-radius:8px;border:0;background:#071826;color:#fff}
-  .orders .item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:#071826;margin-bottom:8px}
-  footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
-  @media(max-width:880px){main{grid-template-columns:1fr} .grid{grid-template-columns:1fr} .logo{min-width:90px;font-size:16px}}
-  .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,204,0,0.12);color:#ffdd88;font-weight:600;font-size:12px}
-  /* modal */
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
-  .modal{background:#071826;padding:16px;border-radius:12px;max-width:600px;width:100%}
-  .row{display:flex;gap:8px;margin-bottom:8px}
-  label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
-  /* GiD big button */
-  .gid-order-wrap{display:flex;align-items:center;justify-content:space-between;margin:10px 0 16px}
-  .gid-order{flex:1;padding:14px;border-radius:14px;background:linear-gradient(90deg,var(--accent), #ffb800);color:#081018;font-weight:800;border:0;cursor:pointer;font-size:16px;box-shadow:0 10px 30px rgba(255,204,0,0.12)}
-  .gid-order small{display:block;font-size:12px;color:#081018;opacity:0.9;font-weight:600}
-  .service-price{font-weight:800;color:var(--accent);margin-left:8px}
-  .service-meta{font-size:13px;color:var(--muted);margin-top:6px}
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(160deg, var(--bg1) 0%, #2b0b3a 40%, var(--bg2) 100%);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+  }
+
+  /* Внешний мобильный контейнер */
+  .phone {
+    width:380px; /* мобильная ширина для демо */
+    max-width:calc(100% - 24px);
+    height:812px;
+    border-radius:30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.03);
+    overflow:hidden;
+    position:relative;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.18));
+    border: 1px solid rgba(255,255,255,0.03);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Header */
+  .header{
+    padding:18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    backdrop-filter: blur(6px) saturate(120%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .title {
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .logo {
+    width:48px;
+    height:48px;
+    border-radius:10px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 6px 18px rgba(91,44,255,0.15), 0 1px 0 rgba(255,255,255,0.02) inset;
+    border:1px solid var(--glass-border);
+    position:relative;
+    overflow:hidden;
+  }
+  .logo svg{filter: drop-shadow(0 6px 16px rgba(91,44,255,0.18));}
+  .app-name {
+    font-weight:800;
+    font-size:20px;
+    letter-spacing:0.6px;
+  }
+  /* glow animation */
+  @keyframes title-glow{
+    0%{text-shadow:0 0 0 rgba(255,255,255,0)}
+    50%{text-shadow:0 0 18px rgba(91,44,255,0.75)}
+    100%{text-shadow:0 0 0 rgba(255,255,255,0)}
+  }
+  .glow {
+    animation: title-glow 2s infinite;
+  }
+
+  .header-center{
+    text-align:center;
+    font-size:14px;
+    color:var(--muted);
+  }
+  .header-actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .icon-btn{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    backdrop-filter: blur(6px);
+    cursor:pointer;
+  }
+
+  /* Content area */
+  .content{
+    padding:14px;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    overflow:auto;
+  }
+
+  /* City & weather */
+  .city-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .city-block{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .city-name{
+    font-weight:700;
+    font-size:18px;
+  }
+  .weather{
+    font-size:13px;
+    color:var(--muted);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:8px 12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(6px);
+  }
+
+  /* Toggle buttons SERVICES / WORK */
+  .toggle {
+    display:flex;
+    gap:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.05));
+    padding:8px;
+    border-radius:14px;
+    width:100%;
+  }
+  .toggle button{
+    flex:1;
+    padding:10px 6px;
+    border-radius:10px;
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    font-weight:700;
+    cursor:pointer;
+  }
+  .toggle button.active{
+    background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    color:var(--text);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 12px rgba(255,205,95,0.06) inset;
+    position:relative;
+  }
+  .toggle button.active::after{
+    content:'';
+    position:absolute;
+    bottom:-6px;
+    left:50%;
+    transform:translateX(-50%);
+    width:40%;
+    height:4px;
+    border-radius:4px;
+    background:var(--accent);
+    box-shadow:0 6px 18px rgba(255,213,100,0.12);
+  }
+
+  /* Main card (glass) */
+  .main-card{
+    margin-top:2px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+    border-radius:18px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    min-height:240px;
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .menu-list{
+    flex:1;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+  }
+  .menu-item{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+    padding:12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.03);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-height:78px;
+    cursor:pointer;
+  }
+  .menu-item .caption{color:var(--muted); font-size:12px;}
+  .menu-item .title{font-weight:800;}
+
+  .notifications-btn{
+    width:64px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .notifications-btn .count{
+    background:var(--accent);
+    color:#111;
+    font-weight:800;
+    font-size:12px;
+    padding:6px 8px;
+    border-radius:12px;
+    margin-top:4px;
+  }
+
+  /* Footer small */
+  .footer{
+    padding:10px 16px;
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    border-top:1px solid rgba(255,255,255,0.02);
+  }
+
+  /* Modals (simple) */
+  .modal-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    padding:20px;
+  }
+  .modal{
+    width:100%;
+    max-width:420px;
+    border-radius:14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+    border:1px solid rgba(255,255,255,0.04);
+    padding:14px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.7);
+  }
+  .modal .h{
+    font-weight:800; margin-bottom:8px;
+  }
+  .row{display:flex;gap:8px;align-items:center;}
+  label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px;}
+  input[type="text"], input[type="tel"], input[type="password"], textarea, select, input[type="number"], input[type="date"], input[type="time"]{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    background:rgba(255,255,255,0.02);
+    border:1px solid rgba(255,255,255,0.03);
+    color:var(--text);
+    outline:none;
+  }
+  textarea{min-height:80px; resize:vertical;}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;}
+  .btn{
+    padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:800;
+    background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color:var(--text);
+  }
+  .btn.primary{
+    background: linear-gradient(90deg, #ffd54a, #ffb347);
+    color:#111;
+  }
+  .small{font-size:13px;color:var(--muted);}
+
+  /* lists for chat / posts */
+  .list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px;}
+  .post{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);}
+  .post .meta{font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .flex-between{display:flex;justify-content:space-between;align-items:center;}
+
+  /* small responsive for very narrow screens */
+  @media (max-width:420px){
+    .phone{width:100%}
+  }
+
+
+  /* tiny helper for hidden */
+  .hidden{display:none !important;}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <header>
-    <div class="logo">GiDCity</div>
-    <div>
-      <h1>GiDCity — локальные услуги</h1>
-      <div class="subtitle">Каталог услуг, объявления и быстрый заказ — мини-приложение</div>
+
+<div class="phone" role="application" aria-label="GiDCity prototype">
+  <!-- Header -->
+  <div class="header">
+    <div class="title">
+      <div class="logo" id="avatarPreview" title="Аватар">
+        <!-- simple city logo -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="7" width="4" height="10" rx="1.2" fill="white" opacity="0.12"/>
+          <rect x="9" y="4" width="4" height="13" rx="1.2" fill="white" opacity="0.12"/>
+          <rect x="15" y="9" width="4" height="8" rx="1.2" fill="white" opacity="0.12"/>
+          <circle cx="12" cy="3" r="3" fill="#ffd54a" opacity="0.9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="app-name glow" id="appTitle">GiDCity</div>
+        <div class="small" id="subtitle">Добро пожаловать</div>
+      </div>
     </div>
-  </header>
 
-  <nav id="tabs">
-    <div class="tab active" data-tab="home">Главная</div>
-    <div class="tab" data-tab="services">Услуги</div>
-    <div class="tab" data-tab="announces">Объявления</div>
-    <div class="tab" data-tab="orders">Заказы</div>
-    <div class="tab" data-tab="profile">Профиль</div>
-  </nav>
+    <div class="header-center" id="headerCenter">GiDCity-ға қош келдіңіз!</div>
 
-  <main>
-    <section class="panel" id="content">
-      <!-- content switches here -->
-      <div id="homeView">
-        <h2>Быстрый доступ</h2>
-        <p class="small">GiD Заказ — универсальный быстрый заказ на всё, что нужно.</p>
+    <div class="header-actions">
+      <div class="icon-btn" id="calendarBtn" title="Календарь" aria-label="Открыть календарь">
+        <!-- calendar svg -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 11h10M7 16h10M3 7h18M8 3v4M16 3v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="icon-btn" id="settingsBtn" title="Настройки" aria-label="Открыть настройки">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06A2 2 0 113.28 16.9l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82L4.21 3.28A2 2 0 116.9 3.28l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09c.05.68.43 1.25 1 1.51h.01a1.65 1.65 0 001.82-.33l.06-.06A2 2 0 1120.72 7.1l-.06.06a1.65 1.65 0 00-.33 1.82V10c.07.55.36 1.05.81 1.44z" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
 
-        <div class="gid-order-wrap">
-          <button class="gid-order" id="gidQuickOrder">
-            GiD Заказ — быстрое оформление любой услуги
-            <small>Вызовите такси, курьера или закажите услугу одним кликом</small>
-          </button>
+  <!-- Content -->
+  <div class="content">
+    <!-- City / weather row -->
+    <div class="city-row">
+      <div class="city-block">
+        <div>
+          <div class="city-name" id="cityName">Нур-Султан</div>
+          <div class="small" id="citySubtitle">Казахстан</div>
         </div>
+        <div class="weather" id="weatherBlock">— °C · ясное небо</div>
+      </div>
+      <div class="small">Последняя синхр.: <span id="syncStatus">локально</span></div>
+    </div>
 
-        <div class="categories" id="homeCats"></div>
-        <div style="margin-top:12px" id="featured">
-          <h3>Популярные услуги</h3>
-          <div class="grid" id="featuredGrid"></div>
-        </div>
+    <!-- Toggle -->
+    <div class="toggle" role="tablist" aria-label="Выбор раздела">
+      <button id="servicesBtn" class="active" aria-pressed="true">УСЛУГИ</button>
+      <button id="workBtn" aria-pressed="false">РАБОТА</button>
+    </div>
+
+    <!-- Main card -->
+    <div class="main-card" role="region" aria-label="Главное меню">
+      <div class="menu-list" id="menuList">
+        <!-- items populated by JS -->
       </div>
 
-      <div id="servicesView" style="display:none">
-        <div class="search">
-          <input id="searchInput" placeholder="Поиск услуг, напр. такси, курьер, барбершоп..." />
-          <button class="btn ghost" id="clearSearch">Сброс</button>
-        </div>
-        <div class="categories" id="cats"></div>
-        <div class="grid" id="serviceGrid"></div>
+      <div class="notifications-btn">
+        <div style="font-size:13px;color:var(--muted)">Уведомления</div>
+        <div class="count" id="notifCount">0</div>
+        <button class="btn" id="openNotifs">Открыть</button>
       </div>
+    </div>
 
-      <div id="announcesView" style="display:none">
-        <h3>Объявления и акции</h3>
-        <div class="announce" id="announceList"></div>
-        <hr style="border:none;height:1px;background:rgba(255,255,255,0.03);margin:12px 0">
-        <h4>Подать объявление</h4>
-        <div style="margin-top:8px">
-          <input id="annTitle" placeholder="Заголовок" style="width:100%;padding:10px;border-radius:8px;border:0;background:#071826;color:#fff;margin-bottom:8px"/>
-          <textarea id="annText" placeholder="Текст объявления" style="width:100%;padding:10px;border-radius:8px;border:0;background:#071826;color:#fff"></textarea>
-          <div style="text-align:right;margin-top:8px"><button class="btn" id="addAnn">Опубликовать</button></div>
-        </div>
-      </div>
+    <!-- small help -->
+    <div class="small">Шрифт — стиль iOS. Дизайн — минимализм + футуризм, неон и стекло.</div>
 
-      <div id="ordersView" style="display:none">
-        <h3>Мои заказы</h3>
-        <div class="orders" id="ordersList"></div>
-      </div>
+  </div>
 
-      <div id="profileView" style="display:none">
-        <h3>Профиль</h3>
-        <div style="margin-bottom:8px">
-          <label>Имя</label>
-          <input id="profileName" placeholder="Ваше имя" />
-        </div>
-        <div style="margin-bottom:8px">
-          <label>Телефон</label>
-          <input id="profilePhone" placeholder="+7..." />
-        </div>
-        <div style="text-align:right"><button class="btn" id="saveProfile">Сохранить</button></div>
-      </div>
-    </section>
-
-    <aside class="sidebar">
-      <div class="panel">
-        <h4>Корзина / Быстрый заказ</h4>
-        <div id="quickCard" style="margin:12px 0;padding:10px;background:#071826;border-radius:8px">
-          <div id="selectedServiceName" class="small">Услуга не выбрана</div>
-          <div class="service-meta" id="selectedServiceMeta"></div>
-          <div style="margin-top:8px">
-            <button class="btn" id="openOrder" disabled>Оформить заказ</button>
-          </div>
-        </div>
-
-        <h4 style="margin-top:12px">Контакты</h4>
-        <div class="small">Поддержка: +7 (700) 000-00-00</div>
-        <div style="margin-top:8px"><span class="badge">GiDCity</span></div>
-      </div>
-    </aside>
-  </main>
-
-  <footer>Мини-приложение для демонстрации — GiDCity · Прототип</footer>
+  <!-- Footer -->
+  <div class="footer">KASSEN Technology Inc.</div>
 </div>
 
-<!-- modal -->
-<div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <h3 id="modalTitle">Оформить заказ</h3>
-    <div class="row">
-      <div style="flex:1">
-        <label>Имя</label>
-        <input id="mName" placeholder="Имя" />
-      </div>
-      <div style="width:160px">
-        <label>Телефон</label>
-        <input id="mPhone" placeholder="+7..." />
-      </div>
-    </div>
-
-    <div class="row">
-      <div style="flex:1">
-        <label>Адрес / Комментарий</label>
-        <input id="mAddr" placeholder="Улица, дом, квартира" />
-      </div>
-      <div style="width:150px">
-        <label>Кол-во / Примечание</label>
-        <input id="mQty" placeholder="1" />
-      </div>
-    </div>
-
-    <div class="row">
-      <div style="flex:1">
-        <label>Специфичные поля</label>
-        <select id="mSpec">
-          <option value="">-- выберите --</option>
-          <option value="asap">Как можно скорее</option>
-          <option value="time">Назначить время</option>
-        </select>
-      </div>
-      <div style="width:150px">
-        <label>Цена</label>
-        <div id="mPrice" style="padding:10px;background:#061219;border-radius:8px;color:var(--accent);font-weight:800">—</div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
-      <button class="btn ghost" id="closeModal">Отмена</button>
-      <button class="btn" id="confirmOrder">Подтвердить</button>
-    </div>
+<!-- ---------------- MODALS ---------------- -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
+  <div class="modal" id="modalWindow" role="document" aria-modal="true">
+    <!-- dynamic content -->
   </div>
 </div>
 
+<!-- Auth modal (shown on first open) -->
+<div class="modal-backdrop" id="authBackdrop" style="display:flex;">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="h">Авторизация</div>
+    <div class="small">Для входа введите имя, номер телефона и четырёхзначный пароль (PIN)</div>
+    <div style="height:10px"></div>
+
+    <label for="authName">Имя</label>
+    <input id="authName" type="text" placeholder="Ваше имя">
+
+    <label for="authPhone">Номер телефона</label>
+    <input id="authPhone" type="tel" placeholder="+7xxxxxxxxxx">
+
+    <label for="authPIN">Пароль (4 цифры)</label>
+    <input id="authPIN" type="password" maxlength="4" pattern="\d*" inputmode="numeric" placeholder="1234">
+
+    <div class="modal-actions">
+      <button class="btn" id="authSkip">Пропустить</button>
+      <button class="btn primary" id="authSubmit">Войти</button>
+    </div>
+
+    <div style="height:10px"></div>
+    <div class="small" style="color:#ffd54a">Примечание: для реального приложения аутентификацию и PIN нужно реализовать на сервере.</div>
+  </div>
+</div>
+
+<!-- Template modals (inserted dynamically into #modalWindow) -->
+
 <script>
-/* ==== Demo data and app logic (updated) ==== */
-const CATEGORIES = ['Такси','Курьер','Доставка','Рестораны','Салоны','Барбершоп'];
-const SAMPLE_SERVICES = [
-  {id:'s1',cat:'Такси',title:'GiD Taxi — эконом',desc:'Быстрое такси по городу',price:600},
-  {id:'s2',cat:'Курьер',title:'GiD Курьер — срочно',desc:'Доставим документ в тот же день',price:900},
-  {id:'s3',cat:'Доставка',title:'GiD Доставка — еда',desc:'Заказ и доставка из кафе',price:250},
-  {id:'s4',cat:'Рестораны',title:'Ресторан «Ашхана» — скидка',desc:'Комплексный обед',price:1200},
-  {id:'s5',cat:'Салоны',title:'Салон красоты «Lux»',desc:'Стрижка и укладка',price:4000},
-  {id:'s6',cat:'Барбершоп',title:'BarberPro — мужская стрижка',desc:'Классика и бритьё',price:1800}
-];
+/*
+  GiDCity — Single-file prototype (HTML/CSS/JS).
+  - Локальное хранение: localStorage
+  - JSONBin sync: функция `syncToJSONBin()` использует указанный Bin ID и X-Master-Key.
+    ВАЖНО: держать ключ на клиенте небезопасно. В продакшне нужно прятать ключ на сервере.
+*/
 
-let services = JSON.parse(localStorage.getItem('services_v1')) || SAMPLE_SERVICES;
-let announces = JSON.parse(localStorage.getItem('ann_v1')) || [
-  {id:Date.now(),title:'Скидка в BarberPro',text:'-20% на стрижки до конца месяца'}
-];
-let orders = JSON.parse(localStorage.getItem('orders_v1')) || [];
-let profile = JSON.parse(localStorage.getItem('profile_v1')) || {name:'',phone:''};
+const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG'; // ВАЖНО: небезопасно хранить в клиенте
+const JSONBIN_ID = '6911fbe843b1c97be9a4dc97';
+const USE_JSONBIN = true; // переключатель: если false — будет работать только локально (рекомендуется для публичного размещения)
 
-const tabs = document.querySelectorAll('.tab');
-const views = {
-  home: document.getElementById('homeView'),
-  services: document.getElementById('servicesView'),
-  announces: document.getElementById('announcesView'),
-  orders: document.getElementById('ordersView'),
-  profile: document.getElementById('profileView')
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalWindow = document.getElementById('modalWindow');
+const authBackdrop = document.getElementById('authBackdrop');
+
+const appStateKey = 'gidcity_state_v1';
+
+let state = {
+  user: null,
+  city: 'Нур-Султан',
+  theme: 'фиолетово-черный',
+  notifications: [],
+  servicesPosts: [],
+  cityPosts: [],
+  chats: [],
+  wallet: {balance: 0},
+  reminders: []
 };
-const homeCats = document.getElementById('homeCats');
-const featuredGrid = document.getElementById('featuredGrid');
-const catsBox = document.getElementById('cats');
-const serviceGrid = document.getElementById('serviceGrid');
-const announceList = document.getElementById('announceList');
-const ordersList = document.getElementById('ordersList');
 
-const selectedServiceName = document.getElementById('selectedServiceName');
-const selectedServiceMeta = document.getElementById('selectedServiceMeta');
-const openOrderBtn = document.getElementById('openOrder');
-const modalBg = document.getElementById('modalBg');
-
-let selectedService = null;
-
-/* tabs */
-tabs.forEach(t=>t.addEventListener('click',()=>{
-  tabs.forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const key = t.dataset.tab;
-  Object.values(views).forEach(v=>v.style.display='none');
-  views[key].style.display='block';
-}));
-
-/* init UI */
-function renderCats(){
-  homeCats.innerHTML = ''; catsBox.innerHTML='';
-  CATEGORIES.forEach(c=>{
-    const el = document.createElement('div'); el.className='cat'; el.textContent=c;
-    el.onclick = ()=>{ filterByCategory(c); document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active')); el.classList.add('active'); };
-    homeCats.appendChild(el);
-    const el2 = el.cloneNode(true);
-    el2.onclick = ()=>{ filterByCategory(c); document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active')); el2.classList.add('active'); };
-    catsBox.appendChild(el2);
-  });
-}
-function renderFeatured(){
-  featuredGrid.innerHTML='';
-  services.slice(0,4).forEach(s => {
-    const c = document.createElement('div'); c.className='card';
-    c.innerHTML = `<h3>${s.title} <span class="service-price">${s.price} тг</span></h3>
-      <p class="small">${s.desc}</p>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="small">${s.cat}</div>
-        <div>
-          <button class="btn" data-id="${s.id}" aria-label="Заказать ${s.title}">Заказать</button>
-        </div>
-      </div>`;
-    c.querySelector('button').onclick = ()=>selectService(s.id, true);
-    featuredGrid.appendChild(c);
-  });
-}
-function renderServices(list){
-  serviceGrid.innerHTML='';
-  list.forEach(s=>{
-    const c = document.createElement('div'); c.className='card';
-    c.innerHTML = `<h3>${s.title} <span class="service-price">${s.price} тг</span></h3>
-      <p>${s.desc}</p>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="small">${s.cat}</div>
-        <div><button class="btn ghost" data-id="${s.id}">Подробнее</button> <button class="btn" data-id="${s.id}">Заказать</button></div>
-      </div>`;
-    c.querySelectorAll('.btn').forEach(btn=>{
-      btn.onclick = (ev)=> {
-        const id = ev.currentTarget.dataset.id;
-        if(ev.currentTarget.textContent.trim()==='Заказать') selectService(id, true); else alert('Подробнее: ' + s.desc);
-      };
+// ---------- Utilities ----------
+function saveState(localOnly=false){
+  localStorage.setItem(appStateKey, JSON.stringify(state));
+  document.getElementById('syncStatus').textContent = localOnly ? 'локально' : 'сохранено';
+  if (!localOnly && USE_JSONBIN){
+    syncToJSONBin().then(res=>{
+      document.getElementById('syncStatus').textContent = 'синхр. JSONBin';
+    }).catch(err=>{
+      console.warn('JSONBin sync error', err);
+      document.getElementById('syncStatus').textContent = 'ошибка синхр.';
     });
-    serviceGrid.appendChild(c);
-  });
-}
-function renderAnnounces(){
-  announceList.innerHTML='';
-  announces.slice().reverse().forEach(a=>{
-    const d = document.createElement('div'); d.className='item';
-    d.innerHTML = `<strong>${a.title}</strong><div class="small">${a.text}</div>`;
-    announceList.appendChild(d);
-  });
-}
-function renderOrders(){
-  ordersList.innerHTML='';
-  if(!orders.length) ordersList.innerHTML = '<div class="small">Заказов пока нет</div>';
-  orders.slice().reverse().forEach(o=>{
-    const el = document.createElement('div'); el.className='item';
-    el.innerHTML = `<div><strong>${o.serviceTitle}</strong><div class="small">${o.addr} • ${o.name} • ${o.phone}</div></div><div class="small">${o.status}</div>`;
-    ordersList.appendChild(el);
-  });
-}
-
-/* select & order modal - now auto-open and prefill service-specific data */
-function selectService(id, autoOpen=false){
-  selectedService = services.find(s=>s.id===id);
-  selectedServiceName.textContent = selectedService ? `${selectedService.title} — ${selectedService.price} тг` : 'Услуга не выбрана';
-  selectedServiceMeta.textContent = selectedService ? `${selectedService.cat}` : '';
-  openOrderBtn.disabled = !selectedService;
-  // fill modal price and default placeholder according to category
-  document.getElementById('mPrice').textContent = selectedService ? selectedService.price + ' тг' : '—';
-  const addrPlaceholder = selectedService ? `Адрес для ${selectedService.cat.toLowerCase()} (ул., дом)` : 'Улица, дом, квартира';
-  document.getElementById('mAddr').placeholder = addrPlaceholder;
-  document.getElementById('mQty').placeholder = selectedService && selectedService.cat==='Такси' ? 'Кол-во мест' : '1';
-  // show quick select spec defaults
-  const spec = document.getElementById('mSpec');
-  spec.value = '';
-  // prefill name/phone from profile
-  document.getElementById('mName').value = profile.name || '';
-  document.getElementById('mPhone').value = profile.phone || '';
-  if(autoOpen){
-    // open modal
-    document.getElementById('modalTitle').textContent = `Заказ: ${selectedService.title}`;
-    modalBg.style.display = 'flex';
   }
 }
-openOrderBtn.onclick = ()=> {
-  if(!selectedService) return alert('Выберите услугу');
-  document.getElementById('mName').value = profile.name || '';
-  document.getElementById('mPhone').value = profile.phone || '';
-  document.getElementById('mAddr').value = '';
-  document.getElementById('mQty').value = '';
-  modalBg.style.display = 'flex';
-  document.getElementById('modalTitle').textContent = `Заказ: ${selectedService.title}`;
-};
-document.getElementById('closeModal').onclick = ()=> modalBg.style.display='none';
-document.getElementById('confirmOrder').onclick = ()=>{
-  const name = document.getElementById('mName').value.trim();
-  const phone = document.getElementById('mPhone').value.trim();
-  const addr = document.getElementById('mAddr').value.trim();
-  const qty = document.getElementById('mQty').value.trim() || '1';
-  const spec = document.getElementById('mSpec').value;
-  if(!name||!phone||!addr){alert('Заполните имя, телефон и адрес');return;}
-  const newOrder = {
-    id:Date.now(),
-    serviceId:selectedService.id,
-    serviceTitle:selectedService.title,
-    serviceCat:selectedService.cat,
-    name, phone, addr, qty, spec,
-    price:selectedService.price,
-    status:'Создан'
-  };
-  orders.push(newOrder); localStorage.setItem('orders_v1', JSON.stringify(orders));
-  modalBg.style.display='none'; renderOrders(); alert('Заказ создан');
-};
-
-/* GiD quick order button: open modal without preselecting a specific service (user chooses in modal) */
-document.getElementById('gidQuickOrder').onclick = ()=>{
-  // clear selection but allow free-text service in address/comment
-  selectedService = null;
-  selectedServiceName.textContent = 'GiD Заказ — универсальный';
-  selectedServiceMeta.textContent = 'Любая услуга';
-  document.getElementById('mPrice').textContent = 'по запросу';
-  document.getElementById('mAddr').placeholder = 'Опишите услугу и адрес';
-  document.getElementById('mQty').placeholder = 'Кол-во';
-  document.getElementById('mName').value = profile.name || '';
-  document.getElementById('mPhone').value = profile.phone || '';
-  document.getElementById('mSpec').value = '';
-  document.getElementById('modalTitle').textContent = 'GiD Заказ — универсальный';
-  modalBg.style.display = 'flex';
-};
-
-/* announcements */
-document.getElementById('addAnn').onclick = ()=>{
-  const t = document.getElementById('annTitle').value.trim();
-  const txt = document.getElementById('annText').value.trim();
-  if(!t||!txt){alert('Заполните заголовок и текст');return;}
-  const a = {id:Date.now(), title:t, text:txt};
-  announces.push(a); localStorage.setItem('ann_v1', JSON.stringify(announces));
-  document.getElementById('annTitle').value=''; document.getElementById('annText').value='';
-  renderAnnounces(); alert('Объявление опубликовано');
-};
-
-/* profile */
-document.getElementById('profileName').value = profile.name || '';
-document.getElementById('profilePhone').value = profile.phone || '';
-document.getElementById('saveProfile').onclick = ()=>{
-  profile.name = document.getElementById('profileName').value.trim();
-  profile.phone = document.getElementById('profilePhone').value.trim();
-  localStorage.setItem('profile_v1', JSON.stringify(profile));
-  alert('Профиль сохранён');
-};
-
-/* search & filter */
-document.getElementById('searchInput').addEventListener('input', (e)=>{
-  const q = e.target.value.trim().toLowerCase();
-  if(!q) renderServices(services);
-  else renderServices(services.filter(s=> (s.title+s.desc+s.cat).toLowerCase().includes(q)));
-});
-document.getElementById('clearSearch').onclick = ()=>{
-  document.getElementById('searchInput').value=''; renderServices(services);
-};
-
-function filterByCategory(cat){
-  renderServices(services.filter(s=>s.cat===cat));
-  tabs.forEach(t=>t.classList.remove('active'));
-  document.querySelector('[data-tab="services"]').classList.add('active');
-  Object.values(views).forEach(v=>v.style.display='none'); views.services.style.display='block';
+function loadState(){
+  const raw = localStorage.getItem(appStateKey);
+  if(raw){
+    try{ Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn('parse state err', e); }
+  }
+}
+function addNotification(text, meta={}){
+  const n = {id:Date.now(), text, meta, ts:new Date().toISOString()};
+  state.notifications.unshift(n);
+  updateNotifCount();
+  saveState();
+}
+function updateNotifCount(){
+  document.getElementById('notifCount').textContent = state.notifications.length || 0;
 }
 
-/* initial render */
-renderCats(); renderFeatured(); renderServices(services); renderAnnounces(); renderOrders();
-selectService(null);
+// ---------- JSONBin sync (demo). ----------
+async function syncToJSONBin(){
+  // Note: this writes the whole state to the bin (PUT). In production — use server-side secret handling.
+  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+  const payload = {state, updatedAt: new Date().toISOString()};
+  // Use fetch with X-Master-Key. This will fail if the bin is locked / permissions different.
+  const resp = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_KEY
+    },
+    body: JSON.stringify(payload)
+  });
+  if(!resp.ok) throw new Error('JSONBin save failed: '+resp.status);
+  return resp.json();
+}
+async function loadFromJSONBin(){
+  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
+  const resp = await fetch(url, {headers:{'X-Master-Key': JSONBIN_KEY}});
+  if(!resp.ok) throw new Error('JSONBin load failed: '+resp.status);
+  const data = await resp.json();
+  if(data && data.record && data.record.state) {
+    state = data.record.state;
+    saveState(true);
+    renderAll();
+  }
+  return data;
+}
 
-/* persist services demo (optionally add service) */
-localStorage.setItem('services_v1', JSON.stringify(services));
+// ---------- UI rendering ----------
+function renderMenuItems(){
+  const menuList = document.getElementById('menuList');
+  menuList.innerHTML = '';
+  const activeSection = document.getElementById('servicesBtn').classList.contains('active') ? 'services' : 'work';
+
+  const items = (activeSection === 'services') ? [
+    {id:'order', title:'ЗАКАЗАТЬ', caption:'Создать заявку'},
+    {id:'reserve', title:'ЗАБРОНИРОВАТЬ', caption:'скоро...'},
+    {id:'ads', title:'Объявление услуг', caption:'Список объявлений'},
+    {id:'citychat', title:'City чат', caption:'лента твоего города'},
+    {id:'messenger', title:'Мессенджер', caption:'Диалоги'},
+    {id:'wallet', title:'Кошелёк', caption:'Баланс'}
+  ] : [
+    {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок'},
+    {id:'ads2', title:'Объявление услуг', caption:'Список объявлений'},
+    {id:'citychat2', title:'City чат', caption:'лента твоего города'},
+    {id:'messenger2', title:'Мессенджер', caption:'Диалоги'},
+    {id:'wallet2', title:'Кошелёк', caption:'Баланс'},
+    {id:'spacer', title:'', caption:''}
+  ];
+
+  items.forEach(it=>{
+    const el = document.createElement('div');
+    el.className='menu-item';
+    el.dataset.id = it.id;
+    el.innerHTML = `<div class="title">${it.title}</div><div class="caption">${it.caption}</div>`;
+    if(it.id === 'spacer') el.style.visibility='hidden';
+    el.addEventListener('click', ()=>onMenuClick(it.id, activeSection));
+    menuList.appendChild(el);
+  });
+}
+
+function renderAll(){
+  document.getElementById('cityName').textContent = state.city || 'Нур-Султан';
+  // subtitle remains
+  updateNotifCount();
+  renderMenuItems();
+}
+
+// ---------- Events & handlers ----------
+document.getElementById('servicesBtn').addEventListener('click', ()=>{
+  document.getElementById('servicesBtn').classList.add('active');
+  document.getElementById('servicesBtn').setAttribute('aria-pressed','true');
+  document.getElementById('workBtn').classList.remove('active');
+  document.getElementById('workBtn').setAttribute('aria-pressed','false');
+  renderMenuItems();
+});
+document.getElementById('workBtn').addEventListener('click', ()=>{
+  document.getElementById('workBtn').classList.add('active');
+  document.getElementById('workBtn').setAttribute('aria-pressed','true');
+  document.getElementById('servicesBtn').classList.remove('active');
+  document.getElementById('servicesBtn').setAttribute('aria-pressed','false');
+  renderMenuItems();
+});
+
+document.getElementById('calendarBtn').addEventListener('click', openCalendarModal);
+document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+document.getElementById('openNotifs').addEventListener('click', openNotifications);
+document.getElementById('authSubmit').addEventListener('click', doAuth);
+document.getElementById('authSkip').addEventListener('click', ()=>{
+  authBackdrop.style.display='none';
+  loadState();
+  renderAll();
+});
+
+function onMenuClick(id, section){
+  // map to actions
+  if(id === 'order'){ openOrderModal(); }
+  else if(id === 'reserve'){ openReserveModal(); }
+  else if(id === 'ads' || id === 'ads2'){ openAdsModal(); }
+  else if(id === 'citychat' || id === 'citychat2'){ openCityChatModal(); }
+  else if(id === 'messenger' || id === 'messenger2'){ openMessengerModal(); }
+  else if(id === 'wallet' || id === 'wallet2'){ openWalletModal(); }
+  else if(id === 'findJobs'){ openFindJobsModal(); }
+}
+
+// ---------- Modals implementation ----------
+function showModal(html){
+  modalWindow.innerHTML = html;
+  modalBackdrop.style.display = 'flex';
+  modalBackdrop.setAttribute('aria-hidden','false');
+
+  // attach close handlers for elements with data-close
+  modalWindow.querySelectorAll('[data-close]').forEach(btn=>{
+    btn.addEventListener('click', hideModal);
+  });
+}
+
+function hideModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); modalWindow.innerHTML=''; }
+
+function openCalendarModal(){
+  const modal = `
+    <div class="h">Календарь — ${new Date().toLocaleString('ru',{month:'long', year:'numeric'})}</div>
+    <div class="small">Выберите дату и время, добавьте заметку — напоминание придёт в уведомления.</div>
+    <div style="height:8px"></div>
+    <label>Дата</label>
+    <input type="date" id="remDate" value="${new Date().toISOString().slice(0,10)}">
+    <label>Время</label>
+    <input type="time" id="remTime" value="12:00">
+    <label>Заметка</label>
+    <input type="text" id="remNote" placeholder="Например: забрать посылку">
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+      <button class="btn primary" id="saveReminder">Добавить напоминание</button>
+    </div>
+  `;
+  showModal(modal);
+  document.getElementById('saveReminder').addEventListener('click', ()=>{
+    const d = document.getElementById('remDate').value;
+    const t = document.getElementById('remTime').value;
+    const note = document.getElementById('remNote').value || 'Напоминание';
+    if(!d || !t) return alert('Укажите дату и время');
+    const dtISO = new Date(d + 'T' + t + ':00').toISOString();
+    state.reminders.unshift({id:Date.now(), datetime:dtISO, note, read:false});
+    addNotification('Добавлено напоминание: ' + note, {type:'reminder', when:dtISO});
+    saveState();
+    hideModal();
+    tryScheduleNotification(dtISO, note);
+  });
+}
+
+function tryScheduleNotification(dtISO, text){
+  // In this client demo we can't reliably schedule while tab closed. We'll use Notification API to request permission and create a immediate notification if <=1 minute away.
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'default') Notification.requestPermission();
+  // if time less than 60s -> show immediate
+  const time = new Date(dtISO).getTime() - Date.now();
+  if(time <= 60000 && time > -5000){
+    if(Notification.permission === 'granted'){
+      new Notification('GiDCity — напоминание', {body:text});
+    }
+  } else {
+    // fallback: set timeout if tab active
+    if(time > 0 && time < 1000*60*60*24*7){ // schedule within 7 days only for demo
+      setTimeout(()=>{ if(Notification.permission === 'granted'){ new Notification('GiDCity — напоминание', {body:text}); addNotification('Напоминание: '+text); } }, time);
+    }
+  }
+}
+
+function openSettingsModal(){
+  const icons = ['Нур-Султан','Алматы','Шымкент','Караганда','Актобе','Павлодар','Костанай'];
+  const themeOptions = ['фиолетово-черный','тёмно-синий','тёплый-оранжевый'];
+  const modal = `
+    <div class="h">Настройки</div>
+    <div class="small">Профиль</div>
+    <label>Аватар (URL)</label>
+    <input type="text" id="profileAvatar" placeholder="https://..." value="">
+    <label>Имя</label>
+    <input type="text" id="profileName" placeholder="Имя">
+    <label>Фамилия</label>
+    <input type="text" id="profileSurname" placeholder="Фамилия">
+    <label>Телефон</label>
+    <input type="tel" id="profilePhone" placeholder="+7...">
+    <div style="height:8px"></div>
+    <label>Выбор города</label>
+    <select id="citySelect">${icons.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
+    <div style="height:8px"></div>
+    <label>Выбор темы</label>
+    <select id="themeSelect">${themeOptions.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+      <button class="btn primary" id="saveSettings">Сохранить</button>
+    </div>
+    <div style="height:8px"></div>
+    <div class="small" style="color:#ffd54a">Безопасность: API-ключ для JSONBin не храните в публичных репозиториях.</div>
+  `;
+  showModal(modal);
+  // preload
+  document.getElementById('profileAvatar').value = (state.user && state.user.avatar) ? state.user.avatar : '';
+  document.getElementById('profileName').value = (state.user && state.user.name) ? state.user.name : '';
+  document.getElementById('profileSurname').value = (state.user && state.user.surname) ? state.user.surname : '';
+  document.getElementById('profilePhone').value = (state.user && state.user.phone) ? state.user.phone : '';
+  document.getElementById('citySelect').value = state.city || 'Нур-Султан';
+  document.getElementById('themeSelect').value = state.theme || 'фиолетово-черный';
+
+  document.getElementById('saveSettings').addEventListener('click', ()=>{
+    const avatar = document.getElementById('profileAvatar').value.trim();
+    const name = document.getElementById('profileName').value.trim();
+    const surname = document.getElementById('profileSurname').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const city = document.getElementById('citySelect').value;
+    const theme = document.getElementById('themeSelect').value;
+    state.user = state.user || {};
+    state.user.avatar = avatar || state.user.avatar;
+    state.user.name = name || state.user.name;
+    state.user.surname = surname || state.user.surname;
+    state.user.phone = phone || state.user.phone;
+    state.city = city;
+    state.theme = theme;
+    if(avatar) document.getElementById('avatarPreview').innerHTML = `<img src="${avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:6px">`;
+    saveState();
+    hideModal();
+    renderAll();
+  });
+}
+
+function openNotifications(){
+  const list = state.notifications.map(n=>`<div class="post"><div class="meta">${new Date(n.ts).toLocaleString()}</div><div>${n.text}</div></div>`).join('') || '<div class="small">Нет новых уведомлений</div>';
+  const modal = `
+    <div class="h">Уведомления</div>
+    <div class="list">${list}</div>
+    <div class="modal-actions">
+      <button class="btn" id="clearNotifs">Очистить</button>
+      <button class="btn" data-close>Закрыть</button>
+    </div>
+  `;
+  showModal(modal);
+  document.getElementById('clearNotifs').addEventListener('click', ()=>{
+    state.notifications = [];
+    saveState();
+    hideModal();
+    renderAll();
+  });
+}
+
+function openOrderModal(){
+  const services = ['GiD Заказ','Квартира/дом','Такси','Курьер','Мастер/специалист'];
+  const modal = `
+    <div class="h">Создать заявку</div>
+    <label>Услуга</label>
+    <select id="orderService">${services.map(s=>`<option>${s}</option>`).join('')}</select>
+    <label>Описание</label>
+    <textarea id="orderDesc" placeholder="Опишите задачу"></textarea>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1"><label>Дедлайн</label><input type="date" id="orderDeadline"></div>
+      <div style="width:120px"><label>Бюджет (₸)</label><input type="number" id="orderBudget" min="0" value="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+      <button class="btn primary" id="createOrder">Заказать</button>
+    </div>
+  `;
+  showModal(modal);
+  document.getElementById('createOrder').addEventListener('click', ()=>{
+    const svc = document.getElementById('orderService').value;
+    const desc = document.getElementById('orderDesc').value;
+    const deadline = document.getElementById('orderDeadline').value;
+    const budget = document.getElementById('orderBudget').value;
+    const order = {id:Date.now(), svc, desc, deadline, budget, city:state.city, created: new Date().toISOString()};
+    // store as a generic post / service request
+    state.servicesPosts.unshift(order);
+    addNotification('Новая заявка создана: ' + svc, {type:'order', orderId:order.id});
+    saveState();
+    hideModal();
+    alert('Заявка создана (прототип).');
+  });
+}
+
+function openReserveModal(){
+  const modal = `
+    <div class="h">Забронировать</div>
+    <div class="small">Отсутствуют подключённые заведения к GiDCity</div>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+    </div>
+  `;
+  showModal(modal);
+}
+
+function openAdsModal(){
+  const cats = ['Вакансии','Бизнес','Акции','Афиша','Товары','Продукты'];
+  const modal = `
+    <div class="h">Объявление услуг</div>
+    <label>Категория</label>
+    <select id="adsCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select>
+    <label>Заголовок</label>
+    <input type="text" id="adsTitle" placeholder="Заголовок">
+    <label>Текст</label>
+    <textarea id="adsText" placeholder="Описание объявления"></textarea>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+      <button class="btn primary" id="publishAds">Опубликовать</button>
+    </div>
+  `;
+  showModal(modal);
+  document.getElementById('publishAds').addEventListener('click', ()=>{
+    const cat = document.getElementById('adsCat').value;
+    const title = document.getElementById('adsTitle').value;
+    const text = document.getElementById('adsText').value;
+    state.cityPosts.unshift({id:Date.now(), cat, title, text, created: new Date().toISOString()});
+    saveState();
+    addNotification('Опубликовано объявление: ' + title);
+    hideModal();
+  });
+}
+
+function openCityChatModal(){
+  const postsHtml = state.cityPosts.map(p=>`<div class="post"><div class="meta">${new Date(p.created).toLocaleString()} · ${p.cat}</div><div style="font-weight:700">${p.title}</div><div class="small">${p.text}</div></div>`).join('') || '<div class="small">Лента пустая</div>';
+  const modal = `
+    <div class="h">City чат — ${state.city}</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+      <div style="width:44px;height:44px;border-radius:10px;background:var(--glass-bg);display:flex;align-items:center;justify-content:center"><div style="font-weight:800;color:var(--muted)">U</div></div>
+      <input id="cityPostText" type="text" placeholder="Поделитесь..." style="flex:1">
+      <button class="btn" id="attachImg">📎</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+      <button class="btn primary" id="publishCityPost">Опубликовать</button>
+    </div>
+    <div style="height:10px"></div>
+    <div class="list">${postsHtml}</div>
+  `;
+  showModal(modal);
+  document.getElementById('publishCityPost').addEventListener('click', ()=>{
+    const text = document.getElementById('cityPostText').value.trim();
+    if(!text) return alert('Введите текст поста');
+    state.cityPosts.unshift({id:Date.now(), title: 'Пост', text, cat:'Объявление', created: new Date().toISOString()});
+    saveState();
+    addNotification('Новый пост в City чате');
+    hideModal();
+  });
+}
+
+function openMessengerModal(){
+  const chatsHtml = state.chats.map(c=>`<div class="post"><div class="meta">${c.name || c.contact}</div><div class="small">${c.last || ''}</div></div>`).join('') || '<div class="small">Список диалогов пуст</div>';
+  const modal = `
+    <div class="h">Мессенджер</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn" id="openContacts">Контакты</button>
+      <button class="btn" id="createChat">Создать чат</button>
+    </div>
+    <div class="list">${chatsHtml}</div>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+    </div>
+  `;
+  showModal(modal);
+  document.getElementById('createChat').addEventListener('click', ()=>{
+    const name = prompt('Имя / номер контакта:');
+    if(!name) return;
+    state.chats.unshift({id:Date.now(), name, last:'Новый чат'});
+    saveState();
+    hideModal();
+    openMessengerModal();
+  });
+}
+
+function openWalletModal(){
+  const modal = `
+    <div class="h">Кошелёк</div>
+    <div style="font-size:26px;font-weight:900">${state.wallet.balance || 0} ₸</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn" id="walletTransfer">Перевести</button>
+      <button class="btn" id="walletTopup">Пополнить</button>
+      <button class="btn" id="walletWithdraw">Снять</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" data-close>Закрыть</button>
+    </div>
+  `;
+  showModal(modal);
+  document.getElementById('walletTopup').addEventListener('click', ()=>{
+    const sum = parseInt(prompt('Сумма пополнения (₸):')||'0',10);
+    if(sum>0){ state.wallet.balance = (state.wallet.balance||0) + sum; saveState(); alert('Пополнение успешно'); hideModal(); openWalletModal(); }
+  });
+  document.getElementById('walletTransfer').addEventListener('click', ()=>{
+    const to = prompt('Кому (номер):');
+    const sum = parseInt(prompt('Сумма (₸):')||'0',10);
+    if(!to || sum<=0) return;
+    if((state.wallet.balance||0) < sum) return alert('Недостаточно средств');
+    state.wallet.balance -= sum;
+    saveState();
+    addNotification(`Перевод ${sum}₸ на ${to}`);
+    hideModal();
+  });
+  document.getElementById('walletWithdraw').addEventListener('click', ()=>{
+    const sum = parseInt(prompt('Сумма снятия (₸):')||'0',10);
+    if(sum>0 && (state.wallet.balance||0) >= sum){ state.wallet.balance -= sum; saveState(); alert('Снятие успешно'); hideModal(); openWalletModal(); }
+    else alert('Ошибка снятия');
+  });
+}
+
+function openFindJobsModal(){
+  const jobs = state.servicesPosts.map(o=>`<div class="post"><div class="meta">${o.svc} · ${o.deadline || ''}</div><div style="font-weight:700">${o.desc}</div><div class="small">Бюджет ${o.budget} ₸</div><div style="margin-top:8px"><button class="btn" onclick="applyJob(${o.id})">Откликнуться</button></div></div>`).join('') || '<div class="small">Нет доступных заявок</div>';
+  const modal = `
+    <div class="h">Найти заказы</div>
+    <div class="small">Лента в реальном времени (демо)</div>
+    <div style="height:8px"></div>
+    <div class="list">${jobs}</div>
+    <div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>
+  `;
+  showModal(modal);
+}
+
+window.applyJob = function(orderId){
+  const budget = prompt('Ваш бюджет (₸):','0');
+  const comment = prompt('Комментарий:','');
+  // find order
+  const order = state.servicesPosts.find(o=>o.id == orderId);
+  if(!order) return alert('Заявка не найдена');
+  // send proposal as notification to owner (prototype)
+  addNotification(`Отклик на вашу заявку (${order.svc}): ${budget}₸ — ${comment}`, {type:'proposal', orderId});
+  hideModal();
+  alert('Отклик отправлен (демо).');
+}
+
+// ---------- Auth ----------
+function doAuth(){
+  const name = document.getElementById('authName').value.trim();
+  const phone = document.getElementById('authPhone').value.trim();
+  const pin = document.getElementById('authPIN').value.trim();
+  if(!name || !phone || !/^\d{4}$/.test(pin)) return alert('Заполните имя, телефон и 4-значный PIN');
+  state.user = {name, phone, pin};
+  addNotification('Пользователь вошёл: ' + name);
+  saveState();
+  authBackdrop.style.display='none';
+  renderAll();
+}
+
+// ---------- Init ----------
+loadState();
+renderAll();
+
+// If user has reminders in past -> schedule short-notifications for near ones
+state.reminders.forEach(r=>{
+  tryScheduleNotification(r.datetime, r.note);
+});
+
+// If user explicitly wants to use JSONBin and key present, try load (non-blocking)
+if(USE_JSONBIN){
+  // Try to load remote state (silent)
+  loadFromJSONBin().catch(err=>{
+    console.info('Не удалось загрузить состояние из JSONBin (это нормально для демо).', err);
+  });
+}
+
+/* Accessibility: close modal on backdrop click */
+modalBackdrop.addEventListener('click', (e)=>{
+  if(e.target === modalBackdrop) hideModal();
+});
+
+// small dynamic title swap: show first greeting then russian text
+setTimeout(()=>{ document.getElementById('headerCenter').textContent = 'Добро пожаловать в GiDCity!'; }, 2200);
+
+// Avatar preview if user exists
+if(state.user && state.user.avatar){
+  document.getElementById('avatarPreview').innerHTML = `<img src="${state.user.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:6px">`;
+}
+
+// initial notification (demo)
+if(!localStorage.getItem('gidcity_welcome_shown')){
+  addNotification('Добро! Прототип GiDCity загружен');
+  localStorage.setItem('gidcity_welcome_shown','1');
+}
+renderAll();
+
 </script>
+
 </body>
 </html>
