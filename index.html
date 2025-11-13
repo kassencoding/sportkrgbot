@@ -3,36 +3,36 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GiD City — Мини-приложение</title>
+<title>GiDCity — Мини-приложение</title>
 <style>
   :root{
-    --bg:#0f1724; --card:#0b1220; --accent:#ff6b00; --muted:#9aa4b2; --glass: rgba(255,255,255,0.03);
-    --radius:12px; --maxw:1100px;
+    --bg:#0f1724; --card:#0b1220; --accent:#ffcc00; --muted:#9aa4b2; --glass: rgba(255,255,255,0.03);
+    --radius:12px; --maxw:1200px;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,Segoe UI,Arial;color:#e6eef6;background:linear-gradient(180deg,#071022 0%, #081226 100%);padding:20px;display:flex;justify-content:center}
   .app{width:100%;max-width:var(--maxw);}
   header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-  .logo{width:56px;height:56px;background:linear-gradient(135deg,#103a5c,#0b7bd6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+  .logo{min-width:120px;height:56px;background:linear-gradient(135deg,#2b2b2b,#111);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800;font-size:20px;padding:8px 12px;letter-spacing:0.6px}
   h1{font-size:18px;margin:0}
   .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
   nav{display:flex;gap:8px;margin:12px 0}
   .tab{background:var(--glass);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
-  .tab.active{background:linear-gradient(90deg, rgba(255,107,0,0.18), rgba(255,107,0,0.08));color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
-  main{display:grid;grid-template-columns:1fr 340px;gap:16px}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);min-height:400px}
+  .tab.active{background:linear-gradient(90deg, rgba(255,204,0,0.18), rgba(255,204,0,0.08));color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+  main{display:grid;grid-template-columns:1fr 360px;gap:16px}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);min-height:420px}
   .sidebar{position:sticky;top:20px;height:fit-content}
   .search{display:flex;gap:8px;margin-bottom:12px}
   .search input{flex:1;padding:10px;border-radius:10px;border:0;background:#071826;color:#fff}
   .categories{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-  .cat{padding:6px 10px;border-radius:999px;background:var(--glass);font-size:13px;color:var(--muted);cursor:pointer}
-  .cat.active{background:rgba(255,107,0,0.12);color:#fff}
+  .cat{padding:8px 12px;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));font-size:14px;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+  .cat.active{background:var(--accent);color:#081018;font-weight:700; box-shadow:0 6px 18px rgba(255,204,0,0.12); transform:translateY(-1px)}
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  .card{background:#071f2b;padding:12px;border-radius:12px;box-shadow:0 6px 10px rgba(2,6,10,0.6)}
+  .card{background:#071f2b;padding:14px;border-radius:12px;box-shadow:0 6px 10px rgba(2,6,10,0.6)}
   .card h3{margin:0;font-size:15px}
   .card p{margin:6px 0 10px;color:var(--muted);font-size:13px}
-  .btn{background:var(--accent);color:#fff;padding:8px 10px;border-radius:10px;border:0;cursor:pointer}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .btn{background:var(--accent);color:#081018;padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600;padding:8px 10px}
   .small{font-size:13px;color:var(--muted)}
   .announce{display:flex;flex-direction:column;gap:8px}
   .announce .item{background:#071826;padding:10px;border-radius:10px}
@@ -40,21 +40,27 @@
   .form-row input, .form-row textarea, .form-row select{flex:1;padding:10px;border-radius:8px;border:0;background:#071826;color:#fff}
   .orders .item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:#071826;margin-bottom:8px}
   footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
-  @media(max-width:880px){main{grid-template-columns:1fr} .grid{grid-template-columns:1fr}}
-  .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,107,0,0.12);color:#ffb88a;font-weight:600;font-size:12px}
+  @media(max-width:880px){main{grid-template-columns:1fr} .grid{grid-template-columns:1fr} .logo{min-width:90px;font-size:16px}}
+  .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,204,0,0.12);color:#ffdd88;font-weight:600;font-size:12px}
   /* modal */
-  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
   .modal{background:#071826;padding:16px;border-radius:12px;max-width:600px;width:100%}
   .row{display:flex;gap:8px;margin-bottom:8px}
   label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+  /* GiD big button */
+  .gid-order-wrap{display:flex;align-items:center;justify-content:space-between;margin:10px 0 16px}
+  .gid-order{flex:1;padding:14px;border-radius:14px;background:linear-gradient(90deg,var(--accent), #ffb800);color:#081018;font-weight:800;border:0;cursor:pointer;font-size:16px;box-shadow:0 10px 30px rgba(255,204,0,0.12)}
+  .gid-order small{display:block;font-size:12px;color:#081018;opacity:0.9;font-weight:600}
+  .service-price{font-weight:800;color:var(--accent);margin-left:8px}
+  .service-meta{font-size:13px;color:var(--muted);margin-top:6px}
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header>
-    <div class="logo">GiD</div>
+    <div class="logo">GiDCity</div>
     <div>
-      <h1>GiD City — локальные услуги</h1>
+      <h1>GiDCity — локальные услуги</h1>
       <div class="subtitle">Каталог услуг, объявления и быстрый заказ — мини-приложение</div>
     </div>
   </header>
@@ -72,7 +78,15 @@
       <!-- content switches here -->
       <div id="homeView">
         <h2>Быстрый доступ</h2>
-        <p class="small">Выберите категорию или нажмите на услугу, чтобы оформить заказ.</p>
+        <p class="small">GiD Заказ — универсальный быстрый заказ на всё, что нужно.</p>
+
+        <div class="gid-order-wrap">
+          <button class="gid-order" id="gidQuickOrder">
+            GiD Заказ — быстрое оформление любой услуги
+            <small>Вызовите такси, курьера или закажите услугу одним кликом</small>
+          </button>
+        </div>
+
         <div class="categories" id="homeCats"></div>
         <div style="margin-top:12px" id="featured">
           <h3>Популярные услуги</h3>
@@ -125,6 +139,7 @@
         <h4>Корзина / Быстрый заказ</h4>
         <div id="quickCard" style="margin:12px 0;padding:10px;background:#071826;border-radius:8px">
           <div id="selectedServiceName" class="small">Услуга не выбрана</div>
+          <div class="service-meta" id="selectedServiceMeta"></div>
           <div style="margin-top:8px">
             <button class="btn" id="openOrder" disabled>Оформить заказ</button>
           </div>
@@ -132,12 +147,12 @@
 
         <h4 style="margin-top:12px">Контакты</h4>
         <div class="small">Поддержка: +7 (700) 000-00-00</div>
-        <div style="margin-top:8px"><span class="badge">GiD City</span></div>
+        <div style="margin-top:8px"><span class="badge">GiDCity</span></div>
       </div>
     </aside>
   </main>
 
-  <footer>Мини-приложение для демонстрации — GiD City · Прототип</footer>
+  <footer>Мини-приложение для демонстрации — GiDCity · Прототип</footer>
 </div>
 
 <!-- modal -->
@@ -154,12 +169,33 @@
         <input id="mPhone" placeholder="+7..." />
       </div>
     </div>
+
     <div class="row">
       <div style="flex:1">
         <label>Адрес / Комментарий</label>
         <input id="mAddr" placeholder="Улица, дом, квартира" />
       </div>
+      <div style="width:150px">
+        <label>Кол-во / Примечание</label>
+        <input id="mQty" placeholder="1" />
+      </div>
     </div>
+
+    <div class="row">
+      <div style="flex:1">
+        <label>Специфичные поля</label>
+        <select id="mSpec">
+          <option value="">-- выберите --</option>
+          <option value="asap">Как можно скорее</option>
+          <option value="time">Назначить время</option>
+        </select>
+      </div>
+      <div style="width:150px">
+        <label>Цена</label>
+        <div id="mPrice" style="padding:10px;background:#061219;border-radius:8px;color:var(--accent);font-weight:800">—</div>
+      </div>
+    </div>
+
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
       <button class="btn ghost" id="closeModal">Отмена</button>
       <button class="btn" id="confirmOrder">Подтвердить</button>
@@ -168,7 +204,7 @@
 </div>
 
 <script>
-/* ==== Demo data and app logic ==== */
+/* ==== Demo data and app logic (updated) ==== */
 const CATEGORIES = ['Такси','Курьер','Доставка','Рестораны','Салоны','Барбершоп'];
 const SAMPLE_SERVICES = [
   {id:'s1',cat:'Такси',title:'GiD Taxi — эконом',desc:'Быстрое такси по городу',price:600},
@@ -202,6 +238,7 @@ const announceList = document.getElementById('announceList');
 const ordersList = document.getElementById('ordersList');
 
 const selectedServiceName = document.getElementById('selectedServiceName');
+const selectedServiceMeta = document.getElementById('selectedServiceMeta');
 const openOrderBtn = document.getElementById('openOrder');
 const modalBg = document.getElementById('modalBg');
 
@@ -232,8 +269,15 @@ function renderFeatured(){
   featuredGrid.innerHTML='';
   services.slice(0,4).forEach(s => {
     const c = document.createElement('div'); c.className='card';
-    c.innerHTML = `<h3>${s.title}</h3><p class="small">${s.desc}</p><div style="display:flex;justify-content:space-between;align-items:center"><div class="small">${s.price} тг</div><button class="btn" data-id="${s.id}">Заказать</button></div>`;
-    c.querySelector('button').onclick = ()=>selectService(s.id);
+    c.innerHTML = `<h3>${s.title} <span class="service-price">${s.price} тг</span></h3>
+      <p class="small">${s.desc}</p>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="small">${s.cat}</div>
+        <div>
+          <button class="btn" data-id="${s.id}" aria-label="Заказать ${s.title}">Заказать</button>
+        </div>
+      </div>`;
+    c.querySelector('button').onclick = ()=>selectService(s.id, true);
     featuredGrid.appendChild(c);
   });
 }
@@ -241,11 +285,16 @@ function renderServices(list){
   serviceGrid.innerHTML='';
   list.forEach(s=>{
     const c = document.createElement('div'); c.className='card';
-    c.innerHTML = `<h3>${s.title}</h3><p>${s.desc}</p><div style="display:flex;justify-content:space-between;align-items:center"><div class="small">${s.price} тг • ${s.cat}</div><div><button class="btn ghost" data-id="${s.id}">Подробнее</button> <button class="btn" data-id="${s.id}">Заказать</button></div></div>`;
+    c.innerHTML = `<h3>${s.title} <span class="service-price">${s.price} тг</span></h3>
+      <p>${s.desc}</p>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="small">${s.cat}</div>
+        <div><button class="btn ghost" data-id="${s.id}">Подробнее</button> <button class="btn" data-id="${s.id}">Заказать</button></div>
+      </div>`;
     c.querySelectorAll('.btn').forEach(btn=>{
       btn.onclick = (ev)=> {
         const id = ev.currentTarget.dataset.id;
-        if(ev.currentTarget.textContent.trim()==='Заказать') selectService(id); else alert('Подробнее: ' + s.desc);
+        if(ev.currentTarget.textContent.trim()==='Заказать') selectService(id, true); else alert('Подробнее: ' + s.desc);
       };
     });
     serviceGrid.appendChild(c);
@@ -269,16 +318,35 @@ function renderOrders(){
   });
 }
 
-/* select & order modal */
-function selectService(id){
+/* select & order modal - now auto-open and prefill service-specific data */
+function selectService(id, autoOpen=false){
   selectedService = services.find(s=>s.id===id);
   selectedServiceName.textContent = selectedService ? `${selectedService.title} — ${selectedService.price} тг` : 'Услуга не выбрана';
+  selectedServiceMeta.textContent = selectedService ? `${selectedService.cat}` : '';
   openOrderBtn.disabled = !selectedService;
+  // fill modal price and default placeholder according to category
+  document.getElementById('mPrice').textContent = selectedService ? selectedService.price + ' тг' : '—';
+  const addrPlaceholder = selectedService ? `Адрес для ${selectedService.cat.toLowerCase()} (ул., дом)` : 'Улица, дом, квартира';
+  document.getElementById('mAddr').placeholder = addrPlaceholder;
+  document.getElementById('mQty').placeholder = selectedService && selectedService.cat==='Такси' ? 'Кол-во мест' : '1';
+  // show quick select spec defaults
+  const spec = document.getElementById('mSpec');
+  spec.value = '';
+  // prefill name/phone from profile
+  document.getElementById('mName').value = profile.name || '';
+  document.getElementById('mPhone').value = profile.phone || '';
+  if(autoOpen){
+    // open modal
+    document.getElementById('modalTitle').textContent = `Заказ: ${selectedService.title}`;
+    modalBg.style.display = 'flex';
+  }
 }
 openOrderBtn.onclick = ()=> {
+  if(!selectedService) return alert('Выберите услугу');
   document.getElementById('mName').value = profile.name || '';
   document.getElementById('mPhone').value = profile.phone || '';
   document.getElementById('mAddr').value = '';
+  document.getElementById('mQty').value = '';
   modalBg.style.display = 'flex';
   document.getElementById('modalTitle').textContent = `Заказ: ${selectedService.title}`;
 };
@@ -287,10 +355,36 @@ document.getElementById('confirmOrder').onclick = ()=>{
   const name = document.getElementById('mName').value.trim();
   const phone = document.getElementById('mPhone').value.trim();
   const addr = document.getElementById('mAddr').value.trim();
+  const qty = document.getElementById('mQty').value.trim() || '1';
+  const spec = document.getElementById('mSpec').value;
   if(!name||!phone||!addr){alert('Заполните имя, телефон и адрес');return;}
-  const newOrder = {id:Date.now(), serviceId:selectedService.id, serviceTitle:selectedService.title, name, phone, addr, status:'Создан'};
+  const newOrder = {
+    id:Date.now(),
+    serviceId:selectedService.id,
+    serviceTitle:selectedService.title,
+    serviceCat:selectedService.cat,
+    name, phone, addr, qty, spec,
+    price:selectedService.price,
+    status:'Создан'
+  };
   orders.push(newOrder); localStorage.setItem('orders_v1', JSON.stringify(orders));
   modalBg.style.display='none'; renderOrders(); alert('Заказ создан');
+};
+
+/* GiD quick order button: open modal without preselecting a specific service (user chooses in modal) */
+document.getElementById('gidQuickOrder').onclick = ()=>{
+  // clear selection but allow free-text service in address/comment
+  selectedService = null;
+  selectedServiceName.textContent = 'GiD Заказ — универсальный';
+  selectedServiceMeta.textContent = 'Любая услуга';
+  document.getElementById('mPrice').textContent = 'по запросу';
+  document.getElementById('mAddr').placeholder = 'Опишите услугу и адрес';
+  document.getElementById('mQty').placeholder = 'Кол-во';
+  document.getElementById('mName').value = profile.name || '';
+  document.getElementById('mPhone').value = profile.phone || '';
+  document.getElementById('mSpec').value = '';
+  document.getElementById('modalTitle').textContent = 'GiD Заказ — универсальный';
+  modalBg.style.display = 'flex';
 };
 
 /* announcements */
