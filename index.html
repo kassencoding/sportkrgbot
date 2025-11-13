@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>GiDCity — прототип мобильного приложения (финальные исправления)</title>
+<title>GiDCity — прототип мобильного приложения (pull + fixes)</title>
 <meta name="description" content="GiDCity prototype — JSONBin sync, themes, media uploads, chat actions.">
 <style>
   :root{
@@ -19,14 +19,12 @@
     --gap: 12px;
   }
   html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(160deg,var(--bg-top) 0%, #2b0b3a 40%, var(--bg-bottom) 100%);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;padding:18px;}
-  /* телефонная рамка: центрирование и отступы */
   .phone{width:380px;max-width:calc(100% - 36px);height:812px;border-radius:28px;box-shadow:0 30px 90px rgba(0,0,0,0.6);overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.16));margin:auto;}
   .header{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,0.03);backdrop-filter:blur(6px);}
   .title{display:flex;align-items:center;gap:12px;min-width:0;}
   .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;border:1px solid var(--glass-border);overflow:hidden;flex-shrink:0;}
   .app-name{font-weight:800;font-size:20px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .subtitle{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  /* center header now is date button */
   .header-center{display:flex;align-items:center;justify-content:center;flex:1;}
   .date-btn{padding:8px 12px;border-radius:14px;background:var(--panel-bg);border:1px solid var(--glass-border);font-weight:800;cursor:pointer;min-width:140px;text-align:center;color:var(--text)}
   .header-actions{display:flex;gap:8px;align-items:center}
@@ -45,16 +43,13 @@
   .menu-item{background:var(--panel-bg);padding:14px;border-radius:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;justify-content:center;cursor:pointer;min-height:90px;box-sizing:border-box}
   .menu-item .title{font-weight:900;font-size:16px}
   .menu-item .caption{color:var(--muted);font-size:13px;margin-top:6px}
-  /* reserve (long button) spans two columns */
   .menu-list .menu-item[data-id="reserve"]{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;min-height:64px}
-  /* special color rules: gold and dark green */
   .menu-list .menu-item[data-tag="gold"] .title{color:var(--accent)}
   .menu-list .menu-item[data-tag="darkgreen"] .title{color:#0b6b3a}
   .menu-right{display:flex;flex-direction:column;align-items:center;gap:10px}
   .notif-block{background:var(--panel-bg);padding:8px;border-radius:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;align-items:center;gap:6px}
   .notif-count{background:var(--accent);color:#111;padding:6px 8px;border-radius:999px;font-weight:900}
   .footer{padding:10px 16px;text-align:center;font-size:11px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02)}
-  /* modal */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
   .modal{width:100%;max-width:420px;border-radius:14px;background:linear-gradient(180deg,var(--panel-bg),#0b0b0b);border:1px solid var(--glass-border);padding:14px;box-shadow:0 30px 80px rgba(0,0,0,0.7);max-height:80vh;overflow:auto}
   .modal .h{font-weight:900;margin-bottom:8px;font-size:18px}
@@ -72,7 +67,6 @@
   .act-btn{padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-weight:800}
   .comment-list{margin-top:8px;padding-left:10px;border-left:2px dashed rgba(255,255,255,0.03)}
   .comment{margin-bottom:8px;padding:6px;border-radius:8px;background:rgba(0,0,0,0.2)}
-  /* ensure no overflow of phone when modal opens */
   body.modal-open{overflow:hidden}
   @media (max-width:420px){ .phone{width:100%;height:100vh;border-radius:0} }
 </style>
@@ -91,7 +85,6 @@
       </div>
     </div>
 
-    <!-- Центр: теперь КНОПКА-календарь (показывает текущую дату). Убрано дублирование города/анимации -->
     <div class="header-center">
       <button class="date-btn" id="dateButton" title="Календарь — открыть">17 нояб 2025</button>
     </div>
@@ -142,7 +135,6 @@
   <div class="modal" id="modalWindow" role="dialog" aria-modal="true"></div>
 </div>
 
-<!-- AUTH modal (сохранил) -->
 <div class="modal-backdrop" id="authBackdrop" style="display:flex;">
   <div class="modal" role="dialog" aria-modal="true">
     <div class="h">Авторизация</div>
@@ -157,28 +149,21 @@
   </div>
 </div>
 
-<!-- hidden file inputs for media -->
+<!-- hidden file inputs -->
 <input id="fileProfileAvatar" type="file" accept="image/*" class="hidden">
 <input id="fileChatAttach" type="file" accept="image/*" class="hidden">
 <input id="fileMessageAttach" type="file" accept="image/*" class="hidden">
 <input id="fileOrderAttach" type="file" accept="image/*" class="hidden">
 
 <script>
-/*  =============
-    JavaScript — доработки:
-    - JSONBin sync с retry/backoff и человекочитаемыми ошибками
-    - reserve (span 2 columns) и убран бейдж рядом с ней
-    - dateButton в header вместо приветствия
-    - modal max-height + prevent body scroll while modal open
-    - точность и центровка, фиксированные размеры карточек
-    ============= */
-
-/* JSONBin (используем твой ключ) */
+/* =============
+   Конфигурация и state
+   ============= */
 const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG';
 const JSONBIN_ID = '6911fbe843b1c97be9a4dc97';
 const USE_JSONBIN = true;
+const PULL_INTERVAL_SEC = 15; // периодический pull (можно уменьшать/увеличивать в зависимости от rate limits)
 
-/* state */
 const appStateKey = 'gidcity_state_live_v_final';
 let state = {
   user: null,
@@ -189,17 +174,18 @@ let state = {
   cityPosts: [],
   chats: [],
   wallet: {balance:0},
-  reminders: []
+  reminders: [],
+  updatedAt: new Date().toISOString()
 };
 
-/* city coords for weather */
+/* координаты городов (для погоды) */
 const CITY_COORDS = {
   "Караганда": {lat:49.8062, lon:73.0851},
   "Нур-Султан": {lat:51.1605, lon:71.4704},
   "Алматы": {lat:43.2383, lon:76.9458}
 };
 
-/* themes */
+/* темы */
 const THEMES = {
   'фиолетово-черный': {top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a'},
   'тёмно-синий': {top:'#0b3d91', bottom:'#061428', accent:'#55d4ff'},
@@ -221,70 +207,110 @@ const fileChatAttach = document.getElementById('fileChatAttach');
 const fileMessageAttach = document.getElementById('fileMessageAttach');
 const fileOrderAttach = document.getElementById('fileOrderAttach');
 
-/* load from localStorage */
+/* === local load/save === */
 function loadLocal(){
   const raw = localStorage.getItem(appStateKey);
   if(raw){
-    try{ Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn(e) }
+    try{ Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn('parse local state err', e); }
   }
 }
-
-/* save debounce + JSONBin sync with retry/backoff */
 let saveTimer = null;
 let syncRetryTimer = null;
 let syncBackoff = 0;
+
+function setSyncStatus(text){ const el = document.getElementById('syncStatus'); if(el) el.textContent = text; }
+
+/* requestSave: обновляем updatedAt и сохраняем локально и затем в JSONBin с дебаунсом */
 function requestSave(){
+  state.updatedAt = new Date().toISOString();
   localStorage.setItem(appStateKey, JSON.stringify(state));
   setSyncStatus('локально');
   if(!USE_JSONBIN) return;
   if(saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(()=> performSync(), 800);
+  saveTimer = setTimeout(()=> performSyncPut(), 900);
 }
 
-/* human readable sync status */
-function setSyncStatus(text){ const el = document.getElementById('syncStatus'); if(el) el.textContent = text; }
-
-/* perform sync with backoff retries */
-async function performSync(){
-  // cancel previous retry if any
+/* PUT (save) с retry/backoff */
+async function performSyncPut(){
   if(syncRetryTimer) { clearTimeout(syncRetryTimer); syncRetryTimer = null; }
   try{
     await syncToJSONBin();
     syncBackoff = 0;
     setSyncStatus('синхр. JSONBin');
   }catch(err){
-    console.warn('sync err', err);
-    // exponential backoff: 2^n * base (s) capped
-    syncBackoff = Math.min((syncBackoff || 0) + 1, 6); // cap exponent
+    console.warn('sync PUT error', err);
+    syncBackoff = Math.min((syncBackoff || 0) + 1, 6);
     const delaySec = Math.min(Math.pow(2, syncBackoff), 64);
     setSyncStatus(`ошибка синхр., повтор через ${delaySec}s`);
-    syncRetryTimer = setTimeout(()=>{ performSync(); }, delaySec * 1000);
+    syncRetryTimer = setTimeout(()=> performSyncPut(), delaySec * 1000);
   }
 }
 
-/* sync function */
+/* actual PUT */
 async function syncToJSONBin(){
   const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
   const payload = {state, updatedAt: new Date().toISOString()};
-  const resp = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY}, body: JSON.stringify(payload)});
+  const resp = await fetch(url, {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},
+    body: JSON.stringify(payload)
+  });
   if(!resp.ok) throw new Error('JSONBin PUT failed: ' + resp.status);
   return resp.json();
 }
 
-/* load remote if possible */
-async function loadFromJSONBin(){
+/* GET latest remote */
+async function pullFromJSONBin(){
   try{
     const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
     const r = await fetch(url, {headers:{'X-Master-Key':JSONBIN_KEY}});
-    if(!r.ok) throw new Error('JSONBin GET failed');
+    if(!r.ok) throw new Error('JSONBin GET failed: ' + r.status);
     const data = await r.json();
     if(data && data.record && data.record.state){
-      state = data.record.state;
-      localStorage.setItem(appStateKey, JSON.stringify(state));
+      return data.record.state;
     }
+    return null;
   }catch(e){
-    console.warn('loadFromJSONBin error', e);
+    console.warn('pull error', e);
+    return null;
   }
+}
+
+/* merge strategy: если remote.updatedAt > state.updatedAt — принимаем remote полностью
+   (простая, но эффективная стратегия для отображения новых постов и быстрого обновления клиентов).
+   Можно сделать более тонкий merge по массивам при желании.
+*/
+function mergeRemoteState(remote){
+  if(!remote) return false;
+  const localTs = new Date(state.updatedAt || 0).getTime();
+  const remoteTs = new Date(remote.updatedAt || 0).getTime();
+  if(remoteTs > localTs + 500){ // если remote явно новее (даём 500ms допуск)
+    state = remote;
+    // ensure updatedAt exists
+    if(!state.updatedAt) state.updatedAt = new Date().toISOString();
+    localStorage.setItem(appStateKey, JSON.stringify(state));
+    renderAll();
+    return true;
+  }
+  return false;
+}
+
+/* periodic pull starter */
+let pullTimer = null;
+function startPeriodicPull(intervalSec){
+  if(!USE_JSONBIN) return;
+  if(pullTimer) clearInterval(pullTimer);
+  pullTimer = setInterval(async ()=>{
+    setSyncStatus('получение...');
+    const remote = await pullFromJSONBin();
+    if(remote){
+      const merged = mergeRemoteState(remote);
+      if(merged) setSyncStatus('обновлено с JSONBin');
+      else setSyncStatus('синхр. OK');
+    } else {
+      setSyncStatus('ошибка получения');
+    }
+  }, Math.max(5, intervalSec) * 1000);
 }
 
 /* apply theme */
@@ -318,28 +344,20 @@ async function fetchWeather(city){
 }
 function weatherText(code){ const map={0:'ясно',1:'малооблачно',2:'облачно',3:'пасмурно',61:'дождь',63:'дождь',80:'ливень'}; return map[code]||'неизв.'; }
 
-/* render menu — reserve spans two columns and has no badge */
+/* render menu */
 function renderMenu(){
   const menuList = document.getElementById('menuList');
   menuList.innerHTML = '';
-
   const servicesActive = document.getElementById('servicesBtn').classList.contains('active');
 
   if(servicesActive){
-    // order (gold)
     menuList.appendChild(makeMenuItem('ЗАКАЗАТЬ','Создать заявку','order','gold'));
-    // reserve spans two columns and has no badge (long button) — placed after order
     menuList.appendChild(makeMenuItem('ЗАБРОНИРОВАТЬ','скоро...','reserve','gold'));
-    // ads (gold)
     menuList.appendChild(makeMenuItem('Объявление услуг','Список объявлений','ads','gold'));
-    // city chat (darkgreen)
     menuList.appendChild(makeMenuItem('City чат','лента твоего города','citychat','darkgreen'));
-    // messenger
     menuList.appendChild(makeMenuItem('Мессенджер','Диалоги','messenger'));
-    // wallet
     menuList.appendChild(makeMenuItem('Кошелёк','Баланс','wallet'));
   } else {
-    // work
     menuList.appendChild(makeMenuItem('Найти заказы','Поиск заявок','findJobs','gold'));
     menuList.appendChild(makeMenuItem('Объявление услуг','Список объявлений','ads2','gold'));
     menuList.appendChild(makeMenuItem('City чат','лента твоего города','citychat2','darkgreen'));
@@ -349,19 +367,17 @@ function renderMenu(){
   }
 }
 
-/* helper to create menu item; tag controls title color */
 function makeMenuItem(title, caption, id, tag){
   const el = document.createElement('div');
   el.className = 'menu-item';
   el.dataset.id = id;
   if(tag) el.dataset.tag = tag;
-  if(id === 'reserve') el.dataset.id = 'reserve';
   el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;width:100%"><div style="min-width:0"><div class="title">${title}</div><div class="caption">${caption}</div></div><div style="opacity:0.9">›</div></div>`;
   el.addEventListener('click', ()=> onMenuClick(id));
   return el;
 }
 
-/* menu click mapping */
+/* menu click */
 function onMenuClick(id){
   if(id === 'order') openOrderModal();
   else if(id === 'reserve') openReserveModal();
@@ -378,24 +394,21 @@ function showModal(html){
   modalBackdrop.style.display = 'flex';
   modalBackdrop.setAttribute('aria-hidden','false');
   document.body.classList.add('modal-open');
-  // bind close buttons inside modal
   modalWindow.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', hideModal));
 }
 function hideModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); modalWindow.innerHTML=''; document.body.classList.remove('modal-open'); }
 modalBackdrop.addEventListener('click', (e)=> { if(e.target === modalBackdrop) hideModal(); });
 
-/* date button */
+/* date */
 function updateDateButton(){
   const btn = document.getElementById('dateButton');
   const now = new Date();
-  const opts = {day:'numeric', month:'short', weekday:'short'};
+  const opts = {day:'numeric', month:'short'};
   btn.textContent = now.toLocaleDateString('ru-RU', opts);
   btn.title = now.toLocaleString();
 }
-document.getElementById('dateButton').addEventListener('click', openCalendarModal);
-document.getElementById('calendarBtn').addEventListener('click', openCalendarModal);
 
-/* settings modal (requires name + surname) + avatar upload */
+/* settings modal */
 function openSettingsModal(forceOpen){
   const cities = Object.keys(CITY_COORDS);
   const themes = Object.keys(THEMES);
@@ -406,9 +419,9 @@ function openSettingsModal(forceOpen){
       <button class="btn" id="uploadAvatarBtn">Загрузить фото</button>
       <img id="avatarPreviewSmall" src="${state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/48/333/fff?text=U'}" style="width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid var(--glass-border)">
     </div>
-    <label>Имя</label><input id="profileName" type="text" value="${state.user && state.user.name ? escapeHtml(state.user.name) : ''}">
-    <label>Фамилия</label><input id="profileSurname" type="text" value="${state.user && state.user.surname ? escapeHtml(state.user.surname) : ''}">
-    <label>Телефон</label><input id="profilePhone" type="tel" value="${state.user && state.user.phone ? escapeHtml(state.user.phone) : ''}">
+    <label>Имя</label><input id="profileName" type="text" value="${escapeHtml(state.user && state.user.name ? state.user.name : '')}">
+    <label>Фамилия</label><input id="profileSurname" type="text" value="${escapeHtml(state.user && state.user.surname ? state.user.surname : '')}">
+    <label>Телефон</label><input id="profilePhone" type="tel" value="${escapeHtml(state.user && state.user.phone ? state.user.phone : '')}">
     <label>Город</label><select id="citySelect">${cities.map(c=>`<option value="${c}" ${c===state.city?'selected':''}>${c}</option>`).join('')}</select>
     <label>Тема</label><select id="themeSelect">${themes.map(t=>`<option value="${t}" ${t===state.theme?'selected':''}>${t}</option>`).join('')}</select>
     <div class="modal-actions"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="saveSettings">Сохранить</button></div>
@@ -423,6 +436,7 @@ function openSettingsModal(forceOpen){
     document.getElementById('avatarPreviewSmall').src = b64;
     document.getElementById('avatarPreviewSmall').dataset.b64 = b64;
   };
+
   document.getElementById('saveSettings').addEventListener('click', ()=>{
     const name = document.getElementById('profileName').value.trim();
     const surname = document.getElementById('profileSurname').value.trim();
@@ -442,7 +456,7 @@ function openSettingsModal(forceOpen){
   });
 }
 
-/* order modal with attach */
+/* order modal */
 function openOrderModal(){
   const services = ['GiD Заказ','Квартира/дом','Такси','Курьер','Мастер/специалист'];
   const modal = `
@@ -482,7 +496,7 @@ function openOrderModal(){
   });
 }
 
-/* reserve modal (no badge) */
+/* reserve modal */
 function openReserveModal(){
   const modal = `<div class="h">Забронировать</div><div class="small">Отсутствуют подключённые заведения к GiDCity</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
   showModal(modal);
@@ -500,7 +514,7 @@ function openAdsModal(){
     if(!title || !text) return alert('Заполните заголовок и текст');
     const authorName = state.user ? `${state.user.name || ''} ${state.user.surname || ''}`.trim() : 'Аноним';
     const authorAvatar = state.user && state.user.avatar ? state.user.avatar : null;
-    const post = {id:Date.now(), cat, title, text, created: new Date().toISOString(), authorName, authorAvatar, city: state.city};
+    const post = {id:Date.now(), cat, title, text, created: new Date().toISOString(), authorName, authorAvatar, city: state.city, likes:0, comments:[]};
     state.cityPosts.unshift(post);
     requestSave();
     addNotification('Опубликовано объявление: ' + title);
@@ -508,12 +522,12 @@ function openAdsModal(){
   });
 }
 
-/* City chat modal: posts with avatar/name, attach image, like/comment/repost */
+/* City chat modal with attach, like/comment/repost */
 function openCityChatModal(){
   const postsHtml = state.cityPosts.map(p=>{
     const author = p.authorName || (state.user ? `${state.user.name || ''} ${state.user.surname || ''}`.trim() : 'Аноним');
     const avatar = p.authorAvatar || (state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/36/333/fff?text=U');
-    const imgHtml = p.image ? `<img src="${p.image}" class="post-image" alt="image">` : '';
+    const imgHtml = p.image ? `<img src="${p.image}" class="post-image" alt="image" style="max-width:100%;border-radius:8px;margin-top:8px">` : '';
     const likes = p.likes || 0;
     const commentsCount = (p.comments && p.comments.length) || 0;
     return `<div class="post" data-id="${p.id}"><div class="post-author"><img src="${avatar}" alt="avatar"><div style="font-weight:900">${escapeHtml(author)}</div></div><div class="meta">${new Date(p.created).toLocaleString()}</div><div>${escapeHtml(p.text||p.title||'')}</div>${imgHtml}<div class="post-actions"><button class="act-btn like-btn" data-id="${p.id}">❤ <span class="like-count">${likes}</span></button><button class="act-btn comment-btn" data-id="${p.id}">💬 <span class="comment-count">${commentsCount}</span></button><button class="act-btn repost-btn" data-id="${p.id}">⤴︎ Репост</button></div><div class="comment-list" id="comments-${p.id}" style="display:${commentsCount? 'block':'none'}">${(p.comments||[]).map(c=>`<div class="comment"><div style="font-weight:800">${escapeHtml(c.author)}</div><div class="small">${escapeHtml(c.text)}</div></div>`).join('')}</div></div>`;
@@ -532,17 +546,9 @@ function openCityChatModal(){
   `;
   showModal(modal);
 
-  // attach image
   document.getElementById('attachImgBtn').addEventListener('click', ()=> fileChatAttach.click());
-  fileChatAttach.onchange = async function(e){
-    const f = e.target.files[0]; if(!f) return;
-    const b64 = await fileToBase64(f);
-    const p = document.getElementById('attachedPreview');
-    p.innerHTML = `<img src="${b64}" style="max-width:120px;border-radius:8px">`;
-    p.dataset.b64 = b64;
-  };
+  fileChatAttach.onchange = async function(e){ const f = e.target.files[0]; if(!f) return; const b64 = await fileToBase64(f); const p = document.getElementById('attachedPreview'); p.innerHTML = `<img src="${b64}" style="max-width:120px;border-radius:8px">`; p.dataset.b64 = b64; };
 
-  // publish
   document.getElementById('publishCityPost').addEventListener('click', ()=>{
     const text = document.getElementById('cityPostText').value.trim();
     const image = document.getElementById('attachedPreview').dataset ? document.getElementById('attachedPreview').dataset.b64 : null;
@@ -553,22 +559,18 @@ function openCityChatModal(){
     state.cityPosts.unshift(post);
     requestSave();
     addNotification('Новый пост в City чате');
-    // render new post at top
     const list = document.getElementById('cityPostsList');
-    const newHtml = `<div class="post" data-id="${post.id}"><div class="post-author"><img src="${post.authorAvatar||'https://via.placeholder.com/36/333/fff?text=U'}" alt="avatar"><div style="font-weight:900">${escapeHtml(post.authorName)}</div></div><div class="meta">${new Date(post.created).toLocaleString()}</div><div>${escapeHtml(post.text)}</div>${post.image?`<img src="${post.image}" class="post-image">`:''}<div class="post-actions"><button class="act-btn like-btn" data-id="${post.id}">❤ <span class="like-count">0</span></button><button class="act-btn comment-btn" data-id="${post.id}">💬 <span class="comment-count">0</span></button><button class="act-btn repost-btn" data-id="${post.id}">⤴︎ Репост</button></div><div class="comment-list" id="comments-${post.id}" style="display:none"></div></div>`;
+    const newHtml = `<div class="post" data-id="${post.id}"><div class="post-author"><img src="${post.authorAvatar||'https://via.placeholder.com/36/333/fff?text=U'}" alt="avatar"><div style="font-weight:900">${escapeHtml(post.authorName)}</div></div><div class="meta">${new Date(post.created).toLocaleString()}</div><div>${escapeHtml(post.text)}</div>${post.image?`<img src="${post.image}" class="post-image" style="max-width:100%;border-radius:8px;margin-top:8px">`:''}<div class="post-actions"><button class="act-btn like-btn" data-id="${post.id}">❤ <span class="like-count">0</span></button><button class="act-btn comment-btn" data-id="${post.id}">💬 <span class="comment-count">0</span></button><button class="act-btn repost-btn" data-id="${post.id}">⤴︎ Репост</button></div><div class="comment-list" id="comments-${post.id}" style="display:none"></div></div>`;
     list.insertAdjacentHTML('afterbegin', newHtml);
-    // bind actions
     bindPostActions(post.id);
-    // clear
     document.getElementById('cityPostText').value='';
     const prev = document.getElementById('attachedPreview'); if(prev){ prev.innerHTML=''; delete prev.dataset.b64; }
   });
 
-  // bind existing posts actions
   (state.cityPosts || []).forEach(p => bindPostActions(p.id));
 }
 
-/* bind post actions */
+/* bind actions for a post */
 function bindPostActions(postId){
   const container = modalWindow.querySelector(`.post[data-id="${postId}"]`);
   if(!container) return;
@@ -592,7 +594,7 @@ function bindPostActions(postId){
     let chat = state.chats.find(c=> (c.name === chosen || c.contact === chosen) );
     if(!chat){ chat = {id:Date.now(), name:chosen, messages:[]}; state.chats.unshift(chat); }
     const post = state.cityPosts.find(p=>String(p.id)===String(postId));
-    const message = {name: state.user ? `${state.user.name} ${state.user.surname||''}`.trim() : 'Вы', text: `Репост: ${post.text}`, ts: new Date().toISOString(), image: post.image || null, avatar: state.user && state.user.avatar ? state.user.avatar : null};
+    const message = {name: state.user ? (state.user.name + ' ' + (state.user.surname||'')) : 'Вы', text: `Репост: ${post.text}`, ts: new Date().toISOString(), image: post.image || null, avatar: state.user && state.user.avatar ? state.user.avatar : null};
     chat.messages = chat.messages || []; chat.messages.push(message);
     requestSave();
     alert('Репост отправлен в чат: ' + chosen);
@@ -618,7 +620,7 @@ function openCommentsModal(postId){
   });
 }
 
-/* messenger & chat (attach images) */
+/* messenger / chats */
 function openMessengerModal(){
   const chatsHtml = (state.chats || []).map(c=>`<div class="post" data-chat-id="${c.id}" style="display:flex;gap:8px;align-items:center"><img src="${c.avatar||'https://via.placeholder.com/44/333/fff?text=C'}" style="width:44px;height:44px;border-radius:8px;object-fit:cover"><div style="flex:1"><div style="font-weight:900">${escapeHtml(c.name||c.contact||'Контакт')}</div><div class="small">${escapeHtml(c.last||'')}</div></div></div>`).join('') || '<div class="small">Список диалогов пуст</div>';
   const modal = `<div class="h">Мессенджер</div><div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn" id="openContacts">Контакты</button><button class="btn" id="createChat">Создать чат</button></div><div class="list" id="chatsList">${chatsHtml}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
@@ -647,8 +649,8 @@ function openMessengerModal(){
 function openChatWindow(chatId){
   const chat = state.chats.find(c=>String(c.id)===String(chatId));
   if(!chat) return alert('Чат не найден');
-  const messagesHtml = (chat.messages || []).map(m=>`<div class="post"><div class="post-author"><img src="${m.avatar||'https://via.placeholder.com/36/333/fff?text=U'}"><div style="font-weight:800">${escapeHtml(m.name||'')}</div></div><div class="meta">${new Date(m.ts).toLocaleString()}</div><div>${escapeHtml(m.text)}</div>${m.image?`<img src="${m.image}" class="post-image">`:''}</div>`).join('') || '<div class="small">Нет сообщений</div>';
-  const modal = `<div class="h">${escapeHtml(chat.name||chat.contact)}</div><div class="list" id="chatMessages">${messagesHtml}</div><div style="display:flex;gap:8px;align-items:center"><input id="chatMsgText" type="text" placeholder="Сообщение" style="flex:1"><button class="btn" id="attachMsgBtn">📎</button><button class="btn primary" id="sendMsgBtn">Отправить</button></div><div id="msgAttachPreview" style="margin-top:8px"></div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
+  const messagesHtml = (chat.messages || []).map(m=>`<div class="post"><div class="post-author"><img src="${m.avatar||'https://via.placeholder.com/36/333/fff?text=U'}"><div style="font-weight:800">${escapeHtml(m.name||'')}</div></div><div class="meta">${new Date(m.ts).toLocaleString()}</div><div>${escapeHtml(m.text)}</div>${m.image?`<img src="${m.image}" class="post-image" style="max-width:100%;border-radius:8px;margin-top:8px">`:''}</div>`).join('') || '<div class="small">Нет сообщений</div>';
+  const modal = `<div class="h">${escapeHtml(chat.name || chat.contact)}</div><div class="list" id="chatMessages">${messagesHtml}</div><div style="display:flex;gap:8px;align-items:center"><input id="chatMsgText" type="text" placeholder="Сообщение" style="flex:1"><button class="btn" id="attachMsgBtn">📎</button><button class="btn primary" id="sendMsgBtn">Отправить</button></div><div id="msgAttachPreview" style="margin-top:8px"></div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
   showModal(modal);
   document.getElementById('attachMsgBtn').addEventListener('click', ()=> fileMessageAttach.click());
   fileMessageAttach.onchange = async e => { const f = e.target.files[0]; if(!f) return; const b64 = await fileToBase64(f); document.getElementById('msgAttachPreview').innerHTML = `<img src="${b64}" style="max-width:120px;border-radius:8px">`; document.getElementById('msgAttachPreview').dataset.b64 = b64; };
@@ -659,19 +661,19 @@ function openChatWindow(chatId){
     const message = {name: state.user ? `${state.user.name} ${state.user.surname||''}`.trim() : 'Вы', text, ts: new Date().toISOString(), avatar: state.user && state.user.avatar ? state.user.avatar : null, image};
     chat.messages = chat.messages || []; chat.messages.push(message); chat.last = text || (image ? 'Изображение' : '');
     requestSave();
-    const list = document.getElementById('chatMessages'); list.insertAdjacentHTML('beforeend', `<div class="post"><div class="post-author"><img src="${message.avatar||'https://via.placeholder.com/36/333/fff?text=U'}"><div style="font-weight:800">${escapeHtml(message.name)}</div></div><div class="meta">${new Date(message.ts).toLocaleString()}</div><div>${escapeHtml(message.text)}</div>${message.image?`<img src="${message.image}" class="post-image">`:''}</div>`);
+    const list = document.getElementById('chatMessages'); list.insertAdjacentHTML('beforeend', `<div class="post"><div class="post-author"><img src="${message.avatar||'https://via.placeholder.com/36/333/fff?text=U'}"><div style="font-weight:800">${escapeHtml(message.name)}</div></div><div class="meta">${new Date(message.ts).toLocaleString()}</div><div>${escapeHtml(message.text)}</div>${message.image?`<img src="${message.image}" class="post-image" style="max-width:100%;border-radius:8px;margin-top:8px">`:''}</div>`);
     document.getElementById('chatMsgText').value=''; const p = document.getElementById('msgAttachPreview'); if(p){ p.innerHTML=''; delete p.dataset.b64; }
   });
 }
 
-/* wallet / find jobs (kept logic) */
+/* wallet & find jobs simplified */
 function openWalletModal(){ const modal = `<div class="h">Кошелёк</div><div style="font-size:26px;font-weight:900">${state.wallet.balance || 0} ₸</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="walletTransfer">Перевести</button><button class="btn" id="walletTopup">Пополнить</button><button class="btn" id="walletWithdraw">Снять</button></div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`; showModal(modal);
   document.getElementById('walletTopup').addEventListener('click', ()=>{ const sum = parseInt(prompt('Сумма пополнения (₸):')||'0',10); if(sum>0){ state.wallet.balance = (state.wallet.balance||0)+sum; requestSave(); alert('Пополнение успешно'); hideModal(); openWalletModal(); }});
   document.getElementById('walletTransfer').addEventListener('click', ()=>{ const to = prompt('Кому (номер):'); const sum = parseInt(prompt('Сумма (₸):')||'0',10); if(!to || sum<=0) return; if((state.wallet.balance||0) < sum) return alert('Недостаточно средств'); state.wallet.balance -= sum; requestSave(); addNotification(`Перевод ${sum}₸ на ${to}`); hideModal();});
   document.getElementById('walletWithdraw').addEventListener('click', ()=>{ const sum = parseInt(prompt('Сумма снятия (₸):')||'0',10); if(sum>0 && (state.wallet.balance||0) >= sum){ state.wallet.balance -= sum; requestSave(); alert('Снятие успешно'); hideModal(); openWalletModal(); } else alert('Ошибка снятия'); });
 }
 
-function openFindJobsModal(){ const jobsHtml = (state.servicesPosts || []).map(o=>`<div class="post"><div class="meta">${o.svc} · ${o.deadline || ''}</div><div style="font-weight:700">${escapeHtml(o.desc)}</div><div class="small">Бюджет ${o.budget} ₸</div><div style="margin-top:8px"><button class="btn" onclick="applyJob(${o.id})">Откликнуться</button></div>${o.image?`<img src="${o.image}" class="post-image">`:''}</div>`).join('') || '<div class="small">Нет заказов</div>'; showModal(`<div class="h">Найти заказы</div><div class="list">${jobsHtml}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`); }
+function openFindJobsModal(){ const jobsHtml = (state.servicesPosts || []).map(o=>`<div class="post"><div class="meta">${o.svc} · ${o.deadline || ''}</div><div style="font-weight:700">${escapeHtml(o.desc)}</div><div class="small">Бюджет ${o.budget} ₸</div><div style="margin-top:8px"><button class="btn" onclick="applyJob(${o.id})">Откликнуться</button></div>${o.image?`<img src="${o.image}" class="post-image" style="max-width:100%;border-radius:8px;margin-top:8px">`:''}</div>`).join('') || '<div class="small">Нет заказов</div>'; showModal(`<div class="h">Найти заказы</div><div class="list">${jobsHtml}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`); }
 window.applyJob = function(orderId){ const budget = prompt('Ваш бюджет (₸):','0'); const comment = prompt('Комментарий:',''); const order = state.servicesPosts.find(o=>o.id==orderId); if(!order) return alert('Заявка не найдена'); addNotification(`Отклик на вашу заявку (${order.svc}): ${budget}₸ — ${comment}`, {type:'proposal', orderId}); requestSave(); hideModal(); alert('Отклик отправлен (демо).'); };
 
 /* notifications */
@@ -699,38 +701,28 @@ function doAuth(){
 /* file to base64 helper */
 function fileToBase64(file){ return new Promise((res,rej)=>{ const r = new FileReader(); r.onload = ()=>res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
 
-/* global file inputs: profile avatar */
+/* file input global handlers */
 fileProfileAvatar.onchange = async function(e){ const f = e.target.files[0]; if(!f) return; const b64 = await fileToBase64(f); state.user = state.user || {}; state.user.avatar = b64; requestSave(); document.getElementById('avatarPreview').innerHTML = `<img src="${b64}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`; };
 
 /* helpers */
 function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* init */
-(async function init(){
-  loadLocal();
-  // try load remote (best-effort)
-  if(USE_JSONBIN){
-    try{ await loadFromJSONBin(); setSyncStatus('синхр. JSONBin'); }catch(e){ console.info('no remote / load error', e); setSyncStatus('локально'); }
-  }
-  applyTheme(state.theme || 'фиолетово-черный');
+/* renderAll */
+function renderAll(){
   document.getElementById('cityName').textContent = state.city || 'Караганда';
   document.getElementById('citySubtitle').textContent = 'Казахстан';
-  updateDateButton();
   updateNotifCount();
   renderMenu();
+  applyTheme(state.theme || 'фиолетово-черный');
   fetchWeather(state.city || 'Караганда');
-  // show avatar if present
   if(state.user && state.user.avatar) document.getElementById('avatarPreview').innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
-  // ensure header date button updates daily
-  setInterval(updateDateButton, 1000*60*30);
-  // if profile incomplete, open settings
-  if(state.user && (!state.user.name || !state.user.surname)) setTimeout(()=>openSettingsModal(true), 400);
-})();
+}
 
-/* UI bindings */
+/* bind UI */
 document.getElementById('servicesBtn').addEventListener('click', ()=>{ document.getElementById('servicesBtn').classList.add('active'); document.getElementById('workBtn').classList.remove('active'); renderMenu(); });
 document.getElementById('workBtn').addEventListener('click', ()=>{ document.getElementById('workBtn').classList.add('active'); document.getElementById('servicesBtn').classList.remove('active'); renderMenu(); });
 document.getElementById('dateButton').addEventListener('click', openCalendarModal);
+document.getElementById('calendarBtn').addEventListener('click', openCalendarModal);
 document.getElementById('settingsBtn').addEventListener('click', ()=>openSettingsModal(false));
 document.getElementById('openNotifs').addEventListener('click', openNotifications);
 
@@ -750,7 +742,27 @@ function tryScheduleNotification(dtISO, text){
   else if(time>0 && time < 1000*60*60*24*7){ setTimeout(()=>{ if(Notification.permission==='granted'){ new Notification('GiDCity — напоминание', {body:text}); addNotification('Напоминание: '+text); } }, time); }
 }
 
-/* utility expose */
+/* init */
+(async function init(){
+  loadLocal();
+  if(USE_JSONBIN){
+    try{ const remoteState = await pullFromJSONBin(); if(remoteState) mergeRemoteState(remoteState); setSyncStatus('синхр. JSONBin'); }catch(e){ console.info('no remote / load error', e); setSyncStatus('локально'); }
+  }
+  applyTheme(state.theme || 'фиолетово-черный');
+  document.getElementById('cityName').textContent = state.city || 'Караганда';
+  updateDateButton();
+  updateNotifCount();
+  renderMenu();
+  fetchWeather(state.city || 'Караганда');
+  if(state.user && (!state.user.name || !state.user.surname)) setTimeout(()=>openSettingsModal(true), 400);
+  if(state.user && state.user.avatar) document.getElementById('avatarPreview').innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
+  // start periodic pull
+  startPeriodicPull(PULL_INTERVAL_SEC);
+  // update date button periodically
+  setInterval(updateDateButton, 1000*60*30);
+})();
+
+/* expose requestSave */
 window.requestSave = requestSave;
 
 </script>
