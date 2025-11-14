@@ -10,91 +10,126 @@
     --bg1:#5b2cff; --bg2:#0a0a0a; --panel:#0a0a0a; --accent:#ffd54a; --glass-bg:rgba(255,255,255,0.02); --glass-border:rgba(255,255,255,0.06);
     --text:#f2f2f2; --muted:rgba(242,242,242,0.62); --radius:12px; --gap:12px;
   }
+
+  /* base layout */
   html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:linear-gradient(160deg,var(--bg1) 0%, #2b0b3a 40%, var(--bg2) 100%);color:var(--text);display:flex;align-items:center;justify-content:center;padding:12px;}
-  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.18));}
-  .header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;backdrop-filter: blur(6px);background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-bottom:1px solid var(--glass-border);position:relative;z-index:30}
+  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.18));position:relative}
+  /* header */
+  .header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;backdrop-filter: blur(6px);background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-bottom:1px solid var(--glass-border);position:relative;z-index:40}
   .title{display:flex;align-items:center;gap:12px}
-  .logo{width:44px;height:44px;border-radius:10px;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(91,44,255,0.12);border:1px solid var(--glass-border)}
-  .app-name{font-weight:800;font-size:18px}
+  .logo{width:44px;height:44px;border-radius:50%;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(91,44,255,0.12);border:1px solid var(--glass-border);overflow:hidden}
+  .logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .app-name{font-weight:900;font-size:18px;display:flex;gap:8px;align-items:center}
+  .app-name small{font-weight:700;font-size:11px;color:var(--muted)}
   .header-center{display:flex;align-items:center;gap:8px}
   .calendar-btn{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);font-weight:700;cursor:pointer}
   .header-actions{display:flex;gap:8px;align-items:center}
   .icon-btn{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);cursor:pointer;position:relative}
   .notif-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#081018;padding:4px 6px;border-radius:12px;font-weight:800;font-size:11px}
+
+  /* content */
   .content{padding:12px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden}
   .top-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
   .city-block{display:flex;flex-direction:column}
   .city-name{font-weight:800;font-size:18px;margin:0}
   .city-sub{font-size:12px;color:var(--muted)}
-  .weather{padding:6px 10px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700}
+  .center-area{display:flex;align-items:center;gap:12px}
+  .weather{padding:6px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700}
+  .status-badge{font-size:12px;color:var(--muted);padding:4px 6px;border-radius:8px;background:rgba(255,255,255,0.01);border:1px solid var(--glass-border)}
+
+  /* tabs */
   .tabs{display:flex;gap:8px;margin-top:6px}
-  .tab{flex:1;padding:8px;border-radius:12px;text-align:center;background:transparent;border:1px solid var(--glass-border);cursor:pointer;color:var(--muted);font-weight:800}
-  .tab.active{background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));color:var(--text);box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25)}
+  .tab{flex:1;padding:8px;border-radius:12px;text-align:center;background:transparent;border:1px solid var(--glass-border);cursor:pointer;color:var(--muted);font-weight:800;transition:all 180ms}
+  .tab.service-active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#081018;box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25);background-color:var(--accent);font-weight:900}
+  .tab.work-active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#081018;box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25);background-color:#4cd964; font-weight:900}
+
+  /* main card */
   .main-card{background:var(--panel);border-radius:14px;padding:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:10px;flex:1;min-height:240px;overflow:hidden}
   .menu-list{flex:1;display:flex;flex-direction:column;gap:10px;overflow:auto;padding-right:6px}
   .menu-item{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;min-height:62px;cursor:pointer}
+  .menu-item.gidchat{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,215,74,0.16)}
   .menu-item .left{display:flex;flex-direction:column}
   .menu-item .title{font-weight:900;font-size:16px}
+  .menu-item .title.gidchat{font-size:18px;letter-spacing:0.6px}
   .menu-item .caption{font-size:12px;color:var(--muted)}
   footer{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.02);font-size:12px;color:var(--muted);text-align:center}
+
   /* map collapse */
-  .map-panel{border-radius:10px;border:1px solid var(--glass-border);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));transition:all 280ms ease}
+  .map-panel{border-radius:10px;border:1px solid var(--glass-border);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));transition:all 280ms ease;position:relative}
   .map-header{display:flex;align-items:center;gap:8px;padding:8px}
   .map-toggle{flex:1;display:flex;align-items:center;gap:8px;cursor:pointer}
   .map-actions{display:flex;gap:6px}
   .map-body{height:260px}
   #map{height:100%}
+  .map-expanded{height:340px}
+
   /* modal */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
   .modal{width:100%;max-width:640px;background:linear-gradient(180deg,var(--panel),#070707);border-radius:12px;padding:14px;border:1px solid var(--glass-border);box-shadow:0 30px 80px rgba(0,0,0,0.7);max-height:90vh;overflow:auto}
+  .modal.fullscreen{max-width:100%;width:100%;height:100%;max-height:100%;border-radius:0;padding:18px;display:flex;flex-direction:column}
+  .modal .modal-body{flex:1;overflow:auto}
   label{font-size:13px;color:var(--muted);display:block;margin:6px 0 4px}
   input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:var(--text)}
   textarea{min-height:90px}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
   .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);font-weight:800}
   .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#081018}
+  .gidchat-holo{padding:10px 14px;border-radius:12px;background:linear-gradient(135deg, rgba(255,215,74,0.08), rgba(255,255,255,0.02));border:1px solid rgba(255,215,74,0.22);box-shadow:0 10px 40px rgba(255,215,74,0.06);font-weight:900}
+
+  /* theme previews in settings */
+  .theme-swatch{width:36px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);display:inline-block;margin-right:8px;vertical-align:middle}
+
+  /* responsive */
   @media(max-width:420px){.phone{width:100%;height:100vh;border-radius:0}}
 </style>
 </head>
 <body>
 <div class="phone" role="application" aria-label="GiDCity prototype">
+  <!-- HEADER -->
   <div class="header">
     <div class="title">
       <div class="logo" id="avatarPreview">G</div>
       <div>
-        <div class="app-name">GiDCity</div>
-        <div style="font-size:12px;color:var(--muted)">мини-приложение</div>
+        <div class="app-name"><span>GiDCity</span> <small>приложение</small></div>
       </div>
     </div>
 
+    <!-- calendar stays in header as requested -->
     <div class="header-center">
       <button class="calendar-btn" id="calendarBtn">Календарь</button>
     </div>
 
     <div class="header-actions">
-      <div class="weather" id="weatherBlock">— °C</div>
       <div class="icon-btn" id="settingsBtn" title="Настройки">⚙️</div>
       <div class="icon-btn" id="notifBtn" title="Уведомления">🔔<div class="notif-badge" id="notifCount">0</div></div>
     </div>
   </div>
 
+  <!-- CONTENT -->
   <div class="content">
     <div class="top-row">
       <div class="city-block">
         <div class="city-name" id="cityName">Караганда</div>
         <div class="city-sub" id="citySub">Казахстан</div>
       </div>
-      <div class="small" id="syncText">макет</div>
+
+      <!-- center area: only weather moved here (calendar left in header) -->
+      <div class="center-area">
+        <div class="weather" id="weatherBlock">— °C</div>
+      </div>
+
+      <!-- right status -->
+      <div class="status-badge" id="syncText">Онлайн</div>
     </div>
 
     <div class="tabs">
-      <div class="tab active" id="tabServices">УСЛУГИ</div>
+      <div class="tab" id="tabServices">УСЛУГИ</div>
       <div class="tab" id="tabWork">РАБОТА</div>
     </div>
 
     <div class="main-card" id="mainCard">
-      <!-- сворачиваемая панель карты (по умолчанию свернута) -->
-      <div class="map-panel" id="mapPanel" style="height:56px">
+      <!-- карта: по умолчанию развёрнута и видна, но сворачивается по клику -->
+      <div class="map-panel map-expanded" id="mapPanel" style="height:340px">
         <div class="map-header">
           <div class="map-toggle" id="mapToggle">
             <div style="font-weight:800">Карта города</div>
@@ -105,7 +140,7 @@
             <button class="btn" id="mapClearBtn">Сброс</button>
           </div>
         </div>
-        <div class="map-body hidden" id="mapBody" style="height:260px;display:none">
+        <div class="map-body" id="mapBody" style="height:260px;display:block">
           <div style="padding:8px;display:flex;gap:8px;align-items:center">
             <input id="mapSearch" placeholder="Поиск адреса или организации" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text)">
             <button class="btn" id="searchBtn">Найти</button>
@@ -130,7 +165,7 @@
 <!-- модалки -->
 <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
   <div class="modal" id="modalWindow" role="dialog" aria-modal="true">
-    <div id="modalContent"></div>
+    <div class="modal-body" id="modalContent"></div>
     <div class="modal-actions" id="modalActions"></div>
   </div>
 </div>
@@ -140,13 +175,14 @@
 
 <script>
 /* ===========================
-   Полный объединённый прототип
-   - Сохранены: auth, JSONBin sync, periodic pull, City chat, Posts, Messenger, Wallet, Reminders и т.д.
-   - Добавлена: сворачиваемая карта с ORS geocode/routing, кнопки A/B, поиск.
+   GiDCity Unified Prototype — full integrated update
+   - All previous features preserved.
+   - New: themes (gold/holo/neon), GIDChat fullscreen, GiD order integrated into "Заказать",
+     weather moved, calendar kept, map expanded by default and fixed controls, tabs colored.
    =========================== */
 
 /* -------------------
-   Конфигурация
+   Configuration
    ------------------- */
 const OPENROUTESERVICE_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcyZWNiZDAxMGJlNTRjY2E4NDQwYTVlYmM2N2U1NzdkIiwiaCI6Im11cm11cjY0In0=';
 const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG';
@@ -155,9 +191,9 @@ const USE_JSONBIN = true;
 const PULL_INTERVAL_MS = 15000;
 
 /* -------------------
-   State load/save
+   State
    ------------------- */
-const appStateKey = 'gidcity_state_live_v2';
+const appStateKey = 'gidcity_state_live_v3';
 let state = {
   __updatedAt: new Date(0).toISOString(),
   user: null,
@@ -173,7 +209,7 @@ let state = {
 function loadState(){ try{ const raw=localStorage.getItem(appStateKey); if(raw) Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn(e); } }
 function localSave(){ localStorage.setItem(appStateKey, JSON.stringify(state)); }
 
-/* JSONBin sync (PUT/GET) */
+/* JSONBin sync helpers (unchanged) */
 async function syncToJSONBin(){ if(!USE_JSONBIN) return; try{
   const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
   state.__updatedAt = new Date().toISOString();
@@ -204,19 +240,34 @@ async function pullAndMerge(){ if(!USE_JSONBIN) return;
 function startPeriodicPull(){ if(pullTimer) clearInterval(pullTimer); if(USE_JSONBIN) pullTimer = setInterval(pullAndMerge, PULL_INTERVAL_MS); }
 
 /* -------------------
-   Helpers / UI refs
+   UI Refs & helpers
    ------------------- */
 function el(id){ return document.getElementById(id); }
 function setSyncStatus(txt){ const s = el('syncText'); if(s) s.textContent = txt; }
 
 /* -------------------
-   Theme
+   Themes
    ------------------- */
-const THEMES = {'фиолетово-черный':{top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a', border:'rgba(255,255,255,0.06)'}};
-function applyTheme(name){ const t=THEMES[name]||THEMES['фиолетово-черный']; document.documentElement.style.setProperty('--bg1', t.top); document.documentElement.style.setProperty('--bg2', t.bottom); document.documentElement.style.setProperty('--accent', t.accent); document.documentElement.style.setProperty('--glass-border', t.border); state.theme=name; localSave(); }
+const THEMES = {
+  'фиолетово-черный':{top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a', border:'rgba(255,255,255,0.06)', glass:'rgba(255,255,255,0.02)'},
+  'gold':{top:'#3b2b14', bottom:'#0b0703', accent:'#ffd54a', border:'rgba(255,215,74,0.12)', glass:'rgba(255,215,74,0.03)'},
+  'holo':{top:'#06103a', bottom:'#0b0033', accent:'#7bf0ff', border:'rgba(123,240,255,0.08)', glass:'rgba(123,240,255,0.03)'},
+  'neon':{top:'#001219', bottom:'#060014', accent:'#ff3bff', border:'rgba(255,59,255,0.12)', glass:'rgba(255,59,255,0.03)'}
+};
+function applyTheme(name){
+  const t = THEMES[name] || THEMES['фиолетово-черный'];
+  document.documentElement.style.setProperty('--bg1', t.top);
+  document.documentElement.style.setProperty('--bg2', t.bottom);
+  document.documentElement.style.setProperty('--accent', t.accent);
+  document.documentElement.style.setProperty('--glass-border', t.border);
+  document.documentElement.style.setProperty('--glass-bg', t.glass);
+  state.theme = name; localSave();
+  // visual tweak: change tab accents if service/work active
+  updateTabsVisual();
+}
 
 /* -------------------
-   Map (collapsed by default)
+   Map (expanded by default)
    ------------------- */
 let map=null, fromMarker=null, toMarker=null, routeLayer=null, searchMarkers=[];
 const DEFAULT_CENTER = {lat:49.8062, lon:73.0851, zoom:13};
@@ -247,7 +298,6 @@ async function geocode(query){
 
 async function buildRoute(fromLatLng, toLatLng){
   try{
-    // try GET
     const url = `https://api.openrouteservice.org/v2/directions/driving-car?start=${fromLatLng.lng},${fromLatLng.lat}&end=${toLatLng.lng},${toLatLng.lat}&api_key=${OPENROUTESERVICE_API_KEY}`;
     let resp = await fetch(url);
     if(!resp.ok){
@@ -268,7 +318,6 @@ async function doMapSearch(q){
   if(!q) return alert('Введите запрос');
   if(!map) initMapIfNeeded();
   const res = await geocode(q);
-  // clear old markers
   searchMarkers.forEach(m=>map.removeLayer(m)); searchMarkers=[];
   if(!res.length){ alert('Ничего не найдено'); return; }
   res.forEach(r=>{
@@ -282,16 +331,16 @@ window.__setFrom = (lat,lon)=>{ setFromPoint(L.latLng(lat,lon)); };
 window.__setTo = (lat,lon)=>{ setToPoint(L.latLng(lat,lon)); };
 
 /* -------------------
-   UI: Menu, Modals, Auth, Posts, Chat, Wallet (восстановлены)
+   Menu & Rendering
    ------------------- */
 function renderMenu(){
   const menuList = el('menuList'); menuList.innerHTML='';
-  const active = el('tabServices').classList.contains('active') ? 'services' : 'work';
+  const active = el('tabServices').classList.contains('service-active') ? 'services' : 'work';
   const items = active==='services' ? [
     {id:'gid_order', title:'GiD Заказ', caption:'Универсальный заказ (всё что угодно)'},
     {id:'order', title:'Заказать', caption:'Создать заявку'},
     {id:'ads', title:'Объявление услуг', caption:'Опубликовать / посмотреть'},
-    {id:'citychat', title:'City чат', caption:'Лента города'},
+    {id:'citychat', title:'GIDChat', caption:'Лента города'},
     {id:'messenger', title:'Мессенджер', caption:'Диалоги'},
     {id:'wallet', title:'Кошелёк', caption:'Баланс'}
   ] : [
@@ -302,47 +351,49 @@ function renderMenu(){
   ];
   items.forEach(it=>{
     const elDiv = document.createElement('div'); elDiv.className='menu-item'; elDiv.dataset.id=it.id;
-    elDiv.innerHTML = `<div class="left"><div class="title">${it.title}</div><div class="caption">${it.caption}</div></div><div style="opacity:0.9">›</div>`;
+    // special styling for GIDChat
+    if(it.id==='citychat'){ elDiv.classList.add('gidchat'); elDiv.innerHTML = `<div class="left"><div class="title gidchat">GIDChat</div><div class="caption">Большая лента города</div></div><div class="gidchat-holo">OPEN</div>`; }
+    else elDiv.innerHTML = `<div class="left"><div class="title">${it.title}</div><div class="caption">${it.caption}</div></div><div style="opacity:0.9">›</div>`;
     elDiv.addEventListener('click', ()=>onMenuClick(it.id));
     menuList.appendChild(elDiv);
   });
 }
 
-/* модалки общие */
-function openModal(html, actionsHtml){
+/* -------------------
+   Modals & Special UI
+   ------------------- */
+function openModal(html, actionsHtml, opts={}){
+  // opts.fullscreen = true -> use fullscreen modal
+  const mb = el('modalBackdrop'), mw = el('modalWindow');
   el('modalContent').innerHTML = html;
   el('modalActions').innerHTML = actionsHtml || '<button class="btn" data-close>Закрыть</button>';
-  el('modalBackdrop').style.display='flex'; el('modalBackdrop').setAttribute('aria-hidden','false');
-  el('modalBackdrop').querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeModal));
-  el('modalBackdrop').addEventListener('click', (e)=>{ if(e.target===el('modalBackdrop')) closeModal(); });
+  if(opts.fullscreen){
+    mw.classList.add('fullscreen');
+  } else {
+    mw.classList.remove('fullscreen');
+  }
+  mb.style.display='flex'; mb.setAttribute('aria-hidden','false');
+  mb.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeModal));
+  mb.addEventListener('click', (e)=>{ if(e.target===mb) closeModal(); });
 }
-function closeModal(){ el('modalBackdrop').style.display='none'; el('modalBackdrop').setAttribute('aria-hidden','true'); el('modalContent').innerHTML=''; el('modalActions').innerHTML=''; }
+function closeModal(){ const mb = el('modalBackdrop'), mw = el('modalWindow'); mb.style.display='none'; mb.setAttribute('aria-hidden','true'); el('modalContent').innerHTML=''; el('modalActions').innerHTML=''; mw.classList.remove('fullscreen'); }
 
-/* Basic modals (Order, GiD Order, Ads, CityChat, Messenger, Wallet) - simplified but full logic preserved */
-function openGiDOrder(){
-  const html = `<div class="h"><strong>GiD Заказ</strong></div>
-    <label>Услуга</label><select id="gidType"><option>Такси</option><option>Курьер</option><option>Мастер</option><option>Квартира</option><option>Другое</option></select>
-    <label>Описание</label><textarea id="gidDesc"></textarea>
-    <label>Адрес</label><input id="gidAddr">
-    <label>Телефон</label><input id="gidPhone" placeholder="+7...">`;
-  const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="gidCreate">Создать</button>';
-  openModal(html, actions);
-  setTimeout(()=>{ document.getElementById('gidCreate').addEventListener('click', ()=>{
-    const type=document.getElementById('gidType').value, desc=document.getElementById('gidDesc').value.trim(), addr=document.getElementById('gidAddr').value.trim();
-    if(!desc||!addr) return alert('Опишите задачу и укажите адрес');
-    state.servicesPosts.unshift({id:Date.now(), type, desc, addr, created:new Date().toISOString()}); localSave(); addNotification('Создан GiD заказ'); closeModal();
-  }); },50);
-}
-
-function openOrderModal(){
+/* GiD Заказ integrated into Order modal */
+function openOrderModal(preselectCategory){
   const categories = ['Такси','Курьер','Квартира/Дом','Мастер','GiD Заказ'];
   let html = `<div class="h"><strong>Создать заявку</strong></div><label>Категория</label><select id="ordCat">${categories.map(c=>`<option>${c}</option>`).join('')}</select><div id="ordDynamic"></div><label>Бюджет (₸)</label><input id="ordBudget" type="number" value="0">`;
   const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="ordCreate">Создать</button>';
   openModal(html, actions);
-  setTimeout(()=>{ populateDynamicFields(); document.getElementById('ordCat').addEventListener('change', populateDynamicFields);
+  setTimeout(()=>{ 
+    if(preselectCategory){
+      const sel = document.getElementById('ordCat');
+      sel.value = preselectCategory;
+    }
+    populateDynamicFields(); 
+    document.getElementById('ordCat').addEventListener('change', populateDynamicFields);
     document.getElementById('ordCreate').addEventListener('click', ()=>{
       const cat=document.getElementById('ordCat').value; const budget=document.getElementById('ordBudget').value; const dyn=captureDynamicFields();
-      if(!dyn) return; state.servicesPosts.unshift({id:Date.now(),cat,budget,dyn,created:new Date().toISOString()}); localSave(); addNotification('Новая заявка'); closeModal();
+      if(!dyn) return; state.servicesPosts.unshift({id:Date.now(),cat,budget,dyn,created:new Date().toISOString()}); localSave(); addNotification('Новая заявка: '+cat); closeModal();
     });
   },50);
 }
@@ -350,9 +401,9 @@ function populateDynamicFields(){
   const cat=document.getElementById('ordCat').value; const cont=el('ordDynamic'); cont.innerHTML='';
   if(cat==='Такси'){ cont.innerHTML=`<label>Откуда</label><input id="taxFrom"><label>Куда</label><input id="taxTo"><label>Пассажиры</label><input id="taxPax" type="number" value="1">`; }
   else if(cat==='Курьер'){ cont.innerHTML=`<label>Откуда</label><input id="curFrom"><label>Куда</label><input id="curTo"><label>Вес/габариты</label><input id="curSize">`; }
-  else if(cat==='Квартира/Дом'){ cont.innerHTML=`<label>Адрес</label><input id="homeAddr"><label>Описание</label><textarea id="homeDesc"></textarea><label>Фото</label><input id="homeFile" type="file" accept="image/*">`; document.getElementById('homeFile').addEventListener('change', async e=>{ const f=e.target.files[0]; if(!f) return; cont.dataset.file=await fileToBase64(f); }); }
+  else if(cat==='Квартира/Дом'){ cont.innerHTML=`<label>Адрес</label><input id="homeAddr"><label>Описание</label><textarea id="homeDesc"></textarea><label>Фото</label><input id="homeFile" type="file" accept="image/*">`; document.getElementById('homeFile')?.addEventListener('change', async e=>{ const f=e.target.files[0]; if(!f) return; cont.dataset.file=await fileToBase64(f); }); }
   else if(cat==='Мастер'){ cont.innerHTML=`<label>Адрес</label><input id="mAddr"><label>Вид работ</label><input id="mType"><label>Время</label><input id="mTime" type="time">`; }
-  else { cont.innerHTML=`<label>Описание</label><textarea id="gDesc"></textarea><label>Адрес</label><input id="gAddr">`; }
+  else { /* GiD Заказ - универсальная форма с критериями услуг */ cont.innerHTML=`<label>Тип услуги</label><select id="gidType"><option>Любая</option><option>Покупка</option><option>Доставка</option><option>Помощь</option><option>Мастер</option></select><label>Критерии / Доп. параметры</label><input id="gidCriteria" placeholder="Например: срочно, бюджет до 5000..."><label>Описание</label><textarea id="gDesc"></textarea><label>Адрес</label><input id="gAddr">`; }
 }
 function captureDynamicFields(){
   const cat=document.getElementById('ordCat').value;
@@ -360,24 +411,37 @@ function captureDynamicFields(){
   if(cat==='Курьер'){ const f=document.getElementById('curFrom').value.trim(), t=document.getElementById('curTo').value.trim(); if(!f||!t){alert('Укажите адреса');return null;} return {from:f,to:t,size:document.getElementById('curSize').value}; }
   if(cat==='Квартира/Дом'){ const a=document.getElementById('homeAddr').value.trim(), d=document.getElementById('homeDesc').value.trim(); if(!a||!d){alert('Укажите адрес и описание');return null;} return {addr:a,desc:d,file:el('ordDynamic').dataset.file||null}; }
   if(cat==='Мастер'){ const a=document.getElementById('mAddr').value.trim(), ty=document.getElementById('mType').value.trim(); if(!a||!ty){alert('Укажите адрес и вид работ');return null;} return {addr:a,type:ty,time:document.getElementById('mTime').value}; }
-  const d=document.getElementById('gDesc').value.trim(), a=document.getElementById('gAddr').value.trim(); if(!d||!a){alert('Заполните описание и адрес');return null;} return {desc:d,addr:a};
+  const d=document.getElementById('gDesc') ? document.getElementById('gDesc').value.trim() : ''; const a=document.getElementById('gAddr') ? document.getElementById('gAddr').value.trim() : '';
+  if(cat==='GiD Заказ'){ const type=document.getElementById('gidType').value, crit=document.getElementById('gidCriteria').value.trim(); if(!d||!a){alert('Заполните описание и адрес');return null;} return {type,criteria:crit,desc:d,addr:a}; }
+  if(!d||!a){alert('Заполните описание и адрес');return null;} return {desc:d,addr:a};
 }
 
 /* Ads */
 function openAdsModal(){ const html=`<div class="h"><strong>Объявление</strong></div><label>Заголовок</label><input id="adTitle"><label>Текст</label><textarea id="adText"></textarea>`; const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="publishAd">Опубликовать</button>'; openModal(html, actions); setTimeout(()=>{ document.getElementById('publishAd').addEventListener('click', ()=>{ const t=el('adTitle').value.trim(), txt=el('adText').value.trim(); if(!t||!txt) return alert('Заполните'); state.cityPosts.unshift({id:Date.now(),title:t,text:txt,created:new Date().toISOString()}); localSave(); addNotification('Опубликовано объявление'); closeModal(); }); },50); }
 
-/* City chat / messenger / wallet basic */
-function openCityChat(){ const html=`<div class="h"><strong>City чат</strong></div><div class="small">Лента</div>`; openModal(html,'<button class="btn" data-close>Закрыть</button>'); }
+/* City chat / GIDChat fullscreen */
+function openGIDChatFull(){
+  // fullscreen modal with big feed
+  const postsHtml = (state.cityPosts||[]).map(p=>`<div style="padding:12px;border-bottom:1px solid var(--glass-border);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);margin-bottom:8px;border-radius:8px"><div style="font-weight:900">${p.title||'Пост'}</div><div class="small" style="color:var(--muted)">${new Date(p.created).toLocaleString()}</div><div style="margin-top:8px">${p.text||''}</div></div>`).join('')||'<div class="small">Лента пуста</div>';
+  const html = `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:900;font-size:20px">GIDChat — ${state.city}</div><div style="display:flex;gap:8px"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="newPostBtn">+ Пост</button></div></div><div style="flex:1;overflow:auto">${postsHtml}</div>`;
+  openModal(html, '', {fullscreen:true});
+  setTimeout(()=>{ el('newPostBtn')?.addEventListener('click', ()=>{ openAdsModal(); }); },50);
+}
+
+/* Messenger & Wallet (preserved) */
 function openMessenger(){ openModal('<div class="h"><strong>Мессенджер</strong></div><div class="small">Список диалогов (демо)</div>','<button class="btn" data-close>Закрыть</button>'); }
 function openWallet(){ const html=`<div class="h"><strong>Кошелёк</strong></div><div style="font-size:24px;font-weight:900">${state.wallet.balance||0} ₸</div>`; openModal(html,'<button class="btn" data-close>Закрыть</button>'); }
 
-/* Settings (restored) */
+/* Settings with theme selection (added futures) */
 function openSettingsModal(forceOpen){
   const cities = ['Караганда','Нур-Султан','Алматы'];
   const themes = Object.keys(THEMES);
-  const html = `<div class="h"><strong>Настройки</strong></div>
+  const html = `<div class="h" style="display:flex;justify-content:space-between;align-items:center"><strong>Настройки</strong><div style="font-size:12px;color:var(--muted)">Тема: <strong>${state.theme}</strong></div></div>
     <label>Аватар</label><button class="btn" id="uploadAvatar">Загрузить</button><img id="avatarPreviewSmall" src="" style="width:44px;height:44px;border-radius:8px;margin-left:8px;vertical-align:middle">
-    <label>Имя</label><input id="profileName"><label>Фамилия</label><input id="profileSurname"><label>Телефон</label><input id="profilePhone"><label>Город</label><select id="citySelect">${cities.map(c=>`<option>${c}</option>`).join('')}</select><label>Тема</label><select id="themeSelect">${themes.map(t=>`<option>${t}</option>`).join('')}</select>`;
+    <label>Имя</label><input id="profileName"><label>Фамилия</label><input id="profileSurname"><label>Телефон</label><input id="profilePhone"><label>Город</label><select id="citySelect">${cities.map(c=>`<option>${c}</option>`).join('')}</select>
+    <label>Тема</label><select id="themeSelect">${themes.map(t=>`<option>${t}</option>`).join('')}</select>
+    <div style="margin-top:8px"><span class="theme-swatch" id="sw1" style="background:linear-gradient(90deg,#5b2cff,#2b0b3a)"></span><span class="theme-swatch" id="sw2" style="background:linear-gradient(90deg,#3b2b14,#0b0703)"></span><span class="theme-swatch" id="sw3" style="background:linear-gradient(90deg,#06103a,#0b0033)"></span><span class="theme-swatch" id="sw4" style="background:linear-gradient(90deg,#001219,#060014)"></span> — примеры тем</div>
+  `;
   const actions = '<button class="btn" data-close>Закрыть</button><button class="btn primary" id="saveSettings">Сохранить</button>';
   openModal(html, actions);
   setTimeout(()=>{
@@ -394,13 +458,13 @@ function openSettingsModal(forceOpen){
       const b64 = document.getElementById('avatarPreviewSmall').dataset ? document.getElementById('avatarPreviewSmall').dataset.b64 : null;
       if(b64) state.user.avatar = b64;
       state.city = el('citySelect').value;
-      state.theme = el('themeSelect').value;
-      applyTheme(state.theme); localSave(); closeModal(); renderAll();
+      const chosenTheme = el('themeSelect').value || state.theme;
+      applyTheme(chosenTheme); localSave(); closeModal(); renderAll();
     });
   },50);
 }
 
-/* Auth (restored) */
+/* Auth */
 function openAuthModal(){
   const html=`<div class="h"><strong>Авторизация</strong></div><label>Имя</label><input id="authName"><label>Телефон</label><input id="authPhone"><label>PIN (4 цифры)</label><input id="authPIN" maxlength="4">`;
   const actions = '<button class="btn" data-close>Пропустить</button><button class="btn primary" id="authSubmit">Войти</button>';
@@ -408,29 +472,29 @@ function openAuthModal(){
   setTimeout(()=>{ document.getElementById('authSubmit').addEventListener('click', ()=>{ const name=el('authName').value.trim(); const phone=el('authPhone').value.trim(); const pin=el('authPIN').value.trim(); if(!name||!phone||!/^\d{4}$/.test(pin)){ alert('Заполните корректно'); return; } state.user = state.user||{}; state.user.name=name; state.user.phone=phone; state.user.pin=pin; localSave(); addNotification('Пользователь вошёл: '+name); closeModal(); renderAll(); }); },50);
 }
 
-/* Notifications & add */
+/* Notifications & helper */
 function addNotification(text, meta={}){
   state.notifications.unshift({id:Date.now(), text, meta, ts:new Date().toISOString()}); localSave(); updateNotifCount();
 }
 function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
 
-/* Posts: City chat, ads - simplified rendering */
+/* City posts feed modal (smaller) */
 function openCityChatModal(){
   const postsHtml = (state.cityPosts||[]).map(p=>`<div style="padding:8px;border-bottom:1px solid var(--glass-border)"><div style="font-weight:800">${p.title||'Пост'}</div><div class="small">${new Date(p.created).toLocaleString()}</div><div style="margin-top:6px">${p.text||''}</div></div>`).join('')||'<div class="small">Лента пуста</div>';
   openModal(`<div class="h"><strong>City чат — ${state.city}</strong></div><div style="max-height:320px;overflow:auto">${postsHtml}</div>`,'<button class="btn" data-close>Закрыть</button>');
 }
 
-/* Utility to read files */
+/* helpers */
 function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); }); }
 
 /* -------------------
    Menu click router
    ------------------- */
 function onMenuClick(id){
-  if(id==='gid_order') openGiDOrder();
+  if(id==='gid_order'){ openOrderModal('GiD Заказ'); } // integrated: preselect GiD
   else if(id==='order') openOrderModal();
   else if(id==='ads') openAdsModal();
-  else if(id==='citychat') openCityChatModal();
+  else if(id==='citychat') openGIDChatFull();
   else if(id==='messenger') openMessenger();
   else if(id==='wallet') openWallet();
   else if(id==='findJobs') alert('Поиск заказов — демо');
@@ -439,18 +503,19 @@ function onMenuClick(id){
 }
 
 /* -------------------
-   Render all
+   Render & misc
    ------------------- */
 function renderAll(){
   el('cityName').textContent = state.city || 'Караганда';
   updateNotifCount();
   renderMenu();
   applyTheme(state.theme || 'фиолетово-черный');
-  // weather quick
   fetchWeather();
   // avatar preview
-  if(state.user && state.user.avatar) el('avatarPreview').innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
-  setSyncStatus('локально');
+  if(state.user && state.user.avatar) el('avatarPreview').innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  setSyncStatus('Онлайн');
+  // ensure map visible
+  setTimeout(()=>{ initMapIfNeeded(); if(map) map.invalidateSize(); },300);
 }
 
 /* -------------------
@@ -468,43 +533,50 @@ async function fetchWeather(){
 }
 
 /* -------------------
-   Init & Events
+   Tabs visual update + events
    ------------------- */
+function updateTabsVisual(){
+  const s = el('tabServices'), w = el('tabWork');
+  // remove all classes
+  s.className = 'tab'; w.className = 'tab';
+  // determine which is active by dataset (we use class on click handlers)
+  if(s.dataset.active === '1') { s.classList.add('service-active'); }
+  if(w.dataset.active === '1') { w.classList.add('work-active'); }
+}
 document.addEventListener('DOMContentLoaded', async ()=>{
   loadState();
+  // default: services active
+  el('tabServices').dataset.active = '1';
   renderAll();
-  // JSONBin initial load
+
+  // JSONBin load
   if(USE_JSONBIN){
     try{
       const data = await loadFromJSONBin();
-      if(data && data.record && data.record.state){
-        state = data.record.state; if(data.updatedAt) state.__updatedAt = data.updatedAt; localSave();
-      }
+      if(data && data.record && data.record.state){ state = data.record.state; if(data.updatedAt) state.__updatedAt = data.updatedAt; localSave(); }
     }catch(e){ console.warn(e); }
   }
   startPeriodicPull();
 
-  // ui bindings
-  el('tabServices').addEventListener('click', ()=>{ el('tabServices').classList.add('active'); el('tabWork').classList.remove('active'); renderMenu(); });
-  el('tabWork').addEventListener('click', ()=>{ el('tabWork').classList.add('active'); el('tabServices').classList.remove('active'); renderMenu(); });
+  // UI bindings
+  el('tabServices').addEventListener('click', ()=>{ el('tabServices').dataset.active='1'; el('tabWork').dataset.active='0'; updateTabsVisual(); renderMenu(); });
+  el('tabWork').addEventListener('click', ()=>{ el('tabWork').dataset.active='1'; el('tabServices').dataset.active='0'; updateTabsVisual(); renderMenu(); });
   el('settingsBtn').addEventListener('click', ()=>openSettingsModal());
   el('calendarBtn').addEventListener('click', ()=>openCalendar());
   el('notifBtn').addEventListener('click', ()=>{ openNotifications(); });
 
-  // map toggle (collapsed by default)
+  // map toggle
   const mapToggle = el('mapToggle');
   mapToggle.addEventListener('click', ()=>{
-    const body = el('mapBody');
+    const body = el('mapBody'), panel = el('mapPanel');
     if(body.style.display==='none' || body.style.display==='') {
-      body.style.display='block';
-      el('mapPanel').style.height='340px';
-      // init map first time
-      setTimeout(()=>{ initMapIfNeeded(); },200);
+      body.style.display='block'; panel.classList.add('map-expanded'); panel.style.height='340px';
+      setTimeout(()=>{ initMapIfNeeded(); if(map) map.invalidateSize(); },200);
     } else {
-      body.style.display='none';
-      el('mapPanel').style.height='56px';
+      body.style.display='none'; panel.classList.remove('map-expanded'); panel.style.height='56px';
     }
   });
+
   // map controls
   el('searchBtn').addEventListener('click', ()=>{ const q=el('mapSearch').value.trim(); if(!q) return alert('Введите запрос'); initMapIfNeeded(); doMapSearch(q); });
   el('setFromBtn').addEventListener('click', ()=>{ initMapIfNeeded(); map._setMode='from'; alert('Кликните по карте, чтобы выбрать отправление (A)'); });
@@ -536,10 +608,6 @@ function openNotifications(){
 
 /* helpers */
 function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
-
-/* -------------------
-   Fin
-   ------------------- */
 
 </script>
 </body>
