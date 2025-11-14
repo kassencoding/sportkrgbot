@@ -3,713 +3,561 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>GiDCity — прототип (с картой и JSONBin)</title>
-<meta name="description" content="GiDCity prototype with JSONBin sync, OpenRouteService routing, media uploads.">
-<!-- Leaflet CSS for map -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin=""/>
+<title>GiDCity — прототип (карта + заявки)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root{
-    --bg1: #5b2cff;
-    --bg2: #0a0a0a;
-    --panel-bg: #0a0a0a;
-    --accent: #ffd54a;
-    --glass-bg: rgba(255,255,255,0.02);
+    --bg-top:#5b2cff;
+    --bg-bottom:#0a0a0a;
+    --panel:#0a0a0a;
+    --accent:#ffd54a;
+    --glass: rgba(255,255,255,0.03);
     --glass-border: rgba(255,255,255,0.06);
-    --text: #f2f2f2;
-    --muted: rgba(242,242,242,0.62);
-    --radius: 12px;
-    --gap: 12px;
+    --text:#eaeef6;
+    --muted:rgba(234,238,246,0.6);
+    --radius:12px;
+    --phone-w:380px;
   }
-  html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(160deg,var(--bg1) 0%, #2b0b3a 40%, var(--bg2) 100%);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;padding:12px;}
-  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.18));}
-  /* fixed top header */
-  .header{position:sticky;top:0;z-index:30;padding:14px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);backdrop-filter: blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);}
-  .title{display:flex;align-items:center;gap:12px;}
-  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--glass-border);}
-  .app-name{font-weight:800;font-size:20px;margin:0;}
-  .header-center{display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .header-actions{display:flex;gap:8px;align-items:center;}
-  .icon-btn{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);cursor:pointer;}
-  .content{padding:12px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:auto;}
-  .city-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-  .city-block{display:flex;gap:12px;align-items:center;}
-  .city-name{font-weight:700;font-size:18px;margin:0;}
-  .weather{font-size:13px;color:var(--muted);background:var(--panel-bg);padding:8px 12px;border-radius:14px;border:1px solid var(--glass-border);min-width:120px;text-align:center;}
-  /* tabs simplified */
-  .toggle{display:flex;gap:10px;background:var(--panel-bg);padding:8px;border-radius:14px;border:1px solid var(--glass-border);position:relative;}
-  .toggle button{flex:1;padding:10px 8px;border-radius:10px;background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer;}
-  .toggle button.active{color:var(--text);}
-  /* main card vertical list for symmetry */
-  .main-card{margin-top:6px;background:var(--panel-bg);border-radius:14px;padding:12px;border:1px solid var(--glass-border);box-shadow:0 8px 20px rgba(0,0,0,0.45);display:flex;flex-direction:column;gap:12px;}
-  .notif-row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));}
-  .notif-left{font-weight:800;font-size:16px;}
-  .menu-list{display:flex;flex-direction:column;gap:10px;}
-  .menu-item{background:rgba(255,255,255,0.01);padding:18px;border-radius:12px;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-  .menu-item .title{font-weight:900;font-size:18px;}
-  .menu-item .caption{color:var(--muted);font-size:13px}
-  .footer{padding:12px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02)}
-  /* modal backdrop */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
-  .modal{width:100%;max-width:420px;border-radius:12px;background:linear-gradient(180deg,var(--panel-bg),#0b0b0b);border:1px solid var(--glass-border);padding:14px;box-shadow:0 30px 80px rgba(0,0,0,0.7);}
-  .modal .h{font-weight:900;margin-bottom:8px;font-size:18px;}
-  label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
-  input,textarea,select{width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:var(--text);outline:none;box-sizing:border-box;}
-  .modal-actions{display:flex;gap:8px;justify-content:space-between;margin-top:12px;}
-  .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:800;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));color:var(--text);}
-  .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#111;}
-  .small{font-size:13px;color:var(--muted);}
-  .post{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px;}
-  .post-author{display:flex;align-items:center;gap:8px;}
-  .post-author img{width:36px;height:36px;border-radius:50%;object-fit:cover;}
-  .post-actions{display:flex;gap:12px;align-items:center;color:var(--muted);font-weight:700;}
-  .map-container{height:240px;border-radius:12px;overflow:hidden;border:1px solid var(--glass-border)}
-  /* small helpers */
-  .hidden{display:none !important;}
-  @media (max-width:420px){.phone{width:100%}}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(160deg,var(--bg-top) 0%, #2b0b3a 40%, var(--bg-bottom) 100%);color:var(--text);display:flex;align-items:center;justify-content:center;padding:12px;}
+  .phone{width:var(--phone-w);max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.18));}
+  .header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--glass-border);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);position:relative;z-index:10}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo .pic{width:44px;height:44px;border-radius:10px;background:var(--glass);display:flex;align-items:center;justify-content:center}
+  .app-title{font-weight:800;font-size:18px}
+  .header-center{display:flex;align-items:center;gap:8px}
+  .calendar-btn{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border);cursor:pointer;font-weight:700}
+  .header-actions{display:flex;align-items:center;gap:8px}
+  .icon-btn{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass);border:1px solid var(--glass-border);cursor:pointer;position:relative}
+  .notif-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#081018;padding:4px 6px;border-radius:12px;font-weight:800;font-size:11px}
+  .content{padding:12px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .city-block{display:flex;flex-direction:column}
+  .city-name{font-weight:800;font-size:18px;margin:0}
+  .city-sub{font-size:12px;color:var(--muted)}
+  .weather{padding:6px 10px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700}
+  .tabs{display:flex;gap:8px;margin-top:6px}
+  .tab{flex:1;padding:8px;border-radius:12px;text-align:center;background:transparent;border:1px solid var(--glass-border);cursor:pointer;color:var(--muted);font-weight:800}
+  .tab.active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25)}
+  .main-card{background:var(--panel);border-radius:14px;padding:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:10px;flex:1;min-height:300px;overflow:hidden}
+  /* menu vertical */
+  .menu-list{display:flex;flex-direction:column;gap:10px;overflow:auto;padding-right:6px}
+  .menu-item{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;min-height:62px;cursor:pointer}
+  .menu-item .left{display:flex;flex-direction:column}
+  .menu-item .title{font-weight:900;font-size:16px}
+  .menu-item .caption{font-size:12px;color:var(--muted)}
+  /* map block */
+  #mapBlock{height:260px;border-radius:10px;overflow:hidden;border:1px solid var(--glass-border)}
+  .map-controls{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+  .search{flex:1;display:flex;gap:8px}
+  .search input{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:var(--text)}
+  .map-actions{display:flex;gap:6px}
+  .small{font-size:12px;color:var(--muted)}
+  footer{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.02);font-size:12px;color:var(--muted);text-align:center}
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
+  .modal{width:100%;max-width:560px;background:linear-gradient(180deg,var(--panel),#070707);border-radius:12px;padding:14px;border:1px solid var(--glass-border);box-shadow:0 30px 80px rgba(0,0,0,0.7);max-height:90vh;overflow:auto}
+  label{font-size:13px;color:var(--muted);display:block;margin:6px 0 4px}
+  input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:var(--text)}
+  textarea{min-height:90px}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+  .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);font-weight:800}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#081018}
+  /* leafleft map container */
+  #map{height:100%;width:100%}
+  /* responsive tweak */
+  @media(max-width:420px){ .phone{width:100%;height:100vh;border-radius:0} }
 </style>
 </head>
 <body>
-
-<div class="phone" role="application" aria-label="GiDCity">
+<div class="phone" role="application" aria-label="GiDCity prototype">
   <div class="header">
-    <div class="title">
-      <div class="logo" id="avatarPreview">
-        <img id="avatarImg" src="https://via.placeholder.com/48/333333/fff?text=U" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:8px">
-      </div>
-      <div>
-        <div class="app-name" id="appTitle">GiDCity</div>
+    <div class="logo">
+      <div class="pic" id="avatarPreview">G</div>
+      <div style="display:flex;flex-direction:column">
+        <div class="app-title">GiDCity</div>
         <div class="small">мини-приложение</div>
       </div>
     </div>
 
-    <div class="header-center" id="headerCenter">
-      <!-- NOTE: greeting removed from persistent; kept minimal -->
-      <div id="dateButton" class="icon-btn" style="padding:8px 12px;border-radius:18px;background:var(--panel-bg);font-weight:800">17 нояб 2025</div>
+    <div class="header-center">
+      <!-- Календарь по центру вместо приветствия -->
+      <button class="calendar-btn" id="calendarBtn">Календарь — открыть</button>
     </div>
 
     <div class="header-actions">
-      <div class="icon-btn" id="calendarBtn" title="Календарь">📅</div>
-      <div class="icon-btn" id="settingsBtn" title="Настройки">⚙️</div>
+      <!-- погода -->
+      <div class="weather" id="weatherBlock">— °C</div>
+      <!-- уведомления вместо синхронизации -->
+      <div class="icon-btn" id="notifBtn" title="Уведомления">
+        🔔
+        <div class="notif-badge" id="notifCount">0</div>
+      </div>
     </div>
   </div>
 
   <div class="content">
-    <div class="city-row">
+    <div class="top-row">
       <div class="city-block">
-        <div>
-          <div class="city-name" id="cityName">Караганда</div>
-          <div class="small" id="citySubtitle">Казахстан</div>
+        <div class="city-name" id="cityName">Караганда</div>
+        <div class="city-sub" id="citySub">Казахстан</div>
+      </div>
+      <div class="small" id="syncText">шаблон / макет</div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Разделы">
+      <div class="tab active" id="tabServices">УСЛУГИ</div>
+      <div class="tab" id="tabWork">РАБОТА</div>
+    </div>
+
+    <div class="main-card" id="mainCard" role="region" aria-label="Главный блок">
+      <!-- карта (вместо "Уведомления" длинной кнопки) -->
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="map-controls">
+          <div class="search">
+            <input type="text" id="mapSearch" placeholder="Поиск адреса или организации">
+            <button class="btn" id="searchBtn">Найти</button>
+          </div>
+          <div class="map-actions">
+            <button class="btn" id="setFromBtn" title="Отметить отправление">A</button>
+            <button class="btn" id="setToBtn" title="Отметить пункт назначения">B</button>
+            <button class="btn" id="routeBtn" title="Построить маршрут">Построить</button>
+            <button class="btn" id="clearRoute">Очистить</button>
+          </div>
         </div>
-        <div class="weather" id="weatherBlock">— °C · —</div>
-      </div>
-      <div class="small" id="syncSmall">Последняя синхр.: локально</div>
-    </div>
-
-    <div class="toggle" role="tablist" aria-label="Выбор">
-      <button id="servicesBtn" class="active">УСЛУГИ</button>
-      <button id="workBtn">РАБОТА</button>
-    </div>
-
-    <div class="main-card" role="region" aria-label="Главное меню">
-      <!-- уведомления сверху как отдельная строка -->
-      <div class="notif-row" id="notifRow">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div class="notif-left">Уведомления <span class="small" style="margin-left:8px;color:var(--muted)">Новые события</span></div>
-          <div style="display:flex;gap:8px;align-items:center"><div id="notifDot" style="background:var(--accent);color:#111;padding:6px 10px;border-radius:14px;font-weight:800">0</div></div>
+        <div id="mapBlock"><div id="map"></div></div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="small">Найдено: <span id="searchCount">0</span></div>
+          <div class="small" style="margin-left:auto">Карта: OpenRouteService</div>
         </div>
-        <div><button class="btn" id="openNotifs">Открыть</button></div>
       </div>
 
-      <div class="menu-list" id="menuList" aria-live="polite">
-        <!-- menu items are filled by JS -->
+      <!-- меню вертикальным столбцом -->
+      <div style="margin-top:8px">
+        <div class="menu-list" id="menuList" aria-label="Меню">
+          <!-- items inserted by JS -->
+        </div>
       </div>
-
-      <!-- map preview fixed inside main card (optional) -->
-      <div class="map-container" id="mapContainer"></div>
     </div>
-
-    <div class="small" id="bottomNote">KASSEN Technology Inc.</div>
   </div>
 
-  <div class="footer" id="footerSync">Последняя синхр.: локально. (JSONBin)</div>
+  <footer id="appFooter">GiDCity • макет прототип — карта: OpenRouteService</footer>
 </div>
 
-<!-- modals -->
-<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
-  <div class="modal" id="modalWindow" role="document" aria-modal="true"></div>
-</div>
-
-<!-- auth modal shown initially -->
-<div class="modal-backdrop" id="authBackdrop" style="display:flex;">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="h">Авторизация</div>
-    <div class="small">Для входа введите имя, номер телефона и PIN (4 цифры)</div>
-    <label for="authName">Имя</label>
-    <input id="authName" type="text" placeholder="Ваше имя">
-    <label for="authPhone">Номер телефона</label>
-    <input id="authPhone" type="tel" placeholder="+7...">
-    <label for="authPIN">PIN</label>
-    <input id="authPIN" type="password" maxlength="4" inputmode="numeric" placeholder="1234">
-    <div class="modal-actions">
-      <!-- primary left, cancel right -->
-      <button class="btn primary" id="authSubmit">Войти</button>
-      <button class="btn" id="authSkip">Пропустить</button>
-    </div>
-    <div class="small" style="color:var(--accent);margin-top:8px">Примечание: в продакшне аутентификацию реализовать на сервере.</div>
+<!-- модалки -->
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+  <div class="modal" id="modalWindow" role="dialog" aria-modal="true">
+    <div id="modalContent"></div>
+    <div class="modal-actions" id="modalActions"></div>
   </div>
 </div>
 
-<!-- hidden file inputs -->
-<input id="fileProfileAvatar" type="file" accept="image/*" class="hidden">
-<input id="fileChatAttach" type="file" accept="image/*" class="hidden">
-<input id="fileMessageAttach" type="file" accept="image/*" class="hidden">
-<input id="fileOrderAttach" type="file" accept="image/*" class="hidden">
-
-<!-- Leaflet JS -->
+<!-- подключаем Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-/* =========================
-   GiDCity enhanced script
-   - JSONBin sync + periodic pull
-   - OpenRouteService routing (ORS_API_KEY included)
-   - Leaflet map for routes
-   - UI changes requested
-   ========================= */
+/* ===========================
+   Конфигурация и state
+   =========================== */
+const OPENROUTESERVICE_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcyZWNiZDAxMGJlNTRjY2E4NDQwYTVlYmM2N2U1NzdkIiwiaCI6Im11cm11cjY0In0='; // твой ключ
+const DEFAULT_CITY = {name:'Караганда', lat:49.8062, lon:73.0851, zoom:13};
 
-/* ----- CONFIG (you provided the key) ----- */
-const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcyZWNiZDAxMGJlNTRjY2E4NDQwYTVlYmM2N2U1NzdkIiwiaCI6Im11cm11cjY0In0=';
-const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG';
-const JSONBIN_ID = '6911fbe843b1c97be9a4dc97';
-const PULL_INTERVAL_MS = 8000; // periodic pull every 8s (respect rate limits)
-
-/* ----- App state ----- */
-const appStateKey = 'gidcity_state_live_v2';
-let state = {
+let state = JSON.parse(localStorage.getItem('gid_state_v2') || '{}') || {};
+state = Object.assign({
+  theme:'фиолетово-черный',
   user: null,
-  city: 'Караганда',
-  theme: 'фиолетово-черный',
   notifications: [],
   servicesPosts: [],
-  cityPosts: [],
-  chats: [],
-  wallet: {balance:0},
-  reminders: []
-};
+  city: DEFAULT_CITY.name
+}, state);
 
-/* ----- City coords for weather and map ----- */
-const CITY_COORDS = {
-  "Караганда": {lat:49.8062, lon:73.0851},
-  "Нур-Султан": {lat:51.1605, lon:71.4704},
-  "Алматы": {lat:43.2383, lon:76.9458}
-  // add more if needed
-};
+/* ==============
+   Utility
+   ============== */
+function saveState(){ localStorage.setItem('gid_state_v2', JSON.stringify(state)); }
+function el(id){ return document.getElementById(id); }
+function setNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
 
-/* ----- THEMES ----- */
-const THEMES = {
-  'фиолетово-черный': {top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a'},
-  'тёмно-синий': {top:'#0b3d91', bottom:'#061428', accent:'#55d4ff'},
-  'красный': {top:'#ff416c', bottom:'#0a0a0a', accent:'#ffb37a'},
-  'оранжевый': {top:'#ff7a18', bottom:'#0a0a0a', accent:'#ffd54a'},
-  'зелёный': {top:'#00b09b', bottom:'#0a0a0a', accent:'#a8ffcf'}
-};
-
-/* ----- UI refs ----- */
-const modalBackdrop = document.getElementById('modalBackdrop');
-const modalWindow = document.getElementById('modalWindow');
-const authBackdrop = document.getElementById('authBackdrop');
-const fileProfileAvatar = document.getElementById('fileProfileAvatar');
-const fileChatAttach = document.getElementById('fileChatAttach');
-const fileMessageAttach = document.getElementById('fileMessageAttach');
-const fileOrderAttach = document.getElementById('fileOrderAttach');
-
-const menuListEl = document.getElementById('menuList');
-const notifDot = document.getElementById('notifDot');
-const notifRow = document.getElementById('notifRow');
-const mapContainer = document.getElementById('mapContainer');
-const footerSync = document.getElementById('footerSync');
-const syncSmall = document.getElementById('syncSmall');
-
-/* --------- Helpers --------- */
-function saveLocal(){ localStorage.setItem(appStateKey, JSON.stringify(state)); }
-function loadLocal(){ const raw = localStorage.getItem(appStateKey); if(raw){ try{ Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn(e); } } }
-function updateNotifCount(){ notifDot.textContent = (state.notifications.length || 0); }
-function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-/* ----- JSONBin sync: save & load ----- */
-let saveTimer = null;
-function requestSave(){
-  saveLocal();
-  footerSync.textContent = 'Последняя синхр.: локально';
-  if(saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(()=>{ syncToJSONBin().then(()=>{ footerSync.textContent = 'Последняя синхр.: синхр. JSONBin'; }).catch(e=>{ footerSync.textContent = 'Последняя синхр.: ошибка синхр.'; console.warn(e); }); }, 1200);
-}
-
-async function syncToJSONBin(){
-  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
-  const payload = { state, updatedAt: new Date().toISOString() };
-  const resp = await fetch(url, { method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY}, body: JSON.stringify(payload) });
-  if(!resp.ok) throw new Error('JSONBin save failed');
-  return resp.json();
-}
-
-let pulling = false;
-async function loadFromJSONBin(){
-  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
-  const resp = await fetch(url, { headers: {'X-Master-Key': JSONBIN_KEY} });
-  if(!resp.ok) throw new Error('JSONBin load failed');
-  const data = await resp.json();
-  if(data && data.record && data.record.state){
-    state = data.record.state;
-    saveLocal();
-    renderAll();
-  }
-  return data;
-}
-
-/* periodic pull (to reduce conflicts) */
-let pullIntervalHandle = null;
-async function startPeriodicPull(ms = PULL_INTERVAL_MS){
-  if(pullIntervalHandle) clearInterval(pullIntervalHandle);
-  pullIntervalHandle = setInterval(async ()=>{
-    if(pulling) return;
-    pulling = true;
-    try{
-      await loadFromJSONBin();
-      //console.log('pulled remote state');
-    }catch(e){
-      //console.warn('pull error', e);
-    } finally { pulling = false; }
-  }, ms);
-}
-
-/* ----- Themes apply ----- */
+/* ==============
+   Apply theme (simple)
+   ============== */
 function applyTheme(name){
-  const t = THEMES[name] || THEMES['фиолетово-черный'];
-  document.documentElement.style.setProperty('--bg1', t.top);
-  document.documentElement.style.setProperty('--bg2', t.bottom);
-  document.documentElement.style.setProperty('--panel-bg', t.bottom);
+  const themes = {
+    'фиолетово-черный': {top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a', border:'rgba(255,255,255,0.06)'},
+    'темно-синий': {top:'#0b3d91', bottom:'#061428', accent:'#55d4ff', border:'rgba(255,255,255,0.06)'}
+  };
+  const t = themes[name] || themes['фиолетово-черный'];
+  document.documentElement.style.setProperty('--bg-top', t.top);
+  document.documentElement.style.setProperty('--bg-bottom', t.bottom);
   document.documentElement.style.setProperty('--accent', t.accent);
+  document.documentElement.style.setProperty('--glass-border', t.border);
+  state.theme = name; saveState();
 }
 
-/* ----- Weather (open-meteo) ----- */
-async function fetchWeatherForCity(city){
-  const coords = CITY_COORDS[city] || CITY_COORDS['Караганда'];
-  try{
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true`;
-    const r = await fetch(url);
-    if(r.ok){
-      const data = await r.json();
-      if(data && data.current_weather){
-        document.getElementById('weatherBlock').textContent = `${Math.round(data.current_weather.temperature)} °C · ${mapWeatherCodeToText(data.current_weather.weathercode)}`;
-      }
-    }
-  }catch(e){
-    document.getElementById('weatherBlock').textContent = '— °C · —';
-  }
-}
-function mapWeatherCodeToText(code){
-  const map = {0:'ясно',1:'малообл',2:'облачно',3:'пасмурно',45:'туман',61:'дождь',71:'снег'};
-  return map[code]||'неизв.';
-}
-
-/* ----- Map & routing (Leaflet + ORS) ----- */
-let map = null;
-let routeLayer = null;
+/* ==============
+   Инициализация карты (Leaflet) + ORS geocode & routing
+   ============== */
+let map, fromMarker=null, toMarker=null, routeLayer=null;
 function initMap(){
-  if(map) return;
-  map = L.map('mapContainer', {zoomControl:false}).setView([49.8062,73.0851], 11);
+  map = L.map('map', {zoomControl:true, preferCanvas:true}).setView([DEFAULT_CITY.lat, DEFAULT_CITY.lon], DEFAULT_CITY.zoom);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(map);
+
+  // click handlers to set points when active mode chosen
+  map.on('click', e=>{
+    if(map._setMode === 'from'){ setFromPoint(e.latlng); map._setMode=null; return; }
+    if(map._setMode === 'to'){ setToPoint(e.latlng); map._setMode=null; return; }
+  });
 }
-async function buildRoute(fromLatLon, toLatLon){
-  if(!ORS_API_KEY) return alert('ORS key missing');
-  const url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
-  const body = { coordinates: [ [fromLatLon[1], fromLatLon[0]], [toLatLon[1], toLatLon[0]] ] }; // ORS expects [lon,lat]
+
+/* геокодинг через ORS */
+async function geocode(text){
   try{
-    const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization': ORS_API_KEY }, body: JSON.stringify(body) });
-    if(!r.ok) throw new Error('ors route failed');
-    const geo = await r.json();
-    if(routeLayer) routeLayer.remove();
-    routeLayer = L.geoJSON(geo, { style:{ color:'#ffd54a', weight:5, opacity:0.9 } }).addTo(map);
-    map.fitBounds(routeLayer.getBounds(), {padding:[20,20]});
-    // extract distance/time from properties if present
-    const summary = (geo.features && geo.features[0] && geo.features[0].properties && geo.features[0].properties.summary) || null;
-    return summary;
+    const q = encodeURIComponent(text);
+    const url = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${q}&size=5`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('geocode error ' + r.status);
+    const data = await r.json();
+    return (data.features||[]).map(f=>({
+      label: f.properties.label || f.properties.name || text,
+      lat: f.geometry.coordinates[1],
+      lon: f.geometry.coordinates[0],
+      props: f.properties
+    }));
   }catch(e){
     console.warn(e);
-    return null;
+    return [];
   }
 }
 
-/* ----- Render menu as vertical list (symmetry) ----- */
-function renderMenuItems(){
-  menuListEl.innerHTML = '';
-  const isServices = document.getElementById('servicesBtn').classList.contains('active');
-  const items = isServices ? [
-    {id:'order', title:'ЗАКАЗАТЬ', caption:'Создать заявку', color:'gold'},
-    {id:'reserve', title:'ЗАБРОНИРОВАТЬ', caption:'скоро...', color:'gold'},
-    {id:'ads', title:'Объявление услуг', caption:'Список объявлений', color:'gold'},
-    {id:'citychat', title:'City чат', caption:'лента твоего города'},
-    {id:'messenger', title:'Мессенджер', caption:'Диалоги'},
-    {id:'wallet', title:'Кошелёк', caption:'Баланс'}
-  ]:[
-    {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок', color:'gold'},
-    {id:'ads2', title:'Объявление услуг', caption:'Список объявлений', color:'gold'},
-    {id:'citychat2', title:'City чат', caption:'лента твоего города'},
-    {id:'messenger2', title:'Мессенджер', caption:'Диалоги'},
-    {id:'wallet2', title:'Кошелёк', caption:'Баланс'}
-  ];
+/* проложить маршрут (driving-car) */
+async function buildRoute(fromLatLng, toLatLng){
+  try{
+    const coords = `${fromLatLng.lng},${fromLatLng.lat}|${toLatLng.lng},${toLatLng.lat}`;
+    const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${OPENROUTESERVICE_API_KEY}&start=${fromLatLng.lng},${fromLatLng.lat}&end=${toLatLng.lng},${toLatLng.lat}`;
+    // ORS directions supports POST with coordinates array, but above quick usage uses GET start/end - if fails fallback to POST
+    let resp = await fetch(url);
+    if(!resp.ok){
+      // try POST
+      resp = await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson', {
+        method:'POST',
+        headers: {'Content-Type':'application/json','Authorization': OPENROUTESERVICE_API_KEY},
+        body: JSON.stringify({coordinates:[[fromLatLng.lng,fromLatLng.lat],[toLatLng.lng,toLatLng.lat]]})
+      });
+      if(!resp.ok) throw new Error('routing failed ' + resp.status);
+      const g = await resp.json();
+      renderRouteGeoJSON(g);
+      return g;
+    }
+    const g = await resp.json();
+    renderRouteGeoJSON(g);
+    return g;
+  }catch(e){
+    alert('Ошибка построения маршрута: ' + (e.message||e));
+    console.warn(e);
+  }
+}
 
+/* отрисовать маршрут GeoJSON */
+function renderRouteGeoJSON(g){
+  if(routeLayer) map.removeLayer(routeLayer);
+  // ORS geojson structure: features[0].geometry
+  let geo = null;
+  if(g && g.features && g.features.length) geo = g;
+  else if(g && g.geometry) geo = {type:'FeatureCollection',features:[g]};
+  if(!geo) return;
+  routeLayer = L.geoJSON(geo, {style:{color: getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#ffd54a', weight:4, opacity:0.9}}).addTo(map);
+  map.fitBounds(routeLayer.getBounds(), {padding:[30,30]});
+}
+
+/* установить маркеры */
+function setFromPoint(latlng){
+  if(fromMarker) map.removeLayer(fromMarker);
+  fromMarker = L.marker(latlng,{title:'Отправление (A)', draggable:true}).addTo(map).bindPopup('A: отправление').openPopup();
+  fromMarker.on('dragend', ()=>{ if(fromMarker && toMarker) buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); });
+}
+function setToPoint(latlng){
+  if(toMarker) map.removeLayer(toMarker);
+  toMarker = L.marker(latlng,{title:'Назначение (B)', draggable:true}).addTo(map).bindPopup('B: назначение').openPopup();
+  toMarker.on('dragend', ()=>{ if(fromMarker && toMarker) buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); });
+}
+
+/* очистить маршрут и маркеры */
+function clearRoute(){
+  if(fromMarker){ map.removeLayer(fromMarker); fromMarker=null; }
+  if(toMarker){ map.removeLayer(toMarker); toMarker=null; }
+  if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; }
+}
+
+/* поиск и отрисовка найденных объектов (временно как маркеры кликабельные) */
+let searchMarkers = [];
+async function doSearch(query){
+  el('searchCount').textContent = '...';
+  const results = await geocode(query);
+  // очистка старых
+  searchMarkers.forEach(m=>map.removeLayer(m)); searchMarkers=[];
+  if(!results.length){ el('searchCount').textContent = 0; alert('Ничего не найдено'); return; }
+  results.forEach((r,i)=>{
+    const mk = L.marker([r.lat,r.lon]).addTo(map).bindPopup(`<strong>${r.label}</strong><div class="small">${(r.props && r.props.osm_type)||''}</div><div style="margin-top:6px"><button class="btn" onclick="window.__setFromFromSearch(${r.lat},${r.lon})">Отправление (A)</button> <button class="btn primary" onclick="window.__setToFromSearch(${r.lat},${r.lon})">Назначение (B)</button></div>`);
+    searchMarkers.push(mk);
+  });
+  map.fitBounds(L.featureGroup(searchMarkers).getBounds(), {padding:[30,30]});
+  el('searchCount').textContent = results.length;
+  return results;
+}
+
+/* вызовы из popup кнопок (глобально) */
+window.__setFromFromSearch = function(lat,lon){ setFromPoint(L.latLng(lat,lon)); }
+window.__setToFromSearch = function(lat,lon){ setToPoint(L.latLng(lat,lon)); }
+
+/* ==============
+   UI: меню, modals, заявки
+   ============== */
+const MENU_ITEMS_SERVICES = [
+  {id:'gid_order', title:'GiD Заказ', caption:'Универсальный быстрый заказ'},
+  {id:'order', title:'ЗАКАЗАТЬ', caption:'Создать заявку'},
+  {id:'reserve', title:'ЗАБРОНИРОВАТЬ', caption:'скоро...'},
+  {id:'ads', title:'Объявление услуг', caption:'Список объявлений'},
+  {id:'citychat', title:'City чат', caption:'лента города'},
+  {id:'messenger', title:'Мессенджер', caption:'диалоги'}
+];
+const MENU_ITEMS_WORK = [
+  {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок'},
+  {id:'myOffers', title:'Мои отклики', caption:'Список'},
+  {id:'wallet', title:'Кошелёк', caption:'Баланс'},
+  {id:'reports', title:'Отчёты', caption:'Статистика'}
+];
+
+function renderMenu(){
+  const box = el('menuList'); box.innerHTML='';
+  const active = el('tabServices').classList.contains('active') ? 'services' : 'work';
+  const items = active==='services' ? MENU_ITEMS_SERVICES : MENU_ITEMS_WORK;
   items.forEach(it=>{
-    const el = document.createElement('div');
-    el.className = 'menu-item';
-    el.dataset.id = it.id;
-    el.innerHTML = `<div>
-                      <div class="title" style="color:${it.color? (it.color==='gold'? 'var(--accent)': it.color): '#fff'}">${it.title}</div>
-                      <div class="caption">${it.caption}</div>
-                    </div>
-                    <div style="opacity:0.9">›</div>`;
-    el.addEventListener('click', ()=>onMenuClick(it.id));
-    menuListEl.appendChild(el);
+    const div = document.createElement('div'); div.className='menu-item'; div.dataset.id=it.id;
+    div.innerHTML = `<div class="left"><div class="title">${it.title}</div><div class="caption">${it.caption}</div></div><div style="opacity:0.9">›</div>`;
+    div.addEventListener('click', ()=>onMenuClick(it.id));
+    box.appendChild(div);
   });
 }
 
-/* ----- Event mapping ----- */
-document.getElementById('servicesBtn').addEventListener('click', ()=>{
-  document.getElementById('servicesBtn').classList.add('active');
-  document.getElementById('workBtn').classList.remove('active');
-  renderMenuItems();
-});
-document.getElementById('workBtn').addEventListener('click', ()=>{
-  document.getElementById('workBtn').classList.add('active');
-  document.getElementById('servicesBtn').classList.remove('active');
-  renderMenuItems();
-});
-document.getElementById('calendarBtn').addEventListener('click', openCalendarModal);
-document.getElementById('settingsBtn').addEventListener('click', ()=>openSettingsModal(false));
-document.getElementById('openNotifs').addEventListener('click', openNotifications);
-document.getElementById('authSubmit').addEventListener('click', doAuth);
-document.getElementById('authSkip').addEventListener('click', ()=>{ authBackdrop.style.display='none'; renderAll(); if(!state.user || !state.user.surname) setTimeout(()=>openSettingsModal(true),400); });
+/* открытие модалок */
+function openModal(html, actionsHtml){
+  el('modalContent').innerHTML = html;
+  el('modalActions').innerHTML = actionsHtml || '<button class="btn" data-close>Закрыть</button>';
+  el('modalBackdrop').style.display='flex'; el('modalBackdrop').setAttribute('aria-hidden','false');
+  // bind close
+  el('modalBackdrop').addEventListener('click', e=>{ if(e.target===el('modalBackdrop')) closeModal(); });
+  el('modalBackdrop').querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeModal));
+}
+function closeModal(){ el('modalBackdrop').style.display='none'; el('modalBackdrop').setAttribute('aria-hidden','true'); el('modalContent').innerHTML=''; el('modalActions').innerHTML=''; }
 
-/* ----- Menu actions ----- */
+/* обработчик меню */
 function onMenuClick(id){
-  if(id==='order') openOrderModal();
-  else if(id==='reserve') openReserveModal();
-  else if(id==='ads' || id==='ads2') openAdsModal();
-  else if(id==='citychat' || id==='citychat2') openCityChatModal();
-  else if(id==='messenger' || id==='messenger2') openMessengerModal();
-  else if(id==='wallet' || id==='wallet2') openWalletModal();
-  else if(id==='findJobs') openFindJobsModal();
+  if(id==='gid_order'){ openGiDOrder(); }
+  else if(id==='order'){ openOrderModal(); }
+  else if(id==='reserve'){ alert('Раздел скоро доступен (макет).'); }
+  else if(id==='ads'){ openAdsModal(); }
+  else if(id==='citychat'){ openCityChat(); }
+  else if(id==='messenger'){ openMessenger(); }
+  else if(id==='findJobs'){ openFindJobs(); }
+  else if(id==='wallet'){ openWallet(); }
+  else alert('Нажата: ' + id);
 }
 
-/* ----- Modal open/close helpers ----- */
-function showModal(html){
-  modalWindow.innerHTML = html;
-  modalBackdrop.style.display = 'flex';
-  modalBackdrop.setAttribute('aria-hidden','false');
-  // attach data-close listeners if exist
-  modalWindow.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click', hideModal));
-}
-function hideModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); modalWindow.innerHTML=''; }
-
-/* ----- Calendar & reminders ----- */
-function openCalendarModal(){
-  const modal = `
-    <div class="h">Календарь — ${new Date().toLocaleString('ru',{month:'long', year:'numeric'})}</div>
-    <label>Дата</label><input type="date" id="remDate" value="${new Date().toISOString().slice(0,10)}">
-    <label>Время</label><input type="time" id="remTime" value="12:00">
-    <label>Заметка</label><input type="text" id="remNote" placeholder="Напоминание">
-    <div class="modal-actions">
-      <button class="btn primary" id="saveReminder">Добавить</button>
-      <button class="btn" data-close>Закрыть</button>
-    </div>`;
-  showModal(modal);
-  document.getElementById('saveReminder').addEventListener('click', ()=>{
-    const d = document.getElementById('remDate').value;
-    const t = document.getElementById('remTime').value;
-    const note = document.getElementById('remNote').value || 'Напоминание';
-    if(!d || !t) return alert('Укажите дату и время');
-    const dt = new Date(d+'T'+t+':00').toISOString();
-    state.reminders.unshift({id:Date.now(), datetime: dt, note, read:false});
-    addNotification('Добавлено напоминание: '+note);
-    requestSave();
-    hideModal();
-  });
+/* GiD Заказ — универсал (динамические поля нетипизированы) */
+function openGiDOrder(){
+  const html = `<div class="h"><strong>GiD Заказ — универсальный</strong></div>
+    <label>Краткое описание</label><input id="gdesc" placeholder="Что нужно сделать">
+    <label>Адрес / Комментарий</label><input id="gaddr" placeholder="Улица, дом, подъезд">
+    <label>Предпочтительное время</label><input id="gtime" type="time">
+    <label>Телефон</label><input id="gphone" placeholder="+7...">
+    <div style="margin-top:8px" class="small">Поля сохраняются локально (демо).</div>`;
+  const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="gidCreate">Создать</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ document.getElementById('gidCreate').addEventListener('click', ()=>{
+    const d = document.getElementById('gdesc').value.trim(), addr=document.getElementById('gaddr').value.trim(), time=document.getElementById('gtime').value, phone=document.getElementById('gphone').value.trim();
+    if(!d || !addr) return alert('Заполните описание и адрес');
+    state.servicesPosts = state.servicesPosts || [];
+    state.servicesPosts.unshift({id:Date.now(), type:'GiD', desc:d, addr, time, phone, created: new Date().toISOString()});
+    saveState(); closeModal(); alert('GiD Заказ создан (демо).');
+  }); },50);
 }
 
-/* ----- Settings modal (avatar via mediapicker) ----- */
-function openSettingsModal(forceOpen){
-  const cities = Object.keys(CITY_COORDS);
-  const themeNames = Object.keys(THEMES);
-  const modal = `
-    <div class="h">Настройки</div>
-    <label>Аватар</label>
-    <div style="display:flex;gap:8px;align-items:center"><button class="btn" id="uploadAvatarBtn">Загрузить фото</button><img id="avatarPreviewSmall" src="${state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/48/333/fff?text=U'}" style="width:48px;height:48px;border-radius:8px;object-fit:cover"></div>
-    <label>Имя</label><input type="text" id="profileName" value="${escapeHtml(state.user && state.user.name || '')}">
-    <label>Фамилия</label><input type="text" id="profileSurname" value="${escapeHtml(state.user && state.user.surname || '')}">
-    <label>Телефон</label><input type="tel" id="profilePhone" value="${escapeHtml(state.user && state.user.phone || '')}">
-    <label>Город</label><select id="citySelect">${cities.map(c=>`<option ${c===state.city? 'selected':''}>${c}</option>`).join('')}</select>
-    <label>Тема</label><select id="themeSelect">${themeNames.map(t=>`<option ${t===state.theme? 'selected':''} value="${t}">${t}</option>`).join('')}</select>
-    <div class="modal-actions">
-      <button class="btn primary" id="saveSettings">Сохранить</button>
-      <button class="btn" data-close>Закрыть</button>
-    </div>
-    <div class="small" id="requiredNote" style="display:none;color:var(--accent)">Имя и Фамилия обязательны.</div>
-  `;
-  showModal(modal);
-
-  document.getElementById('uploadAvatarBtn').addEventListener('click', ()=> fileProfileAvatar.click());
-  fileProfileAvatar.onchange = async (e)=>{
-    const f = e.target.files[0]; if(!f) return;
-    const b64 = await fileToBase64(f);
-    document.getElementById('avatarPreviewSmall').src = b64;
-    document.getElementById('avatarPreviewSmall').dataset.b64 = b64;
-  };
-
-  document.getElementById('saveSettings').addEventListener('click', ()=>{
-    const name = document.getElementById('profileName').value.trim();
-    const sur = document.getElementById('profileSurname').value.trim();
-    const phone = document.getElementById('profilePhone').value.trim();
-    const city = document.getElementById('citySelect').value;
-    const theme = document.getElementById('themeSelect').value;
-    const avatarB64 = document.getElementById('avatarPreviewSmall').dataset ? document.getElementById('avatarPreviewSmall').dataset.b64 : null;
-    if(!name || !sur){ document.getElementById('requiredNote').style.display='block'; return; }
-    state.user = state.user || {};
-    if(avatarB64) state.user.avatar = avatarB64;
-    state.user.name = name;
-    state.user.surname = sur;
-    state.user.phone = phone;
-    state.city = city;
-    state.theme = theme;
-    if(state.user.avatar) document.getElementById('avatarImg').src = state.user.avatar;
-    applyTheme(theme);
-    requestSave();
-    hideModal();
-    renderAll();
-  });
-}
-
-/* ----- Notifications modal ----- */
-function openNotifications(){
-  const list = state.notifications.map(n=>`<div class="post"><div class="meta">${new Date(n.ts).toLocaleString()}</div><div>${escapeHtml(n.text)}</div></div>`).join('') || '<div class="small">Нет новых уведомлений</div>';
-  const modal = `<div class="h">Уведомления</div><div class="list">${list}</div><div class="modal-actions"><button class="btn" id="clearNotifs">Очистить</button><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
-  document.getElementById('clearNotifs').addEventListener('click', ()=>{ state.notifications = []; requestSave(); hideModal(); renderAll(); });
-}
-
-/* ----- Order modal with attach ----- */
+/* Основная форма создания заявки с динамическими полями по категории */
 function openOrderModal(){
-  const modal = `
-    <div class="h">Создать заявку</div>
-    <label>Услуга</label>
-    <select id="orderService"><option>GiD Заказ</option><option>Квартира/дом</option><option>Такси</option><option>Курьер</option><option>Мастер/специалист</option></select>
-    <label>Описание</label><textarea id="orderDesc"></textarea>
-    <div style="display:flex;gap:8px">
-      <div style="flex:1"><label>Дедлайн</label><input type="date" id="orderDeadline"></div>
-      <div style="width:120px"><label>Бюджет (₸)</label><input type="number" id="orderBudget" min="0" value="0"></div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
-      <button class="btn" id="attachOrderBtn">📎 Прикрепить фото</button>
-      <div id="orderAttachPreview"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn primary" id="createOrder">Заказать</button>
-      <button class="btn" data-close>Закрыть</button>
-    </div>`;
-  showModal(modal);
-  document.getElementById('attachOrderBtn').addEventListener('click', ()=> fileOrderAttach.click());
-  fileOrderAttach.onchange = async (e)=>{ const f = e.target.files[0]; if(!f) return; const b = await fileToBase64(f); document.getElementById('orderAttachPreview').innerHTML = `<img src="${b}" style="width:72px;height:72px;border-radius:8px;object-fit:cover">`; document.getElementById('orderAttachPreview').dataset.b64 = b; };
-
-  document.getElementById('createOrder').addEventListener('click', ()=>{
-    const svc = document.getElementById('orderService').value;
-    const desc = document.getElementById('orderDesc').value.trim();
-    const dl = document.getElementById('orderDeadline').value;
-    const budget = document.getElementById('orderBudget').value;
-    const img = document.getElementById('orderAttachPreview').dataset ? document.getElementById('orderAttachPreview').dataset.b64 : null;
-    if(!desc) return alert('Опишите задачу');
-    const order = { id: Date.now(), svc, desc, deadline:dl, budget, created: new Date().toISOString(), city: state.city, image: img };
-    state.servicesPosts.unshift(order);
-    addNotification('Новая заявка создана: ' + svc);
-    requestSave();
-    hideModal();
-    alert('Заявка создана (прототип).');
-  });
+  const categories = ['Такси','Курьер','Квартира/Дом','Мастер','GiD Заказ'];
+  const html = `<div class="h"><strong>Создать заявку</strong></div>
+    <label>Категория</label><select id="ordCat">${categories.map(c=>`<option>${c}</option>`).join('')}</select>
+    <div id="ordDynamic"></div>
+    <div style="margin-top:8px"><label>Бюджет (₸)</label><input id="ordBudget" type="number" value="0"></div>`;
+  const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="ordCreate">Заказать</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ populateDynamicFields(); document.getElementById('ordCat').addEventListener('change', populateDynamicFields);
+    document.getElementById('ordCreate').addEventListener('click', ()=>{
+      const cat = document.getElementById('ordCat').value;
+      const budget = document.getElementById('ordBudget').value;
+      const dyn = captureDynamicFields();
+      if(!dyn) return; // validation failed inside
+      state.servicesPosts = state.servicesPosts || [];
+      state.servicesPosts.unshift({id:Date.now(), cat, budget, dyn, created:new Date().toISOString()});
+      saveState(); closeModal(); alert('Заявка создана (демо).');
+    });
+  },50);
 }
-
-/* ----- Reserve modal ----- */
-function openReserveModal(){ showModal(`<div class="h">Забронировать</div><div class="small">Отсутствуют подключённые заведения к GiDCity</div><div class="modal-actions"><button class="btn primary" data-close>OK</button></div>`); }
-
-/* ----- Ads modal ----- */
-function openAdsModal(){
-  const modal = `<div class="h">Объявление услуг</div><label>Категория</label><select id="adsCat"><option>Вакансии</option><option>Бизнес</option><option>Акции</option></select><label>Заголовок</label><input id="adsTitle"><label>Текст</label><textarea id="adsText"></textarea><div class="modal-actions"><button class="btn primary" id="publishAds">Опубликовать</button><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
-  document.getElementById('publishAds').addEventListener('click', ()=>{
-    const cat = document.getElementById('adsCat').value;
-    const title = document.getElementById('adsTitle').value.trim();
-    const text = document.getElementById('adsText').value.trim();
-    if(!title || !text) return alert('Заполните поля');
-    const post = { id:Date.now(), cat, title, text, created: new Date().toISOString(), authorName: state.user ? `${state.user.name} ${state.user.surname}` : 'Аноним', authorAvatar: state.user && state.user.avatar ? state.user.avatar : null, city: state.city, likes:0, comments:0, reposts:0 };
-    state.cityPosts.unshift(post);
-    addNotification('Опубликовано объявление: '+title);
-    requestSave();
-    hideModal();
-  });
-}
-
-/* ----- City chat (with likes/comments/reposts, attach) ----- */
-function openCityChatModal(){
-  function renderPostsHtml(){
-    return state.cityPosts.map(p=>{
-      const author = p.authorName || (state.user ? `${state.user.name} ${state.user.surname}` : 'Аноним');
-      const avatar = p.authorAvatar || (state.user && state.user.avatar) || 'https://via.placeholder.com/36/333/fff?text=U';
-      return `<div class="post" data-id="${p.id}">
-          <div class="post-author"><img src="${avatar}"><div style="display:flex;flex-direction:column"><div style="font-weight:800">${escapeHtml(author)}</div><div class="small">${new Date(p.created).toLocaleString()}</div></div></div>
-          <div>${escapeHtml(p.text || p.title || '')}</div>
-          ${p.image? `<img src="${p.image}" style="max-width:100%;border-radius:8px">`:''}
-          <div class="post-actions">
-            <span data-action="like" data-id="${p.id}">❤ ${p.likes||0}</span>
-            <span data-action="comment" data-id="${p.id}">💬 ${p.comments||0}</span>
-            <span data-action="repost" data-id="${p.id}">⤴ ${p.reposts||0}</span>
-          </div>
-        </div>`;
-    }).join('') || '<div class="small">Лента пустая</div>';
+function populateDynamicFields(){
+  const cat = document.getElementById('ordCat').value;
+  const cont = el('ordDynamic'); cont.innerHTML='';
+  if(cat==='Такси'){
+    cont.innerHTML = `<label>Адрес отправления</label><input id="taxFrom"><label>Адрес назначения</label><input id="taxTo"><label>Кол-во пассажиров</label><input id="taxPax" type="number" value="1">`;
+  } else if(cat==='Курьер'){
+    cont.innerHTML = `<label>Адрес отправителя</label><input id="curFrom"><label>Адрес получателя</label><input id="curTo"><label>Вес/габариты</label><input id="curSize">`;
+  } else if(cat==='Квартира/Дом'){
+    cont.innerHTML = `<label>Адрес</label><input id="homeAddr"><label>Описание проблемы/услуги</label><textarea id="homeDesc"></textarea><label>Прикрепить фото</label><input id="homeFile" type="file" accept="image/*">`;
+    document.getElementById('homeFile').addEventListener('change', async (e)=>{ const f=e.target.files[0]; if(!f) return; const b=await fileToBase64(f); cont.dataset.file=b; });
+  } else if(cat==='Мастер'){
+    cont.innerHTML = `<label>Адрес</label><input id="mAddr"><label>Тип работ</label><input id="mType"><label>Предпочтительное время</label><input id="mTime" type="time">`;
+  } else { // GiD Заказ
+    cont.innerHTML = `<label>Описание</label><textarea id="gDesc"></textarea><label>Адрес</label><input id="gAddr">`;
   }
-  const modal = `<div class="h">City чат — ${state.city}</div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <img src="${state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/36/333/fff?text=U'}" style="width:44px;height:44px;border-radius:8px;object-fit:cover">
-      <input id="cityPostText" type="text" placeholder="Поделитесь...">
-      <button class="btn" id="attachImg">📎</button>
-    </div>
-    <div id="attachedPreview"></div>
-    <div class="modal-actions">
-      <button class="btn primary" id="publishCityPost">Опубликовать</button>
-      <button class="btn" data-close>Закрыть</button>
-    </div>
-    <div style="height:10px"></div>
-    <div class="list" id="cityPostsList">${renderPostsHtml()}</div>`;
-  showModal(modal);
-
-  fileChatAttach.onchange = async (e)=>{ const f = e.target.files[0]; if(!f) return; const b = await fileToBase64(f); document.getElementById('attachedPreview').innerHTML = `<img src="${b}" style="max-width:120px;border-radius:8px">`; document.getElementById('attachedPreview').dataset.b64 = b; };
-  document.getElementById('attachImg').addEventListener('click', ()=> fileChatAttach.click());
-  document.getElementById('publishCityPost').addEventListener('click', ()=>{
-    const text = document.getElementById('cityPostText').value.trim();
-    const img = document.getElementById('attachedPreview').dataset ? document.getElementById('attachedPreview').dataset.b64 : null;
-    if(!text && !img) return alert('Введите текст или прикрепите изображение');
-    const post = { id:Date.now(), text, image: img, created: new Date().toISOString(), authorName: state.user ? `${state.user.name} ${state.user.surname}` : 'Аноним', authorAvatar: state.user && state.user.avatar ? state.user.avatar : null, likes:0, comments:0, reposts:0, city:state.city };
-    state.cityPosts.unshift(post);
-    requestSave();
-    addNotification('Новый пост в City чате');
-    // refresh post list
-    document.getElementById('cityPostsList').insertAdjacentHTML('afterbegin', `<div class="post" data-id="${post.id}"><div class="post-author"><img src="${post.authorAvatar||'https://via.placeholder.com/36/333/fff?text=U'}"><div style="display:flex;flex-direction:column"><div style="font-weight:800">${escapeHtml(post.authorName)}</div><div class="small">${new Date(post.created).toLocaleString()}</div></div></div><div>${escapeHtml(post.text)}</div>${post.image?`<img src="${post.image}" style="max-width:100%;border-radius:8px">`:''}<div class="post-actions"><span data-action="like" data-id="${post.id}">❤ 0</span><span data-action="comment" data-id="${post.id}">💬 0</span><span data-action="repost" data-id="${post.id}">⤴ 0</span></div></div>`);
-    document.getElementById('cityPostText').value=''; document.getElementById('attachedPreview').innerHTML=''; delete document.getElementById('attachedPreview').dataset.b64;
-  });
-
-  // delegate actions (like/comment/repost)
-  modalWindow.addEventListener('click', function onPostAction(e){
-    const target = e.target.closest('[data-action]');
-    if(!target) return;
-    const action = target.dataset.action;
-    const id = target.dataset.id;
-    const post = state.cityPosts.find(p=>String(p.id)===String(id));
-    if(!post) return;
-    if(action==='like'){ post.likes = (post.likes||0)+1; }
-    if(action==='comment'){ const c = prompt('Комментарий:'); if(c) post.comments = (post.comments||0)+1; }
-    if(action==='repost'){ post.reposts = (post.reposts||0)+1; alert('Репост отправлен (демо)'); }
-    requestSave();
-    // update UI counters in modal
-    const span = modalWindow.querySelector(`[data-action="${action}"][data-id="${id}"]`);
-    if(span) span.textContent = (action==='like' ? '❤ ' + post.likes : action==='comment' ? '💬 ' + post.comments : '⤴ ' + post.reposts);
-  }, {once:false});
+}
+function captureDynamicFields(){
+  const cat = document.getElementById('ordCat').value;
+  if(cat==='Такси'){
+    const from=document.getElementById('taxFrom').value.trim(), to=document.getElementById('taxTo').value.trim();
+    if(!from||!to){ alert('Укажите оба адреса'); return null; }
+    return {from,to,pax:document.getElementById('taxPax').value};
+  } else if(cat==='Курьер'){
+    const f=document.getElementById('curFrom').value.trim(), t=document.getElementById('curTo').value.trim();
+    if(!f||!t){ alert('Укажите адреса'); return null; }
+    return {from:f,to:t,size:document.getElementById('curSize').value};
+  } else if(cat==='Квартира/Дом'){
+    const addr=document.getElementById('homeAddr').value.trim(), desc=document.getElementById('homeDesc').value.trim();
+    if(!addr||!desc){ alert('Укажите адрес и описание'); return null; }
+    return {addr,desc,file: (el('ordDynamic') && el('ordDynamic').dataset && el('ordDynamic').dataset.file) || null};
+  } else if(cat==='Мастер'){
+    const addr=document.getElementById('mAddr').value.trim(), type=document.getElementById('mType').value.trim();
+    if(!addr||!type){ alert('Укажите адрес и тип работ'); return null; }
+    return {addr,type,time:document.getElementById('mTime').value};
+  } else {
+    const d=document.getElementById('gDesc').value.trim(), a=document.getElementById('gAddr').value.trim();
+    if(!d||!a){ alert('Заполните описание и адрес'); return null; }
+    return {desc:d,addr:a};
+  }
 }
 
-/* ----- Messenger (simple) ----- */
-function openMessengerModal(){
-  const chatsHtml = state.chats.map(c=>`<div class="post" data-chat-id="${c.id}" style="display:flex;gap:8px;align-items:center"><img src="${c.avatar||'https://via.placeholder.com/36/333/fff?text=C'}" style="width:44px;height:44px;border-radius:8px"><div style="flex:1"><div style="font-weight:800">${escapeHtml(c.name||c.contact||'Контакт')}</div><div class="small">${escapeHtml(c.last||'')}</div></div></div>`).join('') || '<div class="small">Список диалогов пуст</div>';
-  const modal = `<div class="h">Мессенджер</div><div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn" id="openContacts">Контакты</button><button class="btn" id="createChat">Создать чат</button></div><div class="list" id="chatsList">${chatsHtml}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
-  document.getElementById('createChat').addEventListener('click', ()=>{
-    const name = prompt('Имя / номер контакта:');
-    if(!name) return;
-    state.chats.unshift({id:Date.now(), name, last:'Новый чат', avatar: state.user && state.user.avatar || null, messages:[]});
-    requestSave();
-    hideModal(); openMessengerModal();
-  });
-  document.getElementById('openContacts').addEventListener('click', ()=>{
-    const contacts = state.chats.map(c=>c.name||c.contact).filter(Boolean);
-    showModal(`<div class="h">Контакты</div><div class="list">${contacts.map(c=>`<div class="post">${escapeHtml(c)}</div>`).join('')}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`);
-  });
+/* Ads modal */
+function openAdsModal(){
+  const html = `<div class="h"><strong>Подать объявление</strong></div><label>Заголовок</label><input id="adTitle"><label>Текст</label><textarea id="adText"></textarea>`;
+  const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="publishAd">Опубликовать</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ document.getElementById('publishAd').addEventListener('click', ()=>{
+    const t=document.getElementById('adTitle').value.trim(), txt=document.getElementById('adText').value.trim();
+    if(!t||!txt) return alert('Заполните заголовок и текст');
+    state.cityPosts = state.cityPosts || []; state.cityPosts.unshift({id:Date.now(), title:t, text:txt, created:new Date().toISOString()});
+    saveState(); closeModal(); alert('Объявление опубликовано (демо).');
+  }); },50);
 }
 
-/* ----- Wallet ----- */
-function openWalletModal(){
-  const modal = `<div class="h">Кошелёк</div><div style="font-size:26px;font-weight:900">${state.wallet.balance||0} ₸</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="walletTransfer">Перевести</button><button class="btn" id="walletTopup">Пополнить</button><button class="btn" id="walletWithdraw">Снять</button></div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
-  document.getElementById('walletTopup').addEventListener('click', ()=>{ const s = parseInt(prompt('Сумма (₸):')||'0',10); if(s>0){ state.wallet.balance = (state.wallet.balance||0) + s; requestSave(); hideModal(); openWalletModal(); }});
-  document.getElementById('walletTransfer').addEventListener('click', ()=>{ const to=prompt('Кому (номер):'); const s=parseInt(prompt('Сумма:')||'0',10); if(to && s>0 && (state.wallet.balance||0)>=s){ state.wallet.balance -= s; addNotification(`Перевод ${s}₸ на ${to}`); requestSave(); hideModal(); }});
-  document.getElementById('walletWithdraw').addEventListener('click', ()=>{ const s=parseInt(prompt('Сумма:')||'0',10); if(s>0 && (state.wallet.balance||0)>=s){ state.wallet.balance -= s; requestSave(); hideModal(); openWalletModal(); }});
-}
+/* City chat, messenger stubs */
+function openCityChat(){ alert('Открыть City чат — демо'); }
+function openMessenger(){ alert('Открыть мессенджер — демо'); }
 
-/* ----- Find jobs modal ----- */
-function openFindJobsModal(){
-  const jobs = state.servicesPosts.map(o=>`<div class="post"><div class="meta">${escapeHtml(o.svc)} · ${escapeHtml(o.deadline||'')}</div><div style="font-weight:700">${escapeHtml(o.desc)}</div><div class="small">Бюджет ${o.budget} ₸</div><div style="margin-top:8px"><button class="btn" onclick="applyJob(${o.id})">Откликнуться</button></div>${o.image?`<img src="${o.image}" style="max-width:100%;border-radius:8px">`:''}</div>`).join('') || '<div class="small">Нет заявок</div>';
-  showModal(`<div class="h">Найти заказы</div><div class="list">${jobs}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`);
-}
-window.applyJob = function(orderId){
-  const budget = prompt('Ваш бюджет (₸):','0'); const comment = prompt('Комментарий:','');
-  const order = state.servicesPosts.find(o=>o.id==orderId); if(!order) return alert('Не найдено');
-  addNotification(`Отклик на ${order.svc}: ${budget}₸ — ${comment}`);
-  requestSave();
-  hideModal();
-  alert('Отклик отправлен (демо).');
-}
+/* Find jobs & wallet stubs */
+function openFindJobs(){ alert('Поиск заказов — демо'); }
+function openFindJobsModal(){ alert('Найти заказы — демо'); }
+function openWallet(){ alert('Кошелёк — демо'); }
 
-/* ----- Auth ----- */
-function doAuth(){
-  const name = document.getElementById('authName').value.trim();
-  const phone = document.getElementById('authPhone').value.trim();
-  const pin = document.getElementById('authPIN').value.trim();
-  if(!name || !phone || !/^\d{4}$/.test(pin)) return alert('Заполните имя, телефон и 4-значный PIN');
-  state.user = state.user || {};
-  state.user.name = name; state.user.phone = phone; state.user.pin = pin;
-  requestSave();
-  addNotification('Пользователь вошёл: ' + name);
-  authBackdrop.style.display = 'none';
-  renderAll();
-  if(!state.user.surname) setTimeout(()=>openSettingsModal(true),300);
-}
-
-/* ----- Utilities ----- */
-function fileToBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
-function addNotification(text, meta={}){ state.notifications.unshift({id:Date.now(), text, meta, ts:new Date().toISOString()}); updateNotifCount(); requestSave(); }
-
-/* ----- Render All UI ----- */
-function renderAll(){
-  document.getElementById('cityName').textContent = state.city || 'Караганда';
-  document.getElementById('avatarImg').src = (state.user && state.user.avatar) ? state.user.avatar : 'https://via.placeholder.com/48/333/fff?text=U';
+/* ==============
+   Bind UI events
+   ============== */
+document.addEventListener('DOMContentLoaded', ()=>{
   applyTheme(state.theme || 'фиолетово-черный');
-  updateNotifCount();
-  renderMenuItems();
-  fetchWeatherForCity(state.city || 'Караганда');
-  if(!map) initMap();
+  // tabs
+  el('tabServices').addEventListener('click', ()=>{ el('tabServices').classList.add('active'); el('tabWork').classList.remove('active'); renderMenu(); });
+  el('tabWork').addEventListener('click', ()=>{ el('tabWork').classList.add('active'); el('tabServices').classList.remove('active'); renderMenu(); });
+  renderMenu();
+
+  // calendar modal
+  el('calendarBtn').addEventListener('click', ()=>openCalendar());
+
+  // map init
+  initMap();
+
+  // search button
+  el('searchBtn').addEventListener('click', async ()=>{ const q=el('mapSearch').value.trim(); if(!q) return alert('Введите запрос'); await doSearch(q); });
+
+  // set from/to btns
+  el('setFromBtn').addEventListener('click', ()=>{ map._setMode='from'; alert('Клик на карте чтобы выбрать отправление (A)'); });
+  el('setToBtn').addEventListener('click', ()=>{ map._setMode='to'; alert('Клик на карте чтобы выбрать пункт назначения (B)'); });
+  el('routeBtn').addEventListener('click', ()=>{ if(!fromMarker||!toMarker) return alert('Укажите точки A и B'); buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); });
+  el('clearRoute').addEventListener('click', ()=>{ clearRoute(); });
+
+  // notif
+  el('notifBtn').addEventListener('click', openNotifications);
+  setNotifCount();
+
+  // menu initial render
+  renderMenu();
+
+  // weather quick fetch (open-meteo)
+  fetchWeather();
+
+});
+
+/* Calendar modal */
+function openCalendar(){
+  const html = `<div class="h"><strong>Календарь</strong></div>
+    <label>Дата</label><input type="date" id="calDate" value="${new Date().toISOString().slice(0,10)}">
+    <label>Время</label><input type="time" id="calTime" value="12:00">
+    <label>Заметка</label><input id="calNote">
+    <div class="small">Добавленные напоминания появятся в уведомлениях (локально).</div>`;
+  const actions = '<button class="btn" data-close>Закрыть</button><button class="btn primary" id="addRem">Добавить</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ document.getElementById('addRem').addEventListener('click', ()=>{
+    const d=el('calDate').value, t=el('calTime').value, note=el('calNote').value.trim();
+    if(!d||!t) return alert('Выберите дату и время');
+    state.notifications = state.notifications || [];
+    state.notifications.unshift({id:Date.now(), text:`Напоминание: ${note||'без описания'}`, ts: new Date(d+'T'+t+':00').toISOString()});
+    saveState(); setNotifCount(); closeModal(); alert('Напоминание добавлено');
+  }); },50);
 }
 
-/* ----- Initial load & periodic pull ----- */
-(async function init(){
-  loadLocal();
-  renderAll();
-  try{ await loadFromJSONBin(); }catch(e){ /* fallback to local */ }
-  renderAll();
-  // start periodic pull
-  startPeriodicPull(PULL_INTERVAL_MS);
-  // init map
-  initMap();
-  // set header date button
-  document.getElementById('dateButton').textContent = new Date().toLocaleString('ru',{day:'2-digit',month:'short',year:'numeric'});
-})();
+/* Notifications modal */
+function openNotifications(){
+  const listHtml = (state.notifications||[]).map(n=>`<div style="padding:8px;border-bottom:1px solid var(--glass-border)"><div class="small">${new Date(n.ts||n.created||Date.now()).toLocaleString()}</div><div style="margin-top:6px">${n.text||''}</div></div>`).join('') || '<div class="small">Нет уведомлений</div>';
+  const html = `<div class="h"><strong>Уведомления</strong></div><div style="max-height:320px;overflow:auto;margin-top:8px">${listHtml}</div>`;
+  const actions = '<button class="btn" data-close>Закрыть</button><button class="btn primary" id="clearNotifs">Очистить</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ el('clearNotifs').addEventListener('click', ()=>{ state.notifications=[]; saveState(); setNotifCount(); closeModal(); }); },50);
+}
 
-/* ----- Modal backdrop close on click outside ----- */
-modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) hideModal(); });
+/* Weather fetch */
+async function fetchWeather(){
+  try{
+    const lat=DEFAULT_CITY.lat, lon=DEFAULT_CITY.lon;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('weather fail');
+    const d = await r.json();
+    if(d && d.current_weather){ el('weatherBlock').textContent = `${Math.round(d.current_weather.temperature)} °C · ${d.current_weather.weathercode}`; }
+  }catch(e){ console.warn(e); el('weatherBlock').textContent='— °C'; }
+}
 
+/* helper file->base64 for file attachments */
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>res(fr.result);
+    fr.onerror=rej;
+    fr.readAsDataURL(file);
+  });
+}
+
+/* DEBUG helpers - allow click of popup buttons (setFrom/fromSearch) works via global functions defined earlier */
+
+/* Expose some globals for popups to use */
+window.buildRoute = buildRoute;
+window.setFromPoint = setFromPoint;
+window.setToPoint = setToPoint;
+
+/* End of script */
 </script>
 </body>
 </html>
