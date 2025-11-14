@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>GiDCity — прототип мобильного приложения (расширенный)</title>
-<meta name="description" content="Прототип мобильного приложения GiDCity — интерфейс, модалки, автосохранение в JSONBin (демо).">
+<title>GiDCity — прототип (с картой и JSONBin)</title>
+<meta name="description" content="GiDCity prototype with JSONBin sync, OpenRouteService routing, media uploads.">
+<!-- Leaflet CSS for map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin=""/>
 <style>
-  /* ======================
-     Расширенные стили — симметрия и точная верстка
-     ====================== */
   :root{
-    --bg1: #5b2cff; /* default фиолетовый */
+    --bg1: #5b2cff;
     --bg2: #0a0a0a;
     --panel-bg: #0a0a0a;
     --accent: #ffd54a;
@@ -20,106 +19,77 @@
     --muted: rgba(242,242,242,0.62);
     --radius: 12px;
     --gap: 12px;
-    --card-padding: 12px;
   }
   html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:linear-gradient(160deg,var(--bg1) 0%, #2b0b3a 40%, var(--bg2) 100%);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;padding:12px;}
-  /* phone frame */
-  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.03);overflow:hidden;position:relative;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.18));border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;}
-  /* header (fixed inside phone) */
-  .header{padding:18px;display:flex;align-items:center;justify-content:space-between;gap:8px;backdrop-filter: blur(6px) saturate(120%);background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-bottom:1px solid rgba(255,255,255,0.03);position:sticky;top:0;z-index:30;background-color:rgba(10,10,10,0.28);}
+  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.18));}
+  /* fixed top header */
+  .header{position:sticky;top:0;z-index:30;padding:14px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);backdrop-filter: blur(6px);border-bottom:1px solid rgba(255,255,255,0.03);}
   .title{display:flex;align-items:center;gap:12px;}
-  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(91,44,255,0.15),0 1px 0 rgba(255,255,255,0.02) inset;border:1px solid var(--glass-border);position:relative;overflow:hidden;}
-  .app-name{font-weight:800;font-size:20px;letter-spacing:0.6px;margin:0;}
-  .subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
-  @keyframes title-glow{0%{text-shadow:0 0 0 rgba(255,255,255,0)}50%{text-shadow:0 0 18px rgba(91,44,255,0.75)}100%{text-shadow:0 0 0 rgba(255,255,255,0)}}
-  .glow{animation:title-glow 2s infinite;}
-  /* header center */
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--glass-border);}
+  .app-name{font-weight:800;font-size:20px;margin:0;}
   .header-center{display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .header-center .city-label{font-size:14px;color:var(--muted);font-weight:700;}
-  .header-center .greeting{font-size:12px;color:var(--muted);}
   .header-actions{display:flex;gap:8px;align-items:center;}
-  .icon-btn{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);backdrop-filter: blur(6px);cursor:pointer;}
-  /* content (scrollable area) */
-  .content{padding:14px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:auto;}
+  .icon-btn{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);cursor:pointer;}
+  .content{padding:12px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:auto;}
   .city-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .city-block{display:flex;gap:12px;align-items:center;}
   .city-name{font-weight:700;font-size:18px;margin:0;}
   .weather{font-size:13px;color:var(--muted);background:var(--panel-bg);padding:8px 12px;border-radius:14px;border:1px solid var(--glass-border);min-width:120px;text-align:center;}
-  /* toggle */
-  .toggle{display:flex;gap:10px;background:var(--panel-bg);padding:8px;border-radius:14px;width:100%;border:1px solid var(--glass-border);}
-  .toggle button{flex:1;padding:10px 6px;border-radius:10px;background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer;}
-  .toggle button.active{background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));color:var(--text);box-shadow:0 6px 18px rgba(0,0,0,0.4),0 0 12px rgba(255,205,95,0.06) inset;position:relative;}
-  .toggle button.active::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:40%;height:4px;border-radius:4px;background:var(--accent);box-shadow:0 6px 18px rgba(255,213,100,0.12);}
-  /* main card */
-  .main-card{margin-top:2px;background:var(--panel-bg);border-radius:18px;padding:12px;border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(0,0,0,0.45);min-height:240px;display:flex;gap:12px;align-items:flex-start;flex-direction:column;}
-  .menu-list{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;}
-  .menu-item{background:var(--panel-bg);padding:12px;border-radius:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:6px;min-height:78px;cursor:pointer;align-items:flex-start;justify-content:center;}
-  .menu-item .caption{color:var(--muted);font-size:12px;}
-  .menu-item .title{font-weight:900;font-size:16px;letter-spacing:0.6px;}
-  /* notifications button/panel (top of card) */
-  .notifications-panel{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04));border:1px solid var(--glass-border)}
-  .notifications-left{display:flex;align-items:center;gap:10px}
-  .notif-count{background:var(--accent);color:#111;font-weight:900;font-size:12px;padding:6px 8px;border-radius:12px;margin-left:4px;}
-  /* footer */
-  .footer{padding:10px 16px;text-align:center;font-size:11px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02);}
-  /* modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;}
-  .modal{width:100%;max-width:420px;border-radius:14px;background:linear-gradient(180deg,var(--panel-bg),#0b0b0b);border:1px solid var(--glass-border);padding:14px;box-shadow:0 30px 80px rgba(0,0,0,0.7);max-height:86vh;display:flex;flex-direction:column;overflow:hidden;}
-  .modal .content-scroll{overflow:auto;padding-right:6px;}
+  /* tabs simplified */
+  .toggle{display:flex;gap:10px;background:var(--panel-bg);padding:8px;border-radius:14px;border:1px solid var(--glass-border);position:relative;}
+  .toggle button{flex:1;padding:10px 8px;border-radius:10px;background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer;}
+  .toggle button.active{color:var(--text);}
+  /* main card vertical list for symmetry */
+  .main-card{margin-top:6px;background:var(--panel-bg);border-radius:14px;padding:12px;border:1px solid var(--glass-border);box-shadow:0 8px 20px rgba(0,0,0,0.45);display:flex;flex-direction:column;gap:12px;}
+  .notif-row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));}
+  .notif-left{font-weight:800;font-size:16px;}
+  .menu-list{display:flex;flex-direction:column;gap:10px;}
+  .menu-item{background:rgba(255,255,255,0.01);padding:18px;border-radius:12px;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+  .menu-item .title{font-weight:900;font-size:18px;}
+  .menu-item .caption{color:var(--muted);font-size:13px}
+  .footer{padding:12px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02)}
+  /* modal backdrop */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
+  .modal{width:100%;max-width:420px;border-radius:12px;background:linear-gradient(180deg,var(--panel-bg),#0b0b0b);border:1px solid var(--glass-border);padding:14px;box-shadow:0 30px 80px rgba(0,0,0,0.7);}
   .modal .h{font-weight:900;margin-bottom:8px;font-size:18px;}
-  label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px;}
-  input[type="text"],input[type="tel"],input[type="password"],textarea,select,input[type="number"],input[type="date"],input[type="time"]{width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:var(--text);outline:none;}
-  textarea{min-height:80px;resize:vertical;}
-  .modal-actions{display:flex;gap:8px;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg,transparent, rgba(0,0,0,0.02));}
+  label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:var(--text);outline:none;box-sizing:border-box;}
+  .modal-actions{display:flex;gap:8px;justify-content:space-between;margin-top:12px;}
   .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:800;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));color:var(--text);}
-  .btn.primary{background:linear-gradient(90deg,#ffd54a,#ffb347);color:#111;}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#111;}
   .small{font-size:13px;color:var(--muted);}
-  .list{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding-right:6px;}
-  .post{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);}
-  .post .meta{font-size:12px;color:var(--muted);margin-bottom:6px;}
-  .post-author{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .post{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px;}
+  .post-author{display:flex;align-items:center;gap:8px;}
   .post-author img{width:36px;height:36px;border-radius:50%;object-fit:cover;}
-  .post-author .author-name{font-weight:800;}
-  .post-image{margin-top:8px;max-width:100%;border-radius:8px;display:block;}
-  .attachment-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid var(--glass-border);}
-  .required-note{color:#ffcc66;font-weight:700;margin-top:8px;}
-  @media (max-width:420px){.phone{width:100%}}
+  .post-actions{display:flex;gap:12px;align-items:center;color:var(--muted);font-weight:700;}
+  .map-container{height:240px;border-radius:12px;overflow:hidden;border:1px solid var(--glass-border)}
+  /* small helpers */
   .hidden{display:none !important;}
-  /* grid symmetry helpers: ensure even padding & centering */
-  .centered{display:flex;align-items:center;justify-content:center;}
+  @media (max-width:420px){.phone{width:100%}}
 </style>
 </head>
 <body>
 
-<!-- =========================
-     Полный исходный HTML (твои блоки сохранены) + изменения
-     ========================= -->
-<div class="phone" role="application" aria-label="GiDCity prototype">
+<div class="phone" role="application" aria-label="GiDCity">
   <div class="header">
     <div class="title">
-      <div class="logo" id="avatarPreview" title="Аватар">
-        <!-- логотип -->
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="7" width="4" height="10" rx="1.2" fill="white" opacity="0.12"/>
-          <rect x="9" y="4" width="4" height="13" rx="1.2" fill="white" opacity="0.12"/>
-          <rect x="15" y="9" width="4" height="8" rx="1.2" fill="white" opacity="0.12"/>
-          <circle cx="12" cy="3" r="3" fill="#ffd54a" opacity="0.9"/>
-        </svg>
+      <div class="logo" id="avatarPreview">
+        <img id="avatarImg" src="https://via.placeholder.com/48/333333/fff?text=U" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:8px">
       </div>
-      <div style="line-height:1;">
-        <div class="app-name glow" id="appTitle">GiDCity</div>
-        <div class="subtitle" id="subtitle">мини-приложение</div>
+      <div>
+        <div class="app-name" id="appTitle">GiDCity</div>
+        <div class="small">мини-приложение</div>
       </div>
     </div>
 
-    <div class="header-center">
-      <div class="city-label" id="headerCityLabel">город: Караганда</div>
-      <div class="greeting" id="headerGreeting">GiDCity-ға қош келдіңіз!</div>
+    <div class="header-center" id="headerCenter">
+      <!-- NOTE: greeting removed from persistent; kept minimal -->
+      <div id="dateButton" class="icon-btn" style="padding:8px 12px;border-radius:18px;background:var(--panel-bg);font-weight:800">17 нояб 2025</div>
     </div>
 
     <div class="header-actions">
-      <div class="icon-btn" id="calendarBtn" title="Календарь" aria-label="Открыть календарь">📅</div>
-      <div class="icon-btn" id="settingsBtn" title="Настройки" aria-label="Открыть настройки">⚙️</div>
+      <div class="icon-btn" id="calendarBtn" title="Календарь">📅</div>
+      <div class="icon-btn" id="settingsBtn" title="Настройки">⚙️</div>
     </div>
   </div>
 
@@ -132,105 +102,90 @@
         </div>
         <div class="weather" id="weatherBlock">— °C · —</div>
       </div>
-      <div class="small">Последняя синхр.: <span id="syncStatus">локально</span></div>
+      <div class="small" id="syncSmall">Последняя синхр.: локально</div>
     </div>
 
-    <div class="toggle" role="tablist" aria-label="Выбор раздела">
-      <button id="servicesBtn" class="active" aria-pressed="true">УСЛУГИ</button>
-      <button id="workBtn" aria-pressed="false">РАБОТА</button>
+    <div class="toggle" role="tablist" aria-label="Выбор">
+      <button id="servicesBtn" class="active">УСЛУГИ</button>
+      <button id="workBtn">РАБОТА</button>
     </div>
 
     <div class="main-card" role="region" aria-label="Главное меню">
-      <!-- уведомления — сверху в отдельной панели -->
-      <div class="notifications-panel" id="notificationsPanel" aria-live="polite">
-        <div class="notifications-left">
-          <div style="font-weight:800">Уведомления</div>
-          <div class="small">Новые события</div>
+      <!-- уведомления сверху как отдельная строка -->
+      <div class="notif-row" id="notifRow">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="notif-left">Уведомления <span class="small" style="margin-left:8px;color:var(--muted)">Новые события</span></div>
+          <div style="display:flex;gap:8px;align-items:center"><div id="notifDot" style="background:var(--accent);color:#111;padding:6px 10px;border-radius:14px;font-weight:800">0</div></div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="notif-count" id="notifCount">0</div>
-          <div><button class="btn" id="openNotifs">Открыть</button></div>
-        </div>
+        <div><button class="btn" id="openNotifs">Открыть</button></div>
       </div>
 
-      <div class="menu-list" id="menuList"></div>
+      <div class="menu-list" id="menuList" aria-live="polite">
+        <!-- menu items are filled by JS -->
+      </div>
+
+      <!-- map preview fixed inside main card (optional) -->
+      <div class="map-container" id="mapContainer"></div>
     </div>
 
-    <div class="small" id="helperNote">Шрифт — стиль iOS. Дизайн — минимализм + футуризм, неон и стекло.</div>
+    <div class="small" id="bottomNote">KASSEN Technology Inc.</div>
   </div>
 
-  <div class="footer">
-    <div>KASSEN Technology Inc.</div>
-    <div class="sync-note" id="syncFooter">Последняя синхр.: локально</div>
-  </div>
+  <div class="footer" id="footerSync">Последняя синхр.: локально. (JSONBin)</div>
 </div>
 
-<!-- ---------------- MODALS ---------------- -->
+<!-- modals -->
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
-  <div class="modal" id="modalWindow" role="document" aria-modal="true">
-    <!-- Внутри модалки — блок .content-scroll (чтобы footer кнопки остались видимыми) -->
-    <div class="content-scroll" id="modalContent"></div>
-    <div class="modal-actions" id="modalActions">
-      <!-- Кнопки будут вставлены скриптом (сохранена логика: primary слева, закрыть справа) -->
-    </div>
-  </div>
+  <div class="modal" id="modalWindow" role="document" aria-modal="true"></div>
 </div>
 
-<!-- Auth modal (показывается поверх, фиксировано) -->
+<!-- auth modal shown initially -->
 <div class="modal-backdrop" id="authBackdrop" style="display:flex;">
   <div class="modal" role="dialog" aria-modal="true">
-    <div class="content-scroll">
-      <div class="h">Авторизация</div>
-      <div class="small">Для входа введите имя, номер телефона и четырёхзначный пароль (PIN)</div>
-      <div style="height:10px"></div>
-
-      <label for="authName">Имя</label>
-      <input id="authName" type="text" placeholder="Ваше имя">
-
-      <label for="authPhone">Номер телефона</label>
-      <input id="authPhone" type="tel" placeholder="+7xxxxxxxxxx">
-
-      <label for="authPIN">Пароль (4 цифры)</label>
-      <input id="authPIN" type="password" maxlength="4" pattern="\d*" inputmode="numeric" placeholder="1234">
-    </div>
-
+    <div class="h">Авторизация</div>
+    <div class="small">Для входа введите имя, номер телефона и PIN (4 цифры)</div>
+    <label for="authName">Имя</label>
+    <input id="authName" type="text" placeholder="Ваше имя">
+    <label for="authPhone">Номер телефона</label>
+    <input id="authPhone" type="tel" placeholder="+7...">
+    <label for="authPIN">PIN</label>
+    <input id="authPIN" type="password" maxlength="4" inputmode="numeric" placeholder="1234">
     <div class="modal-actions">
-      <div><button class="btn" id="authSkip">Пропустить</button></div>
-      <div><button class="btn primary" id="authSubmit">Войти</button></div>
+      <!-- primary left, cancel right -->
+      <button class="btn primary" id="authSubmit">Войти</button>
+      <button class="btn" id="authSkip">Пропустить</button>
     </div>
-
-    <div style="height:10px"></div>
-    <div class="small" style="color:#ffd54a">Примечание: в продакшне аутентификацию реализовать на сервере.</div>
+    <div class="small" style="color:var(--accent);margin-top:8px">Примечание: в продакшне аутентификацию реализовать на сервере.</div>
   </div>
 </div>
 
-<!-- Hidden file inputs for media uploads (profile, chat, messenger, orders) -->
+<!-- hidden file inputs -->
 <input id="fileProfileAvatar" type="file" accept="image/*" class="hidden">
 <input id="fileChatAttach" type="file" accept="image/*" class="hidden">
 <input id="fileMessageAttach" type="file" accept="image/*" class="hidden">
 <input id="fileOrderAttach" type="file" accept="image/*" class="hidden">
 
-<script>
-/* ================
-   Расширенный JS: полный исходник сохранён, добавлены исправления:
-   - убран синтаксический CSS-ошибочный символ
-   - periodic pull (каждые N сек)
-   - header & modals фиксированы
-   - modal-actions фиксированы внизу модалки (sticky-like)
-   - уведомления сверху (не растягиваются)
-   - лайки/комменты/репосты поддерживаются
-   ================ */
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-/* ---------- Конфигурация JSONBin ---------- */
+<script>
+/* =========================
+   GiDCity enhanced script
+   - JSONBin sync + periodic pull
+   - OpenRouteService routing (ORS_API_KEY included)
+   - Leaflet map for routes
+   - UI changes requested
+   ========================= */
+
+/* ----- CONFIG (you provided the key) ----- */
+const ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcyZWNiZDAxMGJlNTRjY2E4NDQwYTVlYmM2N2U1NzdkIiwiaCI6Im11cm11cjY0In0=';
 const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG';
 const JSONBIN_ID = '6911fbe843b1c97be9a4dc97';
-const USE_JSONBIN = true; // now sync
-const PULL_INTERVAL_MS = 10000; // периодический pull (можешь изменить)
+const PULL_INTERVAL_MS = 8000; // periodic pull every 8s (respect rate limits)
 
-/* ---------- Глобальный стейт ---------- */
-const appStateKey = 'gidcity_state_live_v1';
+/* ----- App state ----- */
+const appStateKey = 'gidcity_state_live_v2';
 let state = {
-  __updatedAt: new Date(0).toISOString(),
   user: null,
   city: 'Караганда',
   theme: 'фиолетово-черный',
@@ -238,434 +193,317 @@ let state = {
   servicesPosts: [],
   cityPosts: [],
   chats: [],
-  wallet: {balance: 0},
+  wallet: {balance:0},
   reminders: []
 };
 
-/* ---------- Карта городов ---------- */
+/* ----- City coords for weather and map ----- */
 const CITY_COORDS = {
   "Караганда": {lat:49.8062, lon:73.0851},
   "Нур-Султан": {lat:51.1605, lon:71.4704},
-  "Алматы": {lat:43.2383, lon:76.9458},
-  "Шымкент": {lat:42.3417, lon:69.5940},
-  "Актобе": {lat:50.2839, lon:57.1660},
-  "Павлодар": {lat:52.2867, lon:76.9679},
-  "Костанай": {lat:53.2148, lon:63.6248},
-  "Кызылорда": {lat:44.8528, lon:65.4829},
-  "Тараз": {lat:42.8972, lon:71.3667},
-  "Петропавловск": {lat:54.8756, lon:69.1606},
-  "Усть-Каменогорск": {lat:49.9721, lon:82.6157},
-  "Кокшетау": {lat:53.2823, lon:69.3937},
-  "Семей": {lat:50.4117, lon:80.2461},
-  "Актау": {lat:43.6500, lon:51.2172},
-  "Атырау": {lat:47.1000, lon:51.8833},
-  "Талдыкорган": {lat:45.0117, lon:78.3783}
+  "Алматы": {lat:43.2383, lon:76.9458}
+  // add more if needed
 };
 
-/* ---------- Темы ---------- */
+/* ----- THEMES ----- */
 const THEMES = {
   'фиолетово-черный': {top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a'},
   'тёмно-синий': {top:'#0b3d91', bottom:'#061428', accent:'#55d4ff'},
   'красный': {top:'#ff416c', bottom:'#0a0a0a', accent:'#ffb37a'},
   'оранжевый': {top:'#ff7a18', bottom:'#0a0a0a', accent:'#ffd54a'},
-  'серый': {top:'#6b6b6b', bottom:'#0a0a0a', accent:'#d0d0d0'},
-  'зелёный': {top:'#00b09b', bottom:'#0a0a0a', accent:'#a8ffcf'},
-  'белый': {top:'#ffffff', bottom:'#0a0a0a', accent:'#333333'},
-  'жёлтый': {top:'#ffd54a', bottom:'#0a0a0a', accent:'#111111'},
-  'коричневый': {top:'#8b5e3c', bottom:'#0a0a0a', accent:'#ffd9b3'}
+  'зелёный': {top:'#00b09b', bottom:'#0a0a0a', accent:'#a8ffcf'}
 };
 
-/* ---------- UI refs ---------- */
+/* ----- UI refs ----- */
 const modalBackdrop = document.getElementById('modalBackdrop');
 const modalWindow = document.getElementById('modalWindow');
-const modalContent = document.getElementById('modalContent');
-const modalActions = document.getElementById('modalActions');
 const authBackdrop = document.getElementById('authBackdrop');
 const fileProfileAvatar = document.getElementById('fileProfileAvatar');
 const fileChatAttach = document.getElementById('fileChatAttach');
 const fileMessageAttach = document.getElementById('fileMessageAttach');
 const fileOrderAttach = document.getElementById('fileOrderAttach');
 
-/* ---------- Load / Save local ---------- */
-function loadState(){
-  const raw = localStorage.getItem(appStateKey);
-  if(raw){
-    try{ Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn('parse state err', e); }
-  }
-}
-function localSave(){ localStorage.setItem(appStateKey, JSON.stringify(state)); }
+const menuListEl = document.getElementById('menuList');
+const notifDot = document.getElementById('notifDot');
+const notifRow = document.getElementById('notifRow');
+const mapContainer = document.getElementById('mapContainer');
+const footerSync = document.getElementById('footerSync');
+const syncSmall = document.getElementById('syncSmall');
 
-/* ---------- debounce + sync to JSONBin ---------- */
+/* --------- Helpers --------- */
+function saveLocal(){ localStorage.setItem(appStateKey, JSON.stringify(state)); }
+function loadLocal(){ const raw = localStorage.getItem(appStateKey); if(raw){ try{ Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn(e); } } }
+function updateNotifCount(){ notifDot.textContent = (state.notifications.length || 0); }
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ----- JSONBin sync: save & load ----- */
 let saveTimer = null;
 function requestSave(){
-  localSave();
-  setSyncStatus('локально');
-  if(!USE_JSONBIN) return;
+  saveLocal();
+  footerSync.textContent = 'Последняя синхр.: локально';
   if(saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(()=>{
-    syncToJSONBin().then(()=>{ setSyncStatus('синхр. JSONBin'); }).catch(e=>{ setSyncStatus('ошибка синхр.'); console.warn(e); });
-  },1200);
+  saveTimer = setTimeout(()=>{ syncToJSONBin().then(()=>{ footerSync.textContent = 'Последняя синхр.: синхр. JSONBin'; }).catch(e=>{ footerSync.textContent = 'Последняя синхр.: ошибка синхр.'; console.warn(e); }); }, 1200);
 }
 
 async function syncToJSONBin(){
   const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
-  state.__updatedAt = new Date().toISOString();
-  const payload = {state, updatedAt: state.__updatedAt};
-  const resp = await fetch(url, {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},
-    body: JSON.stringify(payload)
-  });
+  const payload = { state, updatedAt: new Date().toISOString() };
+  const resp = await fetch(url, { method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY}, body: JSON.stringify(payload) });
   if(!resp.ok) throw new Error('JSONBin save failed');
   return resp.json();
 }
 
-/* ---------- pull (periodic) ---------- */
-let pullTimer = null;
+let pulling = false;
 async function loadFromJSONBin(){
   const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
-  const resp = await fetch(url, {headers:{'X-Master-Key':JSONBIN_KEY}});
+  const resp = await fetch(url, { headers: {'X-Master-Key': JSONBIN_KEY} });
   if(!resp.ok) throw new Error('JSONBin load failed');
   const data = await resp.json();
   if(data && data.record && data.record.state){
-    return data.record;
+    state = data.record.state;
+    saveLocal();
+    renderAll();
   }
-  return null;
-}
-async function pullAndMerge(){
-  if(!USE_JSONBIN) return;
-  try{
-    const data = await loadFromJSONBin();
-    if(data && data.updatedAt){
-      const remoteUpdated = data.updatedAt || (data.record && data.record.__updatedAt) || null;
-      // сравнить по времени
-      if(remoteUpdated && new Date(remoteUpdated) > new Date(state.__updatedAt || 0)){
-        // обновляем локальный state полностью (как ты и хранил)
-        state = data.record.state ? data.record.state : data.record;
-        if(data.updatedAt) state.__updatedAt = data.updatedAt;
-        localSave();
-        renderAll();
-        setSyncStatus('синхр. JSONBin');
-      }
-    }
-  } catch(e){
-    console.warn('pull error', e);
-    setSyncStatus('ошибка синхр.');
-  }
-}
-function startPeriodicPull(){
-  if(pullTimer) clearInterval(pullTimer);
-  if(USE_JSONBIN) pullTimer = setInterval(pullAndMerge, PULL_INTERVAL_MS);
+  return data;
 }
 
-/* ---------- Helpers ---------- */
-function addNotification(text, meta={}){
-  state.notifications.unshift({id:Date.now(), text, meta, ts: new Date().toISOString()});
-  requestSave();
-  updateNotifCount();
-}
-function updateNotifCount(){ document.getElementById('notifCount').textContent = (state.notifications.length || 0); }
-function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function setSyncStatus(text){
-  const el = document.getElementById('syncStatus');
-  const el2 = document.getElementById('syncFooter');
-  if(el) el.textContent = text;
-  if(el2) el2.textContent = 'Последняя синхр.: ' + text;
+/* periodic pull (to reduce conflicts) */
+let pullIntervalHandle = null;
+async function startPeriodicPull(ms = PULL_INTERVAL_MS){
+  if(pullIntervalHandle) clearInterval(pullIntervalHandle);
+  pullIntervalHandle = setInterval(async ()=>{
+    if(pulling) return;
+    pulling = true;
+    try{
+      await loadFromJSONBin();
+      //console.log('pulled remote state');
+    }catch(e){
+      //console.warn('pull error', e);
+    } finally { pulling = false; }
+  }, ms);
 }
 
-/* ---------- applyTheme ---------- */
+/* ----- Themes apply ----- */
 function applyTheme(name){
   const t = THEMES[name] || THEMES['фиолетово-черный'];
   document.documentElement.style.setProperty('--bg1', t.top);
   document.documentElement.style.setProperty('--bg2', t.bottom);
   document.documentElement.style.setProperty('--panel-bg', t.bottom);
-  document.documentElement.style.setProperty('--accent', t.accent || '#ffd54a');
-  const phone = document.querySelector('.phone');
-  phone.style.background = `linear-gradient(180deg, ${t.top} 0%, #2b0b3a 40%, ${t.bottom} 100%)`;
+  document.documentElement.style.setProperty('--accent', t.accent);
 }
 
-/* ---------- Weather ---------- */
+/* ----- Weather (open-meteo) ----- */
 async function fetchWeatherForCity(city){
   const coords = CITY_COORDS[city] || CITY_COORDS['Караганда'];
-  if(!coords) return;
   try{
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true`;
     const r = await fetch(url);
-    if(!r.ok) throw new Error('weather fetch failed');
-    const data = await r.json();
-    if(data && data.current_weather){
-      const temp = data.current_weather.temperature;
-      const wc = mapWeatherCodeToText(data.current_weather.weathercode);
-      document.getElementById('weatherBlock').textContent = `${Math.round(temp)} °C · ${wc}`;
+    if(r.ok){
+      const data = await r.json();
+      if(data && data.current_weather){
+        document.getElementById('weatherBlock').textContent = `${Math.round(data.current_weather.temperature)} °C · ${mapWeatherCodeToText(data.current_weather.weathercode)}`;
+      }
     }
   }catch(e){
-    console.warn('weather error', e);
     document.getElementById('weatherBlock').textContent = '— °C · —';
   }
 }
 function mapWeatherCodeToText(code){
-  const map = {
-    0:'ясно', 1:'малооблачно', 2:'облачно', 3:'пасмурно',
-    45:'туман',48:'шлейфы',51:'морось',53:'морось',55:'мокрый снег',
-    61:'небольшой дождь',63:'дождь',65:'сильный дождь',
-    71:'снег',73:'снег',75:'сильный снег',
-    80:'ливень',81:'ливень',82:'сильный ливень'
-  };
-  return map[code] || 'неизв.';
+  const map = {0:'ясно',1:'малообл',2:'облачно',3:'пасмурно',45:'туман',61:'дождь',71:'снег'};
+  return map[code]||'неизв.';
 }
 
-/* ---------- Render меню (сохранена логика) ---------- */
-function renderMenuItems(){
-  const menuList = document.getElementById('menuList');
-  menuList.innerHTML = '';
-  const activeSection = document.getElementById('servicesBtn').classList.contains('active') ? 'services' : 'work';
+/* ----- Map & routing (Leaflet + ORS) ----- */
+let map = null;
+let routeLayer = null;
+function initMap(){
+  if(map) return;
+  map = L.map('mapContainer', {zoomControl:false}).setView([49.8062,73.0851], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(map);
+}
+async function buildRoute(fromLatLon, toLatLon){
+  if(!ORS_API_KEY) return alert('ORS key missing');
+  const url = 'https://api.openrouteservice.org/v2/directions/driving-car/geojson';
+  const body = { coordinates: [ [fromLatLon[1], fromLatLon[0]], [toLatLon[1], toLatLon[0]] ] }; // ORS expects [lon,lat]
+  try{
+    const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization': ORS_API_KEY }, body: JSON.stringify(body) });
+    if(!r.ok) throw new Error('ors route failed');
+    const geo = await r.json();
+    if(routeLayer) routeLayer.remove();
+    routeLayer = L.geoJSON(geo, { style:{ color:'#ffd54a', weight:5, opacity:0.9 } }).addTo(map);
+    map.fitBounds(routeLayer.getBounds(), {padding:[20,20]});
+    // extract distance/time from properties if present
+    const summary = (geo.features && geo.features[0] && geo.features[0].properties && geo.features[0].properties.summary) || null;
+    return summary;
+  }catch(e){
+    console.warn(e);
+    return null;
+  }
+}
 
-  const items = (activeSection === 'services') ? [
-    {id:'order', title:'ЗАКАЗАТЬ', caption:'Создать заявку'},
-    {id:'reserve', title:'ЗАБРОНИРОВАТЬ', caption:'скоро...'},
-    {id:'ads', title:'Объявление услуг', caption:'Список объявлений'},
+/* ----- Render menu as vertical list (symmetry) ----- */
+function renderMenuItems(){
+  menuListEl.innerHTML = '';
+  const isServices = document.getElementById('servicesBtn').classList.contains('active');
+  const items = isServices ? [
+    {id:'order', title:'ЗАКАЗАТЬ', caption:'Создать заявку', color:'gold'},
+    {id:'reserve', title:'ЗАБРОНИРОВАТЬ', caption:'скоро...', color:'gold'},
+    {id:'ads', title:'Объявление услуг', caption:'Список объявлений', color:'gold'},
     {id:'citychat', title:'City чат', caption:'лента твоего города'},
     {id:'messenger', title:'Мессенджер', caption:'Диалоги'},
     {id:'wallet', title:'Кошелёк', caption:'Баланс'}
-  ] : [
-    {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок'},
-    {id:'ads2', title:'Объявление услуг', caption:'Список объявлений'},
+  ]:[
+    {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок', color:'gold'},
+    {id:'ads2', title:'Объявление услуг', caption:'Список объявлений', color:'gold'},
     {id:'citychat2', title:'City чат', caption:'лента твоего города'},
     {id:'messenger2', title:'Мессенджер', caption:'Диалоги'},
-    {id:'wallet2', title:'Кошелёк', caption:'Баланс'},
-    {id:'spacer', title:'', caption:''}
+    {id:'wallet2', title:'Кошелёк', caption:'Баланс'}
   ];
 
   items.forEach(it=>{
     const el = document.createElement('div');
-    el.className='menu-item';
+    el.className = 'menu-item';
     el.dataset.id = it.id;
-    el.innerHTML = `<div style="width:100%;display:flex;justify-content:space-between;align-items:center;"><div><div class="title" style="font-weight:900">${it.title}</div><div class="caption">${it.caption}</div></div><div style="opacity:0.9">></div></div>`;
-    if(it.id === 'spacer') el.style.visibility='hidden';
-    el.addEventListener('click', ()=>onMenuClick(it.id, activeSection));
-    menuList.appendChild(el);
+    el.innerHTML = `<div>
+                      <div class="title" style="color:${it.color? (it.color==='gold'? 'var(--accent)': it.color): '#fff'}">${it.title}</div>
+                      <div class="caption">${it.caption}</div>
+                    </div>
+                    <div style="opacity:0.9">›</div>`;
+    el.addEventListener('click', ()=>onMenuClick(it.id));
+    menuListEl.appendChild(el);
   });
 }
 
-/* ---------- render all ---------- */
-function renderAll(){
-  document.getElementById('cityName').textContent = state.city || 'Караганда';
-  document.getElementById('headerCityLabel').textContent = 'город: ' + (state.city || 'Караганда');
-  updateNotifCount();
-  renderMenuItems();
-  applyTheme(state.theme || 'фиолетово-черный');
-  fetchWeatherForCity(state.city || 'Караганда');
-  if(state.user && state.user.avatar){
-    document.getElementById('avatarPreview').innerHTML = `<img src="${state.user.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
-  }
-  // footer sync
-  setSyncStatus('локально');
-}
-
-/* ---------- Events ---------- */
+/* ----- Event mapping ----- */
 document.getElementById('servicesBtn').addEventListener('click', ()=>{
-  document.getElementById('servicesBtn').classList.add('active'); document.getElementById('servicesBtn').setAttribute('aria-pressed','true');
-  document.getElementById('workBtn').classList.remove('active'); document.getElementById('workBtn').setAttribute('aria-pressed','false');
+  document.getElementById('servicesBtn').classList.add('active');
+  document.getElementById('workBtn').classList.remove('active');
   renderMenuItems();
 });
 document.getElementById('workBtn').addEventListener('click', ()=>{
-  document.getElementById('workBtn').classList.add('active'); document.getElementById('workBtn').setAttribute('aria-pressed','true');
-  document.getElementById('servicesBtn').classList.remove('active'); document.getElementById('servicesBtn').setAttribute('aria-pressed','false');
+  document.getElementById('workBtn').classList.add('active');
+  document.getElementById('servicesBtn').classList.remove('active');
   renderMenuItems();
 });
 document.getElementById('calendarBtn').addEventListener('click', openCalendarModal);
 document.getElementById('settingsBtn').addEventListener('click', ()=>openSettingsModal(false));
 document.getElementById('openNotifs').addEventListener('click', openNotifications);
 document.getElementById('authSubmit').addEventListener('click', doAuth);
-document.getElementById('authSkip').addEventListener('click', ()=>{
-  authBackdrop.style.display='none';
-  loadState();
-  renderAll();
-  if(!state.user || !state.user.name || !state.user.surname) setTimeout(()=>openSettingsModal(true), 400);
-});
+document.getElementById('authSkip').addEventListener('click', ()=>{ authBackdrop.style.display='none'; renderAll(); if(!state.user || !state.user.surname) setTimeout(()=>openSettingsModal(true),400); });
 
-/* ---------- menu click mapping ---------- */
-function onMenuClick(id, section){
-  if(id === 'order'){ openOrderModal(); }
-  else if(id === 'reserve'){ openReserveModal(); }
-  else if(id === 'ads' || id === 'ads2'){ openAdsModal(); }
-  else if(id === 'citychat' || id === 'citychat2'){ openCityChatModal(); }
-  else if(id === 'messenger' || id === 'messenger2'){ openMessengerModal(); }
-  else if(id === 'wallet' || id === 'wallet2'){ openWalletModal(); }
-  else if(id === 'findJobs'){ openFindJobsModal(); }
+/* ----- Menu actions ----- */
+function onMenuClick(id){
+  if(id==='order') openOrderModal();
+  else if(id==='reserve') openReserveModal();
+  else if(id==='ads' || id==='ads2') openAdsModal();
+  else if(id==='citychat' || id==='citychat2') openCityChatModal();
+  else if(id==='messenger' || id==='messenger2') openMessengerModal();
+  else if(id==='wallet' || id==='wallet2') openWalletModal();
+  else if(id==='findJobs') openFindJobsModal();
 }
 
-/* ---------- Modal helpers (fixed modal backdrop, sticky actions) ---------- */
-function showModalInner(html, options = {}){
-  // options.primaryFirst (boolean) - keep primary button on left
-  modalContent.innerHTML = html;
-  // actions (if provided inside html, we'll move them to modalActions)
-  // If modalContent contains .modal-actions, extract children
-  const innerActions = modalContent.querySelector('.modal-actions');
-  modalActions.innerHTML = ''; // reset
-  if(innerActions){
-    // move buttons keeping order: primary left, others right
-    const buttons = Array.from(innerActions.querySelectorAll('button'));
-    const left = document.createElement('div');
-    const right = document.createElement('div');
-    left.style.display = 'flex'; left.style.gap = '8px';
-    right.style.display = 'flex'; right.style.gap = '8px';
-    buttons.forEach(btn => {
-      if(btn.classList.contains('primary')) left.appendChild(btn);
-      else right.appendChild(btn);
-    });
-    modalActions.appendChild(left);
-    modalActions.appendChild(right);
-  }
+/* ----- Modal open/close helpers ----- */
+function showModal(html){
+  modalWindow.innerHTML = html;
   modalBackdrop.style.display = 'flex';
   modalBackdrop.setAttribute('aria-hidden','false');
-  // attach click-to-close for data-close
-  modalContent.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click', hideModal));
-  modalActions.querySelectorAll('button[data-close]').forEach(btn=>btn.addEventListener('click', hideModal));
+  // attach data-close listeners if exist
+  modalWindow.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click', hideModal));
 }
-function showModal(html){
-  // wrapper keeps content in .content-scroll inside modal
-  showModalInner(`<div class="content-scroll">${html}</div>`);
-}
-function hideModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); modalContent.innerHTML=''; modalActions.innerHTML=''; }
+function hideModal(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); modalWindow.innerHTML=''; }
 
-/* ---------- Calendar ---------- */
+/* ----- Calendar & reminders ----- */
 function openCalendarModal(){
   const modal = `
     <div class="h">Календарь — ${new Date().toLocaleString('ru',{month:'long', year:'numeric'})}</div>
-    <div class="small">Выберите дату и время, добавьте заметку — напоминание придёт в уведомления.</div>
-    <div style="height:8px"></div>
     <label>Дата</label><input type="date" id="remDate" value="${new Date().toISOString().slice(0,10)}">
     <label>Время</label><input type="time" id="remTime" value="12:00">
-    <label>Заметка</label><input type="text" id="remNote" placeholder="Например: забрать посылку">
-    <div class="modal-actions"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="saveReminder">Добавить напоминание</button></div>
-  `;
+    <label>Заметка</label><input type="text" id="remNote" placeholder="Напоминание">
+    <div class="modal-actions">
+      <button class="btn primary" id="saveReminder">Добавить</button>
+      <button class="btn" data-close>Закрыть</button>
+    </div>`;
   showModal(modal);
-  setTimeout(()=>{
-    const btn = document.getElementById('saveReminder');
-    if(btn) btn.addEventListener('click', ()=>{
-      const d = document.getElementById('remDate').value;
-      const t = document.getElementById('remTime').value;
-      const note = document.getElementById('remNote').value || 'Напоминание';
-      if(!d || !t) return alert('Укажите дату и время');
-      const dtISO = new Date(d + 'T' + t + ':00').toISOString();
-      state.reminders.unshift({id:Date.now(), datetime:dtISO, note, read:false});
-      addNotification('Добавлено напоминание: ' + note, {type:'reminder', when:dtISO});
-      requestSave();
-      hideModal();
-    });
-  },50);
-}
-
-/* ---------- Settings modal ---------- */
-function openSettingsModal(forceOpen){
-  const icons = Object.keys(CITY_COORDS);
-  const themeOptions = Object.keys(THEMES);
-  const modal = `
-    <div class="h">Настройки</div>
-    <div class="small">Профиль (Имя и Фамилия обязательны)</div>
-    <label>Аватар</label>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <button class="btn" id="uploadAvatarBtn">Загрузить фото</button>
-      <img id="avatarPreviewSmall" src="" alt="avatar" style="width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid var(--glass-border)">
-    </div>
-    <label>Имя</label><input type="text" id="profileName" placeholder="Имя">
-    <label>Фамилия</label><input type="text" id="profileSurname" placeholder="Фамилия">
-    <label>Телефон</label><input type="tel" id="profilePhone" placeholder="+7...">
-    <div style="height:8px"></div>
-    <label>Выбор города</label><select id="citySelect">${icons.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-    <div style="height:8px"></div>
-    <label>Тема</label><select id="themeSelect">${themeOptions.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>
-    <div class="modal-actions"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="saveSettings">Сохранить</button></div>
-    <div style="height:8px"></div>
-    <div class="small required-note" id="requiredNote" style="display:none">Имя и Фамилия обязательны для продолжения.</div>
-  `;
-  showModal(modal);
-
-  // preload
-  setTimeout(()=>{
-    document.getElementById('profileName').value = (state.user && state.user.name) ? state.user.name : '';
-    document.getElementById('profileSurname').value = (state.user && state.user.surname) ? state.user.surname : '';
-    document.getElementById('profilePhone').value = (state.user && state.user.phone) ? state.user.phone : '';
-    document.getElementById('citySelect').value = state.city || 'Караганда';
-    document.getElementById('themeSelect').value = state.theme || 'фиолетово-черный';
-    document.getElementById('avatarPreviewSmall').src = (state.user && state.user.avatar) ? state.user.avatar : 'https://via.placeholder.com/48/333333/ffffff?text=U';
-
-    document.getElementById('uploadAvatarBtn').addEventListener('click', ()=>{
-      fileProfileAvatar.click();
-    });
-    fileProfileAvatar.onchange = async function(e){
-      const f = e.target.files[0];
-      if(!f) return;
-      const b64 = await fileToBase64(f);
-      document.getElementById('avatarPreviewSmall').src = b64;
-      document.getElementById('avatarPreviewSmall').dataset.b64 = b64;
-    };
-
-    document.getElementById('saveSettings').addEventListener('click', ()=>{
-      const avatarB64 = document.getElementById('avatarPreviewSmall').dataset ? document.getElementById('avatarPreviewSmall').dataset.b64 : null;
-      const name = document.getElementById('profileName').value.trim();
-      const surname = document.getElementById('profileSurname').value.trim();
-      const phone = document.getElementById('profilePhone').value.trim();
-      const city = document.getElementById('citySelect').value;
-      const theme = document.getElementById('themeSelect').value;
-
-      if(!name || !surname){
-        document.getElementById('requiredNote').style.display='block';
-        alert('Пожалуйста, заполните имя и фамилию (обязательно).');
-        return;
-      } else {
-        document.getElementById('requiredNote').style.display='none';
-      }
-
-      state.user = state.user || {};
-      if(avatarB64) state.user.avatar = avatarB64;
-      state.user.name = name;
-      state.user.surname = surname;
-      state.user.phone = phone;
-      state.city = city;
-      state.theme = theme;
-      if(state.user.avatar) document.getElementById('avatarPreview').innerHTML = `<img src="${state.user.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
-      requestSave();
-      hideModal();
-      renderAll();
-    });
-
-  },50);
-
-  // if forced to open (e.g., after auth) and there is no name/surname -> keep modal open
-  if(forceOpen && (!state.user || !state.user.name || !state.user.surname)){
-    // do nothing, modal already open
-  }
-}
-
-/* ---------- file to base64 ---------- */
-function fileToBase64(file){
-  return new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.onload = ()=>resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+  document.getElementById('saveReminder').addEventListener('click', ()=>{
+    const d = document.getElementById('remDate').value;
+    const t = document.getElementById('remTime').value;
+    const note = document.getElementById('remNote').value || 'Напоминание';
+    if(!d || !t) return alert('Укажите дату и время');
+    const dt = new Date(d+'T'+t+':00').toISOString();
+    state.reminders.unshift({id:Date.now(), datetime: dt, note, read:false});
+    addNotification('Добавлено напоминание: '+note);
+    requestSave();
+    hideModal();
   });
 }
 
-/* ---------- Notifications modal ---------- */
+/* ----- Settings modal (avatar via mediapicker) ----- */
+function openSettingsModal(forceOpen){
+  const cities = Object.keys(CITY_COORDS);
+  const themeNames = Object.keys(THEMES);
+  const modal = `
+    <div class="h">Настройки</div>
+    <label>Аватар</label>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn" id="uploadAvatarBtn">Загрузить фото</button><img id="avatarPreviewSmall" src="${state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/48/333/fff?text=U'}" style="width:48px;height:48px;border-radius:8px;object-fit:cover"></div>
+    <label>Имя</label><input type="text" id="profileName" value="${escapeHtml(state.user && state.user.name || '')}">
+    <label>Фамилия</label><input type="text" id="profileSurname" value="${escapeHtml(state.user && state.user.surname || '')}">
+    <label>Телефон</label><input type="tel" id="profilePhone" value="${escapeHtml(state.user && state.user.phone || '')}">
+    <label>Город</label><select id="citySelect">${cities.map(c=>`<option ${c===state.city? 'selected':''}>${c}</option>`).join('')}</select>
+    <label>Тема</label><select id="themeSelect">${themeNames.map(t=>`<option ${t===state.theme? 'selected':''} value="${t}">${t}</option>`).join('')}</select>
+    <div class="modal-actions">
+      <button class="btn primary" id="saveSettings">Сохранить</button>
+      <button class="btn" data-close>Закрыть</button>
+    </div>
+    <div class="small" id="requiredNote" style="display:none;color:var(--accent)">Имя и Фамилия обязательны.</div>
+  `;
+  showModal(modal);
+
+  document.getElementById('uploadAvatarBtn').addEventListener('click', ()=> fileProfileAvatar.click());
+  fileProfileAvatar.onchange = async (e)=>{
+    const f = e.target.files[0]; if(!f) return;
+    const b64 = await fileToBase64(f);
+    document.getElementById('avatarPreviewSmall').src = b64;
+    document.getElementById('avatarPreviewSmall').dataset.b64 = b64;
+  };
+
+  document.getElementById('saveSettings').addEventListener('click', ()=>{
+    const name = document.getElementById('profileName').value.trim();
+    const sur = document.getElementById('profileSurname').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const city = document.getElementById('citySelect').value;
+    const theme = document.getElementById('themeSelect').value;
+    const avatarB64 = document.getElementById('avatarPreviewSmall').dataset ? document.getElementById('avatarPreviewSmall').dataset.b64 : null;
+    if(!name || !sur){ document.getElementById('requiredNote').style.display='block'; return; }
+    state.user = state.user || {};
+    if(avatarB64) state.user.avatar = avatarB64;
+    state.user.name = name;
+    state.user.surname = sur;
+    state.user.phone = phone;
+    state.city = city;
+    state.theme = theme;
+    if(state.user.avatar) document.getElementById('avatarImg').src = state.user.avatar;
+    applyTheme(theme);
+    requestSave();
+    hideModal();
+    renderAll();
+  });
+}
+
+/* ----- Notifications modal ----- */
 function openNotifications(){
   const list = state.notifications.map(n=>`<div class="post"><div class="meta">${new Date(n.ts).toLocaleString()}</div><div>${escapeHtml(n.text)}</div></div>`).join('') || '<div class="small">Нет новых уведомлений</div>';
   const modal = `<div class="h">Уведомления</div><div class="list">${list}</div><div class="modal-actions"><button class="btn" id="clearNotifs">Очистить</button><button class="btn" data-close>Закрыть</button></div>`;
   showModal(modal);
-  setTimeout(()=>{ const btn = document.getElementById('clearNotifs'); if(btn) btn.addEventListener('click', ()=>{ state.notifications = []; requestSave(); hideModal(); renderAll(); }); },50);
+  document.getElementById('clearNotifs').addEventListener('click', ()=>{ state.notifications = []; requestSave(); hideModal(); renderAll(); });
 }
 
-/* ---------- Order modal ---------- */
+/* ----- Order modal with attach ----- */
 function openOrderModal(){
-  const services = ['GiD Заказ','Квартира/дом','Такси','Курьер','Мастер/специалист'];
   const modal = `
     <div class="h">Создать заявку</div>
     <label>Услуга</label>
-    <select id="orderService">${services.map(s=>`<option>${s}</option>`).join('')}</select>
-    <label>Описание</label>
-    <textarea id="orderDesc" placeholder="Опишите задачу"></textarea>
+    <select id="orderService"><option>GiD Заказ</option><option>Квартира/дом</option><option>Такси</option><option>Курьер</option><option>Мастер/специалист</option></select>
+    <label>Описание</label><textarea id="orderDesc"></textarea>
     <div style="display:flex;gap:8px">
       <div style="flex:1"><label>Дедлайн</label><input type="date" id="orderDeadline"></div>
       <div style="width:120px"><label>Бюджет (₸)</label><input type="number" id="orderBudget" min="0" value="0"></div>
@@ -674,352 +512,204 @@ function openOrderModal(){
       <button class="btn" id="attachOrderBtn">📎 Прикрепить фото</button>
       <div id="orderAttachPreview"></div>
     </div>
-    <div class="modal-actions"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="createOrder">Заказать</button></div>
-  `;
+    <div class="modal-actions">
+      <button class="btn primary" id="createOrder">Заказать</button>
+      <button class="btn" data-close>Закрыть</button>
+    </div>`;
   showModal(modal);
-  setTimeout(()=>{
-    document.getElementById('attachOrderBtn').addEventListener('click', ()=>{ fileOrderAttach.click(); });
-    fileOrderAttach.onchange = async function(e){
-      const f = e.target.files[0];
-      if(!f) return;
-      const b64 = await fileToBase64(f);
-      document.getElementById('orderAttachPreview').innerHTML = `<img src="${b64}" style="width:72px;height:72px;border-radius:8px;object-fit:cover">`;
-      document.getElementById('orderAttachPreview').dataset.b64 = b64;
-    };
+  document.getElementById('attachOrderBtn').addEventListener('click', ()=> fileOrderAttach.click());
+  fileOrderAttach.onchange = async (e)=>{ const f = e.target.files[0]; if(!f) return; const b = await fileToBase64(f); document.getElementById('orderAttachPreview').innerHTML = `<img src="${b}" style="width:72px;height:72px;border-radius:8px;object-fit:cover">`; document.getElementById('orderAttachPreview').dataset.b64 = b; };
 
-    document.getElementById('createOrder').addEventListener('click', ()=>{
-      const svc = document.getElementById('orderService').value;
-      const desc = document.getElementById('orderDesc').value.trim();
-      const deadline = document.getElementById('orderDeadline').value;
-      const budget = document.getElementById('orderBudget').value;
-      const image = document.getElementById('orderAttachPreview').dataset ? document.getElementById('orderAttachPreview').dataset.b64 : null;
-      if(!desc) return alert('Опишите задачу');
-      const order = {id:Date.now(), svc, desc, deadline, budget, city:state.city, created: new Date().toISOString(), image, likes:0, comments:0, reposts:0};
-      state.servicesPosts.unshift(order);
-      addNotification('Новая заявка создана: ' + svc, {type:'order', orderId:order.id});
-      requestSave();
-      hideModal();
-      alert('Заявка создана (прототип).');
-    });
-  },50);
-}
-
-/* ---------- Reserve modal ---------- */
-function openReserveModal(){
-  const modal = `<div class="h">Забронировать</div><div class="small">Отсутствуют подключённые заведения к GiDCity</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
-}
-
-/* ---------- Ads modal ---------- */
-function openAdsModal(){
-  const cats = ['Вакансии','Бизнес','Акции','Афиша','Товары','Продукты'];
-  const modal = `<div class="h">Объявление услуг</div><label>Категория</label><select id="adsCat">${cats.map(c=>`<option>${c}</option>`).join('')}</select><label>Заголовок</label><input type="text" id="adsTitle" placeholder="Заголовок"><label>Текст</label><textarea id="adsText" placeholder="Описание объявления"></textarea><div class="modal-actions"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="publishAds">Опубликовать</button></div>`;
-  showModal(modal);
-  setTimeout(()=>{ document.getElementById('publishAds').addEventListener('click', ()=>{
-    const cat = document.getElementById('adsCat').value;
-    const title = document.getElementById('adsTitle').value.trim();
-    const text = document.getElementById('adsText').value.trim();
-    if(!title || !text) return alert('Заполните заголовок и текст');
-    const authorName = state.user ? `${state.user.name || ''} ${state.user.surname || ''}`.trim() : 'Аноним';
-    const authorAvatar = state.user && state.user.avatar ? state.user.avatar : null;
-    const post = {id:Date.now(), cat, title, text, created: new Date().toISOString(), authorName, authorAvatar, city: state.city, likes:0, comments:0, reposts:0};
-    state.cityPosts.unshift(post);
+  document.getElementById('createOrder').addEventListener('click', ()=>{
+    const svc = document.getElementById('orderService').value;
+    const desc = document.getElementById('orderDesc').value.trim();
+    const dl = document.getElementById('orderDeadline').value;
+    const budget = document.getElementById('orderBudget').value;
+    const img = document.getElementById('orderAttachPreview').dataset ? document.getElementById('orderAttachPreview').dataset.b64 : null;
+    if(!desc) return alert('Опишите задачу');
+    const order = { id: Date.now(), svc, desc, deadline:dl, budget, created: new Date().toISOString(), city: state.city, image: img };
+    state.servicesPosts.unshift(order);
+    addNotification('Новая заявка создана: ' + svc);
     requestSave();
-    addNotification('Опубликовано объявление: ' + title);
     hideModal();
-  }); },50);
-}
-
-/* ---------- City chat modal (with like/comment/repost) ---------- */
-function openCityChatModal(){
-  const postsHtml = state.cityPosts.map(p=>{
-    const author = p.authorName || (state.user ? `${state.user.name||''} ${state.user.surname||''}`.trim() : 'Аноним');
-    const avatar = p.authorAvatar || (state.user && state.user.avatar ? state.user.avatar : '');
-    const imgHtml = p.image ? `<img src="${p.image}" class="post-image" alt="image">` : '';
-    const likes = p.likes || 0, comments = p.comments || 0, reposts = p.reposts || 0;
-    return `<div class="post" data-post-id="${p.id}"><div class="post-author"><img src="${avatar||'https://via.placeholder.com/36/333333/ffffff?text=U'}" alt="аватар"><div class="author-name">${escapeHtml(author)}</div></div><div class="meta">${new Date(p.created).toLocaleString()}</div><div>${escapeHtml(p.text||p.title||'')}</div>${imgHtml}<div style="margin-top:8px;display:flex;gap:8px;align-items:center"><button class="btn likeBtn">❤ <span class="count">${likes}</span></button><button class="btn commentBtn">💬 <span class="count">${comments}</span></button><button class="btn repostBtn">🔁 <span class="count">${reposts}</span></button></div></div>`;
-  }).join('') || '<div class="small">Лента пустая</div>';
-
-  const modal = `<div class="h">City чат — ${state.city}</div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <div style="width:44px;height:44px;border-radius:10px;background:var(--glass-bg);display:flex;align-items:center;justify-content:center"><div style="font-weight:800;color:var(--muted)">${state.user && state.user.name ? state.user.name[0].toUpperCase() : 'U'}</div></div>
-      <input id="cityPostText" type="text" placeholder="Поделитесь..." style="flex:1">
-      <button class="btn" id="attachImg">📎</button>
-    </div>
-    <div id="attachedPreview" style="margin-bottom:8px"></div>
-    <div class="modal-actions"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="publishCityPost">Опубликовать</button></div>
-    <div style="height:10px"></div>
-    <div class="list" id="cityPostsList">${postsHtml}</div>`;
-
-  showModal(modal);
-
-  setTimeout(()=>{
-    document.getElementById('attachImg').addEventListener('click', ()=>{ fileChatAttach.click(); });
-    fileChatAttach.onchange = async function(e){
-      const f = e.target.files[0];
-      if(!f) return;
-      const b64 = await fileToBase64(f);
-      const preview = document.getElementById('attachedPreview');
-      preview.innerHTML = `<img src="${b64}" style="max-width:120px;border-radius:8px">`;
-      preview.dataset.b64 = b64;
-    };
-
-    document.getElementById('publishCityPost').addEventListener('click', ()=>{
-      const text = document.getElementById('cityPostText').value.trim();
-      const img = document.getElementById('attachedPreview') && document.getElementById('attachedPreview').dataset ? document.getElementById('attachedPreview').dataset.b64 : null;
-      if(!text && !img) return alert('Введите текст или прикрепите изображение');
-      const authorName = state.user ? `${state.user.name || ''} ${state.user.surname || ''}`.trim() : 'Аноним';
-      const authorAvatar = state.user && state.user.avatar ? state.user.avatar : null;
-      const post = { id: Date.now(), text, image: img || null, created: new Date().toISOString(), authorName, authorAvatar, city: state.city, likes:0, comments:0, reposts:0 };
-      state.cityPosts.unshift(post);
-      requestSave();
-      addNotification('Новый пост в City чате');
-      const list = document.getElementById('cityPostsList');
-      const newPostHtml = `<div class="post" data-post-id="${post.id}"><div class="post-author"><img src="${authorAvatar||'https://via.placeholder.com/36/333333/ffffff?text=U'}" alt="avatar"><div class="author-name">${escapeHtml(authorName)}</div></div><div class="meta">${new Date(post.created).toLocaleString()}</div><div>${escapeHtml(post.text)}</div>${post.image?`<img src="${post.image}" class="post-image">`:''}<div style="margin-top:8px;display:flex;gap:8px;align-items:center"><button class="btn likeBtn">❤ <span class="count">0</span></button><button class="btn commentBtn">💬 <span class="count">0</span></button><button class="btn repostBtn">🔁 <span class="count">0</span></button></div></div>`;
-      list.insertAdjacentHTML('afterbegin', newPostHtml);
-      attachPostActionHandlers();
-      document.getElementById('cityPostText').value = '';
-      const preview = document.getElementById('attachedPreview');
-      if(preview) { preview.innerHTML=''; delete preview.dataset.b64; }
-    });
-
-    attachPostActionHandlers();
-  },50);
-}
-
-/* ---------- Helpers для постов ---------- */
-function attachPostActionHandlers(){
-  document.querySelectorAll('.post[data-post-id]').forEach(postEl=>{
-    const id = postEl.dataset.postId;
-    const likeBtn = postEl.querySelector('.likeBtn');
-    const commentBtn = postEl.querySelector('.commentBtn');
-    const repostBtn = postEl.querySelector('.repostBtn');
-
-    if(likeBtn && !likeBtn.dataset.bound){
-      likeBtn.addEventListener('click', ()=>{
-        const postObj = state.cityPosts.find(p=>String(p.id)===String(id));
-        if(postObj){ postObj.likes = (postObj.likes || 0) + 1; requestSave(); postEl.querySelector('.likeBtn .count').textContent = postObj.likes; }
-      });
-      likeBtn.dataset.bound = '1';
-    }
-    if(commentBtn && !commentBtn.dataset.bound){
-      commentBtn.addEventListener('click', ()=>{
-        const comment = prompt('Написать комментарий:');
-        if(comment){
-          const postObj = state.cityPosts.find(p=>String(p.id)===String(id));
-          if(!postObj.commentsData) postObj.commentsData = [];
-          postObj.commentsData.push({id:Date.now(), text:comment, author:(state.user? `${state.user.name} ${state.user.surname}`:'Аноним'), ts:new Date().toISOString()});
-          postObj.comments = (postObj.comments||0) + 1;
-          requestSave();
-          postEl.querySelector('.commentBtn .count').textContent = postObj.comments;
-          alert('Комментарий добавлен (демо).');
-        }
-      });
-      commentBtn.dataset.bound = '1';
-    }
-    if(repostBtn && !repostBtn.dataset.bound){
-      repostBtn.addEventListener('click', ()=>{
-        const postObj = state.cityPosts.find(p=>String(p.id)===String(id));
-        if(postObj){
-          postObj.reposts = (postObj.reposts || 0) + 1;
-          requestSave();
-          postEl.querySelector('.repostBtn .count').textContent = postObj.reposts;
-          alert('Репост отправлен (демо).');
-        }
-      });
-      repostBtn.dataset.bound = '1';
-    }
+    alert('Заявка создана (прототип).');
   });
 }
 
-/* ---------- Messenger / Chat / Wallet / FindJobs (как было) ---------- */
-/* (весь код остался — сокращаю здесь в ответе для читабельности, но в файле он сохранён полностью) */
+/* ----- Reserve modal ----- */
+function openReserveModal(){ showModal(`<div class="h">Забронировать</div><div class="small">Отсутствуют подключённые заведения к GiDCity</div><div class="modal-actions"><button class="btn primary" data-close>OK</button></div>`); }
 
+/* ----- Ads modal ----- */
+function openAdsModal(){
+  const modal = `<div class="h">Объявление услуг</div><label>Категория</label><select id="adsCat"><option>Вакансии</option><option>Бизнес</option><option>Акции</option></select><label>Заголовок</label><input id="adsTitle"><label>Текст</label><textarea id="adsText"></textarea><div class="modal-actions"><button class="btn primary" id="publishAds">Опубликовать</button><button class="btn" data-close>Закрыть</button></div>`;
+  showModal(modal);
+  document.getElementById('publishAds').addEventListener('click', ()=>{
+    const cat = document.getElementById('adsCat').value;
+    const title = document.getElementById('adsTitle').value.trim();
+    const text = document.getElementById('adsText').value.trim();
+    if(!title || !text) return alert('Заполните поля');
+    const post = { id:Date.now(), cat, title, text, created: new Date().toISOString(), authorName: state.user ? `${state.user.name} ${state.user.surname}` : 'Аноним', authorAvatar: state.user && state.user.avatar ? state.user.avatar : null, city: state.city, likes:0, comments:0, reposts:0 };
+    state.cityPosts.unshift(post);
+    addNotification('Опубликовано объявление: '+title);
+    requestSave();
+    hideModal();
+  });
+}
+
+/* ----- City chat (with likes/comments/reposts, attach) ----- */
+function openCityChatModal(){
+  function renderPostsHtml(){
+    return state.cityPosts.map(p=>{
+      const author = p.authorName || (state.user ? `${state.user.name} ${state.user.surname}` : 'Аноним');
+      const avatar = p.authorAvatar || (state.user && state.user.avatar) || 'https://via.placeholder.com/36/333/fff?text=U';
+      return `<div class="post" data-id="${p.id}">
+          <div class="post-author"><img src="${avatar}"><div style="display:flex;flex-direction:column"><div style="font-weight:800">${escapeHtml(author)}</div><div class="small">${new Date(p.created).toLocaleString()}</div></div></div>
+          <div>${escapeHtml(p.text || p.title || '')}</div>
+          ${p.image? `<img src="${p.image}" style="max-width:100%;border-radius:8px">`:''}
+          <div class="post-actions">
+            <span data-action="like" data-id="${p.id}">❤ ${p.likes||0}</span>
+            <span data-action="comment" data-id="${p.id}">💬 ${p.comments||0}</span>
+            <span data-action="repost" data-id="${p.id}">⤴ ${p.reposts||0}</span>
+          </div>
+        </div>`;
+    }).join('') || '<div class="small">Лента пустая</div>';
+  }
+  const modal = `<div class="h">City чат — ${state.city}</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <img src="${state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/36/333/fff?text=U'}" style="width:44px;height:44px;border-radius:8px;object-fit:cover">
+      <input id="cityPostText" type="text" placeholder="Поделитесь...">
+      <button class="btn" id="attachImg">📎</button>
+    </div>
+    <div id="attachedPreview"></div>
+    <div class="modal-actions">
+      <button class="btn primary" id="publishCityPost">Опубликовать</button>
+      <button class="btn" data-close>Закрыть</button>
+    </div>
+    <div style="height:10px"></div>
+    <div class="list" id="cityPostsList">${renderPostsHtml()}</div>`;
+  showModal(modal);
+
+  fileChatAttach.onchange = async (e)=>{ const f = e.target.files[0]; if(!f) return; const b = await fileToBase64(f); document.getElementById('attachedPreview').innerHTML = `<img src="${b}" style="max-width:120px;border-radius:8px">`; document.getElementById('attachedPreview').dataset.b64 = b; };
+  document.getElementById('attachImg').addEventListener('click', ()=> fileChatAttach.click());
+  document.getElementById('publishCityPost').addEventListener('click', ()=>{
+    const text = document.getElementById('cityPostText').value.trim();
+    const img = document.getElementById('attachedPreview').dataset ? document.getElementById('attachedPreview').dataset.b64 : null;
+    if(!text && !img) return alert('Введите текст или прикрепите изображение');
+    const post = { id:Date.now(), text, image: img, created: new Date().toISOString(), authorName: state.user ? `${state.user.name} ${state.user.surname}` : 'Аноним', authorAvatar: state.user && state.user.avatar ? state.user.avatar : null, likes:0, comments:0, reposts:0, city:state.city };
+    state.cityPosts.unshift(post);
+    requestSave();
+    addNotification('Новый пост в City чате');
+    // refresh post list
+    document.getElementById('cityPostsList').insertAdjacentHTML('afterbegin', `<div class="post" data-id="${post.id}"><div class="post-author"><img src="${post.authorAvatar||'https://via.placeholder.com/36/333/fff?text=U'}"><div style="display:flex;flex-direction:column"><div style="font-weight:800">${escapeHtml(post.authorName)}</div><div class="small">${new Date(post.created).toLocaleString()}</div></div></div><div>${escapeHtml(post.text)}</div>${post.image?`<img src="${post.image}" style="max-width:100%;border-radius:8px">`:''}<div class="post-actions"><span data-action="like" data-id="${post.id}">❤ 0</span><span data-action="comment" data-id="${post.id}">💬 0</span><span data-action="repost" data-id="${post.id}">⤴ 0</span></div></div>`);
+    document.getElementById('cityPostText').value=''; document.getElementById('attachedPreview').innerHTML=''; delete document.getElementById('attachedPreview').dataset.b64;
+  });
+
+  // delegate actions (like/comment/repost)
+  modalWindow.addEventListener('click', function onPostAction(e){
+    const target = e.target.closest('[data-action]');
+    if(!target) return;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    const post = state.cityPosts.find(p=>String(p.id)===String(id));
+    if(!post) return;
+    if(action==='like'){ post.likes = (post.likes||0)+1; }
+    if(action==='comment'){ const c = prompt('Комментарий:'); if(c) post.comments = (post.comments||0)+1; }
+    if(action==='repost'){ post.reposts = (post.reposts||0)+1; alert('Репост отправлен (демо)'); }
+    requestSave();
+    // update UI counters in modal
+    const span = modalWindow.querySelector(`[data-action="${action}"][data-id="${id}"]`);
+    if(span) span.textContent = (action==='like' ? '❤ ' + post.likes : action==='comment' ? '💬 ' + post.comments : '⤴ ' + post.reposts);
+  }, {once:false});
+}
+
+/* ----- Messenger (simple) ----- */
 function openMessengerModal(){
-  const chatsHtml = state.chats.map(c=>{
-    const avatar = c.avatar || (state.user && state.user.avatar) || 'https://via.placeholder.com/36/333333/ffffff?text=C';
-    return `<div class="post" data-chat-id="${c.id}" style="display:flex;gap:8px;align-items:center"><img src="${avatar}" style="width:44px;height:44px;border-radius:8px;object-fit:cover"><div style="flex:1"><div style="font-weight:800">${escapeHtml(c.name||c.contact||'Контакт')}</div><div class="small">${escapeHtml(c.last||'')}</div></div></div>`;
-  }).join('') || '<div class="small">Список диалогов пуст</div>';
+  const chatsHtml = state.chats.map(c=>`<div class="post" data-chat-id="${c.id}" style="display:flex;gap:8px;align-items:center"><img src="${c.avatar||'https://via.placeholder.com/36/333/fff?text=C'}" style="width:44px;height:44px;border-radius:8px"><div style="flex:1"><div style="font-weight:800">${escapeHtml(c.name||c.contact||'Контакт')}</div><div class="small">${escapeHtml(c.last||'')}</div></div></div>`).join('') || '<div class="small">Список диалогов пуст</div>';
   const modal = `<div class="h">Мессенджер</div><div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn" id="openContacts">Контакты</button><button class="btn" id="createChat">Создать чат</button></div><div class="list" id="chatsList">${chatsHtml}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
   showModal(modal);
-
-  setTimeout(()=>{
-    document.getElementById('openContacts').addEventListener('click', ()=>{
-      const contacts = state.chats.map(c => c.name || c.contact).filter(Boolean);
-      const html = contacts.length ? contacts.map(c=>`<div class="post"><div class="meta">${escapeHtml(c)}</div></div>`).join('') : '<div class="small">Контактов нет</div>';
-      showModal(`<div class="h">Контакты</div><div class="list">${html}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`);
-    });
-
-    document.getElementById('createChat').addEventListener('click', ()=>{
-      const name = prompt('Имя / номер контакта:');
-      if(!name) return;
-      const avatar = state.user && state.user.avatar ? state.user.avatar : null;
-      state.chats.unshift({id:Date.now(), name, last:'Новый чат', avatar});
-      requestSave();
-      hideModal();
-      openMessengerModal();
-    });
-
-    document.getElementById('chatsList').querySelectorAll('[data-chat-id]').forEach(el=>{
-      el.addEventListener('click', ()=>{
-        const id = el.dataset.chatId;
-        openChatWindow(id);
-      });
-    });
-  },50);
+  document.getElementById('createChat').addEventListener('click', ()=>{
+    const name = prompt('Имя / номер контакта:');
+    if(!name) return;
+    state.chats.unshift({id:Date.now(), name, last:'Новый чат', avatar: state.user && state.user.avatar || null, messages:[]});
+    requestSave();
+    hideModal(); openMessengerModal();
+  });
+  document.getElementById('openContacts').addEventListener('click', ()=>{
+    const contacts = state.chats.map(c=>c.name||c.contact).filter(Boolean);
+    showModal(`<div class="h">Контакты</div><div class="list">${contacts.map(c=>`<div class="post">${escapeHtml(c)}</div>`).join('')}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`);
+  });
 }
 
-function openChatWindow(chatId){
-  const chat = state.chats.find(c=>String(c.id)===String(chatId));
-  if(!chat) return alert('Чат не найден');
-  const messages = chat.messages || [];
-  const messagesHtml = messages.map(m=>`<div class="post"><div class="post-author"><img src="${m.avatar||'https://via.placeholder.com/36/333333/ffffff?text=U'}"><div class="author-name">${escapeHtml(m.name||'')}</div></div><div class="meta">${new Date(m.ts).toLocaleString()}</div><div>${escapeHtml(m.text)}</div>${m.image?`<img src="${m.image}" class="post-image">`:''}</div>`).join('') || '<div class="small">Нет сообщений</div>';
-  const modal = `<div class="h">${escapeHtml(chat.name || chat.contact)}</div>
-    <div class="list" id="chatMessages">${messagesHtml}</div>
-    <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><input id="chatMsgText" type="text" placeholder="Сообщение" style="flex:1"><button class="btn" id="attachMsg">📎</button><button class="btn primary" id="sendMsg">Отправить</button></div>
-    <div id="msgAttachPreview" style="margin-top:8px"></div>
-    <div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
-
-  setTimeout(()=>{
-    document.getElementById('attachMsg').addEventListener('click', ()=>{ fileMessageAttach.click(); });
-    fileMessageAttach.onchange = async function(e){
-      const f = e.target.files[0];
-      if(!f) return;
-      const b64 = await fileToBase64(f);
-      document.getElementById('msgAttachPreview').innerHTML = `<img src="${b64}" style="max-width:120px;border-radius:8px">`;
-      document.getElementById('msgAttachPreview').dataset.b64 = b64;
-    };
-
-    document.getElementById('sendMsg').addEventListener('click', ()=>{
-      const text = document.getElementById('chatMsgText').value.trim();
-      const image = document.getElementById('msgAttachPreview').dataset ? document.getElementById('msgAttachPreview').dataset.b64 : null;
-      if(!text && !image) return alert('Введите текст или прикрепите изображение');
-      const message = {name: state.user ? (state.user.name + ' ' + (state.user.surname||'')) : 'Вы', text, ts: new Date().toISOString(), avatar: state.user && state.user.avatar ? state.user.avatar : null, image};
-      chat.messages = chat.messages || [];
-      chat.messages.push(message);
-      chat.last = text || (image ? 'Изображение' : '');
-      requestSave();
-      const list = document.getElementById('chatMessages');
-      const html = `<div class="post"><div class="post-author"><img src="${message.avatar||'https://via.placeholder.com/36/333333/ffffff?text=U'}"><div class="author-name">${escapeHtml(message.name)}</div></div><div class="meta">${new Date(message.ts).toLocaleString()}</div><div>${escapeHtml(message.text)}</div>${message.image?`<img src="${message.image}" class="post-image">`:''}</div>`;
-      list.insertAdjacentHTML('beforeend', html);
-      document.getElementById('chatMsgText').value='';
-      const preview = document.getElementById('msgAttachPreview'); if(preview){ preview.innerHTML=''; delete preview.dataset.b64; }
-    });
-  },50);
-}
-
-/* ---------- Wallet modal ---------- */
+/* ----- Wallet ----- */
 function openWalletModal(){
-  const modal = `<div class="h">Кошелёк</div><div style="font-size:26px;font-weight:900">${state.wallet.balance || 0} ₸</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="walletTransfer">Перевести</button><button class="btn" id="walletTopup">Пополнить</button><button class="btn" id="walletWithdraw">Снять</button></div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
+  const modal = `<div class="h">Кошелёк</div><div style="font-size:26px;font-weight:900">${state.wallet.balance||0} ₸</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="walletTransfer">Перевести</button><button class="btn" id="walletTopup">Пополнить</button><button class="btn" id="walletWithdraw">Снять</button></div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
   showModal(modal);
-  setTimeout(()=>{
-    document.getElementById('walletTopup').addEventListener('click', ()=>{
-      const sum = parseInt(prompt('Сумма пополнения (₸):')||'0',10);
-      if(sum>0){ state.wallet.balance = (state.wallet.balance||0) + sum; requestSave(); alert('Пополнение успешно'); hideModal(); openWalletModal(); }
-    });
-    document.getElementById('walletTransfer').addEventListener('click', ()=>{
-      const to = prompt('Кому (номер):');
-      const sum = parseInt(prompt('Сумма (₸):')||'0',10);
-      if(!to || sum<=0) return;
-      if((state.wallet.balance||0) < sum) return alert('Недостаточно средств');
-      state.wallet.balance -= sum;
-      requestSave();
-      addNotification(`Перевод ${sum}₸ на ${to}`);
-      hideModal();
-    });
-    document.getElementById('walletWithdraw').addEventListener('click', ()=>{
-      const sum = parseInt(prompt('Сумма снятия (₸):')||'0',10);
-      if(sum>0 && (state.wallet.balance||0) >= sum){ state.wallet.balance -= sum; requestSave(); alert('Снятие успешно'); hideModal(); openWalletModal(); }
-      else alert('Ошибка снятия');
-    });
-  },50);
+  document.getElementById('walletTopup').addEventListener('click', ()=>{ const s = parseInt(prompt('Сумма (₸):')||'0',10); if(s>0){ state.wallet.balance = (state.wallet.balance||0) + s; requestSave(); hideModal(); openWalletModal(); }});
+  document.getElementById('walletTransfer').addEventListener('click', ()=>{ const to=prompt('Кому (номер):'); const s=parseInt(prompt('Сумма:')||'0',10); if(to && s>0 && (state.wallet.balance||0)>=s){ state.wallet.balance -= s; addNotification(`Перевод ${s}₸ на ${to}`); requestSave(); hideModal(); }});
+  document.getElementById('walletWithdraw').addEventListener('click', ()=>{ const s=parseInt(prompt('Сумма:')||'0',10); if(s>0 && (state.wallet.balance||0)>=s){ state.wallet.balance -= s; requestSave(); hideModal(); openWalletModal(); }});
 }
 
-/* ---------- Find jobs ---------- */
+/* ----- Find jobs modal ----- */
 function openFindJobsModal(){
-  const jobs = state.servicesPosts.map(o=>`<div class="post"><div class="meta">${o.svc} · ${o.deadline || ''}</div><div style="font-weight:700">${escapeHtml(o.desc)}</div><div class="small">Бюджет ${o.budget} ₸</div><div style="margin-top:8px"><button class="btn" onclick="applyJob(${o.id})">Откликнуться</button></div>${o.image?`<img src="${o.image}" class="post-image">`:''}</div>`).join('') || '<div class="small">Нет доступных заявок</div>';
-  const modal = `<div class="h">Найти заказы</div><div class="small">Лента в реальном времени (демо)</div><div style="height:8px"></div><div class="list">${jobs}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`;
-  showModal(modal);
+  const jobs = state.servicesPosts.map(o=>`<div class="post"><div class="meta">${escapeHtml(o.svc)} · ${escapeHtml(o.deadline||'')}</div><div style="font-weight:700">${escapeHtml(o.desc)}</div><div class="small">Бюджет ${o.budget} ₸</div><div style="margin-top:8px"><button class="btn" onclick="applyJob(${o.id})">Откликнуться</button></div>${o.image?`<img src="${o.image}" style="max-width:100%;border-radius:8px">`:''}</div>`).join('') || '<div class="small">Нет заявок</div>';
+  showModal(`<div class="h">Найти заказы</div><div class="list">${jobs}</div><div class="modal-actions"><button class="btn" data-close>Закрыть</button></div>`);
 }
 window.applyJob = function(orderId){
-  const budget = prompt('Ваш бюджет (₸):','0');
-  const comment = prompt('Комментарий:','');
-  const order = state.servicesPosts.find(o=>o.id == orderId);
-  if(!order) return alert('Заявка не найдена');
-  addNotification(`Отклик на вашу заявку (${order.svc}): ${budget}₸ — ${comment}`, {type:'proposal', orderId});
+  const budget = prompt('Ваш бюджет (₸):','0'); const comment = prompt('Комментарий:','');
+  const order = state.servicesPosts.find(o=>o.id==orderId); if(!order) return alert('Не найдено');
+  addNotification(`Отклик на ${order.svc}: ${budget}₸ — ${comment}`);
   requestSave();
   hideModal();
   alert('Отклик отправлен (демо).');
 }
 
-/* ---------- Auth ---------- */
+/* ----- Auth ----- */
 function doAuth(){
   const name = document.getElementById('authName').value.trim();
   const phone = document.getElementById('authPhone').value.trim();
   const pin = document.getElementById('authPIN').value.trim();
   if(!name || !phone || !/^\d{4}$/.test(pin)) return alert('Заполните имя, телефон и 4-значный PIN');
   state.user = state.user || {};
-  state.user.name = name;
-  state.user.phone = phone;
-  state.user.pin = pin;
+  state.user.name = name; state.user.phone = phone; state.user.pin = pin;
   requestSave();
   addNotification('Пользователь вошёл: ' + name);
   authBackdrop.style.display = 'none';
   renderAll();
-  if(!state.user.surname) setTimeout(()=>openSettingsModal(true), 300);
+  if(!state.user.surname) setTimeout(()=>openSettingsModal(true),300);
 }
 
-/* ---------- file profile avatar ---------- */
-fileProfileAvatar.onchange = async function(e){
-  const f = e.target.files[0];
-  if(!f) return;
-  const b64 = await fileToBase64(f);
-  state.user = state.user || {};
-  state.user.avatar = b64;
-  requestSave();
-  document.getElementById('avatarPreview').innerHTML = `<img src="${b64}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
-};
+/* ----- Utilities ----- */
+function fileToBase64(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+function addNotification(text, meta={}){ state.notifications.unshift({id:Date.now(), text, meta, ts:new Date().toISOString()}); updateNotifCount(); requestSave(); }
 
-/* ---------- Init ---------- */
+/* ----- Render All UI ----- */
+function renderAll(){
+  document.getElementById('cityName').textContent = state.city || 'Караганда';
+  document.getElementById('avatarImg').src = (state.user && state.user.avatar) ? state.user.avatar : 'https://via.placeholder.com/48/333/fff?text=U';
+  applyTheme(state.theme || 'фиолетово-черный');
+  updateNotifCount();
+  renderMenuItems();
+  fetchWeatherForCity(state.city || 'Караганда');
+  if(!map) initMap();
+}
+
+/* ----- Initial load & periodic pull ----- */
 (async function init(){
-  loadState();
-  // initial remote load if possible
-  if(USE_JSONBIN){
-    try{
-      const data = await loadFromJSONBin();
-      if(data && data.record && data.record.state){
-        // merge or set remote
-        if(data.updatedAt){
-          state = data.record.state;
-          state.__updatedAt = data.updatedAt;
-        } else {
-          state = data.record.state;
-        }
-        localSave();
-      }
-    } catch(e){
-      console.info('No remote state or error, using local state', e);
-    }
-  }
+  loadLocal();
   renderAll();
-
-  if(state.city) fetchWeatherForCity(state.city);
-
-  if(state.user && (!state.user.name || !state.user.surname)){
-    setTimeout(()=>openSettingsModal(true), 400);
-  }
-
-  // greeting animation removed as per your request (was unreliable)
-  // Start periodic pull
-  startPeriodicPull();
+  try{ await loadFromJSONBin(); }catch(e){ /* fallback to local */ }
+  renderAll();
+  // start periodic pull
+  startPeriodicPull(PULL_INTERVAL_MS);
+  // init map
+  initMap();
+  // set header date button
+  document.getElementById('dateButton').textContent = new Date().toLocaleString('ru',{day:'2-digit',month:'short',year:'numeric'});
 })();
 
-/* ---------- modal backdrop close ---------- */
-modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) hideModal(); });
+/* ----- Modal backdrop close on click outside ----- */
+modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) hideModal(); });
 
-/* expose */
-window.requestSave = requestSave;
 </script>
 </body>
 </html>
