@@ -34,7 +34,7 @@
   .city-name{font-weight:800;font-size:18px;margin:0}
   .city-sub{font-size:12px;color:var(--muted)}
   .center-area{display:flex;align-items:center;gap:12px}
-  .weather{padding:6px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700}
+  .weather{padding:6px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700;display:flex;align-items:center;gap:8px}
   .status-badge{font-size:12px;color:var(--muted);padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.01);border:1px solid var(--glass-border);cursor:pointer;min-width:70px;text-align:center} /* прямоугольная кнопка */
 
   /* tabs */
@@ -72,7 +72,7 @@
   input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:var(--text)}
   textarea{min-height:90px}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
-  .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);font-weight:800}
+  .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);font-weight:800;font-size:13px} /* уменьшил шрифт кнопок для главных экранов */
   .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#081018}
   .gidchat-holo{padding:10px 14px;border-radius:12px;background:linear-gradient(135deg, rgba(255,215,74,0.08), rgba(255,255,255,0.02));border:1px solid rgba(255,215,74,0.22);box-shadow:0 10px 40px rgba(255,215,74,0.06);font-weight:900}
 
@@ -101,7 +101,7 @@
 
     <div class="header-actions">
       <div class="icon-btn" id="settingsBtn" title="Настройки" aria-label="settings">⚙️</div>
-      <div class="icon-btn" id="notifBtn" title="Уведомления" aria-label="notifications">🔔<div class="notif-badge" id="notifCount">0</div></div>
+      <!-- Убрана кнопка уведомлений сверху по требованию — теперь уведомления справа от погоды -->
     </div>
   </div>
 
@@ -116,10 +116,13 @@
       <!-- center area: only weather moved here (calendar left in header) -->
       <div class="center-area">
         <div class="weather" id="weatherBlock">— °C</div>
+
+        <!-- Новая кнопка уведомлений рядом с погодой (справа от погоды) -->
+        <div class="icon-btn" id="weatherNotifBtn" title="Уведомления" aria-label="notifications">🔔<div class="notif-badge" id="weatherNotifCount">0</div></div>
       </div>
 
       <!-- right status as rectangular button (was "Онлайн") -->
-      <div class="status-badge" id="onlineBtn" role="button" title="Открыть уведомления">Онлайн</div>
+      <div class="status-badge" id="onlineBtn" role="button" title="Синхронизация статуса">Онлайн</div>
     </div>
 
     <div class="tabs">
@@ -168,12 +171,12 @@
 <script>
 /* ===========================
    GiDCity Unified Prototype — updated per user's requests
-   - Сохранил все прежние структуры, расширил функционал:
-     * интеграция GiD Заказ в "Заказать"
-     * расширенная лента (лайки/комментарии/репост)
-     * карта в модалке и автопостроение маршрута при исполнении заказа
-     * больше тем; модальные/кнопочные акценты меняются темой
-     * "Онлайн" → прямоугольная кнопка для уведомлений
+   - Внесены изменения:
+     * Убрана верхняя кнопка уведомлений, добавлена кнопка уведомлений справа от погоды
+     * GIDChat открыт как полноэкранная модалка (fullscreen) для удобного листания ленты
+     * Автор поста теперь всегда показывает аватар + имя + фамилию (если нет автора — показан плейсхолдер и "Аноним")
+     * Кнопка в календаре переименована в "Добавить напоминание"
+     * Шрифт кнопок уменьшен (см. CSS)
    =========================== */
 
 /* -------------------
@@ -471,11 +474,14 @@ function openAdsModal(){
   setTimeout(()=>{ document.getElementById('publishAd').addEventListener('click', ()=>{ const t=el('adTitle').value.trim(), txt=el('adText').value.trim(); if(!t||!txt) return alert('Заполните'); const author = state.user ? {avatar: state.user.avatar||null, name: state.user.name||'', surname: state.user.surname||''} : null; state.cityPosts.unshift({id:Date.now(),title:t,text:txt,created:new Date().toISOString(),author}); localSave(); addNotification('Опубликовано объявление'); closeModal(); }); },50);
 }
 
-/* City chat / GIDChat fullscreen (модифицирован: шире модалка + посты с кнопками) */
+/* City chat / GIDChat fullscreen (модифицирован: fullscreen + посты с кнопками) */
 function openGIDChatFull(){
   // build posts with actions (likes/comments/repost)
   const postsHtml = (state.cityPosts||[]).map(p=>{
-    const author = p.author ? `<div style="display:flex;align-items:center;gap:8px"><div style="width:36px;height:36px;border-radius:50%;overflow:hidden"><img src="${p.author.avatar||'https://via.placeholder.com/36/333333/fff?text=U'}" style="width:100%;height:100%;object-fit:cover"></div><div><div style="font-weight:800">${p.author.name||''} ${p.author.surname||''}</div><div style="color:var(--muted);font-size:12px">${new Date(p.created).toLocaleString()}</div></div></div>` : `<div style="color:var(--muted);font-size:12px">${new Date(p.created).toLocaleString()}</div>`;
+    // если автора нет — показываем плейсхолдер с аватаром и "Аноним"
+    const authorAvatar = p.author && p.author.avatar ? p.author.avatar : 'https://via.placeholder.com/36/333333/fff?text=U';
+    const authorName = p.author && (p.author.name||p.author.surname) ? `${p.author.name||''} ${p.author.surname||''}`.trim() : 'Аноним';
+    const author = `<div style="display:flex;align-items:center;gap:8px"><div style="width:36px;height:36px;border-radius:50%;overflow:hidden"><img src="${authorAvatar}" style="width:100%;height:100%;object-fit:cover"></div><div><div style="font-weight:800">${authorName}</div><div style="color:var(--muted);font-size:12px">${new Date(p.created).toLocaleString()}</div></div></div>`;
     const likesCount = p.likes ? p.likes.length : 0;
     const commentsCount = p.comments ? p.comments.length : 0;
     return `<div class="post" data-id="${p.id}" style="padding:12px;border-bottom:1px solid var(--glass-border);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);margin-bottom:8px;border-radius:8px">
@@ -490,9 +496,9 @@ function openGIDChatFull(){
       <div class="post-interact" style="margin-top:8px;display:none"></div>
     </div>`}).join('')||'<div class="small">Лента пуста</div>';
 
-  const html = `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:900;font-size:20px">GIDChat — ${state.city}</div><div style="display:flex;gap:8px"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="newPostBtn">+ Пост</button></div></div><div style="flex:1;overflow:auto" id="gidFeed">${postsHtml}</div>`;
-  // открываем модалку чуть шире
-  openModal(html, '', {fullscreen:false, maxWidth:'900px'});
+  const html = `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:900;font-size:20px">GIDChat — ${state.city}</div><div style="display:flex;gap:8px"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="newPostBtn">+ Пост</button></div></div><div style="flex:1;overflow:auto;display:flex;flex-direction:column" id="gidFeed">${postsHtml}</div>`;
+  // открываем модалку во весь экран
+  openModal(html, '', {fullscreen:true});
   setTimeout(()=>{
     el('newPostBtn')?.addEventListener('click', ()=>{ openAdsModal(); });
     // delegate actions for posts: like/comment/repost
@@ -531,7 +537,6 @@ function openGIDChatFull(){
 function renderGIDChatActions(postDiv, post){
   postDiv.querySelector('.like-count').textContent = (post.likes||[]).length;
   postDiv.querySelector('.comment-count').textContent = (post.comments||[]).length;
-  // optionally show who liked on click — handled by openLikesList
   // ensure post-interact hidden
   const interact = postDiv.querySelector('.post-interact');
   interact.style.display='none';
@@ -634,15 +639,23 @@ function openAuthModal(){
 function addNotification(text, meta={}){
   state.notifications.unshift({id:Date.now(), text, meta, ts:new Date().toISOString()}); localSave(); updateNotifCount();
 }
-function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
+function updateNotifCount(){ 
+  const cnt = state.notifications.length || 0;
+  // общий счётчик справа от погоды
+  if(el('weatherNotifCount')) el('weatherNotifCount').textContent = cnt;
+  // и старый верхний (если вдруг есть) — на всякий случай обновляем
+  if(el('notifCount')) el('notifCount').textContent = cnt;
+}
 
 /* City posts feed modal (маленькая) — теперь с кнопками лайк/коммент/репост */
 function openCityChatModal(){
   const postsHtml = (state.cityPosts||[]).map(p=>{
-    const author = p.author ? `<div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;overflow:hidden"><img src="${p.author.avatar||'https://via.placeholder.com/28/333333/fff?text=U'}" style="width:100%;height:100%;object-fit:cover"></div><div><div style="font-weight:800;font-size:13px">${p.author.name||''} ${p.author.surname||''}</div><div style="color:var(--muted);font-size:11px">${new Date(p.created).toLocaleString()}</div></div></div>` : `<div style="color:var(--muted);font-size:12px">${new Date(p.created).toLocaleString()}</div>`;
+    const authorAvatar = p.author && p.author.avatar ? p.author.avatar : 'https://via.placeholder.com/28/333333/fff?text=U';
+    const authorName = p.author && (p.author.name||p.author.surname) ? `${p.author.name||''} ${p.author.surname||''}`.trim() : 'Аноним';
+    const author = `<div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;overflow:hidden"><img src="${authorAvatar}" style="width:100%;height:100%;object-fit:cover"></div><div><div style="font-weight:800;font-size:13px">${authorName}</div><div style="color:var(--muted);font-size:11px">${new Date(p.created).toLocaleString()}</div></div></div>`;
     const likesCount = p.likes ? p.likes.length : 0;
     const commentsCount = p.comments ? p.comments.length : 0;
-    return `<div class="post-sm" data-id="${p.id}" style="padding:8px;border-bottom:1px solid var(--glass-border)"><div>${author}</div><div style="font-weight:700;margin-top:6px">${p.title||'Пост'}</div><div style="margin-top:6px">${p.text||''}</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-like" data-action="like">❤ <span class="like-count">${likesCount}</span></button><button class="btn btn-comment" data-action="comment">💬 <span class="comment-count">${commentsCount}</span></button><button class="btn btn-repost" data-action="repost">⤴</button></div><div class="post-interact" style="margin-top:8px;display:none"></div></div>`;
+    return `<div class="post-sm" data-id="${p.id}" style="padding:8px;border-bottom:1px solid var(--glass-border)"><div>${author}</div><div style="font-weight:700;margin-top:6px">${p.title||''}</div><div style="margin-top:6px">${p.text||''}</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-like" data-action="like">❤ <span class="like-count">${likesCount}</span></button><button class="btn btn-comment" data-action="comment">💬 <span class="comment-count">${commentsCount}</span></button><button class="btn btn-repost" data-action="repost">⤴</button></div><div class="post-interact" style="margin-top:8px;display:none"></div></div>`;
   }).join('')||'<div class="small">Лента пуста</div>';
   openModal(`<div class="h"><strong>City чат — ${state.city}</strong></div><div style="max-height:320px;overflow:auto">${postsHtml}</div>`,'<button class="btn" data-close>Закрыть</button>');
   setTimeout(()=>{
@@ -769,8 +782,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   el('tabWork').addEventListener('click', ()=>{ el('tabWork').dataset.active='1'; el('tabServices').dataset.active='0'; updateTabsVisual(); renderMenu(); });
   el('settingsBtn').addEventListener('click', ()=>openSettingsModal());
   el('calendarBtn').addEventListener('click', ()=>openCalendar());
-  el('notifBtn').addEventListener('click', ()=>{ openNotifications(); });
-  el('onlineBtn').addEventListener('click', ()=>{ openNotifications(); }); // кнопка вместо "Онлайн" открывает уведомления
+  // уведомления теперь открываются через кнопку рядом с погодой
+  el('weatherNotifBtn').addEventListener('click', ()=>{ openNotifications(); });
+  el('onlineBtn').addEventListener('click', ()=>{ openNotifications(); }); // кнопка статуса по-прежнему открывает уведомления при клике
 
   // open map modal button
   el('openMapModalBtn').addEventListener('click', ()=>{ 
@@ -796,7 +810,8 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 /* Calendar modal */
 function openCalendar(){
   const html = `<div class="h"><strong>Календарь</strong></div><label>Дата</label><input type="date" id="calDate" value="${new Date().toISOString().slice(0,10)}"><label>Время</label><input type="time" id="calTime" value="12:00"><label>Заметка</label><input id="calNote"><div class="small">Добавленное появится в уведомлениях.</div>`;
-  openModal(html,'<button class="btn" data-close>Закрыть</button><button class="btn primary" id="addRem">Добавить</button>');
+  // Переименовал кнопку на "Добавить напоминание"
+  openModal(html,'<button class="btn" data-close>Закрыть</button><button class="btn primary" id="addRem">Добавить напоминание</button>');
   setTimeout(()=>{ el('addRem').addEventListener('click', ()=>{ const d=el('calDate').value, t=el('calTime').value, n=el('calNote').value; if(!d||!t) return alert('Укажите дату и время'); state.notifications.unshift({id:Date.now(),text:`Напоминание: ${n||'без описания'}`,ts:new Date(d+'T'+t+':00').toISOString()}); localSave(); updateNotifCount(); closeModal(); }); },50);
 }
 
@@ -808,7 +823,11 @@ function openNotifications(){
 }
 
 /* helpers */
-function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
+function updateNotifCount(){ 
+  const cnt = state.notifications.length || 0;
+  if(el('weatherNotifCount')) el('weatherNotifCount').textContent = cnt;
+  if(el('notifCount')) el('notifCount').textContent = cnt;
+}
 
 </script>
 </body>
