@@ -1,391 +1,633 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Гид Сити - Cyber Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --neon-cyan: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-purple: #bc13fe;
-            --bg-dark: #050511;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --blur: blur(12px);
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>GiDCity — прототип расширенный (с картой)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{
+    --bg1:#5b2cff; --bg2:#0a0a0a; --panel:#0a0a0a; --accent:#ffd54a; --glass-bg:rgba(255,255,255,0.02); --glass-border:rgba(255,255,255,0.06);
+    --text:#f2f2f2; --muted:rgba(242,242,242,0.62); --radius:12px; --gap:12px;
+  }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* base layout */
+  html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:linear-gradient(160deg,var(--bg1) 0%, #2b0b3a 40%, var(--bg2) 100%);color:var(--text);display:flex;align-items:center;justify-content:center;padding:12px;}
+  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.18));position:relative}
+  /* header */
+  .header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;backdrop-filter: blur(6px);background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-bottom:1px solid var(--glass-border);position:relative;z-index:40}
+  .title{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:50%;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(91,44,255,0.12);border:1px solid var(--glass-border);overflow:hidden}
+  .logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .app-name{font-weight:900;font-size:18px;display:flex;gap:8px;align-items:center}
+  .app-name small{font-weight:700;font-size:11px;color:var(--muted)}
+  .header-actions{display:flex;gap:8px;align-items:center}
+  .icon-btn{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);cursor:pointer;position:relative}
+  .notif-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#081018;padding:4px 6px;border-radius:12px;font-weight:800;font-size:11px}
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(188, 19, 254, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.15) 0%, transparent 40%);
-            font-family: 'Rajdhani', sans-serif;
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+  /* content */
+  .content{padding:12px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .top-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .city-block{display:flex;flex-direction:column}
+  .city-name{font-weight:800;font-size:18px;margin:0}
+  .city-sub{font-size:12px;color:var(--muted)}
+  .center-area{display:flex;align-items:center;gap:12px}
+  .weather{padding:6px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700}
+  .status-badge{font-size:12px;color:var(--muted);padding:4px 6px;border-radius:8px;background:rgba(255,255,255,0.01);border:1px solid var(--glass-border)}
 
-        /* --- Анимация фона --- */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
+  /* tabs */
+  .tabs{display:flex;gap:8px;margin-top:6px}
+  .tab{flex:1;padding:8px;border-radius:12px;text-align:center;background:transparent;border:1px solid var(--glass-border);cursor:pointer;color:var(--muted);font-weight:800;transition:all 180ms}
+  .tab.service-active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#081018;box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25);background-color:var(--accent);font-weight:900}
+  .tab.work-active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#081018;box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25);background-color:#4cd964; font-weight:900}
 
-        /* --- Основной контейнер (мобильный вид) --- */
-        .app-container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 20px;
-            padding-bottom: 100px; /* место для меню */
-        }
+  /* main card */
+  .main-card{background:var(--panel);border-radius:14px;padding:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:10px;flex:1;min-height:240px;overflow:hidden}
+  .menu-list{flex:1;display:flex;flex-direction:column;gap:10px;overflow:auto;padding-right:6px}
+  .menu-item{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;min-height:62px;cursor:pointer}
+  .menu-item.gidchat{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,215,74,0.16)}
+  .menu-item .left{display:flex;flex-direction:column}
+  .menu-item .title{font-weight:900;font-size:16px}
+  .menu-item .title.gidchat{font-size:18px;letter-spacing:0.6px}
+  .menu-item .caption{font-size:12px;color:var(--muted)}
+  footer{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.02);font-size:12px;color:var(--muted);text-align:center}
 
-        /* --- Заголовок --- */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+  /* map collapse */
+  .map-panel{border-radius:10px;border:1px solid var(--glass-border);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));transition:all 280ms ease;position:relative}
+  .map-header{display:flex;align-items:center;gap:8px;padding:8px}
+  .map-toggle{flex:1;display:flex;align-items:center;gap:8px;cursor:pointer}
+  .map-actions{display:flex;gap:6px}
+  .map-body{height:260px}
+  #map{height:100%}
+  .map-expanded{height:340px}
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, var(--neon-cyan), white);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
-        }
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
+  .modal{width:100%;max-width:640px;background:linear-gradient(180deg,var(--panel),#070707);border-radius:12px;padding:14px;border:1px solid var(--glass-border);box-shadow:0 30px 80px rgba(0,0,0,0.7);max-height:90vh;overflow:auto}
+  .modal.fullscreen{max-width:100%;width:100%;height:100%;max-height:100%;border-radius:0;padding:18px;display:flex;flex-direction:column}
+  .modal .modal-body{flex:1;overflow:auto}
+  label{font-size:13px;color:var(--muted);display:block;margin:6px 0 4px}
+  input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:var(--text)}
+  textarea{min-height:90px}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+  .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);font-weight:800}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#081018}
+  .gidchat-holo{padding:10px 14px;border-radius:12px;background:linear-gradient(135deg, rgba(255,215,74,0.08), rgba(255,255,255,0.02));border:1px solid rgba(255,215,74,0.22);box-shadow:0 10px 40px rgba(255,215,74,0.06);font-weight:900}
 
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--neon-pink);
-            box-shadow: 0 0 15px var(--neon-pink);
-            background: url('https://i.pravatar.cc/150?img=33') center/cover;
-        }
+  /* theme previews in settings */
+  .theme-swatch{width:36px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);display:inline-block;margin-right:8px;vertical-align:middle}
 
-        /* --- Поиск --- */
-        .search-bar {
-            position: relative;
-            margin-bottom: 30px;
-        }
+  /* NEW: Floating Action Button (FAB) for Calendar */
+  .fab-container {
+    position: absolute;
+    bottom: 24px; /* Отступ от нижнего края */
+    right: 24px; /* Отступ от правого края */
+    z-index: 50; /* Поверх всего контента */
+  }
 
-        .search-input {
-            width: 100%;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: var(--blur);
-            padding: 15px 20px;
-            border-radius: 30px;
-            color: white;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 18px;
-            outline: none;
-            transition: 0.4s;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
+  .fab-calendar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 213, 74, 0.3); /* Яркая тень */
+    border: none;
+    transition: transform 150ms ease;
+  }
 
-        .search-input:focus {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0,0,0,0.5);
-        }
+  .fab-calendar:hover {
+    transform: scale(1.05);
+  }
 
-        /* --- Категории (Скролл) --- */
-        .categories {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            scrollbar-width: none; /* Скрыть скроллбар Firefox */
-        }
-        .categories::-webkit-scrollbar { display: none; } /* Скрыть скроллбар Chrome */
-
-        .cat-btn {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-            border: 1px solid var(--glass-border);
-            padding: 10px 25px;
-            border-radius: 15px;
-            color: #aaa;
-            font-weight: bold;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .cat-btn.active, .cat-btn:hover {
-            background: var(--neon-purple);
-            color: white;
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 15px var(--neon-purple);
-            transform: scale(1.05);
-        }
-
-        /* --- Карточки мест --- */
-        .card {
-            background: rgba(20, 20, 35, 0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            overflow: hidden;
-            margin-bottom: 25px;
-            backdrop-filter: blur(20px);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.15);
-        }
-
-        .card-img-wrapper {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .card-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: 0.5s;
-        }
-
-        .card:hover .card-img {
-            transform: scale(1.1);
-        }
-
-        .rating-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--neon-cyan);
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            border: 1px solid var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-title {
-            font-size: 22px;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .card-desc {
-            color: #bbb;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        /* --- Кнопка действия --- */
-        .btn-action {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 15px;
-            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            letter-spacing: 1px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        .btn-action::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
-        }
-
-        .btn-action:hover::before {
-            left: 100%;
-        }
-
-        .btn-action:hover {
-            box-shadow: 0 0 20px var(--neon-pink);
-        }
-
-        /* --- Нижнее меню (Floating Dock) --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            background: rgba(10, 10, 20, 0.8);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 40px;
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 100;
-        }
-
-        .nav-item {
-            color: #666;
-            font-size: 24px;
-            cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: var(--neon-cyan);
-            transform: translateY(-5px);
-            text-shadow: 0 0 15px var(--neon-cyan);
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-cyan);
-        }
-
-    </style>
+  /* responsive */
+  @media(max-width:420px){.phone{width:100%;height:100vh;border-radius:0}}
+</style>
 </head>
 <body>
-
-    <div class="app-container">
-        <header>
-            <h1>GID CITY <span style="font-size:12px; color:var(--neon-pink)">//v2.0</span></h1>
-            <div class="avatar"></div>
-        </header>
-
-        <div class="search-bar">
-            <input type="text" class="search-input" placeholder="Найти локацию...">
-        </div>
-
-        <div class="categories">
-            <div class="cat-btn active">🔥 Топ</div>
-            <div class="cat-btn">🍔 Еда</div>
-            <div class="cat-btn">🍸 Бары</div>
-            <div class="cat-btn">🎨 Арт</div>
-            <div class="cat-btn">🌳 Парки</div>
-        </div>
-
-        <div id="places-list">
-            <div class="card">
-                <div class="card-img-wrapper">
-                    <span class="rating-badge">★ 4.9</span>
-                    <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="card-img" alt="Bar">
-                </div>
-                <div class="card-content">
-                    <div class="card-title">Neon Sky Bar</div>
-                    <div class="card-desc">Лучшие коктейли на крыше с панорамным видом на ночной город.</div>
-                    <button class="btn-action">Забронировать</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-img-wrapper">
-                    <span class="rating-badge">★ 4.7</span>
-                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="card-img" alt="Club">
-                </div>
-                <div class="card-content">
-                    <div class="card-title">Cyber Arena</div>
-                    <div class="card-desc">Компьютерный клуб нового поколения. VR зоны и турниры.</div>
-                    <button class="btn-action">Играть</button>
-                </div>
-            </div>
-
-             <div class="card">
-                <div class="card-img-wrapper">
-                    <span class="rating-badge">★ 5.0</span>
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="card-img" alt="Restaurant">
-                </div>
-                <div class="card-content">
-                    <div class="card-title">Gastro Lab</div>
-                    <div class="card-desc">Молекулярная кухня и необычная подача блюд.</div>
-                    <button class="btn-action">Меню</button>
-                </div>
-            </div>
-        </div>
+<div class="phone" role="application" aria-label="GiDCity prototype">
+  <div class="header">
+    <div class="title">
+      <div class="logo" id="avatarPreview">G</div>
+      <div>
+        <div class="app-name"><span>GiDCity</span> <small>приложение</small></div>
+      </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active">🏠</div>
-        <div class="nav-item">🗺️</div>
-        <div class="nav-item">❤️</div>
-        <div class="nav-item">👤</div>
-    </nav>
+    <div class="header-actions">
+      <div class="icon-btn" id="settingsBtn" title="Настройки">⚙️</div>
+      <div class="icon-btn" id="notifBtn" title="Уведомления">🔔<div class="notif-badge" id="notifCount">0</div></div>
+    </div>
+  </div>
 
-    <script>
-        // Добавляем простую интерактивность для "Вау" эффекта
-        
-        // 1. Эффект нажатия на категории
-        const cats = document.querySelectorAll('.cat-btn');
-        cats.forEach(cat => {
-            cat.addEventListener('click', () => {
-                cats.forEach(c => c.classList.remove('active'));
-                cat.classList.add('active');
-            });
-        });
+  <div class="content">
+    <div class="top-row">
+      <div class="city-block">
+        <div class="city-name" id="cityName">Караганда</div>
+        <div class="city-sub" id="citySub">Казахстан</div>
+      </div>
 
-        // 2. Эффект "Тильт" (наклон) карточек при движении мыши (для десктопа)
-        // На телефоне это работать не будет, но на компе выглядит круто
-        const cards = document.querySelectorAll('.card');
-        
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -10; // макс поворот 10deg
-                const rotateY = ((x - centerX) / centerX) * 10;
+      <div class="center-area">
+        <div class="weather" id="weatherBlock">— °C</div>
+      </div>
 
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-            });
+      <div class="status-badge" id="syncText">Онлайн</div>
+    </div>
 
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-            });
-        });
+    <div class="tabs">
+      <div class="tab" id="tabServices">УСЛУГИ</div>
+      <div class="tab" id="tabWork">РАБОТА</div>
+    </div>
 
-        // 3. Клик по навигации
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                navItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-            });
-        });
-    </script>
+    <div class="main-card" id="mainCard">
+      <div class="map-panel map-expanded" id="mapPanel" style="height:340px">
+        <div class="map-header">
+          <div class="map-toggle" id="mapToggle">
+            <div style="font-weight:800">Карта города</div>
+            <div style="color:var(--muted);font-size:12px">Нажмите чтобы открыть / закрыть</div>
+          </div>
+          <div class="map-actions">
+            <button class="btn" id="mapCenterBtn">Центр</button>
+            <button class="btn" id="mapClearBtn">Сброс</button>
+          </div>
+        </div>
+        <div class="map-body" id="mapBody" style="height:260px;display:block">
+          <div style="padding:8px;display:flex;gap:8px;align-items:center">
+            <input id="mapSearch" placeholder="Поиск адреса или организации" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text)">
+            <button class="btn" id="searchBtn">Найти</button>
+            <button class="btn" id="setFromBtn">A</button>
+            <button class="btn" id="setToBtn">B</button>
+            <button class="btn primary" id="routeBtn">Маршрут</button>
+          </div>
+          <div id="map" style="height:200px;border-radius:8px;margin:8px"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="menu-list" id="menuList"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="appFooter">GiDCity • макет — карта: OpenRouteService</footer>
+
+  <div class="fab-container">
+    <button class="fab-calendar" id="calendarBtn" title="Календарь/Напоминания">🗓️</button>
+  </div>
+
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+  <div class="modal" id="modalWindow" role="dialog" aria-modal="true">
+    <div class="modal-body" id="modalContent"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/* ===========================
+   GiDCity Unified Prototype — full integrated update
+   - All previous features preserved.
+   - Calendar button moved to FAB (Floating Action Button).
+   =========================== */
+
+/* -------------------
+   Configuration
+   ------------------- */
+const OPENROUTESERVICE_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcyZWNiZDAxMGJlNTRjY2E4NDQwYTVlYmM2N2U1NzdkIiwiaCI6Im11cm11cjY0In0=';
+const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG';
+const JSONBIN_ID = '6911fbe843b1c97be9a4dc97';
+const USE_JSONBIN = true;
+const PULL_INTERVAL_MS = 15000;
+
+/* -------------------
+   State
+   ------------------- */
+const appStateKey = 'gidcity_state_live_v3';
+let state = {
+  __updatedAt: new Date(0).toISOString(),
+  user: null,
+  city: 'Караганда',
+  theme: 'фиолетово-черный',
+  notifications: [],
+  servicesPosts: [],
+  cityPosts: [],
+  chats: [],
+  wallet: {balance:0},
+  reminders: []
+};
+function loadState(){ try{ const raw=localStorage.getItem(appStateKey); if(raw) Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn(e); } }
+function localSave(){ localStorage.setItem(appStateKey, JSON.stringify(state)); }
+
+/* JSONBin sync helpers (unchanged) */
+async function syncToJSONBin(){ if(!USE_JSONBIN) return; try{
+  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+  state.__updatedAt = new Date().toISOString();
+  const payload = {state, updatedAt: state.__updatedAt};
+  const resp = await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(payload)});
+  if(!resp.ok) throw new Error('JSONBin save failed');
+  return resp.json();
+}catch(e){ console.warn('sync error', e); throw e; } }
+async function loadFromJSONBin(){ if(!USE_JSONBIN) return null; try{
+  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
+  const resp = await fetch(url,{headers:{'X-Master-Key':JSONBIN_KEY}});
+  if(!resp.ok) throw new Error('JSONBin load failed');
+  const data = await resp.json(); return data;
+}catch(e){ console.warn(e); return null; } }
+
+let pullTimer = null;
+async function pullAndMerge(){ if(!USE_JSONBIN) return;
+  try{
+    const data = await loadFromJSONBin();
+    if(data && data.record && data.record.state){
+      const remoteUpdated = data.updatedAt || data.record.state.__updatedAt;
+      if(remoteUpdated && new Date(remoteUpdated) > new Date(state.__updatedAt || 0)){
+        state = data.record.state || state; if(data.updatedAt) state.__updatedAt = data.updatedAt; localSave(); renderAll(); setSyncStatus('синхр. JSONBin');
+      }
+    }
+  }catch(e){ console.warn('pull err', e); setSyncStatus('ошибка синхр.'); }
+}
+function startPeriodicPull(){ if(pullTimer) clearInterval(pullTimer); if(USE_JSONBIN) pullTimer = setInterval(pullAndMerge, PULL_INTERVAL_MS); }
+
+/* -------------------
+   UI Refs & helpers
+   ------------------- */
+function el(id){ return document.getElementById(id); }
+function setSyncStatus(txt){ const s = el('syncText'); if(s) s.textContent = txt; }
+
+/* -------------------
+   Themes
+   ------------------- */
+const THEMES = {
+  'фиолетово-черный':{top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a', border:'rgba(255,255,255,0.06)', glass:'rgba(255,255,255,0.02)'},
+  'gold':{top:'#3b2b14', bottom:'#0b0703', accent:'#ffd54a', border:'rgba(255,215,74,0.12)', glass:'rgba(255,215,74,0.03)'},
+  'holo':{top:'#06103a', bottom:'#0b0033', accent:'#7bf0ff', border:'rgba(123,240,255,0.08)', glass:'rgba(123,240,255,0.03)'},
+  'neon':{top:'#001219', bottom:'#060014', accent:'#ff3bff', border:'rgba(255,59,255,0.12)', glass:'rgba(255,59,255,0.03)'}
+};
+function applyTheme(name){
+  const t = THEMES[name] || THEMES['фиолетово-черный'];
+  document.documentElement.style.setProperty('--bg1', t.top);
+  document.documentElement.style.setProperty('--bg2', t.bottom);
+  document.documentElement.style.setProperty('--accent', t.accent);
+  document.documentElement.style.setProperty('--glass-border', t.border);
+  document.documentElement.style.setProperty('--glass-bg', t.glass);
+  state.theme = name; localSave();
+  // visual tweak: change tab accents if service/work active
+  updateTabsVisual();
+}
+
+/* -------------------
+   Map (expanded by default)
+   ------------------- */
+let map=null, fromMarker=null, toMarker=null, routeLayer=null, searchMarkers=[];
+const DEFAULT_CENTER = {lat:49.8062, lon:73.0851, zoom:13};
+function initMapIfNeeded(){
+  if(map) return;
+  try{
+    map = L.map('map').setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lon], DEFAULT_CENTER.zoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(map);
+    map.on('click', e=>{
+      if(map._setMode==='from'){ setFromPoint(e.latlng); map._setMode=null; }
+      else if(map._setMode==='to'){ setToPoint(e.latlng); map._setMode=null; }
+    });
+  }catch(e){ console.warn('map init err', e); alert('Ошибка инициализации карты (проверьте подключение).'); }
+}
+function setFromPoint(latlng){ if(fromMarker) map.removeLayer(fromMarker); fromMarker = L.marker(latlng,{title:'A',draggable:true}).addTo(map).bindPopup('A – отправление').openPopup(); fromMarker.on('dragend', ()=>{ if(fromMarker && toMarker) buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); }); }
+function setToPoint(latlng){ if(toMarker) map.removeLayer(toMarker); toMarker = L.marker(latlng,{title:'B',draggable:true}).addTo(map).bindPopup('B – назначение').openPopup(); toMarker.on('dragend', ()=>{ if(fromMarker && toMarker) buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); }); }
+function clearRoute(){ if(fromMarker){ map.removeLayer(fromMarker); fromMarker=null; } if(toMarker){ map.removeLayer(toMarker); toMarker=null; } if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; } searchMarkers.forEach(m=>map.removeLayer(m)); searchMarkers=[]; }
+
+async function geocode(query){
+  try{
+    const url = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(query)}&size=5`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('geocode fail '+r.status);
+    const data = await r.json();
+    return (data.features||[]).map(f=>({label:f.properties.label, lat:f.geometry.coordinates[1], lon:f.geometry.coordinates[0], props:f.properties}));
+  }catch(e){ console.warn(e); return []; }
+}
+
+async function buildRoute(fromLatLng, toLatLng){
+  try{
+    const url = `https://api.openrouteservice.org/v2/directions/driving-car?start=${fromLatLng.lng},${fromLatLng.lat}&end=${toLatLng.lng},${toLatLng.lat}&api_key=${OPENROUTESERVICE_API_KEY}`;
+    let resp = await fetch(url);
+    if(!resp.ok){
+      resp = await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson',{method:'POST',headers:{'Content-Type':'application/json','Authorization':OPENROUTESERVICE_API_KEY},body:JSON.stringify({coordinates:[[fromLatLng.lng,fromLatLng.lat],[toLatLng.lng,toLatLng.lat]]})});
+      if(!resp.ok) throw new Error('routing fail ' + resp.status);
+      const g = await resp.json(); renderRouteGeoJSON(g); return g;
+    }
+    const g = await resp.json(); renderRouteGeoJSON(g); return g;
+  }catch(e){ console.warn(e); alert('Ошибка построения маршрута: ' + (e.message||e)); }
+}
+function renderRouteGeoJSON(g){
+  if(routeLayer) map.removeLayer(routeLayer);
+  routeLayer = L.geoJSON(g,{style:{color:getComputedStyle(document.documentElement).getPropertyValue('--accent')||'#ffd54a',weight:5,opacity:0.9}}).addTo(map);
+  if(routeLayer && routeLayer.getBounds) map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
+}
+
+async function doMapSearch(q){
+  if(!q) return alert('Введите запрос');
+  if(!map) initMapIfNeeded();
+  const res = await geocode(q);
+  searchMarkers.forEach(m=>map.removeLayer(m)); searchMarkers=[];
+  if(!res.length){ alert('Ничего не найдено'); return; }
+  res.forEach(r=>{
+    const mk = L.marker([r.lat,r.lon]).addTo(map).bindPopup(`<strong>${r.label}</strong><div style="margin-top:6px"><button onclick="window.__setFrom(${r.lat},${r.lon})">A</button> <button onclick="window.__setTo(${r.lat},${r.lon})">B</button></div>`);
+    searchMarkers.push(mk);
+  });
+  map.fitBounds(L.featureGroup(searchMarkers).getBounds(),{padding:[20,20]});
+  return res;
+}
+window.__setFrom = (lat,lon)=>{ setFromPoint(L.latLng(lat,lon)); };
+window.__setTo = (lat,lon)=>{ setToPoint(L.latLng(lat,lon)); };
+
+/* -------------------
+   Menu & Rendering
+   ------------------- */
+function renderMenu(){
+  const menuList = el('menuList'); menuList.innerHTML='';
+  const active = el('tabServices').classList.contains('service-active') ? 'services' : 'work';
+  const items = active==='services' ? [
+    {id:'gid_order', title:'GiD Заказ', caption:'Универсальный заказ (всё что угодно)'},
+    {id:'order', title:'Заказать', caption:'Создать заявку'},
+    {id:'ads', title:'Объявление услуг', caption:'Опубликовать / посмотреть'},
+    {id:'citychat', title:'GIDChat', caption:'Лента города'},
+    {id:'messenger', title:'Мессенджер', caption:'Диалоги'},
+    {id:'wallet', title:'Кошелёк', caption:'Баланс'}
+  ] : [
+    {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок'},
+    {id:'myOffers', title:'Мои отклики', caption:'Отклики'},
+    {id:'reports', title:'Отчёты', caption:'Статистика'},
+    {id:'settings', title:'Настройки', caption:'Профиль и темы'}
+  ];
+  items.forEach(it=>{
+    const elDiv = document.createElement('div'); elDiv.className='menu-item'; elDiv.dataset.id=it.id;
+    // special styling for GIDChat
+    if(it.id==='citychat'){ elDiv.classList.add('gidchat'); elDiv.innerHTML = `<div class="left"><div class="title gidchat">GIDChat</div><div class="caption">Большая лента города</div></div><div class="gidchat-holo">OPEN</div>`; }
+    else elDiv.innerHTML = `<div class="left"><div class="title">${it.title}</div><div class="caption">${it.caption}</div></div><div style="opacity:0.9">›</div>`;
+    elDiv.addEventListener('click', ()=>onMenuClick(it.id));
+    menuList.appendChild(elDiv);
+  });
+}
+
+/* -------------------
+   Modals & Special UI
+   ------------------- */
+function openModal(html, actionsHtml, opts={}){
+  // opts.fullscreen = true -> use fullscreen modal
+  const mb = el('modalBackdrop'), mw = el('modalWindow');
+  el('modalContent').innerHTML = html;
+  el('modalActions').innerHTML = actionsHtml || '<button class="btn" data-close>Закрыть</button>';
+  if(opts.fullscreen){
+    mw.classList.add('fullscreen');
+  } else {
+    mw.classList.remove('fullscreen');
+  }
+  mb.style.display='flex'; mb.setAttribute('aria-hidden','false');
+  mb.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeModal));
+  mb.addEventListener('click', (e)=>{ if(e.target===mb) closeModal(); });
+}
+function closeModal(){ const mb = el('modalBackdrop'), mw = el('modalWindow'); mb.style.display='none'; mb.setAttribute('aria-hidden','true'); el('modalContent').innerHTML=''; el('modalActions').innerHTML=''; mw.classList.remove('fullscreen'); }
+
+/* GiD Заказ integrated into Order modal */
+function openOrderModal(preselectCategory){
+  const categories = ['Такси','Курьер','Квартира/Дом','Мастер','GiD Заказ'];
+  let html = `<div class="h"><strong>Создать заявку</strong></div><label>Категория</label><select id="ordCat">${categories.map(c=>`<option>${c}</option>`).join('')}</select><div id="ordDynamic"></div><label>Бюджет (₸)</label><input id="ordBudget" type="number" value="0">`;
+  const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="ordCreate">Создать</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ 
+    if(preselectCategory){
+      const sel = document.getElementById('ordCat');
+      sel.value = preselectCategory;
+    }
+    populateDynamicFields(); 
+    document.getElementById('ordCat').addEventListener('change', populateDynamicFields);
+    document.getElementById('ordCreate').addEventListener('click', ()=>{
+      const cat=document.getElementById('ordCat').value; const budget=document.getElementById('ordBudget').value; const dyn=captureDynamicFields();
+      if(!dyn) return; state.servicesPosts.unshift({id:Date.now(),cat,budget,dyn,created:new Date().toISOString()}); localSave(); addNotification('Новая заявка: '+cat); closeModal();
+    });
+  },50);
+}
+function populateDynamicFields(){
+  const cat=document.getElementById('ordCat').value; const cont=el('ordDynamic'); cont.innerHTML='';
+  if(cat==='Такси'){ cont.innerHTML=`<label>Откуда</label><input id="taxFrom"><label>Куда</label><input id="taxTo"><label>Пассажиры</label><input id="taxPax" type="number" value="1">`; }
+  else if(cat==='Курьер'){ cont.innerHTML=`<label>Откуда</label><input id="curFrom"><label>Куда</label><input id="curTo"><label>Вес/габариты</label><input id="curSize">`; }
+  else if(cat==='Квартира/Дом'){ cont.innerHTML=`<label>Адрес</label><input id="homeAddr"><label>Описание</label><textarea id="homeDesc"></textarea><label>Фото</label><input id="homeFile" type="file" accept="image/*">`; document.getElementById('homeFile')?.addEventListener('change', async e=>{ const f=e.target.files[0]; if(!f) return; cont.dataset.file=await fileToBase64(f); }); }
+  else if(cat==='Мастер'){ cont.innerHTML=`<label>Адрес</label><input id="mAddr"><label>Вид работ</label><input id="mType"><label>Время</label><input id="mTime" type="time">`; }
+  else { /* GiD Заказ - универсальная форма с критериями услуг */ cont.innerHTML=`<label>Тип услуги</label><select id="gidType"><option>Любая</option><option>Покупка</option><option>Доставка</option><option>Помощь</option><option>Мастер</option></select><label>Критерии / Доп. параметры</label><input id="gidCriteria" placeholder="Например: срочно, бюджет до 5000..."><label>Описание</label><textarea id="gDesc"></textarea><label>Адрес</label><input id="gAddr">`; }
+}
+function captureDynamicFields(){
+  const cat=document.getElementById('ordCat').value;
+  if(cat==='Такси'){ const f=document.getElementById('taxFrom').value.trim(), t=document.getElementById('taxTo').value.trim(); if(!f||!t){alert('Укажите адреса');return null;} return {from:f,to:t,pax:document.getElementById('taxPax').value}; }
+  if(cat==='Курьер'){ const f=document.getElementById('curFrom').value.trim(), t=document.getElementById('curTo').value.trim(); if(!f||!t){alert('Укажите адреса');return null;} return {from:f,to:t,size:document.getElementById('curSize').value}; }
+  if(cat==='Квартира/Дом'){ const a=document.getElementById('homeAddr').value.trim(), d=document.getElementById('homeDesc').value.trim(); if(!a||!d){alert('Укажите адрес и описание');return null;} return {addr:a,desc:d,file:el('ordDynamic').dataset.file||null}; }
+  if(cat==='Мастер'){ const a=document.getElementById('mAddr').value.trim(), ty=document.getElementById('mType').value.trim(); if(!a||!ty){alert('Укажите адрес и вид работ');return null;} return {addr:a,type:ty,time:document.getElementById('mTime').value}; }
+  const d=document.getElementById('gDesc') ? document.getElementById('gDesc').value.trim() : ''; const a=document.getElementById('gAddr') ? document.getElementById('gAddr').value.trim() : '';
+  if(cat==='GiD Заказ'){ const type=document.getElementById('gidType').value, crit=document.getElementById('gidCriteria').value.trim(); if(!d||!a){alert('Заполните описание и адрес');return null;} return {type,criteria:crit,desc:d,addr:a}; }
+  if(!d||!a){alert('Заполните описание и адрес');return null;} return {desc:d,addr:a};
+}
+
+/* Ads */
+function openAdsModal(){ const html=`<div class="h"><strong>Объявление</strong></div><label>Заголовок</label><input id="adTitle"><label>Текст</label><textarea id="adText"></textarea>`; const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="publishAd">Опубликовать</button>'; openModal(html, actions); setTimeout(()=>{ document.getElementById('publishAd').addEventListener('click', ()=>{ const t=el('adTitle').value.trim(), txt=el('adText').value.trim(); if(!t||!txt) return alert('Заполните'); state.cityPosts.unshift({id:Date.now(),title:t,text:txt,created:new Date().toISOString()}); localSave(); addNotification('Опубликовано объявление'); closeModal(); }); },50); }
+
+/* City chat / GIDChat fullscreen */
+function openGIDChatFull(){
+  // fullscreen modal with big feed
+  const postsHtml = (state.cityPosts||[]).map(p=>`<div style="padding:12px;border-bottom:1px solid var(--glass-border);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);margin-bottom:8px;border-radius:8px"><div style="font-weight:900">${p.title||'Пост'}</div><div class="small" style="color:var(--muted)">${new Date(p.created).toLocaleString()}</div><div style="margin-top:8px">${p.text||''}</div></div>`).join('')||'<div class="small">Лента пуста</div>';
+  const html = `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:900;font-size:20px">GIDChat — ${state.city}</div><div style="display:flex;gap:8px"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="newPostBtn">+ Пост</button></div></div><div style="flex:1;overflow:auto">${postsHtml}</div>`;
+  openModal(html, '', {fullscreen:true});
+  setTimeout(()=>{ el('newPostBtn')?.addEventListener('click', ()=>{ openAdsModal(); }); },50);
+}
+
+/* Messenger & Wallet (preserved) */
+function openMessenger(){ openModal('<div class="h"><strong>Мессенджер</strong></div><div class="small">Список диалогов (демо)</div>','<button class="btn" data-close>Закрыть</button>'); }
+function openWallet(){ const html=`<div class="h"><strong>Кошелёк</strong></div><div style="font-size:24px;font-weight:900">${state.wallet.balance||0} ₸</div>`; openModal(html,'<button class="btn" data-close>Закрыть</button>'); }
+
+/* Settings with theme selection (added futures) */
+function openSettingsModal(forceOpen){
+  const cities = ['Караганда','Нур-Султан','Алматы'];
+  const themes = Object.keys(THEMES);
+  const html = `<div class="h" style="display:flex;justify-content:space-between;align-items:center"><strong>Настройки</strong><div style="font-size:12px;color:var(--muted)">Тема: <strong>${state.theme}</strong></div></div>
+    <label>Аватар</label><button class="btn" id="uploadAvatar">Загрузить</button><img id="avatarPreviewSmall" src="" style="width:44px;height:44px;border-radius:8px;margin-left:8px;vertical-align:middle">
+    <label>Имя</label><input id="profileName"><label>Фамилия</label><input id="profileSurname"><label>Телефон</label><input id="profilePhone"><label>Город</label><select id="citySelect">${cities.map(c=>`<option>${c}</option>`).join('')}</select>
+    <label>Тема</label><select id="themeSelect">${themes.map(t=>`<option>${t}</option>`).join('')}</select>
+    <div style="margin-top:8px"><span class="theme-swatch" id="sw1" style="background:linear-gradient(90deg,#5b2cff,#2b0b3a)"></span><span class="theme-swatch" id="sw2" style="background:linear-gradient(90deg,#3b2b14,#0b0703)"></span><span class="theme-swatch" id="sw3" style="background:linear-gradient(90deg,#06103a,#0b0033)"></span><span class="theme-swatch" id="sw4" style="background:linear-gradient(90deg,#001219,#060014)"></span> — примеры тем</div>
+  `;
+  const actions = '<button class="btn" data-close>Закрыть</button><button class="btn primary" id="saveSettings">Сохранить</button>';
+  openModal(html, actions);
+  setTimeout(()=>{
+    document.getElementById('profileName').value = state.user ? (state.user.name||'') : '';
+    document.getElementById('profileSurname').value = state.user ? (state.user.surname||'') : '';
+    document.getElementById('profilePhone').value = state.user ? (state.user.phone||'') : '';
+    document.getElementById('avatarPreviewSmall').src = state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/44/333333/fff?text=U';
+    document.getElementById('uploadAvatar').addEventListener('click', ()=>{ const f=document.createElement('input'); f.type='file'; f.accept='image/*'; f.onchange=async e=>{ const file=e.target.files[0]; if(!file) return; const b=await fileToBase64(file); document.getElementById('avatarPreviewSmall').src=b; document.getElementById('avatarPreviewSmall').dataset.b64=b; }; f.click(); });
+    document.getElementById('saveSettings').addEventListener('click', ()=>{
+      const name=el('profileName').value.trim(), surname=el('profileSurname').value.trim();
+      if(!name||!surname){ alert('Имя и фамилия обязательны'); return; }
+      state.user = state.user||{};
+      state.user.name = name; state.user.surname = surname; state.user.phone = el('profilePhone').value.trim();
+      const b64 = document.getElementById('avatarPreviewSmall').dataset ? document.getElementById('avatarPreviewSmall').dataset.b64 : null;
+      if(b64) state.user.avatar = b64;
+      state.city = el('citySelect').value;
+      const chosenTheme = el('themeSelect').value || state.theme;
+      applyTheme(chosenTheme); localSave(); closeModal(); renderAll();
+    });
+  },50);
+}
+
+/* Auth */
+function openAuthModal(){
+  const html=`<div class="h"><strong>Авторизация</strong></div><label>Имя</label><input id="authName"><label>Телефон</label><input id="authPhone"><label>PIN (4 цифры)</label><input id="authPIN" maxlength="4">`;
+  const actions = '<button class="btn" data-close>Пропустить</button><button class="btn primary" id="authSubmit">Войти</button>';
+  openModal(html, actions);
+  setTimeout(()=>{ document.getElementById('authSubmit').addEventListener('click', ()=>{ const name=el('authName').value.trim(); const phone=el('authPhone').value.trim(); const pin=el('authPIN').value.trim(); if(!name||!phone||!/^\d{4}$/.test(pin)){ alert('Заполните корректно'); return; } state.user = state.user||{}; state.user.name=name; state.user.phone=phone; state.user.pin=pin; localSave(); addNotification('Пользователь вошёл: '+name); closeModal(); renderAll(); }); },50);
+}
+
+/* Notifications & helper */
+function addNotification(text, meta={}){
+  state.notifications.unshift({id:Date.now(), text, meta, ts:new Date().toISOString()}); localSave(); updateNotifCount();
+}
+function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
+
+/* City posts feed modal (smaller) */
+function openCityChatModal(){
+  const postsHtml = (state.cityPosts||[]).map(p=>`<div style="padding:8px;border-bottom:1px solid var(--glass-border)"><div style="font-weight:800">${p.title||'Пост'}</div><div class="small">${new Date(p.created).toLocaleString()}</div><div style="margin-top:6px">${p.text||''}</div></div>`).join('')||'<div class="small">Лента пуста</div>';
+  openModal(`<div class="h"><strong>City чат — ${state.city}</strong></div><div style="max-height:320px;overflow:auto">${postsHtml}</div>`,'<button class="btn" data-close>Закрыть</button>');
+}
+
+/* helpers */
+function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); }); }
+
+/* -------------------
+   Menu click router
+   ------------------- */
+function onMenuClick(id){
+  if(id==='gid_order'){ openOrderModal('GiD Заказ'); } // integrated: preselect GiD
+  else if(id==='order') openOrderModal();
+  else if(id==='ads') openAdsModal();
+  else if(id==='citychat') openGIDChatFull();
+  else if(id==='messenger') openMessenger();
+  else if(id==='wallet') openWallet();
+  else if(id==='findJobs') alert('Поиск заказов — демо');
+  else if(id==='settings') openSettingsModal();
+  else alert('Нажата: '+id);
+}
+
+/* -------------------
+   Render & misc
+   ------------------- */
+function renderAll(){
+  el('cityName').textContent = state.city || 'Караганда';
+  updateNotifCount();
+  renderMenu();
+  applyTheme(state.theme || 'фиолетово-черный');
+  fetchWeather();
+  // avatar preview
+  if(state.user && state.user.avatar) el('avatarPreview').innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  setSyncStatus('Онлайн');
+  // ensure map visible
+  setTimeout(()=>{ initMapIfNeeded(); if(map) map.invalidateSize(); },300);
+}
+
+/* -------------------
+   Weather
+   ------------------- */
+async function fetchWeather(){
+  try{
+    const coords = {lat:49.8062,lon:73.0851};
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('weather fail');
+    const d = await r.json();
+    if(d && d.current_weather) el('weatherBlock').textContent = `${Math.round(d.current_weather.temperature)} °C`;
+  }catch(e){ el('weatherBlock').textContent='— °C'; }
+}
+
+/* -------------------
+   Tabs visual update + events
+   ------------------- */
+function updateTabsVisual(){
+  const s = el('tabServices'), w = el('tabWork');
+  // remove all classes
+  s.className = 'tab'; w.className = 'tab';
+  // determine which is active by dataset (we use class on click handlers)
+  if(s.dataset.active === '1') { s.classList.add('service-active'); }
+  if(w.dataset.active === '1') { w.classList.add('work-active'); }
+}
+document.addEventListener('DOMContentLoaded', async ()=>{
+  loadState();
+  // default: services active
+  el('tabServices').dataset.active = '1';
+  renderAll();
+
+  // JSONBin load
+  if(USE_JSONBIN){
+    try{
+      const data = await loadFromJSONBin();
+      if(data && data.record && data.record.state){ state = data.record.state; if(data.updatedAt) state.__updatedAt = data.updatedAt; localSave(); }
+    }catch(e){ console.warn(e); }
+  }
+  startPeriodicPull();
+
+  // UI bindings
+  el('tabServices').addEventListener('click', ()=>{ el('tabServices').dataset.active='1'; el('tabWork').dataset.active='0'; updateTabsVisual(); renderMenu(); });
+  el('tabWork').addEventListener('click', ()=>{ el('tabWork').dataset.active='1'; el('tabServices').dataset.active='0'; updateTabsVisual(); renderMenu(); });
+  el('settingsBtn').addEventListener('click', ()=>openSettingsModal());
+  // FAB BINDING (calendarBtn)
+  el('calendarBtn').addEventListener('click', ()=>openCalendar());
+  el('notifBtn').addEventListener('click', ()=>{ openNotifications(); });
+
+  // map toggle
+  const mapToggle = el('mapToggle');
+  mapToggle.addEventListener('click', ()=>{
+    const body = el('mapBody'), panel = el('mapPanel');
+    if(body.style.display==='none' || body.style.display==='') {
+      body.style.display='block'; panel.classList.add('map-expanded'); panel.style.height='340px';
+      setTimeout(()=>{ initMapIfNeeded(); if(map) map.invalidateSize(); },200);
+    } else {
+      body.style.display='none'; panel.classList.remove('map-expanded'); panel.style.height='56px';
+    }
+  });
+
+  // map controls
+  el('searchBtn').addEventListener('click', ()=>{ const q=el('mapSearch').value.trim(); if(!q) return alert('Введите запрос'); initMapIfNeeded(); doMapSearch(q); });
+  el('setFromBtn').addEventListener('click', ()=>{ initMapIfNeeded(); map._setMode='from'; alert('Кликните по карте, чтобы выбрать отправление (A)'); });
+  el('setToBtn').addEventListener('click', ()=>{ initMapIfNeeded(); map._setMode='to'; alert('Кликните по карте, чтобы выбрать пункт назначения (B)'); });
+  el('routeBtn').addEventListener('click', ()=>{ if(!fromMarker||!toMarker) return alert('Укажите точки A и B'); buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); });
+  el('mapClearBtn').addEventListener('click', ()=>{ clearRoute(); });
+  el('mapCenterBtn').addEventListener('click', ()=>{ if(!map) initMapIfNeeded(); map.setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lon], DEFAULT_CENTER.zoom); });
+
+  // initial menu
+  renderMenu();
+
+  // auth if no user
+  if(!state.user) setTimeout(()=>openAuthModal(), 600);
+});
+
+/* Calendar modal (Logic Preserved) */
+function openCalendar(){
+  const html = `<div class="h"><strong>Календарь</strong></div><label>Дата</label><input type="date" id="calDate" value="${new Date().toISOString().slice(0,10)}"><label>Время</label><input type="time" id="calTime" value="12:00"><label>Заметка</label><input id="calNote"><div class="small">Добавленное появится в уведомлениях.</div>`;
+  openModal(html,'<button class="btn" data-close>Закрыть</button><button class="btn primary" id="addRem">Добавить</button>');
+  setTimeout(()=>{ el('addRem').addEventListener('click', ()=>{ const d=el('calDate').value, t=el('calTime').value, n=el('calNote').value; if(!d||!t) return alert('Укажите дату и время'); state.notifications.unshift({id:Date.now(),text:`Напоминание: ${n||'без описания'}`,ts:new Date(d+'T'+t+':00').toISOString()}); localSave(); updateNotifCount(); closeModal(); }); },50);
+}
+
+/* Notifications list */
+function openNotifications(){
+  const listHtml = (state.notifications||[]).map(n=>`<div style="padding:8px;border-bottom:1px solid var(--glass-border)"><div class="small">${new Date(n.ts).toLocaleString()}</div><div style="margin-top:6px">${n.text}</div></div>`).join('')||'<div class="small">Нет уведомлений</div>';
+  openModal(`<div class="h"><strong>Уведомления</strong></div><div style="max-height:360px;overflow:auto">${listHtml}</div>`,'<button class="btn" data-close>Закрыть</button><button class="btn primary" id="clearNotifs">Очистить</button>');
+  setTimeout(()=>{ el('clearNotifs').addEventListener('click', ()=>{ state.notifications=[]; localSave(); updateNotifCount(); closeModal(); }); },50);
+}
+
+/* helpers */
+function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
+
+</script>
 </body>
 </html>
