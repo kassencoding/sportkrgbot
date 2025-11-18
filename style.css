@@ -1,0 +1,297 @@
+/* Глобальные переменные и основной стиль */
+:root {
+    --neon-purple: #9f50ff;
+    --neon-yellow: #f0e34a;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --text-color: #f0f0f0;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-color);
+    background: #000;
+    overflow: hidden; /* Скрыть прокрутку на время splash screen */
+}
+
+/* 1. ЭКРАН ЗАПУСКА */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #4a00e0, #000000, #8e2de2, #000000);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.splash-text {
+    font-size: 2.5em;
+    font-weight: 700;
+    text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple);
+    opacity: 0;
+    animation: fadeInOut 2s ease-in-out forwards;
+}
+
+/* 2. ОСНОВНОЙ КОНТЕЙНЕР ПРИЛОЖЕНИЯ */
+.app-container {
+    display: none; /* Изначально скрыт */
+    height: 100vh;
+    width: 100%;
+    padding: 1.2rem;
+    box-sizing: border-box;
+    background: linear-gradient(-45deg, #4a00e0, #000000, #8e2de2, #000000);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    overflow-y: auto; /* Позволяет прокручивать контент */
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Стили "Стекломорфизм" и "Неон" */
+.glass-button, .glass-modal, .menu-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.glass-button {
+    color: var(--text-color);
+    font-size: 1rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    font-weight: 600; /* Жирные кнопки */
+}
+
+.glass-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 5px var(--neon-purple);
+}
+
+/* 3. ХЕДЕР (ВЕРХНИЙ РЯД) */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.logo-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    animation: neon-glow 2s infinite alternate;
+}
+
+@keyframes neon-glow {
+    from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--neon-purple); }
+    to { text-shadow: 0 0 10px #fff, 0 0 20px var(--neon-purple), 0 0 30px var(--neon-purple); }
+}
+
+.header-button {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+}
+#calendarButton {
+    width: auto;
+    padding: 0.5rem 1rem;
+}
+
+/* 4. ВТОРОЙ РЯД (ГОРОД И ПОГОДА) */
+.city-weather {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+.current-city { font-weight: 600; }
+.weather-widget { font-weight: 500; }
+
+/* 5. ТРЕТИЙ РЯД (НАВИГАЦИЯ) */
+.main-nav {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.nav-toggle {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.nav-toggle:first-child { border-radius: 10px 0 0 10px; }
+.nav-toggle:last-child { border-radius: 0 10px 10px 0; }
+
+.nav-toggle.active {
+    background: var(--neon-yellow);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-yellow);
+}
+
+/* 6. ЧЕТВЁРТЫЙ РЯД (ЗАГОЛОВОК МЕНЮ) */
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.menu-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.notification-button {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+}
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff3b30;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+}
+
+/* 7. КОНТЕНТ (КАРТОЧКИ МЕНЮ) */
+.content-tab {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+.content-tab.active {
+    display: grid;
+}
+
+.menu-card {
+    padding: 1.2rem;
+    cursor: pointer;
+    border-left: 4px solid var(--neon-purple);
+}
+.menu-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+.menu-card h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.menu-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+.menu-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-left-color: #555;
+}
+
+/* 8. ФУТЕР */
+.app-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* 9. МОДАЛЬНЫЕ ОКНА */
+.modal {
+    display: none; /* Скрыты по умолчанию */
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); /* Темный фон */
+    animation: fadeInModal 0.3s ease;
+}
+
+.modal-content {
+    position: relative;
+    margin: 30% auto; /* По центру для мобильных */
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 500px;
+}
+
+.close-button {
+    color: var(--text-color);
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close-button:hover { color: #ccc; }
+
+.modal-buttons {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+.glass-button.primary {
+    background: var(--neon-purple);
+    border-color: var(--neon-purple);
+}
+.glass-button.close-btn {
+    margin-top: 1rem;
+}
+
+/* Стили для кнопок в уведомлениях */
+.glass-button-inline {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.glass-button-inline.accept { border-color: #4cd964; }
+.glass-button-inline.reject { border-color: #ff3b30; }
+
+@keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
