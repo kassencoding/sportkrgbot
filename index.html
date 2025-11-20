@@ -1,633 +1,1246 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>GiDCity — прототип расширенный (с картой)</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-  :root{
-    --bg1:#5b2cff; --bg2:#0a0a0a; --panel:#0a0a0a; --accent:#ffd54a; --glass-bg:rgba(255,255,255,0.02); --glass-border:rgba(255,255,255,0.06);
-    --text:#f2f2f2; --muted:rgba(242,242,242,0.62); --radius:12px; --gap:12px;
-  }
+    <meta charset="UTF-8" />
+    <title>Управление физической культуры и спорта Карагандинской области</title>
+    <!-- Telegram WebApp JS (будет работать внутри Telegram) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --bg-main: #f5f6f8;
+            --bg-card: #ffffff;
+            --accent: #1c5faa;
+            --accent-soft: #e4eef9;
+            --border: #dde1e7;
+            --text-main: #1e2a3b;
+            --text-muted: #6b7280;
+            --danger: #c0392b;
+            --success: #2e7d32;
+            --shadow-soft: 0 6px 18px rgba(15, 23, 42, 0.08);
+            --radius-lg: 12px;
+            --radius-md: 8px;
+            --radius-sm: 4px;
+        }
 
-  /* base layout */
-  html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:linear-gradient(160deg,var(--bg1) 0%, #2b0b3a 40%, var(--bg2) 100%);color:var(--text);display:flex;align-items:center;justify-content:center;padding:12px;}
-  .phone{width:380px;max-width:calc(100% - 24px);height:812px;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.18));position:relative}
-  /* header */
-  .header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;backdrop-filter: blur(6px);background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-bottom:1px solid var(--glass-border);position:relative;z-index:40}
-  .title{display:flex;align-items:center;gap:12px}
-  .logo{width:44px;height:44px;border-radius:50%;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(91,44,255,0.12);border:1px solid var(--glass-border);overflow:hidden}
-  .logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-  .app-name{font-weight:900;font-size:18px;display:flex;gap:8px;align-items:center}
-  .app-name small{font-weight:700;font-size:11px;color:var(--muted)}
-  .header-actions{display:flex;gap:8px;align-items:center}
-  .icon-btn{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);cursor:pointer;position:relative}
-  .notif-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#081018;padding:4px 6px;border-radius:12px;font-weight:800;font-size:11px}
+        * {
+            box-sizing: border-box;
+        }
 
-  /* content */
-  .content{padding:12px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden}
-  .top-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .city-block{display:flex;flex-direction:column}
-  .city-name{font-weight:800;font-size:18px;margin:0}
-  .city-sub{font-size:12px;color:var(--muted)}
-  .center-area{display:flex;align-items:center;gap:12px}
-  .weather{padding:6px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--glass-border);font-weight:700}
-  .status-badge{font-size:12px;color:var(--muted);padding:4px 6px;border-radius:8px;background:rgba(255,255,255,0.01);border:1px solid var(--glass-border)}
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
 
-  /* tabs */
-  .tabs{display:flex;gap:8px;margin-top:6px}
-  .tab{flex:1;padding:8px;border-radius:12px;text-align:center;background:transparent;border:1px solid var(--glass-border);cursor:pointer;color:var(--muted);font-weight:800;transition:all 180ms}
-  .tab.service-active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#081018;box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25);background-color:var(--accent);font-weight:900}
-  .tab.work-active{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#081018;box-shadow:inset 0 -6px 0 rgba(0,0,0,0.25);background-color:#4cd964; font-weight:900}
+        .app {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-  /* main card */
-  .main-card{background:var(--panel);border-radius:14px;padding:12px;border:1px solid var(--glass-border);display:flex;flex-direction:column;gap:10px;flex:1;min-height:240px;overflow:hidden}
-  .menu-list{flex:1;display:flex;flex-direction:column;gap:10px;overflow:auto;padding-right:6px}
-  .menu-item{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;min-height:62px;cursor:pointer}
-  .menu-item.gidchat{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,215,74,0.16)}
-  .menu-item .left{display:flex;flex-direction:column}
-  .menu-item .title{font-weight:900;font-size:16px}
-  .menu-item .title.gidchat{font-size:18px;letter-spacing:0.6px}
-  .menu-item .caption{font-size:12px;color:var(--muted)}
-  footer{padding:8px 12px;border-top:1px solid rgba(255,255,255,0.02);font-size:12px;color:var(--muted);text-align:center}
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 18px 18px 24px;
+            display: flex;
+            flex-direction: column;
+        }
 
-  /* map collapse */
-  .map-panel{border-radius:10px;border:1px solid var(--glass-border);overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));transition:all 280ms ease;position:relative}
-  .map-header{display:flex;align-items:center;gap:8px;padding:8px}
-  .map-toggle{flex:1;display:flex;align-items:center;gap:8px;cursor:pointer}
-  .map-actions{display:flex;gap:6px}
-  .map-body{height:260px}
-  #map{height:100%}
-  .map-expanded{height:340px}
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
 
-  /* modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
-  .modal{width:100%;max-width:640px;background:linear-gradient(180deg,var(--panel),#070707);border-radius:12px;padding:14px;border:1px solid var(--glass-border);box-shadow:0 30px 80px rgba(0,0,0,0.7);max-height:90vh;overflow:auto}
-  .modal.fullscreen{max-width:100%;width:100%;height:100%;max-height:100%;border-radius:0;padding:18px;display:flex;flex-direction:column}
-  .modal .modal-body{flex:1;overflow:auto}
-  label{font-size:13px;color:var(--muted);display:block;margin:6px 0 4px}
-  input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);color:var(--text)}
-  textarea{min-height:90px}
-  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
-  .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:var(--text);font-weight:800}
-  .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb347);color:#081018}
-  .gidchat-holo{padding:10px 14px;border-radius:12px;background:linear-gradient(135deg, rgba(255,215,74,0.08), rgba(255,255,255,0.02));border:1px solid rgba(255,215,74,0.22);box-shadow:0 10px 40px rgba(255,215,74,0.06);font-weight:900}
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #e5e7eb;
+            box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.8);
+        }
 
-  /* theme previews in settings */
-  .theme-swatch{width:36px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);display:inline-block;margin-right:8px;vertical-align:middle}
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
 
-  /* NEW: Floating Action Button (FAB) for Calendar */
-  .fab-container {
-    position: absolute;
-    bottom: 24px; /* Отступ от нижнего края */
-    right: 24px; /* Отступ от правого края */
-    z-index: 50; /* Поверх всего контента */
-  }
+        .brand-title {
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
 
-  .fab-calendar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--bg2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 0 4px rgba(255, 213, 74, 0.3); /* Яркая тень */
-    border: none;
-    transition: transform 150ms ease;
-  }
+        .brand-subtitle {
+            font-size: 11px;
+            color: #9ca3af;
+        }
 
-  .fab-calendar:hover {
-    transform: scale(1.05);
-  }
+        .sidebar-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #64748b;
+            margin: 16px 0 8px;
+        }
 
-  /* responsive */
-  @media(max-width:420px){.phone{width:100%;height:100vh;border-radius:0}}
-</style>
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .nav-item span.label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item span.icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background: #1d4ed8;
+            color: #e5e7eb;
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(148, 163, 184, 0.18);
+        }
+
+        .nav-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.35);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 11px;
+            color: #6b7280;
+            border-top: 1px solid rgba(31, 41, 55, 0.9);
+            padding-top: 10px;
+        }
+
+        .sidebar-footer-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-footer-label {
+            color: #9ca3af;
+        }
+
+        /* MAIN LAYOUT */
+        .main {
+            flex: 1;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .top-bar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 11px;
+        }
+
+        .role-pill-label {
+            color: var(--text-muted);
+        }
+
+        .role-pill-role {
+            font-weight: 600;
+        }
+
+        .role-select {
+            font-size: 12px;
+            padding: 6px 8px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: #ffffff;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            background: var(--accent);
+            color: #ffffff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn.secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .chip {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        /* CONTENT */
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 14px 14px 12px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .card-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid var(--border);
+            margin: 0 -14px;
+            padding: 0 14px 6px;
+        }
+
+        .tab {
+            font-size: 12px;
+            padding: 4px 8px 6px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            background: var(--accent-soft);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            font-size: 13px;
+        }
+
+        /* ORG STRUCTURE */
+        .org-tree {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .org-node {
+            padding: 4px 6px;
+            border-radius: var(--radius-md);
+            margin-bottom: 2px;
+        }
+
+        .org-node-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: default;
+        }
+
+        .org-node-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            color: var(--text-muted);
+        }
+
+        .org-node-level-1 { font-weight: 600; }
+        .org-node-level-2 { padding-left: 10px; }
+        .org-node-level-3 { padding-left: 22px; font-size: 12px; }
+
+        .org-node-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 22px;
+        }
+
+        /* TASKS */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .input, .select {
+            font-size: 12px;
+            padding: 6px 8px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: #ffffff;
+            min-width: 80px;
+        }
+
+        .table-wrapper {
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        thead {
+            background: #f9fafb;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        th, td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #edf2f7;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-size: 11px;
+        }
+
+        .status-new {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-done {
+            background: #ecfdf3;
+            color: #166534;
+        }
+
+        .status-overdue {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            font-size: 11px;
+        }
+
+        /* FORMS / TABLE BUILDER */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1.2fr;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .mini-table {
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .mini-table-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .pill {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .badge-counter {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            background: #f3f4f6;
+        }
+
+        .muted {
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .brand {
+                margin-bottom: 0;
+                margin-right: 12px;
+            }
+
+            .sidebar-section-title {
+                display: none;
+            }
+
+            .nav-list {
+                display: flex;
+                gap: 6px;
+            }
+
+            .nav-item {
+                white-space: nowrap;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-bar-right {
+                margin-left: 0;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="phone" role="application" aria-label="GiDCity prototype">
-  <div class="header">
-    <div class="title">
-      <div class="logo" id="avatarPreview">G</div>
-      <div>
-        <div class="app-name"><span>GiDCity</span> <small>приложение</small></div>
-      </div>
-    </div>
-
-    <div class="header-actions">
-      <div class="icon-btn" id="settingsBtn" title="Настройки">⚙️</div>
-      <div class="icon-btn" id="notifBtn" title="Уведомления">🔔<div class="notif-badge" id="notifCount">0</div></div>
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="top-row">
-      <div class="city-block">
-        <div class="city-name" id="cityName">Караганда</div>
-        <div class="city-sub" id="citySub">Казахстан</div>
-      </div>
-
-      <div class="center-area">
-        <div class="weather" id="weatherBlock">— °C</div>
-      </div>
-
-      <div class="status-badge" id="syncText">Онлайн</div>
-    </div>
-
-    <div class="tabs">
-      <div class="tab" id="tabServices">УСЛУГИ</div>
-      <div class="tab" id="tabWork">РАБОТА</div>
-    </div>
-
-    <div class="main-card" id="mainCard">
-      <div class="map-panel map-expanded" id="mapPanel" style="height:340px">
-        <div class="map-header">
-          <div class="map-toggle" id="mapToggle">
-            <div style="font-weight:800">Карта города</div>
-            <div style="color:var(--muted);font-size:12px">Нажмите чтобы открыть / закрыть</div>
-          </div>
-          <div class="map-actions">
-            <button class="btn" id="mapCenterBtn">Центр</button>
-            <button class="btn" id="mapClearBtn">Сброс</button>
-          </div>
+<div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">СП</div>
+            <div class="brand-text">
+                <div class="brand-title">
+                    Управление ФКиС<br/>Карагандинской области
+                </div>
+                <div class="brand-subtitle">Служебный кабинет</div>
+            </div>
         </div>
-        <div class="map-body" id="mapBody" style="height:260px;display:block">
-          <div style="padding:8px;display:flex;gap:8px;align-items:center">
-            <input id="mapSearch" placeholder="Поиск адреса или организации" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--text)">
-            <button class="btn" id="searchBtn">Найти</button>
-            <button class="btn" id="setFromBtn">A</button>
-            <button class="btn" id="setToBtn">B</button>
-            <button class="btn primary" id="routeBtn">Маршрут</button>
-          </div>
-          <div id="map" style="height:200px;border-radius:8px;margin:8px"></div>
+
+        <div class="sidebar-section-title">Навигация</div>
+        <ul class="nav-list">
+            <li class="nav-item active" data-page="dashboard">
+                <span class="label">
+                    <span class="icon">📊</span>
+                    Сводка
+                </span>
+                <span class="nav-badge">Сегодня</span>
+            </li>
+            <li class="nav-item" data-page="structure">
+                <span class="label">
+                    <span class="icon">🏛️</span>
+                    Структура управления
+                </span>
+            </li>
+            <li class="nav-item" data-page="tasks">
+                <span class="label">
+                    <span class="icon">📝</span>
+                    Поручения
+                </span>
+                <span class="nav-badge" id="sidebarTasksCount">8</span>
+            </li>
+            <li class="nav-item" data-page="tables">
+                <span class="label">
+                    <span class="icon">📂</span>
+                    Таблицы и отчёты
+                </span>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-row">
+                <span class="sidebar-footer-label">Текущий пользователь</span>
+                <span id="sidebarUser">–</span>
+            </div>
+            <div class="sidebar-footer-row">
+                <span class="sidebar-footer-label">Роль</span>
+                <span id="sidebarRole">–</span>
+            </div>
+            <div class="sidebar-footer-row">
+                <span class="sidebar-footer-label">Уровень доступа</span>
+                <span id="sidebarLevel">–</span>
+            </div>
         </div>
-      </div>
+    </aside>
 
-      <div>
-        <div class="menu-list" id="menuList"></div>
-      </div>
-    </div>
-  </div>
+    <!-- MAIN -->
+    <main class="main">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div>
+                <div class="page-title" id="pageTitle">Сводка по управлению</div>
+                <div class="page-subtitle">
+                    Внутренняя система поручений и отчётности для Управления физической культуры и спорта Карагандинской области
+                </div>
+                <div class="chips">
+                    <span class="chip">Вертикаль «область → район → объект спорта»</span>
+                    <span class="chip">Только служебная информация</span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <div class="role-pill">
+                    <span class="role-pill-label">Текущая должность</span>
+                    <span class="role-pill-role" id="currentRoleLabel">Не определена</span>
+                </div>
+                <select class="role-select" id="roleSelect">
+                    <!-- В реальном приложении список и права подтягиваются с сервера -->
+                    <option value="guest">Гость / просмотр</option>
+                    <option value="head">Руководитель управления</option>
+                    <option value="deputy">Заместитель руководителя</option>
+                    <option value="department_head">Начальник отдела</option>
+                    <option value="specialist">Главный специалист</option>
+                    <option value="org_head">Руководитель спорторганизации</option>
+                </select>
+                <button class="btn secondary" id="btnSyncTelegram">Синхронизировать с Telegram</button>
+            </div>
+        </div>
 
-  <footer id="appFooter">GiDCity • макет — карта: OpenRouteService</footer>
+        <!-- DASHBOARD PAGE -->
+        <section id="page-dashboard" class="page">
+            <div class="content-grid">
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Текущая нагрузка по поручениям</div>
+                            <div class="card-subtitle">Обобщённые данные по всем подведомственным организациям</div>
+                        </div>
+                        <div class="card-controls">
+                            <span class="badge-counter" id="totalTasksBadge">Всего: 0</span>
+                            <button class="btn secondary" id="btnGotoTasks">Открыть список</button>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="form-grid">
+                            <div class="mini-table">
+                                <div class="mini-table-header">
+                                    <span>Статусы поручений</span>
+                                    <span class="muted">По системе</span>
+                                </div>
+                                <table>
+                                    <tbody id="dashboardStatusTable">
+                                    <!-- наполняется скриптом -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mini-table">
+                                <div class="mini-table-header">
+                                    <span>Уровни управления</span>
+                                    <span class="muted">Область / район / объект</span>
+                                </div>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td>Областной уровень</td>
+                                        <td>Поручения руководителя управления; приказы, протоколы</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Районные отделы</td>
+                                        <td>Распределение поручений, контроль сроков</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Спортшколы, стадионы</td>
+                                        <td>Факт исполнения, загрузка таблиц и отчётов</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-  <div class="fab-container">
-    <button class="fab-calendar" id="calendarBtn" title="Календарь/Напоминания">🗓️</button>
-  </div>
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Ближайшие контрольные точки</div>
+                            <div class="card-subtitle">Краткий перечень значимых сроков по поручениям</div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Срок</th>
+                                    <th>Поручение</th>
+                                    <th>Ответственный</th>
+                                    <th>Статус</th>
+                                </tr>
+                                </thead>
+                                <tbody id="milestonesTable">
+                                <!-- наполняется скриптом -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
 
+        <!-- STRUCTURE PAGE -->
+        <section id="page-structure" class="page" style="display:none;">
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Структура управления</div>
+                        <div class="card-subtitle">Официальная вертикаль подчинённости в сфере физической культуры и спорта</div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <ul class="org-tree">
+                        <li class="org-node org-node-level-1">
+                            <div class="org-node-header">
+                                <span>Руководитель управления ФКиС Карагандинской области</span>
+                                <span class="org-node-badge">уровень: область</span>
+                            </div>
+                            <div class="org-node-meta">Утверждает приоритеты, даёт ключевые поручения, несёт общую ответственность.</div>
+                        </li>
+                        <li class="org-node org-node-level-2">
+                            <div class="org-node-header">
+                                <span>Заместитель руководителя (по массовому спорту)</span>
+                                <span class="org-node-badge">куратор: массовый спорт</span>
+                            </div>
+                            <div class="org-node-meta">Координация районных отделов по массовым мероприятиям и ГТО.</div>
+                        </li>
+                        <li class="org-node org-node-level-3">
+                            <div class="org-node-header">
+                                <span>Отдел массового спорта</span>
+                                <span class="org-node-badge">область</span>
+                            </div>
+                            <div class="org-node-meta">Планирование календаря, отчётность по массовым мероприятиям.</div>
+                        </li>
+                        <li class="org-node org-node-level-2">
+                            <div class="org-node-header">
+                                <span>Заместитель руководителя (по спорту высших достижений)</span>
+                                <span class="org-node-badge">куратор: СДЮСШ, сборные</span>
+                            </div>
+                            <div class="org-node-meta">Взаимодействие со спортшколами, федерациями, подготовка спортсменов.</div>
+                        </li>
+                        <li class="org-node org-node-level-3">
+                            <div class="org-node-header">
+                                <span>Отдел спорта высших достижений</span>
+                                <span class="org-node-badge">область</span>
+                            </div>
+                            <div class="org-node-meta">Лимиты финансирования, сборы, участие в соревнованиях.</div>
+                        </li>
+                        <li class="org-node org-node-level-2">
+                            <div class="org-node-header">
+                                <span>Финансово-экономический отдел</span>
+                                <span class="org-node-badge">область</span>
+                            </div>
+                            <div class="org-node-meta">Сметы, финансирование подведомственных организаций, отчётность.</div>
+                        </li>
+                        <li class="org-node org-node-level-2">
+                            <div class="org-node-header">
+                                <span>Районные/городские отделы физической культуры и спорта</span>
+                                <span class="org-node-badge">район, город</span>
+                            </div>
+                            <div class="org-node-meta">Распределение поручений до уровня объектов спорта.</div>
+                        </li>
+                        <li class="org-node org-node-level-3">
+                            <div class="org-node-header">
+                                <span>ДЮСШ, спортшколы, стадионы, Дворцы спорта</span>
+                                <span class="org-node-badge">объект спорта</span>
+                            </div>
+                            <div class="org-node-meta">Фактическое исполнение поручений, заполнение таблиц, отчёты.</div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </section>
+
+        <!-- TASKS PAGE -->
+        <section id="page-tasks" class="page" style="display:none;">
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Реестр поручений</div>
+                        <div class="card-subtitle">Поручения руководства для районных отделов и подведомственных организаций</div>
+                    </div>
+                    <div class="card-controls">
+                        <button class="btn" id="btnNewTask">
+                            ➕ Новое поручение
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="filter-row" style="margin-bottom: 8px;">
+                        <select class="select" id="filterStatus">
+                            <option value="all">Все статусы</option>
+                            <option value="new">Новое</option>
+                            <option value="in_progress">В работе</option>
+                            <option value="done">Исполнено</option>
+                            <option value="overdue">Просрочено</option>
+                        </select>
+                        <select class="select" id="filterLevel">
+                            <option value="all">Все уровни</option>
+                            <option value="region">Область → район</option>
+                            <option value="district">Район → организация</option>
+                            <option value="org">Внутри организации</option>
+                        </select>
+                        <input class="input" id="filterSearch" placeholder="Поиск по тексту поручения..." />
+                        <button class="btn secondary" id="btnResetFilters">Сбросить</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Текст поручения</th>
+                                <th>Уровень</th>
+                                <th>Ответственный</th>
+                                <th>Срок</th>
+                                <th>Статус</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tasksTableBody">
+                            <!-- наполняется скриптом -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="helper-text" style="margin-top: 4px;">
+                        ✦ Создание поручений доступно только для: Руководитель управления, Заместитель, Начальник отдела.
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- TABLES PAGE -->
+        <section id="page-tables" class="page" style="display:none;">
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Таблицы и отчёты</div>
+                        <div class="card-subtitle">Шаблоны для обязательного заполнения подведомственными организациями</div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="tableType">Тип таблицы / отчёта</label>
+                            <select class="select" id="tableType">
+                                <option value="events">План спортивных мероприятий</option>
+                                <option value="infrastructure">Состояние спортивных объектов</option>
+                                <option value="staff">Кадровая информация</option>
+                                <option value="finance">Финансирование и расходы</option>
+                            </select>
+                            <div class="helper-text">
+                                В реальном приложении здесь будет формирование конкретного шаблона (колонки, формат, проверки).
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tablePeriod">Отчётный период</label>
+                            <input class="input" id="tablePeriod" placeholder="Например: I квартал 2026 г." />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Статус загрузки</label>
+                            <div class="mini-table">
+                                <div class="mini-table-header">
+                                    <span>Организации</span>
+                                    <span>Статус</span>
+                                </div>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td>ДЮСШ г. Караганды</td>
+                                        <td><span class="status-pill status-done">Файл загружен</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Отдел спорта г. Темиртау</td>
+                                        <td><span class="status-pill status-in-progress">Черновик</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Стадион «Шахтёр»</td>
+                                        <td><span class="status-pill status-new">Ожидается</span></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Действия</label>
+                            <button class="btn" id="btnDownloadTemplate">Скачать шаблон (Excel)</button>
+                            <button class="btn secondary" id="btnUploadReport" style="margin-top: 6px;">Загрузить заполненный файл</button>
+                            <div class="helper-text">
+                                Здесь подключается загрузка/скачивание файлов через ваш сервер и Telegram Bot API.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
 </div>
-
-<div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-  <div class="modal" id="modalWindow" role="dialog" aria-modal="true">
-    <div class="modal-body" id="modalContent"></div>
-    <div class="modal-actions" id="modalActions"></div>
-  </div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ===========================
-   GiDCity Unified Prototype — full integrated update
-   - All previous features preserved.
-   - Calendar button moved to FAB (Floating Action Button).
-   =========================== */
+    // -----------------------
+    // Телеграм WebApp интеграция (минимум)
+    // -----------------------
+    (function initTelegram() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            // Можно установить тему под тёмный/светлый Telegram
+            document.body.style.background = tg.colorScheme === 'dark' ? '#020617' : '#f5f6f8';
+            document.body.dataset.tgTheme = tg.colorScheme;
 
-/* -------------------
-   Configuration
-   ------------------- */
-const OPENROUTESERVICE_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcyZWNiZDAxMGJlNTRjY2E4NDQwYTVlYmM2N2U1NzdkIiwiaCI6Im11cm11cjY0In0=';
-const JSONBIN_KEY = '$2a$10$tGtoDprB0qjFrz.cAvouWueOIGmsgCpArJqSirVeyyF/3KH1z52ZG';
-const JSONBIN_ID = '6911fbe843b1c97be9a4dc97';
-const USE_JSONBIN = true;
-const PULL_INTERVAL_MS = 15000;
+            const userLabel = document.getElementById('sidebarUser');
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                userLabel.textContent = tg.initDataUnsafe.user.first_name + (tg.initDataUnsafe.user.last_name ? (' ' + tg.initDataUnsafe.user.last_name) : '');
+            } else {
+                userLabel.textContent = 'Пользователь Telegram';
+            }
+        }
+    })();
 
-/* -------------------
-   State
-   ------------------- */
-const appStateKey = 'gidcity_state_live_v3';
-let state = {
-  __updatedAt: new Date(0).toISOString(),
-  user: null,
-  city: 'Караганда',
-  theme: 'фиолетово-черный',
-  notifications: [],
-  servicesPosts: [],
-  cityPosts: [],
-  chats: [],
-  wallet: {balance:0},
-  reminders: []
-};
-function loadState(){ try{ const raw=localStorage.getItem(appStateKey); if(raw) Object.assign(state, JSON.parse(raw)); }catch(e){ console.warn(e); } }
-function localSave(){ localStorage.setItem(appStateKey, JSON.stringify(state)); }
+    // -----------------------
+    // Демо-данные поручений
+    // (в боевом варианте они приходят с сервера)
+    // -----------------------
+    const tasks = [
+        {
+            id: 1,
+            text: 'Подготовить сводный план массовых спортивных мероприятий на II квартал',
+            level: 'region',
+            levelLabel: 'Область → район',
+            responsible: 'Отдел массового спорта',
+            deadline: '15.03.2026',
+            status: 'in_progress'
+        },
+        {
+            id: 2,
+            text: 'Обновить сведения о состоянии спортивных объектов (стадион, манеж, ДЮСШ)',
+            level: 'district',
+            levelLabel: 'Район → организация',
+            responsible: 'Отдел ФКиС г. Караганды',
+            deadline: '01.04.2026',
+            status: 'new'
+        },
+        {
+            id: 3,
+            text: 'Представить отчёт о выполнении нормативов ГТО среди школьников',
+            level: 'district',
+            levelLabel: 'Район → организация',
+            responsible: 'Отдел ФКиС г. Темиртау',
+            deadline: '28.02.2026',
+            status: 'overdue'
+        },
+        {
+            id: 4,
+            text: 'Согласовать график учебно-тренировочных сборов сборной области',
+            level: 'region',
+            levelLabel: 'Область → район',
+            responsible: 'Отдел спорта высших достижений',
+            deadline: '05.03.2026',
+            status: 'done'
+        },
+        {
+            id: 5,
+            text: 'Представить информацию по кадровому обеспечению тренерского состава',
+            level: 'org',
+            levelLabel: 'Внутри организации',
+            responsible: 'ДЮСШ г. Караганды',
+            deadline: '10.03.2026',
+            status: 'in_progress'
+        },
+        {
+            id: 6,
+            text: 'Обновить паспорт спортивного объекта «Стадион Шахтёр»',
+            level: 'org',
+            levelLabel: 'Внутри организации',
+            responsible: 'Стадион «Шахтёр»',
+            deadline: '20.03.2026',
+            status: 'new'
+        },
+        {
+            id: 7,
+            text: 'Подготовить свод по финансированию участия в республиканских соревнованиях',
+            level: 'region',
+            levelLabel: 'Область → район',
+            responsible: 'Финансово-экономический отдел',
+            deadline: '30.03.2026',
+            status: 'in_progress'
+        },
+        {
+            id: 8,
+            text: 'Предоставить фотоотчёт о проведении областного турнира по футболу',
+            level: 'district',
+            levelLabel: 'Район → организация',
+            responsible: 'Отдел ФКиС г. Балхаша',
+            deadline: '18.03.2026',
+            status: 'done'
+        }
+    ];
 
-/* JSONBin sync helpers (unchanged) */
-async function syncToJSONBin(){ if(!USE_JSONBIN) return; try{
-  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
-  state.__updatedAt = new Date().toISOString();
-  const payload = {state, updatedAt: state.__updatedAt};
-  const resp = await fetch(url,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(payload)});
-  if(!resp.ok) throw new Error('JSONBin save failed');
-  return resp.json();
-}catch(e){ console.warn('sync error', e); throw e; } }
-async function loadFromJSONBin(){ if(!USE_JSONBIN) return null; try{
-  const url = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`;
-  const resp = await fetch(url,{headers:{'X-Master-Key':JSONBIN_KEY}});
-  if(!resp.ok) throw new Error('JSONBin load failed');
-  const data = await resp.json(); return data;
-}catch(e){ console.warn(e); return null; } }
+    const statusLabels = {
+        new: 'Новое',
+        in_progress: 'В работе',
+        done: 'Исполнено',
+        overdue: 'Просрочено'
+    };
 
-let pullTimer = null;
-async function pullAndMerge(){ if(!USE_JSONBIN) return;
-  try{
-    const data = await loadFromJSONBin();
-    if(data && data.record && data.record.state){
-      const remoteUpdated = data.updatedAt || data.record.state.__updatedAt;
-      if(remoteUpdated && new Date(remoteUpdated) > new Date(state.__updatedAt || 0)){
-        state = data.record.state || state; if(data.updatedAt) state.__updatedAt = data.updatedAt; localSave(); renderAll(); setSyncStatus('синхр. JSONBin');
-      }
+    function getStatusClass(status) {
+        switch (status) {
+            case 'new': return 'status-new';
+            case 'in_progress': return 'status-in-progress';
+            case 'done': return 'status-done';
+            case 'overdue': return 'status-overdue';
+            default: return '';
+        }
     }
-  }catch(e){ console.warn('pull err', e); setSyncStatus('ошибка синхр.'); }
-}
-function startPeriodicPull(){ if(pullTimer) clearInterval(pullTimer); if(USE_JSONBIN) pullTimer = setInterval(pullAndMerge, PULL_INTERVAL_MS); }
 
-/* -------------------
-   UI Refs & helpers
-   ------------------- */
-function el(id){ return document.getElementById(id); }
-function setSyncStatus(txt){ const s = el('syncText'); if(s) s.textContent = txt; }
+    // -----------------------
+    // Навигация между страницами
+    // -----------------------
+    const navItems = document.querySelectorAll('.nav-item');
+    const pages = document.querySelectorAll('.page');
+    const pageTitle = document.getElementById('pageTitle');
 
-/* -------------------
-   Themes
-   ------------------- */
-const THEMES = {
-  'фиолетово-черный':{top:'#5b2cff', bottom:'#0a0a0a', accent:'#ffd54a', border:'rgba(255,255,255,0.06)', glass:'rgba(255,255,255,0.02)'},
-  'gold':{top:'#3b2b14', bottom:'#0b0703', accent:'#ffd54a', border:'rgba(255,215,74,0.12)', glass:'rgba(255,215,74,0.03)'},
-  'holo':{top:'#06103a', bottom:'#0b0033', accent:'#7bf0ff', border:'rgba(123,240,255,0.08)', glass:'rgba(123,240,255,0.03)'},
-  'neon':{top:'#001219', bottom:'#060014', accent:'#ff3bff', border:'rgba(255,59,255,0.12)', glass:'rgba(255,59,255,0.03)'}
-};
-function applyTheme(name){
-  const t = THEMES[name] || THEMES['фиолетово-черный'];
-  document.documentElement.style.setProperty('--bg1', t.top);
-  document.documentElement.style.setProperty('--bg2', t.bottom);
-  document.documentElement.style.setProperty('--accent', t.accent);
-  document.documentElement.style.setProperty('--glass-border', t.border);
-  document.documentElement.style.setProperty('--glass-bg', t.glass);
-  state.theme = name; localSave();
-  // visual tweak: change tab accents if service/work active
-  updateTabsVisual();
-}
+    const pageTitleMap = {
+        dashboard: 'Сводка по управлению',
+        structure: 'Структура управления',
+        tasks: 'Реестр поручений',
+        tables: 'Таблицы и отчёты'
+    };
 
-/* -------------------
-   Map (expanded by default)
-   ------------------- */
-let map=null, fromMarker=null, toMarker=null, routeLayer=null, searchMarkers=[];
-const DEFAULT_CENTER = {lat:49.8062, lon:73.0851, zoom:13};
-function initMapIfNeeded(){
-  if(map) return;
-  try{
-    map = L.map('map').setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lon], DEFAULT_CENTER.zoom);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OSM'}).addTo(map);
-    map.on('click', e=>{
-      if(map._setMode==='from'){ setFromPoint(e.latlng); map._setMode=null; }
-      else if(map._setMode==='to'){ setToPoint(e.latlng); map._setMode=null; }
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const page = item.dataset.page;
+            navItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+
+            pages.forEach(p => p.style.display = 'none');
+            document.getElementById('page-' + page).style.display = 'block';
+
+            pageTitle.textContent = pageTitleMap[page] || '';
+        });
     });
-  }catch(e){ console.warn('map init err', e); alert('Ошибка инициализации карты (проверьте подключение).'); }
-}
-function setFromPoint(latlng){ if(fromMarker) map.removeLayer(fromMarker); fromMarker = L.marker(latlng,{title:'A',draggable:true}).addTo(map).bindPopup('A – отправление').openPopup(); fromMarker.on('dragend', ()=>{ if(fromMarker && toMarker) buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); }); }
-function setToPoint(latlng){ if(toMarker) map.removeLayer(toMarker); toMarker = L.marker(latlng,{title:'B',draggable:true}).addTo(map).bindPopup('B – назначение').openPopup(); toMarker.on('dragend', ()=>{ if(fromMarker && toMarker) buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); }); }
-function clearRoute(){ if(fromMarker){ map.removeLayer(fromMarker); fromMarker=null; } if(toMarker){ map.removeLayer(toMarker); toMarker=null; } if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; } searchMarkers.forEach(m=>map.removeLayer(m)); searchMarkers=[]; }
 
-async function geocode(query){
-  try{
-    const url = `https://api.openrouteservice.org/geocode/search?api_key=${OPENROUTESERVICE_API_KEY}&text=${encodeURIComponent(query)}&size=5`;
-    const r = await fetch(url);
-    if(!r.ok) throw new Error('geocode fail '+r.status);
-    const data = await r.json();
-    return (data.features||[]).map(f=>({label:f.properties.label, lat:f.geometry.coordinates[1], lon:f.geometry.coordinates[0], props:f.properties}));
-  }catch(e){ console.warn(e); return []; }
-}
-
-async function buildRoute(fromLatLng, toLatLng){
-  try{
-    const url = `https://api.openrouteservice.org/v2/directions/driving-car?start=${fromLatLng.lng},${fromLatLng.lat}&end=${toLatLng.lng},${toLatLng.lat}&api_key=${OPENROUTESERVICE_API_KEY}`;
-    let resp = await fetch(url);
-    if(!resp.ok){
-      resp = await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson',{method:'POST',headers:{'Content-Type':'application/json','Authorization':OPENROUTESERVICE_API_KEY},body:JSON.stringify({coordinates:[[fromLatLng.lng,fromLatLng.lat],[toLatLng.lng,toLatLng.lat]]})});
-      if(!resp.ok) throw new Error('routing fail ' + resp.status);
-      const g = await resp.json(); renderRouteGeoJSON(g); return g;
-    }
-    const g = await resp.json(); renderRouteGeoJSON(g); return g;
-  }catch(e){ console.warn(e); alert('Ошибка построения маршрута: ' + (e.message||e)); }
-}
-function renderRouteGeoJSON(g){
-  if(routeLayer) map.removeLayer(routeLayer);
-  routeLayer = L.geoJSON(g,{style:{color:getComputedStyle(document.documentElement).getPropertyValue('--accent')||'#ffd54a',weight:5,opacity:0.9}}).addTo(map);
-  if(routeLayer && routeLayer.getBounds) map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
-}
-
-async function doMapSearch(q){
-  if(!q) return alert('Введите запрос');
-  if(!map) initMapIfNeeded();
-  const res = await geocode(q);
-  searchMarkers.forEach(m=>map.removeLayer(m)); searchMarkers=[];
-  if(!res.length){ alert('Ничего не найдено'); return; }
-  res.forEach(r=>{
-    const mk = L.marker([r.lat,r.lon]).addTo(map).bindPopup(`<strong>${r.label}</strong><div style="margin-top:6px"><button onclick="window.__setFrom(${r.lat},${r.lon})">A</button> <button onclick="window.__setTo(${r.lat},${r.lon})">B</button></div>`);
-    searchMarkers.push(mk);
-  });
-  map.fitBounds(L.featureGroup(searchMarkers).getBounds(),{padding:[20,20]});
-  return res;
-}
-window.__setFrom = (lat,lon)=>{ setFromPoint(L.latLng(lat,lon)); };
-window.__setTo = (lat,lon)=>{ setToPoint(L.latLng(lat,lon)); };
-
-/* -------------------
-   Menu & Rendering
-   ------------------- */
-function renderMenu(){
-  const menuList = el('menuList'); menuList.innerHTML='';
-  const active = el('tabServices').classList.contains('service-active') ? 'services' : 'work';
-  const items = active==='services' ? [
-    {id:'gid_order', title:'GiD Заказ', caption:'Универсальный заказ (всё что угодно)'},
-    {id:'order', title:'Заказать', caption:'Создать заявку'},
-    {id:'ads', title:'Объявление услуг', caption:'Опубликовать / посмотреть'},
-    {id:'citychat', title:'GIDChat', caption:'Лента города'},
-    {id:'messenger', title:'Мессенджер', caption:'Диалоги'},
-    {id:'wallet', title:'Кошелёк', caption:'Баланс'}
-  ] : [
-    {id:'findJobs', title:'Найти заказы', caption:'Поиск заявок'},
-    {id:'myOffers', title:'Мои отклики', caption:'Отклики'},
-    {id:'reports', title:'Отчёты', caption:'Статистика'},
-    {id:'settings', title:'Настройки', caption:'Профиль и темы'}
-  ];
-  items.forEach(it=>{
-    const elDiv = document.createElement('div'); elDiv.className='menu-item'; elDiv.dataset.id=it.id;
-    // special styling for GIDChat
-    if(it.id==='citychat'){ elDiv.classList.add('gidchat'); elDiv.innerHTML = `<div class="left"><div class="title gidchat">GIDChat</div><div class="caption">Большая лента города</div></div><div class="gidchat-holo">OPEN</div>`; }
-    else elDiv.innerHTML = `<div class="left"><div class="title">${it.title}</div><div class="caption">${it.caption}</div></div><div style="opacity:0.9">›</div>`;
-    elDiv.addEventListener('click', ()=>onMenuClick(it.id));
-    menuList.appendChild(elDiv);
-  });
-}
-
-/* -------------------
-   Modals & Special UI
-   ------------------- */
-function openModal(html, actionsHtml, opts={}){
-  // opts.fullscreen = true -> use fullscreen modal
-  const mb = el('modalBackdrop'), mw = el('modalWindow');
-  el('modalContent').innerHTML = html;
-  el('modalActions').innerHTML = actionsHtml || '<button class="btn" data-close>Закрыть</button>';
-  if(opts.fullscreen){
-    mw.classList.add('fullscreen');
-  } else {
-    mw.classList.remove('fullscreen');
-  }
-  mb.style.display='flex'; mb.setAttribute('aria-hidden','false');
-  mb.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', closeModal));
-  mb.addEventListener('click', (e)=>{ if(e.target===mb) closeModal(); });
-}
-function closeModal(){ const mb = el('modalBackdrop'), mw = el('modalWindow'); mb.style.display='none'; mb.setAttribute('aria-hidden','true'); el('modalContent').innerHTML=''; el('modalActions').innerHTML=''; mw.classList.remove('fullscreen'); }
-
-/* GiD Заказ integrated into Order modal */
-function openOrderModal(preselectCategory){
-  const categories = ['Такси','Курьер','Квартира/Дом','Мастер','GiD Заказ'];
-  let html = `<div class="h"><strong>Создать заявку</strong></div><label>Категория</label><select id="ordCat">${categories.map(c=>`<option>${c}</option>`).join('')}</select><div id="ordDynamic"></div><label>Бюджет (₸)</label><input id="ordBudget" type="number" value="0">`;
-  const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="ordCreate">Создать</button>';
-  openModal(html, actions);
-  setTimeout(()=>{ 
-    if(preselectCategory){
-      const sel = document.getElementById('ordCat');
-      sel.value = preselectCategory;
-    }
-    populateDynamicFields(); 
-    document.getElementById('ordCat').addEventListener('change', populateDynamicFields);
-    document.getElementById('ordCreate').addEventListener('click', ()=>{
-      const cat=document.getElementById('ordCat').value; const budget=document.getElementById('ordBudget').value; const dyn=captureDynamicFields();
-      if(!dyn) return; state.servicesPosts.unshift({id:Date.now(),cat,budget,dyn,created:new Date().toISOString()}); localSave(); addNotification('Новая заявка: '+cat); closeModal();
+    document.getElementById('btnGotoTasks').addEventListener('click', () => {
+        document.querySelector('.nav-item[data-page="tasks"]').click();
     });
-  },50);
-}
-function populateDynamicFields(){
-  const cat=document.getElementById('ordCat').value; const cont=el('ordDynamic'); cont.innerHTML='';
-  if(cat==='Такси'){ cont.innerHTML=`<label>Откуда</label><input id="taxFrom"><label>Куда</label><input id="taxTo"><label>Пассажиры</label><input id="taxPax" type="number" value="1">`; }
-  else if(cat==='Курьер'){ cont.innerHTML=`<label>Откуда</label><input id="curFrom"><label>Куда</label><input id="curTo"><label>Вес/габариты</label><input id="curSize">`; }
-  else if(cat==='Квартира/Дом'){ cont.innerHTML=`<label>Адрес</label><input id="homeAddr"><label>Описание</label><textarea id="homeDesc"></textarea><label>Фото</label><input id="homeFile" type="file" accept="image/*">`; document.getElementById('homeFile')?.addEventListener('change', async e=>{ const f=e.target.files[0]; if(!f) return; cont.dataset.file=await fileToBase64(f); }); }
-  else if(cat==='Мастер'){ cont.innerHTML=`<label>Адрес</label><input id="mAddr"><label>Вид работ</label><input id="mType"><label>Время</label><input id="mTime" type="time">`; }
-  else { /* GiD Заказ - универсальная форма с критериями услуг */ cont.innerHTML=`<label>Тип услуги</label><select id="gidType"><option>Любая</option><option>Покупка</option><option>Доставка</option><option>Помощь</option><option>Мастер</option></select><label>Критерии / Доп. параметры</label><input id="gidCriteria" placeholder="Например: срочно, бюджет до 5000..."><label>Описание</label><textarea id="gDesc"></textarea><label>Адрес</label><input id="gAddr">`; }
-}
-function captureDynamicFields(){
-  const cat=document.getElementById('ordCat').value;
-  if(cat==='Такси'){ const f=document.getElementById('taxFrom').value.trim(), t=document.getElementById('taxTo').value.trim(); if(!f||!t){alert('Укажите адреса');return null;} return {from:f,to:t,pax:document.getElementById('taxPax').value}; }
-  if(cat==='Курьер'){ const f=document.getElementById('curFrom').value.trim(), t=document.getElementById('curTo').value.trim(); if(!f||!t){alert('Укажите адреса');return null;} return {from:f,to:t,size:document.getElementById('curSize').value}; }
-  if(cat==='Квартира/Дом'){ const a=document.getElementById('homeAddr').value.trim(), d=document.getElementById('homeDesc').value.trim(); if(!a||!d){alert('Укажите адрес и описание');return null;} return {addr:a,desc:d,file:el('ordDynamic').dataset.file||null}; }
-  if(cat==='Мастер'){ const a=document.getElementById('mAddr').value.trim(), ty=document.getElementById('mType').value.trim(); if(!a||!ty){alert('Укажите адрес и вид работ');return null;} return {addr:a,type:ty,time:document.getElementById('mTime').value}; }
-  const d=document.getElementById('gDesc') ? document.getElementById('gDesc').value.trim() : ''; const a=document.getElementById('gAddr') ? document.getElementById('gAddr').value.trim() : '';
-  if(cat==='GiD Заказ'){ const type=document.getElementById('gidType').value, crit=document.getElementById('gidCriteria').value.trim(); if(!d||!a){alert('Заполните описание и адрес');return null;} return {type,criteria:crit,desc:d,addr:a}; }
-  if(!d||!a){alert('Заполните описание и адрес');return null;} return {desc:d,addr:a};
-}
 
-/* Ads */
-function openAdsModal(){ const html=`<div class="h"><strong>Объявление</strong></div><label>Заголовок</label><input id="adTitle"><label>Текст</label><textarea id="adText"></textarea>`; const actions = '<button class="btn" data-close>Отмена</button><button class="btn primary" id="publishAd">Опубликовать</button>'; openModal(html, actions); setTimeout(()=>{ document.getElementById('publishAd').addEventListener('click', ()=>{ const t=el('adTitle').value.trim(), txt=el('adText').value.trim(); if(!t||!txt) return alert('Заполните'); state.cityPosts.unshift({id:Date.now(),title:t,text:txt,created:new Date().toISOString()}); localSave(); addNotification('Опубликовано объявление'); closeModal(); }); },50); }
+    // -----------------------
+    // Рендер таблицы поручений
+    // -----------------------
+    const tasksTableBody = document.getElementById('tasksTableBody');
+    const filterStatus = document.getElementById('filterStatus');
+    const filterLevel = document.getElementById('filterLevel');
+    const filterSearch = document.getElementById('filterSearch');
+    const sidebarTasksCount = document.getElementById('sidebarTasksCount');
+    const totalTasksBadge = document.getElementById('totalTasksBadge');
 
-/* City chat / GIDChat fullscreen */
-function openGIDChatFull(){
-  // fullscreen modal with big feed
-  const postsHtml = (state.cityPosts||[]).map(p=>`<div style="padding:12px;border-bottom:1px solid var(--glass-border);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);margin-bottom:8px;border-radius:8px"><div style="font-weight:900">${p.title||'Пост'}</div><div class="small" style="color:var(--muted)">${new Date(p.created).toLocaleString()}</div><div style="margin-top:8px">${p.text||''}</div></div>`).join('')||'<div class="small">Лента пуста</div>';
-  const html = `<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:900;font-size:20px">GIDChat — ${state.city}</div><div style="display:flex;gap:8px"><button class="btn" data-close>Закрыть</button><button class="btn primary" id="newPostBtn">+ Пост</button></div></div><div style="flex:1;overflow:auto">${postsHtml}</div>`;
-  openModal(html, '', {fullscreen:true});
-  setTimeout(()=>{ el('newPostBtn')?.addEventListener('click', ()=>{ openAdsModal(); }); },50);
-}
+    function renderTasks() {
+        const statusValue = filterStatus.value;
+        const levelValue = filterLevel.value;
+        const searchValue = filterSearch.value.toLowerCase();
 
-/* Messenger & Wallet (preserved) */
-function openMessenger(){ openModal('<div class="h"><strong>Мессенджер</strong></div><div class="small">Список диалогов (демо)</div>','<button class="btn" data-close>Закрыть</button>'); }
-function openWallet(){ const html=`<div class="h"><strong>Кошелёк</strong></div><div style="font-size:24px;font-weight:900">${state.wallet.balance||0} ₸</div>`; openModal(html,'<button class="btn" data-close>Закрыть</button>'); }
+        const filtered = tasks.filter(t => {
+            if (statusValue !== 'all' && t.status !== statusValue) return false;
+            if (levelValue !== 'all' && t.level !== levelValue) return false;
+            if (searchValue && !t.text.toLowerCase().includes(searchValue)) return false;
+            return true;
+        });
 
-/* Settings with theme selection (added futures) */
-function openSettingsModal(forceOpen){
-  const cities = ['Караганда','Нур-Султан','Алматы'];
-  const themes = Object.keys(THEMES);
-  const html = `<div class="h" style="display:flex;justify-content:space-between;align-items:center"><strong>Настройки</strong><div style="font-size:12px;color:var(--muted)">Тема: <strong>${state.theme}</strong></div></div>
-    <label>Аватар</label><button class="btn" id="uploadAvatar">Загрузить</button><img id="avatarPreviewSmall" src="" style="width:44px;height:44px;border-radius:8px;margin-left:8px;vertical-align:middle">
-    <label>Имя</label><input id="profileName"><label>Фамилия</label><input id="profileSurname"><label>Телефон</label><input id="profilePhone"><label>Город</label><select id="citySelect">${cities.map(c=>`<option>${c}</option>`).join('')}</select>
-    <label>Тема</label><select id="themeSelect">${themes.map(t=>`<option>${t}</option>`).join('')}</select>
-    <div style="margin-top:8px"><span class="theme-swatch" id="sw1" style="background:linear-gradient(90deg,#5b2cff,#2b0b3a)"></span><span class="theme-swatch" id="sw2" style="background:linear-gradient(90deg,#3b2b14,#0b0703)"></span><span class="theme-swatch" id="sw3" style="background:linear-gradient(90deg,#06103a,#0b0033)"></span><span class="theme-swatch" id="sw4" style="background:linear-gradient(90deg,#001219,#060014)"></span> — примеры тем</div>
-  `;
-  const actions = '<button class="btn" data-close>Закрыть</button><button class="btn primary" id="saveSettings">Сохранить</button>';
-  openModal(html, actions);
-  setTimeout(()=>{
-    document.getElementById('profileName').value = state.user ? (state.user.name||'') : '';
-    document.getElementById('profileSurname').value = state.user ? (state.user.surname||'') : '';
-    document.getElementById('profilePhone').value = state.user ? (state.user.phone||'') : '';
-    document.getElementById('avatarPreviewSmall').src = state.user && state.user.avatar ? state.user.avatar : 'https://via.placeholder.com/44/333333/fff?text=U';
-    document.getElementById('uploadAvatar').addEventListener('click', ()=>{ const f=document.createElement('input'); f.type='file'; f.accept='image/*'; f.onchange=async e=>{ const file=e.target.files[0]; if(!file) return; const b=await fileToBase64(file); document.getElementById('avatarPreviewSmall').src=b; document.getElementById('avatarPreviewSmall').dataset.b64=b; }; f.click(); });
-    document.getElementById('saveSettings').addEventListener('click', ()=>{
-      const name=el('profileName').value.trim(), surname=el('profileSurname').value.trim();
-      if(!name||!surname){ alert('Имя и фамилия обязательны'); return; }
-      state.user = state.user||{};
-      state.user.name = name; state.user.surname = surname; state.user.phone = el('profilePhone').value.trim();
-      const b64 = document.getElementById('avatarPreviewSmall').dataset ? document.getElementById('avatarPreviewSmall').dataset.b64 : null;
-      if(b64) state.user.avatar = b64;
-      state.city = el('citySelect').value;
-      const chosenTheme = el('themeSelect').value || state.theme;
-      applyTheme(chosenTheme); localSave(); closeModal(); renderAll();
-    });
-  },50);
-}
+        tasksTableBody.innerHTML = '';
+        filtered.forEach((t, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${t.text}</td>
+                <td><span class="tag">${t.levelLabel}</span></td>
+                <td>${t.responsible}</td>
+                <td>${t.deadline}</td>
+                <td><span class="status-pill ${getStatusClass(t.status)}">${statusLabels[t.status]}</span></td>
+            `;
+            tasksTableBody.appendChild(tr);
+        });
 
-/* Auth */
-function openAuthModal(){
-  const html=`<div class="h"><strong>Авторизация</strong></div><label>Имя</label><input id="authName"><label>Телефон</label><input id="authPhone"><label>PIN (4 цифры)</label><input id="authPIN" maxlength="4">`;
-  const actions = '<button class="btn" data-close>Пропустить</button><button class="btn primary" id="authSubmit">Войти</button>';
-  openModal(html, actions);
-  setTimeout(()=>{ document.getElementById('authSubmit').addEventListener('click', ()=>{ const name=el('authName').value.trim(); const phone=el('authPhone').value.trim(); const pin=el('authPIN').value.trim(); if(!name||!phone||!/^\d{4}$/.test(pin)){ alert('Заполните корректно'); return; } state.user = state.user||{}; state.user.name=name; state.user.phone=phone; state.user.pin=pin; localSave(); addNotification('Пользователь вошёл: '+name); closeModal(); renderAll(); }); },50);
-}
-
-/* Notifications & helper */
-function addNotification(text, meta={}){
-  state.notifications.unshift({id:Date.now(), text, meta, ts:new Date().toISOString()}); localSave(); updateNotifCount();
-}
-function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
-
-/* City posts feed modal (smaller) */
-function openCityChatModal(){
-  const postsHtml = (state.cityPosts||[]).map(p=>`<div style="padding:8px;border-bottom:1px solid var(--glass-border)"><div style="font-weight:800">${p.title||'Пост'}</div><div class="small">${new Date(p.created).toLocaleString()}</div><div style="margin-top:6px">${p.text||''}</div></div>`).join('')||'<div class="small">Лента пуста</div>';
-  openModal(`<div class="h"><strong>City чат — ${state.city}</strong></div><div style="max-height:320px;overflow:auto">${postsHtml}</div>`,'<button class="btn" data-close>Закрыть</button>');
-}
-
-/* helpers */
-function fileToBase64(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); }); }
-
-/* -------------------
-   Menu click router
-   ------------------- */
-function onMenuClick(id){
-  if(id==='gid_order'){ openOrderModal('GiD Заказ'); } // integrated: preselect GiD
-  else if(id==='order') openOrderModal();
-  else if(id==='ads') openAdsModal();
-  else if(id==='citychat') openGIDChatFull();
-  else if(id==='messenger') openMessenger();
-  else if(id==='wallet') openWallet();
-  else if(id==='findJobs') alert('Поиск заказов — демо');
-  else if(id==='settings') openSettingsModal();
-  else alert('Нажата: '+id);
-}
-
-/* -------------------
-   Render & misc
-   ------------------- */
-function renderAll(){
-  el('cityName').textContent = state.city || 'Караганда';
-  updateNotifCount();
-  renderMenu();
-  applyTheme(state.theme || 'фиолетово-черный');
-  fetchWeather();
-  // avatar preview
-  if(state.user && state.user.avatar) el('avatarPreview').innerHTML = `<img src="${state.user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-  setSyncStatus('Онлайн');
-  // ensure map visible
-  setTimeout(()=>{ initMapIfNeeded(); if(map) map.invalidateSize(); },300);
-}
-
-/* -------------------
-   Weather
-   ------------------- */
-async function fetchWeather(){
-  try{
-    const coords = {lat:49.8062,lon:73.0851};
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true`;
-    const r = await fetch(url);
-    if(!r.ok) throw new Error('weather fail');
-    const d = await r.json();
-    if(d && d.current_weather) el('weatherBlock').textContent = `${Math.round(d.current_weather.temperature)} °C`;
-  }catch(e){ el('weatherBlock').textContent='— °C'; }
-}
-
-/* -------------------
-   Tabs visual update + events
-   ------------------- */
-function updateTabsVisual(){
-  const s = el('tabServices'), w = el('tabWork');
-  // remove all classes
-  s.className = 'tab'; w.className = 'tab';
-  // determine which is active by dataset (we use class on click handlers)
-  if(s.dataset.active === '1') { s.classList.add('service-active'); }
-  if(w.dataset.active === '1') { w.classList.add('work-active'); }
-}
-document.addEventListener('DOMContentLoaded', async ()=>{
-  loadState();
-  // default: services active
-  el('tabServices').dataset.active = '1';
-  renderAll();
-
-  // JSONBin load
-  if(USE_JSONBIN){
-    try{
-      const data = await loadFromJSONBin();
-      if(data && data.record && data.record.state){ state = data.record.state; if(data.updatedAt) state.__updatedAt = data.updatedAt; localSave(); }
-    }catch(e){ console.warn(e); }
-  }
-  startPeriodicPull();
-
-  // UI bindings
-  el('tabServices').addEventListener('click', ()=>{ el('tabServices').dataset.active='1'; el('tabWork').dataset.active='0'; updateTabsVisual(); renderMenu(); });
-  el('tabWork').addEventListener('click', ()=>{ el('tabWork').dataset.active='1'; el('tabServices').dataset.active='0'; updateTabsVisual(); renderMenu(); });
-  el('settingsBtn').addEventListener('click', ()=>openSettingsModal());
-  // FAB BINDING (calendarBtn)
-  el('calendarBtn').addEventListener('click', ()=>openCalendar());
-  el('notifBtn').addEventListener('click', ()=>{ openNotifications(); });
-
-  // map toggle
-  const mapToggle = el('mapToggle');
-  mapToggle.addEventListener('click', ()=>{
-    const body = el('mapBody'), panel = el('mapPanel');
-    if(body.style.display==='none' || body.style.display==='') {
-      body.style.display='block'; panel.classList.add('map-expanded'); panel.style.height='340px';
-      setTimeout(()=>{ initMapIfNeeded(); if(map) map.invalidateSize(); },200);
-    } else {
-      body.style.display='none'; panel.classList.remove('map-expanded'); panel.style.height='56px';
+        sidebarTasksCount.textContent = tasks.length;
+        totalTasksBadge.textContent = 'Всего: ' + tasks.length;
     }
-  });
 
-  // map controls
-  el('searchBtn').addEventListener('click', ()=>{ const q=el('mapSearch').value.trim(); if(!q) return alert('Введите запрос'); initMapIfNeeded(); doMapSearch(q); });
-  el('setFromBtn').addEventListener('click', ()=>{ initMapIfNeeded(); map._setMode='from'; alert('Кликните по карте, чтобы выбрать отправление (A)'); });
-  el('setToBtn').addEventListener('click', ()=>{ initMapIfNeeded(); map._setMode='to'; alert('Кликните по карте, чтобы выбрать пункт назначения (B)'); });
-  el('routeBtn').addEventListener('click', ()=>{ if(!fromMarker||!toMarker) return alert('Укажите точки A и B'); buildRoute(fromMarker.getLatLng(), toMarker.getLatLng()); });
-  el('mapClearBtn').addEventListener('click', ()=>{ clearRoute(); });
-  el('mapCenterBtn').addEventListener('click', ()=>{ if(!map) initMapIfNeeded(); map.setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lon], DEFAULT_CENTER.zoom); });
+    filterStatus.addEventListener('change', renderTasks);
+    filterLevel.addEventListener('change', renderTasks);
+    filterSearch.addEventListener('input', () => {
+        // небольшая задержка не нужна, фильтрация лёгкая
+        renderTasks();
+    });
 
-  // initial menu
-  renderMenu();
+    document.getElementById('btnResetFilters').addEventListener('click', () => {
+        filterStatus.value = 'all';
+        filterLevel.value = 'all';
+        filterSearch.value = '';
+        renderTasks();
+    });
 
-  // auth if no user
-  if(!state.user) setTimeout(()=>openAuthModal(), 600);
-});
+    // -----------------------
+    // Статусы для дашборда и контрольные точки
+    // -----------------------
+    const dashboardStatusTable = document.getElementById('dashboardStatusTable');
+    const milestonesTable = document.getElementById('milestonesTable');
 
-/* Calendar modal (Logic Preserved) */
-function openCalendar(){
-  const html = `<div class="h"><strong>Календарь</strong></div><label>Дата</label><input type="date" id="calDate" value="${new Date().toISOString().slice(0,10)}"><label>Время</label><input type="time" id="calTime" value="12:00"><label>Заметка</label><input id="calNote"><div class="small">Добавленное появится в уведомлениях.</div>`;
-  openModal(html,'<button class="btn" data-close>Закрыть</button><button class="btn primary" id="addRem">Добавить</button>');
-  setTimeout(()=>{ el('addRem').addEventListener('click', ()=>{ const d=el('calDate').value, t=el('calTime').value, n=el('calNote').value; if(!d||!t) return alert('Укажите дату и время'); state.notifications.unshift({id:Date.now(),text:`Напоминание: ${n||'без описания'}`,ts:new Date(d+'T'+t+':00').toISOString()}); localSave(); updateNotifCount(); closeModal(); }); },50);
-}
+    function renderDashboard() {
+        // Подсчёт статусов
+        const counters = {
+            new: 0,
+            in_progress: 0,
+            done: 0,
+            overdue: 0
+        };
+        tasks.forEach(t => counters[t.status]++);
 
-/* Notifications list */
-function openNotifications(){
-  const listHtml = (state.notifications||[]).map(n=>`<div style="padding:8px;border-bottom:1px solid var(--glass-border)"><div class="small">${new Date(n.ts).toLocaleString()}</div><div style="margin-top:6px">${n.text}</div></div>`).join('')||'<div class="small">Нет уведомлений</div>';
-  openModal(`<div class="h"><strong>Уведомления</strong></div><div style="max-height:360px;overflow:auto">${listHtml}</div>`,'<button class="btn" data-close>Закрыть</button><button class="btn primary" id="clearNotifs">Очистить</button>');
-  setTimeout(()=>{ el('clearNotifs').addEventListener('click', ()=>{ state.notifications=[]; localSave(); updateNotifCount(); closeModal(); }); },50);
-}
+        dashboardStatusTable.innerHTML = '';
+        Object.keys(counters).forEach(key => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${statusLabels[key]}</td>
+                <td>${counters[key]}</td>
+            `;
+            dashboardStatusTable.appendChild(tr);
+        });
 
-/* helpers */
-function updateNotifCount(){ el('notifCount').textContent = state.notifications.length || 0; }
+        // Контрольные точки — просто берём первые 4 поручения
+        milestonesTable.innerHTML = '';
+        tasks.slice(0, 4).forEach(t => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${t.deadline}</td>
+                <td>${t.text}</td>
+                <td>${t.responsible}</td>
+                <td><span class="status-pill ${getStatusClass(t.status)}">${statusLabels[t.status]}</span></td>
+            `;
+            milestonesTable.appendChild(tr);
+        });
+    }
 
+    // -----------------------
+    // Роли и уровни доступа (демо)
+    // -----------------------
+    const roleSelect = document.getElementById('roleSelect');
+    const currentRoleLabel = document.getElementById('currentRoleLabel');
+    const sidebarRole = document.getElementById('sidebarRole');
+    const sidebarLevel = document.getElementById('sidebarLevel');
+
+    const roleInfo = {
+        guest: { label: 'Гость / просмотр', level: 'только чтение' },
+        head: { label: 'Руководитель управления', level: 'полный доступ' },
+        deputy: { label: 'Заместитель руководителя', level: 'создание поручений в своей зоне' },
+        department_head: { label: 'Начальник отдела', level: 'поручения по своему направлению' },
+        specialist: { label: 'Главный специалист', level: 'исполнение и отчётность' },
+        org_head: { label: 'Руководитель спорторганизации', level: 'исполнение, загрузка отчётов' }
+    };
+
+    function updateRoleUI() {
+        const value = roleSelect.value;
+        const info = roleInfo[value];
+        currentRoleLabel.textContent = info.label;
+        sidebarRole.textContent = info.label;
+        sidebarLevel.textContent = info.level;
+
+        // Ограничение создания поручений для некоторых ролей
+        const btnNewTask = document.getElementById('btnNewTask');
+        if (['head', 'deputy', 'department_head'].includes(value)) {
+            btnNewTask.disabled = false;
+            btnNewTask.style.opacity = '1';
+        } else {
+            btnNewTask.disabled = true;
+            btnNewTask.style.opacity = '0.5';
+        }
+    }
+
+    roleSelect.addEventListener('change', updateRoleUI);
+
+    // -----------------------
+    // Кнопки «Новое поручение», «Скачать шаблон», «Загрузить отчёт»
+    // (сейчас просто алерты, дальше можно привязать сервер)
+    // -----------------------
+    document.getElementById('btnNewTask').addEventListener('click', () => {
+        alert('Здесь будет форма создания поручения (через ваш сервер). Роли: Руководитель / Заместитель / Начальник отдела.');
+    });
+
+    document.getElementById('btnDownloadTemplate').addEventListener('click', () => {
+        alert('Здесь можно отдать ссылку на скачивание Excel-шаблона с вашего сервера.');
+    });
+
+    document.getElementById('btnUploadReport').addEventListener('click', () => {
+        alert('Здесь должна открываться форма загрузки файла и отправки его на сервер.');
+    });
+
+    document.getElementById('btnSyncTelegram').addEventListener('click', () => {
+        alert('В боевой версии роль будет определяться автоматически по данным Telegram-пользователя и вашей базе.');
+    });
+
+    // -----------------------
+    // Инициализация
+    // -----------------------
+    function init() {
+        renderTasks();
+        renderDashboard();
+        roleSelect.value = 'guest';
+        updateRoleUI();
+    }
+
+    init();
 </script>
 </body>
 </html>
