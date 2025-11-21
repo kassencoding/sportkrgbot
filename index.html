@@ -8,7 +8,7 @@
     <!-- Стили -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Telegram WebApp (не мешает работе в браузере) -->
+    <!-- Telegram WebApp (если открыто в Telegram) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
@@ -19,9 +19,9 @@
 <!-- ============================================================= -->
 <div id="modeScreen" class="screen active">
     <div class="mode-container">
-        <!-- Герб: загрузить файл img/karaganda_gerb.png в репо -->
+        <div class="mode-glow"></div>
         <div class="mode-logo-wrap">
-            <img src="img/karaganda_gerb.png" class="logo" alt="Герб Карагандинской области">
+            <img src="img/karaganda_gerb.jpeg" class="welcome-gerb" alt="Герб Карагандинской области">
         </div>
         <h1>Добро пожаловать</h1>
         <div class="subtitle">
@@ -32,7 +32,7 @@
             Я сотрудник
         </button>
 
-        <button class="btn secondary wide" onclick="selectMode('guest')">
+        <button class="btn ghost wide" onclick="selectMode('guest')">
             Я гость
         </button>
     </div>
@@ -44,20 +44,24 @@
 <!-- ============================================================= -->
 <div id="orgSelectScreen" class="screen">
     <div class="screen-title">Выберите организацию</div>
+    <div class="screen-subtitle">Сначала выберите управление или подведомственную организацию</div>
+
     <div class="list-container" id="organizationList"></div>
 
-    <button class="btn secondary wide" onclick="backToMode()">Назад</button>
+    <button class="btn ghost wide mt-12" onclick="backToMode()">Назад</button>
 </div>
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН 1.5 — ВЫБОР ОТДЕЛА (Только для Управления)              -->
+<!-- ЭКРАН 1.5 — ВЫБОР ОТДЕЛА УПРАВЛЕНИЯ                           -->
 <!-- ============================================================= -->
 <div id="deptSelectScreen" class="screen">
     <div class="screen-title">Выберите отдел</div>
+    <div class="screen-subtitle">Отдел внутри Управления ФКиС</div>
+
     <div class="list-container" id="departmentList"></div>
 
-    <button class="btn secondary wide" onclick="backToOrg()">Назад</button>
+    <button class="btn ghost wide mt-12" onclick="backToOrg()">Назад</button>
 </div>
 
 
@@ -66,9 +70,11 @@
 <!-- ============================================================= -->
 <div id="roleSelectScreen" class="screen">
     <div class="screen-title">Выберите сотрудника</div>
+    <div class="screen-subtitle" id="roleScreenSubtitle">Список должностей</div>
+
     <div class="list-container" id="roleList"></div>
 
-    <button class="btn secondary wide" onclick="backFromRole()">Назад</button>
+    <button class="btn ghost wide mt-12" onclick="backFromRole()">Назад</button>
 </div>
 
 
@@ -78,7 +84,7 @@
 <div id="employeeHome" class="screen">
     <div class="header">
         <div class="header-logo-circle">
-            <img src="img/karaganda_gerb.png" class="header-logo" alt="Герб">
+            <img src="img/karaganda_gerb.jpeg" class="header-logo" alt="Герб">
         </div>
         <div>
             <div class="header-role" id="empRole">—</div>
@@ -86,45 +92,68 @@
         </div>
     </div>
 
-    <!-- Горизонтальная строка плиток -->
+    <!-- Горизонтальный блок плиток 2×2 -->
     <div class="menu-row">
         <button class="menu-pill" onclick="openCreateTask()">
-            <span class="pill-icon">➕</span>
-            <span class="pill-label">Создать поручение</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">➕</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Создать поручение</div>
+                <div class="pill-sub">Задать задачу с таблицей и сроком</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openTasksScreen()">
-            <span class="pill-icon">📝</span>
-            <span class="pill-label">Поручения</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">📝</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Поручения</div>
+                <div class="pill-sub">Входящие и мои поручения</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openDatabase()">
-            <span class="pill-icon">📚</span>
-            <span class="pill-label">База данных</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">📚</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">База данных</div>
+                <div class="pill-sub">Разделы по зоне ответственности</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openAIChat()">
-            <span class="pill-icon">🤖</span>
-            <span class="pill-label">ИИ</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">🤖</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">ИИ-ассистент</div>
+                <div class="pill-sub">Ответы для граждан и коллег</div>
+            </div>
         </button>
     </div>
 
     <!-- нижнее меню -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="goEmployeeHome()">
+    <div class="bottom-nav" id="employeeBottomNav">
+        <div class="nav-item active" onclick="setEmployeeTab('home')">
             <span class="nav-icon">🏠</span>
             <span class="nav-label">Главная</span>
         </div>
-        <div class="nav-item" onclick="openTasksScreen()">
+        <div class="nav-item" onclick="setEmployeeTab('tasks')">
             <span class="nav-icon">📝</span>
             <span class="nav-label">Поручения</span>
         </div>
-        <div class="nav-item" onclick="openDatabase()">
+        <div class="nav-item" onclick="setEmployeeTab('db')">
             <span class="nav-icon">📚</span>
             <span class="nav-label">База</span>
         </div>
-        <div class="nav-item" onclick="openAIChat()">
+        <div class="nav-item" onclick="setEmployeeTab('ai')">
             <span class="nav-icon">🤖</span>
             <span class="nav-label">ИИ</span>
         </div>
-        <div class="nav-item" onclick="openProfile()">
+        <div class="nav-item" onclick="setEmployeeTab('profile')">
             <span class="nav-icon">👤</span>
             <span class="nav-label">Профиль</span>
         </div>
@@ -143,7 +172,10 @@
             <img id="employeeAvatarImg" alt="Фото сотрудника">
             <span id="employeeAvatarPlaceholder">Фото</span>
         </div>
-        <button class="btn secondary small" onclick="uploadEmployeePhoto()">Изменить фото</button>
+        <div class="avatar-actions">
+            <button class="btn secondary small" onclick="uploadEmployeePhoto()">Изменить фото</button>
+            <div class="avatar-hint">Можно сфотографировать или выбрать из галереи</div>
+        </div>
         <input type="file" id="employeeAvatarInput" accept="image/*" capture="environment" style="display:none" onchange="handleEmployeePhoto(this)">
     </div>
 
@@ -151,26 +183,26 @@
         <div class="profile-label">Должность</div>
         <div id="profileRole">—</div>
 
-        <div class="profile-label">Организация</div>
+        <div class="profile-label mt-8">Организация</div>
         <div id="profileOrg">—</div>
     </div>
 
-    <button class="btn danger wide" onclick="resetEmployee()">Выйти из аккаунта</button>
+    <button class="btn danger wide mt-16" onclick="resetEmployee()">Выйти из аккаунта</button>
 
-    <div class="bottom-nav">
-        <div class="nav-item" onclick="goEmployeeHome()">
+    <div class="bottom-nav" id="employeeBottomNavProfile">
+        <div class="nav-item" onclick="setEmployeeTab('home')">
             <span class="nav-icon">🏠</span>
             <span class="nav-label">Главная</span>
         </div>
-        <div class="nav-item" onclick="openTasksScreen()">
+        <div class="nav-item" onclick="setEmployeeTab('tasks')">
             <span class="nav-icon">📝</span>
             <span class="nav-label">Поручения</span>
         </div>
-        <div class="nav-item" onclick="openDatabase()">
+        <div class="nav-item" onclick="setEmployeeTab('db')">
             <span class="nav-icon">📚</span>
             <span class="nav-label">База</span>
         </div>
-        <div class="nav-item" onclick="openAIChat()">
+        <div class="nav-item" onclick="setEmployeeTab('ai')">
             <span class="nav-icon">🤖</span>
             <span class="nav-label">ИИ</span>
         </div>
@@ -187,11 +219,14 @@
 <!-- ============================================================= -->
 <div id="databaseScreen" class="screen">
     <div class="screen-title">База данных</div>
+    <div class="screen-subtitle">
+        Добавляйте разделы по своей зоне ответственности. ИИ использует этот текст для ответов гостям.
+    </div>
 
     <div id="dbSectionList" class="db-list"></div>
 
-    <button class="btn primary wide" onclick="addDbSection()">Добавить раздел</button>
-    <button class="btn secondary wide" onclick="goEmployeeHome()">Назад</button>
+    <button class="btn primary wide mt-12" onclick="addDbSection()">Добавить раздел</button>
+    <button class="btn ghost wide mt-8" onclick="goEmployeeHome()">Назад</button>
 </div>
 
 
@@ -201,7 +236,7 @@
 <div id="createTaskScreen" class="screen">
     <div class="screen-title">Новое поручение</div>
 
-    <div class="form">
+    <div class="form card-like">
         <label>Кому</label>
         <select id="taskTarget"></select>
 
@@ -213,16 +248,22 @@
     </div>
 
     <div class="screen-title small-title">Таблица поручения</div>
+    <div class="screen-subtitle">
+        Настройте таблицу как в Excel: столбцы, строки, тип ячеек и автоматическая сумма по числовым колонкам.
+    </div>
 
     <div id="tableEditor" class="table-editor"></div>
 
     <div class="table-controls">
-        <button class="btn secondary" onclick="addTableColumn()">+ столбец</button>
-        <button class="btn secondary" onclick="addTableRow()">+ строка</button>
+        <button class="btn secondary" onclick="addTableColumn()">+ Столбец</button>
+        <button class="btn secondary" onclick="addTableRow()">+ Строка</button>
+        <button class="btn ghost" onclick="calculateSums()">Σ Посчитать сумму</button>
     </div>
 
-    <button class="btn primary wide" onclick="saveTask()">Создать поручение</button>
-    <button class="btn secondary wide" onclick="backFromCreateTask()">Назад</button>
+    <div id="tableSums" class="table-sums"></div>
+
+    <button class="btn primary wide mt-12" onclick="saveTask()">Создать поручение</button>
+    <button class="btn ghost wide mt-8" onclick="backFromCreateTask()">Назад</button>
 </div>
 
 
@@ -231,10 +272,11 @@
 <!-- ============================================================= -->
 <div id="tasksScreen" class="screen">
     <div class="screen-title">Поручения</div>
+    <div class="screen-subtitle">Поручения, где вы являетесь исполнителем или инициатором</div>
 
     <div id="tasksList"></div>
 
-    <button class="btn secondary wide" onclick="goEmployeeHome()">Назад</button>
+    <button class="btn ghost wide mt-12" onclick="goEmployeeHome()">Назад</button>
 </div>
 
 
@@ -243,6 +285,9 @@
 <!-- ============================================================= -->
 <div id="aiScreen" class="screen">
     <div class="screen-title">ИИ-ассистент</div>
+    <div class="screen-subtitle">
+        ИИ использует данные из базы по вашей должности. Гости получают ответы на основе этой информации.
+    </div>
 
     <div id="aiChat" class="chat-container"></div>
 
@@ -251,7 +296,7 @@
         <button onclick="sendAI()">➤</button>
     </div>
 
-    <button class="btn secondary wide" onclick="backFromAI()">Назад</button>
+    <button class="btn ghost wide mt-12" onclick="backFromAI()">Назад</button>
 </div>
 
 
@@ -261,47 +306,76 @@
 <div id="guestHome" class="screen">
     <div class="header guest">
         <div class="header-logo-circle">
-            <img src="img/karaganda_gerb.png" class="header-logo" alt="Герб">
+            <img src="img/karaganda_gerb.jpeg" class="header-logo" alt="Герб">
         </div>
         <div>
             <div class="header-title">Гостевой режим</div>
-            <div class="header-org">Информация для населения</div>
+            <div class="header-org">Информация для жителей области</div>
         </div>
     </div>
 
     <div class="menu-row">
         <button class="menu-pill" onclick="openAIChat()">
-            <span class="pill-icon">🤖</span>
-            <span class="pill-label">Задать вопрос ИИ</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">🤖</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Задать вопрос ИИ</div>
+                <div class="pill-sub">Быстрый ответ по спорту и объектам</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openGuestRequestInfo()">
-            <span class="pill-icon">📨</span>
-            <span class="pill-label">Запросить информацию</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">📨</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Запросить информацию</div>
+                <div class="pill-sub">Официальный запрос в Управление</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openGuestEvents()">
-            <span class="pill-icon">📅</span>
-            <span class="pill-label">Мероприятия</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">📅</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Мероприятия</div>
+                <div class="pill-sub">Ближайшие соревнования и акции</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openGuestSections()">
-            <span class="pill-icon">🏟️</span>
-            <span class="pill-label">Секции</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">🏟️</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Секции</div>
+                <div class="pill-sub">Список секций и тренеров</div>
+            </div>
         </button>
+
         <button class="menu-pill" onclick="openGuestResults()">
-            <span class="pill-icon">🏅</span>
-            <span class="pill-label">Новости и результаты</span>
+            <div class="pill-icon-wrap neon">
+                <span class="pill-icon">🏅</span>
+            </div>
+            <div class="pill-text">
+                <div class="pill-title">Новости и результаты</div>
+                <div class="pill-sub">Успехи спортсменов области</div>
+            </div>
         </button>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="goGuestHome()">
+    <div class="bottom-nav" id="guestBottomNav">
+        <div class="nav-item active" onclick="setGuestTab('home')">
             <span class="nav-icon">🏠</span>
             <span class="nav-label">Главная</span>
         </div>
-        <div class="nav-item" onclick="openAIChat()">
+        <div class="nav-item" onclick="setGuestTab('ai')">
             <span class="nav-icon">🤖</span>
             <span class="nav-label">ИИ</span>
         </div>
-        <div class="nav-item" onclick="openGuestProfile()">
+        <div class="nav-item" onclick="setGuestTab('profile')">
             <span class="nav-icon">👤</span>
             <span class="nav-label">Профиль</span>
         </div>
@@ -314,17 +388,21 @@
 <!-- ============================================================= -->
 <div id="guestProfile" class="screen">
     <div class="screen-title">Профиль гостя</div>
+    <div class="screen-subtitle">Для обратной связи укажите свои данные</div>
 
     <div class="avatar-block">
         <div class="avatar-circle">
             <img id="guestAvatarImg" alt="Фото гостя">
             <span id="guestAvatarPlaceholder">Фото</span>
         </div>
-        <button class="btn secondary small" onclick="uploadGuestPhoto()">Изменить фото</button>
+        <div class="avatar-actions">
+            <button class="btn secondary small" onclick="uploadGuestPhoto()">Изменить фото</button>
+            <div class="avatar-hint">Фото по желанию, не обязательно</div>
+        </div>
         <input type="file" id="guestAvatarInput" accept="image/*" capture="environment" style="display:none" onchange="handleGuestPhoto(this)">
     </div>
 
-    <div class="form">
+    <div class="form card-like">
         <label>ФИО</label>
         <input id="guestFio">
 
@@ -335,8 +413,8 @@
         <input id="guestIin">
     </div>
 
-    <button class="btn primary wide" onclick="saveGuestProfile()">Сохранить</button>
-    <button class="btn secondary wide" onclick="goGuestHome()">Назад</button>
+    <button class="btn primary wide mt-12" onclick="saveGuestProfile()">Сохранить</button>
+    <button class="btn ghost wide mt-8" onclick="goGuestHome()">Назад</button>
 </div>
 
 
