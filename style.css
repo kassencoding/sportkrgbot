@@ -9,16 +9,15 @@
 html, body {
     margin: 0;
     padding: 0;
-    background: #f5f6fa;
+    background: radial-gradient(circle at top, #e0f2ff 0, #f5f6fa 42%, #eef2ff 100%);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-    color: #111827;
+    color: #0f172a;
 }
 
 /* Экран */
 .screen {
     display: none;
-    padding: 16px;
-    padding-bottom: 90px; /* место под нижнее меню */
+    padding: 18px 16px 90px;
     max-width: 480px;
     margin: 0 auto;
 }
@@ -27,11 +26,10 @@ html, body {
     display: block;
 }
 
-/* Заголовки */
 .screen-title {
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 14px;
+    margin-bottom: 4px;
 }
 
 .screen-title.small-title {
@@ -39,6 +37,15 @@ html, body {
     margin-top: 18px;
 }
 
+.screen-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
 
 /* =============================================================
    КНОПКИ
@@ -60,20 +67,27 @@ html, body {
 }
 
 .btn.primary {
-    background: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: white;
-    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.48);
+    box-shadow: 0 14px 35px rgba(37, 99, 235, 0.55);
 }
 
 .btn.primary:hover {
-    box-shadow: 0 16px 38px rgba(37, 99, 235, 0.6);
+    box-shadow: 0 18px 45px rgba(37, 99, 235, 0.65);
     transform: translateY(-1px);
 }
 
 .btn.secondary {
     background: white;
-    color: #111827;
+    color: #0f172a;
     border: 1px solid #d1d5db;
+}
+
+.btn.ghost {
+    background: rgba(255,255,255,0.7);
+    color: #0f172a;
+    border: 1px solid rgba(148,163,184,0.5);
+    backdrop-filter: blur(10px);
 }
 
 .btn.danger {
@@ -92,36 +106,50 @@ html, body {
 ============================================================= */
 
 .mode-container {
-    background: white;
-    padding: 26px 20px 22px;
-    border-radius: 22px;
-    box-shadow: 0 14px 40px rgba(15,23,42,0.25);
-    border: 1px solid rgba(209,213,219,0.8);
+    position: relative;
+    background: rgba(255,255,255,0.9);
+    padding: 28px 20px 22px;
+    border-radius: 24px;
+    box-shadow: 0 22px 60px rgba(15,23,42,0.35);
+    border: 1px solid rgba(148,163,184,0.35);
     text-align: center;
     max-width: 390px;
-    margin: 40px auto;
+    margin: 46px auto;
+    overflow: hidden;
+}
+
+.mode-glow {
+    position: absolute;
+    inset: -80px;
+    background: radial-gradient(circle at top, rgba(59,130,246,0.22), transparent 55%);
+    pointer-events: none;
 }
 
 .mode-logo-wrap {
+    position: relative;
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
-.mode-container h1 {
-    margin: 0;
-    font-size: 22px;
-}
-
-.mode-container .logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
+.welcome-gerb {
+    width: 86px;
+    height: 86px;
     border-radius: 999px;
+    object-fit: cover;
+    box-shadow: 0 0 32px rgba(37,99,235,0.55);
+    border: 2px solid rgba(191,219,254,0.95);
     background: #e0f2fe;
 }
 
+.mode-container h1 {
+    position: relative;
+    margin: 6px 0 4px;
+    font-size: 22px;
+}
+
 .mode-container .subtitle {
+    position: relative;
     color: #6b7280;
     font-size: 14px;
     margin-bottom: 16px;
@@ -135,17 +163,32 @@ html, body {
 .list-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .list-item {
-    background: white;
+    background: rgba(255,255,255,0.95);
     padding: 12px 14px;
-    border-radius: 16px;
-    box-shadow: 0 8px 28px rgba(15,23,42,0.14);
-    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.18);
+    border: 1px solid rgba(209,213,219,0.9);
     cursor: pointer;
     transition: 0.12s;
+    position: relative;
+    overflow: hidden;
+}
+
+.list-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(59,130,246,0.1), transparent 60%);
+    opacity: 0;
+    transition: 0.15s;
+}
+
+.list-item:hover::before {
+    opacity: 1;
 }
 
 .list-item:hover {
@@ -172,23 +215,26 @@ html, body {
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
+    margin-top: 4px;
 }
 
 .header-logo-circle {
-    width: 52px;
-    height: 52px;
-    border-radius: 18px;
-    background: white;
-    box-shadow: 0 10px 28px rgba(15,23,42,0.2);
+    width: 56px;
+    height: 56px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 12px 36px rgba(15,23,42,0.28);
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(191,219,254,0.9);
 }
 
 .header-logo {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 999px;
 }
 
 .header-title {
@@ -212,37 +258,74 @@ html, body {
 ============================================================= */
 
 .menu-row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .menu-pill {
-    flex: 1 1 calc(50% - 10px);
-    background: white;
+    background: rgba(255,255,255,0.98);
     border-radius: 20px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(209,213,219,0.95);
     padding: 10px 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 10px 28px rgba(15,23,42,0.16);
+    gap: 10px;
+    box-shadow: 0 14px 36px rgba(15,23,42,0.22);
     cursor: pointer;
     transition: 0.12s;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-pill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(56,189,248,0.16), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.menu-pill:hover::after {
+    opacity: 1;
 }
 
 .menu-pill:hover {
     transform: translateY(-1px);
 }
 
+.pill-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pill-icon-wrap.neon {
+    background: radial-gradient(circle at top left, #eff6ff, #dbeafe);
+    box-shadow: 0 0 0 1px rgba(129,140,248,0.7), 0 0 18px rgba(59,130,246,0.5);
+}
+
 .pill-icon {
     font-size: 18px;
 }
 
-.pill-label {
+.pill-text {
+    text-align: left;
+}
+
+.pill-title {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+}
+
+.pill-sub {
+    font-size: 12px;
+    color: #6b7280;
 }
 
 
@@ -257,15 +340,16 @@ html, body {
     right: 0;
     max-width: 480px;
     margin: 0 auto;
-    background: #020617;
+    background: rgba(15,23,42,0.97);
     padding: 6px;
     border-radius: 20px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 16px 46px rgba(15,23,42,0.9);
-    border: 1px solid rgba(148,163,184,0.7);
+    box-shadow: 0 18px 50px rgba(15,23,42,0.95);
+    border: 1px solid rgba(148,163,184,0.8);
     z-index: 100;
+    backdrop-filter: blur(16px);
 }
 
 .nav-item {
@@ -280,8 +364,9 @@ html, body {
 }
 
 .nav-item.active {
-    background: rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, rgba(37,99,235,0.88), rgba(14,165,233,0.85));
     color: white;
+    box-shadow: 0 0 0 1px rgba(191,219,254,0.7);
 }
 
 .nav-icon {
@@ -296,13 +381,21 @@ html, body {
 
 
 /* =============================================================
-   ФОРМЫ
+   ФОРМЫ / КАРТОЧКИ
 ============================================================= */
 
 .form {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.card-like {
+    background: rgba(255,255,255,0.98);
+    border-radius: 18px;
+    border: 1px solid rgba(209,213,219,0.9);
+    padding: 12px 14px;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.2);
 }
 
 .form label {
@@ -346,12 +439,12 @@ textarea {
 }
 
 .avatar-circle {
-    width: 70px;
-    height: 70px;
+    width: 74px;
+    height: 74px;
     border-radius: 999px;
-    background: white;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 26px rgba(15,23,42,0.18);
+    background: rgba(255,255,255,0.98);
+    border: 1px solid rgba(209,213,219,0.9);
+    box-shadow: 0 14px 34px rgba(15,23,42,0.22);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -371,18 +464,66 @@ textarea {
     color: #6b7280;
 }
 
+.avatar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.avatar-hint {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
 .profile-block {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255,255,255,0.98);
+    border: 1px solid rgba(209,213,219,0.9);
     border-radius: 18px;
     padding: 12px 14px;
-    box-shadow: 0 8px 24px rgba(15,23,42,0.16);
+    box-shadow: 0 12px 34px rgba(15,23,42,0.22);
 }
 
 .profile-label {
-    color: #6b7280;
+    color: #9ca3af;
     font-size: 12px;
     margin-top: 6px;
+}
+
+
+/* =============================================================
+   БАЗА ДАННЫХ
+============================================================= */
+
+.db-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.db-section {
+    background: rgba(255,255,255,0.98);
+    border-radius: 16px;
+    border: 1px solid rgba(209,213,219,0.9);
+    padding: 8px 10px;
+    box-shadow: 0 10px 28px rgba(15,23,42,0.18);
+}
+
+.db-section input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.db-section textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    resize: vertical;
 }
 
 
@@ -391,11 +532,11 @@ textarea {
 ============================================================= */
 
 .chat-container {
-    background: white;
+    background: rgba(255,255,255,0.98);
     border-radius: 16px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(209,213,219,0.9);
     padding: 10px;
-    box-shadow: 0 8px 26px rgba(15,23,42,0.14);
+    box-shadow: 0 12px 34px rgba(15,23,42,0.22);
     min-height: 220px;
     max-height: 360px;
     overflow-y: auto;
@@ -437,6 +578,8 @@ textarea {
     border-radius: 999px;
     border: 1px solid #d1d5db;
     padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
 }
 
 .chat-input-box button {
@@ -444,9 +587,10 @@ textarea {
     height: 44px;
     border-radius: 999px;
     border: none;
-    background: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
     color: white;
     font-size: 20px;
+    box-shadow: 0 12px 30px rgba(37,99,235,0.6);
 }
 
 
@@ -456,11 +600,11 @@ textarea {
 
 .table-editor {
     overflow-x: auto;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255,255,255,0.98);
+    border: 1px solid rgba(209,213,219,0.9);
     border-radius: 14px;
     padding: 8px;
-    box-shadow: 0 8px 26px rgba(15,23,42,0.14);
+    box-shadow: 0 12px 34px rgba(15,23,42,0.22);
 }
 
 .table-editor table {
@@ -472,21 +616,55 @@ textarea {
 .table-editor td {
     border: 1px solid #e5e7eb;
     padding: 4px 6px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
-.table-editor input {
+.table-editor th {
+    background: #eff6ff;
+}
+
+.table-editor .col-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.table-editor .col-header input {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 3px 6px;
+    font-size: 12px;
+}
+
+.table-editor .col-header select {
+    width: 100%;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    padding: 2px 4px;
+    font-size: 11px;
+}
+
+.table-editor input.cell-input {
     width: 100%;
     border: none;
     outline: none;
     background: transparent;
-    font-size: 13px;
+    font-size: 12px;
+    padding: 2px 3px;
 }
 
 .table-controls {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.table-sums {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #374151;
 }
 
 
@@ -501,11 +679,11 @@ textarea {
 }
 
 .task-card {
-    background: white;
+    background: rgba(255,255,255,0.98);
     border-radius: 16px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(209,213,219,0.9);
     padding: 10px 12px;
-    box-shadow: 0 8px 24px rgba(15,23,42,0.16);
+    box-shadow: 0 12px 32px rgba(15,23,42,0.22);
 }
 
 .task-title {
@@ -525,7 +703,7 @@ textarea {
 ============================================================= */
 
 @media (max-width: 400px) {
-    .menu-pill {
-        flex: 1 1 100%;
+    .menu-row {
+        grid-template-columns: 1fr;
     }
 }
