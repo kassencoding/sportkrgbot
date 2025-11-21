@@ -2,25 +2,28 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>Управление физической культуры и спорта Карагандинской области</title>
-    <!-- Telegram WebApp JS (будет работать внутри Telegram) -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Управление ФКиС Карагандинской области</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Telegram WebApp JS -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         :root {
-            --bg-main: #f5f6f8;
+            --bg-main: #f4f5f7;
             --bg-card: #ffffff;
-            --accent: #1c5faa;
-            --accent-soft: #e4eef9;
-            --border: #dde1e7;
-            --text-main: #1e2a3b;
+            --accent: #007aff;
+            --accent-soft: #e5f0ff;
+            --border-subtle: #e5e7eb;
+            --text-main: #111827;
             --text-muted: #6b7280;
-            --danger: #c0392b;
-            --success: #2e7d32;
-            --shadow-soft: 0 6px 18px rgba(15, 23, 42, 0.08);
-            --radius-lg: 12px;
-            --radius-md: 8px;
-            --radius-sm: 4px;
+            --danger: #ef4444;
+            --success: #16a34a;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-soft: 0 12px 32px rgba(15, 23, 42, 0.12);
+            --shadow-tiny: 0 2px 10px rgba(15, 23, 42, 0.08);
         }
 
         * {
@@ -29,251 +32,187 @@
 
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
         }
 
-        .app {
-            display: flex;
-            min-height: 100vh;
-            max-width: 1200px;
+        button, input, select, textarea {
+            font-family: inherit;
+        }
+
+        .app-shell {
+            max-width: 480px;
             margin: 0 auto;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: #0f172a;
-            color: #e5e7eb;
-            padding: 18px 18px 24px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background: linear-gradient(to bottom, #f9fafb, #edf1f7);
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
+        /* TOP SAFE AREA (для iOS) */
+        .safe-top {
+            height: env(safe-area-inset-top);
         }
 
-        .brand-logo {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 700;
-            color: #e5e7eb;
-            box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.8);
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .brand-title {
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-
-        .brand-subtitle {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        .sidebar-section-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #64748b;
-            margin: 16px 0 8px;
-        }
-
-        .nav-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .nav-item {
-            font-size: 13px;
-            padding: 8px 10px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background 0.15s ease, color 0.15s ease;
-        }
-
-        .nav-item span.label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-item span.icon {
-            font-size: 16px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .nav-item.active {
-            background: #1d4ed8;
-            color: #e5e7eb;
-        }
-
-        .nav-item:hover:not(.active) {
-            background: rgba(148, 163, 184, 0.18);
-        }
-
-        .nav-badge {
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.35);
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            font-size: 11px;
-            color: #6b7280;
-            border-top: 1px solid rgba(31, 41, 55, 0.9);
-            padding-top: 10px;
-        }
-
-        .sidebar-footer-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-
-        .sidebar-footer-label {
-            color: #9ca3af;
-        }
-
-        /* MAIN LAYOUT */
-        .main {
-            flex: 1;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .top-bar {
+        /* HEADER */
+        .header {
+            padding: 16px 16px 8px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .page-title {
-            font-size: 18px;
-            font-weight: 600;
+        .emblem {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: #ffffff;
+            box-shadow: var(--shadow-tiny);
+            background-image: url('gerb-karaganda.png'); /* замените на реальный путь к гербу */
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
         }
 
-        .page-subtitle {
+        .header-text {
+            flex: 1;
+        }
+
+        .header-title {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .header-subtitle {
             font-size: 12px;
             color: var(--text-muted);
+            margin-top: 2px;
         }
 
-        .top-bar-right {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .role-pill {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
+        .current-role-label {
             font-size: 11px;
-        }
-
-        .role-pill-label {
             color: var(--text-muted);
-        }
-
-        .role-pill-role {
-            font-weight: 600;
-        }
-
-        .role-select {
-            font-size: 12px;
-            padding: 6px 8px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            background: #ffffff;
-        }
-
-        .btn {
-            padding: 8px 12px;
-            font-size: 12px;
-            border-radius: var(--radius-md);
-            border: 1px solid transparent;
-            background: var(--accent);
-            color: #ffffff;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn.secondary {
-            background: #ffffff;
-            color: var(--text-main);
-            border-color: var(--border);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
             margin-top: 4px;
         }
 
-        .chip {
-            font-size: 11px;
-            padding: 4px 8px;
+        .current-role-value {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .pill-ghost {
             border-radius: 999px;
-            background: var(--accent-soft);
-            color: var(--accent);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 4px 10px;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.9);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
         }
 
-        /* CONTENT */
-        .content-grid {
+        .pill-ghost span.icon {
+            font-size: 13px;
+        }
+
+        /* MAIN CONTENT AREA */
+        .main {
+            flex: 1;
+            padding: 4px 12px 80px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* HOMESCREEN BUTTON GRID */
+        .grid-buttons {
             display: grid;
-            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-            gap: 14px;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 10px;
         }
 
+        @media (min-width: 400px) {
+            .grid-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .tile-button {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 14px 12px;
+            box-shadow: var(--shadow-tiny);
+            border: 1px solid rgba(209, 213, 219, 0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+        }
+
+        .tile-button:active {
+            transform: scale(0.97);
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.16);
+        }
+
+        .tile-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tile-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-soft);
+            font-size: 15px;
+        }
+
+        .tile-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .tile-caption {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* CARDS / LISTS */
         .card {
             background: var(--bg-card);
             border-radius: var(--radius-lg);
-            padding: 14px 14px 12px;
+            padding: 14px 12px;
             box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            border: 1px solid rgba(229, 231, 235, 0.9);
         }
 
-        .card-header {
+        .card-title-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: baseline;
+            margin-bottom: 8px;
             gap: 8px;
         }
 
@@ -287,186 +226,576 @@
             color: var(--text-muted);
         }
 
-        .card-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* TABS */
-        .tabs {
-            display: flex;
-            gap: 6px;
-            border-bottom: 1px solid var(--border);
-            margin: 0 -14px;
-            padding: 0 14px 6px;
-        }
-
-        .tab {
-            font-size: 12px;
-            padding: 4px 8px 6px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-
-        .tab.active {
-            color: var(--accent);
-            background: var(--accent-soft);
-            font-weight: 500;
-        }
-
-        .tab-content {
-            font-size: 13px;
-        }
-
-        /* ORG STRUCTURE */
-        .org-tree {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-            font-size: 13px;
-        }
-
-        .org-node {
-            padding: 4px 6px;
-            border-radius: var(--radius-md);
-            margin-bottom: 2px;
-        }
-
-        .org-node-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: default;
-        }
-
-        .org-node-badge {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            background: #f3f4f6;
-            color: var(--text-muted);
-        }
-
-        .org-node-level-1 { font-weight: 600; }
-        .org-node-level-2 { padding-left: 10px; }
-        .org-node-level-3 { padding-left: 22px; font-size: 12px; }
-
-        .org-node-meta {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-left: 22px;
-        }
-
-        /* TASKS */
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            font-size: 12px;
-        }
-
-        .input, .select {
-            font-size: 12px;
-            padding: 6px 8px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            background: #ffffff;
-            min-width: 80px;
-        }
-
-        .table-wrapper {
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            max-height: 280px;
-            overflow-y: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        thead {
-            background: #f9fafb;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        th, td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #edf2f7;
-            text-align: left;
-        }
-
-        th {
-            font-weight: 500;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--text-muted);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .status-pill {
+        .chip {
             display: inline-flex;
             align-items: center;
-            padding: 2px 6px;
+            padding: 4px 8px;
             border-radius: 999px;
             font-size: 11px;
+            background: #e5e7eb;
+            color: #374151;
         }
 
-        .status-new {
-            background: #eef2ff;
-            color: #3730a3;
+        /* TASKS LIST */
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .status-in-progress {
+        .task-card {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 10px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-tiny);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .task-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .task-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .badge-status {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-status.new {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .badge-status.in_progress {
             background: #fef3c7;
             color: #92400e;
         }
 
-        .status-done {
+        .badge-status.done {
             background: #ecfdf3;
             color: #166534;
         }
 
-        .status-overdue {
+        .badge-status.overdue {
             background: #fef2f2;
             color: #b91c1c;
         }
 
-        .tag {
-            display: inline-block;
+        .badge-deadline {
+            font-size: 11px;
             padding: 2px 6px;
             border-radius: 999px;
             background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* FILTER ROW */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .input, .select, .textarea {
+            font-size: 13px;
+            padding: 7px 9px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: #ffffff;
+            width: 100%;
+        }
+
+        .textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .input:focus, .select:focus, .textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(59,130,246,0.35);
+        }
+
+        label.field-label {
             font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
         }
 
-        /* FORMS / TABLE BUILDER */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1.2fr;
-            gap: 10px;
-            font-size: 12px;
+        .field-group {
+            margin-bottom: 10px;
         }
 
-        .form-group {
+        /* BUTTONS */
+        .btn {
+            border-radius: 999px;
+            border: none;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn.secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-tiny);
+        }
+
+        .btn.ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            box-shadow: none;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn[disabled] {
+            opacity: 0.5;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        /* BOTTOM NAVBAR */
+        .bottom-nav-wrapper {
+            position: fixed;
+            bottom: env(safe-area-inset-bottom);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            padding: 0 8px 6px;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .bottom-nav {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 18px;
+            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.35);
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            padding: 4px 4px 2px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            flex: 1;
+            border-radius: 999px;
+            padding: 4px 4px 6px;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            cursor: pointer;
+        }
+
+        .nav-item span.icon {
+            font-size: 18px;
+        }
+
+        .nav-item span.label {
+            font-size: 10px;
+        }
+
+        .nav-item.active {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .nav-item.active span.label {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* MODALS (iOS-style sheets) */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.28);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal-backdrop.visible {
+            display: flex;
+        }
+
+        .modal-sheet {
+            width: 100%;
+            max-width: 480px;
+            background: #f9fafb;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -12px 34px rgba(15, 23, 42, 0.45);
+            padding: 10px 14px 16px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .modal-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .modal-close {
+            border-radius: 999px;
+            border: none;
+            background: #e5e7eb;
+            width: 26px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* FULLSCREEN ROLE MODAL */
+        .role-modal-fullscreen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, #ffffff, #e5edff);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            padding: 24px 18px 18px;
+            z-index: 60;
+        }
+
+        .role-modal-fullscreen.visible {
+            display: flex;
+        }
+
+        .role-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 24px;
+            margin: 0 auto 14px;
+            background: #ffffff;
+            box-shadow: 0 16px 42px rgba(37, 99, 235, 0.35);
+            background-image: url('gerb-karaganda.png'); /* герб */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .role-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .role-subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .role-form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 14px 12px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(209, 213, 219, 0.85);
+        }
+
+        .role-helper {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        /* TABLE BUILDER */
+        .table-builder {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            padding: 8px;
+            margin-top: 4px;
+        }
+
+        .table-builder-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .table-builder-title {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .table-builder-actions {
+            display: flex;
             gap: 4px;
         }
 
-        .form-label {
+        .btn-mini {
             font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: #f9fafb;
+            cursor: pointer;
+        }
+
+        .btn-mini:active {
+            transform: translateY(1px);
+        }
+
+        .columns-config {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .column-config-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr) auto;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .column-config-row small {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .btn-icon-small {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .table-preview-wrapper {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            overflow: auto;
+            max-height: 220px;
+        }
+
+        table.builder-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 100%;
+            font-size: 11px;
+        }
+
+        .builder-table th,
+        .builder-table td {
+            border: 1px solid #e5e7eb;
+            padding: 4px;
+            text-align: left;
+        }
+
+        .builder-table th {
+            background: #f9fafb;
+            font-weight: 500;
+        }
+
+        .builder-input {
+            width: 100%;
+            border: none;
+            font-size: 11px;
+            padding: 2px 3px;
+            background: transparent;
+        }
+
+        .builder-input:focus {
+            outline: none;
+            background: #eef2ff;
+        }
+
+        .builder-footer {
+            background: #f3f4f6;
+        }
+
+        .sum-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* AI / EVENTS / SECTIONS / RESULTS */
+        .pill-switch {
+            display: inline-flex;
+            padding: 3px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+
+        .pill-switch button {
+            border-radius: 999px;
+            border: none;
+            padding: 4px 10px;
+            font-size: 11px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .pill-switch button.active {
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+        }
+
+        .list-simple {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .list-item-simple {
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 8px 10px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .list-item-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .list-item-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* CHAT-like for AI */
+        .ai-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .ai-chip {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            background: #ffffff;
+        }
+
+        .ai-chat-window {
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            padding: 8px;
+            background: #ffffff;
+            max-height: 260px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .ai-msg {
+            margin-bottom: 6px;
+        }
+
+        .ai-msg-user {
+            text-align: right;
+        }
+
+        .ai-msg-user span {
+            display: inline-block;
+            background: #dbeafe;
+            border-radius: 999px;
+            padding: 4px 8px;
+        }
+
+        .ai-msg-bot span {
+            display: inline-block;
+            background: #f3f4f6;
+            border-radius: 999px;
+            padding: 4px 8px;
+        }
+
+        .ai-input-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .ai-input-row input {
+            flex: 1;
+        }
+
+        /* PROFILE */
+        .profile-list {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .profile-row span.label {
             color: var(--text-muted);
         }
 
@@ -475,772 +804,1527 @@
             color: var(--text-muted);
         }
 
-        .mini-table {
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            padding: 8px;
-            font-size: 12px;
-        }
-
-        .mini-table-header {
-            display: flex;
-            justify-content: space-between;
+        /* SMALL TEXTS */
+        .muted-small {
             font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .pill {
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .badge-counter {
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            background: #f3f4f6;
-        }
-
-        .muted {
-            color: var(--text-muted);
-        }
-
-        @media (max-width: 900px) {
-            .app {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                overflow-x: auto;
-                padding-bottom: 10px;
-            }
-
-            .brand {
-                margin-bottom: 0;
-                margin-right: 12px;
-            }
-
-            .sidebar-section-title {
-                display: none;
-            }
-
-            .nav-list {
-                display: flex;
-                gap: 6px;
-            }
-
-            .nav-item {
-                white-space: nowrap;
-            }
-
-            .sidebar-footer {
-                display: none;
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .top-bar-right {
-                margin-left: 0;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
-<div class="app">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-logo">СП</div>
-            <div class="brand-text">
-                <div class="brand-title">
-                    Управление ФКиС<br/>Карагандинской области
-                </div>
-                <div class="brand-subtitle">Служебный кабинет</div>
+<div class="app-shell">
+    <div class="safe-top"></div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="emblem"></div>
+        <div class="header-text">
+            <div class="header-title">Управление ФКиС Карагандинской области</div>
+            <div class="header-subtitle">Внутренняя система поручений и публичный сервис</div>
+            <div class="current-role-label">
+                Вход по должности:
+                <span class="current-role-value" id="headerCurrentRole">Не выбрана</span>
             </div>
         </div>
-
-        <div class="sidebar-section-title">Навигация</div>
-        <ul class="nav-list">
-            <li class="nav-item active" data-page="dashboard">
-                <span class="label">
-                    <span class="icon">📊</span>
-                    Сводка
-                </span>
-                <span class="nav-badge">Сегодня</span>
-            </li>
-            <li class="nav-item" data-page="structure">
-                <span class="label">
-                    <span class="icon">🏛️</span>
-                    Структура управления
-                </span>
-            </li>
-            <li class="nav-item" data-page="tasks">
-                <span class="label">
-                    <span class="icon">📝</span>
-                    Поручения
-                </span>
-                <span class="nav-badge" id="sidebarTasksCount">8</span>
-            </li>
-            <li class="nav-item" data-page="tables">
-                <span class="label">
-                    <span class="icon">📂</span>
-                    Таблицы и отчёты
-                </span>
-            </li>
-        </ul>
-
-        <div class="sidebar-footer">
-            <div class="sidebar-footer-row">
-                <span class="sidebar-footer-label">Текущий пользователь</span>
-                <span id="sidebarUser">–</span>
-            </div>
-            <div class="sidebar-footer-row">
-                <span class="sidebar-footer-label">Роль</span>
-                <span id="sidebarRole">–</span>
-            </div>
-            <div class="sidebar-footer-row">
-                <span class="sidebar-footer-label">Уровень доступа</span>
-                <span id="sidebarLevel">–</span>
-            </div>
+        <div class="header-actions">
+            <button class="pill-ghost" id="btnOpenProfileFromHeader">
+                <span class="icon">👤</span>
+                <span>Профиль</span>
+            </button>
         </div>
-    </aside>
+    </header>
 
-    <!-- MAIN -->
+    <!-- MAIN CONTENT -->
     <main class="main">
-        <!-- TOP BAR -->
-        <div class="top-bar">
-            <div>
-                <div class="page-title" id="pageTitle">Сводка по управлению</div>
-                <div class="page-subtitle">
-                    Внутренняя система поручений и отчётности для Управления физической культуры и спорта Карагандинской области
-                </div>
-                <div class="chips">
-                    <span class="chip">Вертикаль «область → район → объект спорта»</span>
-                    <span class="chip">Только служебная информация</span>
-                </div>
-            </div>
-            <div class="top-bar-right">
-                <div class="role-pill">
-                    <span class="role-pill-label">Текущая должность</span>
-                    <span class="role-pill-role" id="currentRoleLabel">Не определена</span>
-                </div>
-                <select class="role-select" id="roleSelect">
-                    <!-- В реальном приложении список и права подтягиваются с сервера -->
-                    <option value="guest">Гость / просмотр</option>
-                    <option value="head">Руководитель управления</option>
-                    <option value="deputy">Заместитель руководителя</option>
-                    <option value="department_head">Начальник отдела</option>
-                    <option value="specialist">Главный специалист</option>
-                    <option value="org_head">Руководитель спорторганизации</option>
-                </select>
-                <button class="btn secondary" id="btnSyncTelegram">Синхронизировать с Telegram</button>
-            </div>
-        </div>
-
-        <!-- DASHBOARD PAGE -->
-        <section id="page-dashboard" class="page">
-            <div class="content-grid">
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-title">Текущая нагрузка по поручениям</div>
-                            <div class="card-subtitle">Обобщённые данные по всем подведомственным организациям</div>
-                        </div>
-                        <div class="card-controls">
-                            <span class="badge-counter" id="totalTasksBadge">Всего: 0</span>
-                            <button class="btn secondary" id="btnGotoTasks">Открыть список</button>
-                        </div>
-                    </div>
-                    <div class="tab-content">
-                        <div class="form-grid">
-                            <div class="mini-table">
-                                <div class="mini-table-header">
-                                    <span>Статусы поручений</span>
-                                    <span class="muted">По системе</span>
-                                </div>
-                                <table>
-                                    <tbody id="dashboardStatusTable">
-                                    <!-- наполняется скриптом -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="mini-table">
-                                <div class="mini-table-header">
-                                    <span>Уровни управления</span>
-                                    <span class="muted">Область / район / объект</span>
-                                </div>
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                        <td>Областной уровень</td>
-                                        <td>Поручения руководителя управления; приказы, протоколы</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Районные отделы</td>
-                                        <td>Распределение поручений, контроль сроков</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Спортшколы, стадионы</td>
-                                        <td>Факт исполнения, загрузка таблиц и отчётов</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-title">Ближайшие контрольные точки</div>
-                            <div class="card-subtitle">Краткий перечень значимых сроков по поручениям</div>
-                        </div>
-                    </div>
-                    <div class="tab-content">
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Срок</th>
-                                    <th>Поручение</th>
-                                    <th>Ответственный</th>
-                                    <th>Статус</th>
-                                </tr>
-                                </thead>
-                                <tbody id="milestonesTable">
-                                <!-- наполняется скриптом -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </section>
-
-        <!-- STRUCTURE PAGE -->
-        <section id="page-structure" class="page" style="display:none;">
-            <section class="card">
-                <div class="card-header">
+        <!-- HOME SCREEN -->
+        <section id="screen-home" class="screen active">
+            <div class="card">
+                <div class="card-title-row">
                     <div>
-                        <div class="card-title">Структура управления</div>
-                        <div class="card-subtitle">Официальная вертикаль подчинённости в сфере физической культуры и спорта</div>
+                        <div class="card-title">Быстрые действия</div>
+                        <div class="card-subtitle">Создание поручений и переход к основным разделам</div>
+                    </div>
+                    <div class="chip" id="chipRoleSummary">Роль: не выбрана</div>
+                </div>
+                <div class="grid-buttons">
+                    <div class="tile-button" id="btnOpenNewTask">
+                        <div class="tile-header">
+                            <div class="tile-icon">📝</div>
+                            <div class="tile-title">Создать поручение</div>
+                        </div>
+                        <div class="tile-caption">С указанием получателя, дедлайна и таблицы</div>
+                    </div>
+
+                    <div class="tile-button" id="btnGotoTasksScreen">
+                        <div class="tile-header">
+                            <div class="tile-icon">📋</div>
+                            <div class="tile-title">Поручения и отчёты</div>
+                        </div>
+                        <div class="tile-caption">Реестр поручений по управлению и организациям</div>
+                    </div>
+
+                    <div class="tile-button" id="btnGotoAiScreen">
+                        <div class="tile-header">
+                            <div class="tile-icon">🤖</div>
+                            <div class="tile-title">ИИ-ассистент</div>
+                        </div>
+                        <div class="tile-caption">Ответы на вопросы населения и сотрудников</div>
+                    </div>
+
+                    <div class="tile-button" id="btnGotoEventsScreen">
+                        <div class="tile-header">
+                            <div class="tile-icon">📅</div>
+                            <div class="tile-title">Мероприятия</div>
+                        </div>
+                        <div class="tile-caption">Календарь, секции, тренеры, результаты</div>
+                    </div>
+
+                    <div class="tile-button" id="btnGotoProfileScreen">
+                        <div class="tile-header">
+                            <div class="tile-icon">⚙️</div>
+                            <div class="tile-title">Профиль и должность</div>
+                        </div>
+                        <div class="tile-caption">Настройка должности и организации</div>
+                    </div>
+
+                    <div class="tile-button" id="btnGuestInfo">
+                        <div class="tile-header">
+                            <div class="tile-icon">👥</div>
+                            <div class="tile-title">Интерфейс гостя</div>
+                        </div>
+                        <div class="tile-caption">Для населения: секции, сооружения, спорт</div>
                     </div>
                 </div>
-                <div class="tab-content">
-                    <ul class="org-tree">
-                        <li class="org-node org-node-level-1">
-                            <div class="org-node-header">
-                                <span>Руководитель управления ФКиС Карагандинской области</span>
-                                <span class="org-node-badge">уровень: область</span>
-                            </div>
-                            <div class="org-node-meta">Утверждает приоритеты, даёт ключевые поручения, несёт общую ответственность.</div>
-                        </li>
-                        <li class="org-node org-node-level-2">
-                            <div class="org-node-header">
-                                <span>Заместитель руководителя (по массовому спорту)</span>
-                                <span class="org-node-badge">куратор: массовый спорт</span>
-                            </div>
-                            <div class="org-node-meta">Координация районных отделов по массовым мероприятиям и ГТО.</div>
-                        </li>
-                        <li class="org-node org-node-level-3">
-                            <div class="org-node-header">
-                                <span>Отдел массового спорта</span>
-                                <span class="org-node-badge">область</span>
-                            </div>
-                            <div class="org-node-meta">Планирование календаря, отчётность по массовым мероприятиям.</div>
-                        </li>
-                        <li class="org-node org-node-level-2">
-                            <div class="org-node-header">
-                                <span>Заместитель руководителя (по спорту высших достижений)</span>
-                                <span class="org-node-badge">куратор: СДЮСШ, сборные</span>
-                            </div>
-                            <div class="org-node-meta">Взаимодействие со спортшколами, федерациями, подготовка спортсменов.</div>
-                        </li>
-                        <li class="org-node org-node-level-3">
-                            <div class="org-node-header">
-                                <span>Отдел спорта высших достижений</span>
-                                <span class="org-node-badge">область</span>
-                            </div>
-                            <div class="org-node-meta">Лимиты финансирования, сборы, участие в соревнованиях.</div>
-                        </li>
-                        <li class="org-node org-node-level-2">
-                            <div class="org-node-header">
-                                <span>Финансово-экономический отдел</span>
-                                <span class="org-node-badge">область</span>
-                            </div>
-                            <div class="org-node-meta">Сметы, финансирование подведомственных организаций, отчётность.</div>
-                        </li>
-                        <li class="org-node org-node-level-2">
-                            <div class="org-node-header">
-                                <span>Районные/городские отделы физической культуры и спорта</span>
-                                <span class="org-node-badge">район, город</span>
-                            </div>
-                            <div class="org-node-meta">Распределение поручений до уровня объектов спорта.</div>
-                        </li>
-                        <li class="org-node org-node-level-3">
-                            <div class="org-node-header">
-                                <span>ДЮСШ, спортшколы, стадионы, Дворцы спорта</span>
-                                <span class="org-node-badge">объект спорта</span>
-                            </div>
-                            <div class="org-node-meta">Фактическое исполнение поручений, заполнение таблиц, отчёты.</div>
-                        </li>
-                    </ul>
-                </div>
-            </section>
+            </div>
         </section>
 
-        <!-- TASKS PAGE -->
-        <section id="page-tasks" class="page" style="display:none;">
-            <section class="card">
-                <div class="card-header">
+        <!-- TASKS SCREEN -->
+        <section id="screen-tasks" class="screen">
+            <div class="card">
+                <div class="card-title-row">
                     <div>
                         <div class="card-title">Реестр поручений</div>
-                        <div class="card-subtitle">Поручения руководства для районных отделов и подведомственных организаций</div>
+                        <div class="card-subtitle">Поручения руководства для сотрудников и организаций</div>
                     </div>
-                    <div class="card-controls">
-                        <button class="btn" id="btnNewTask">
-                            ➕ Новое поручение
-                        </button>
-                    </div>
+                    <button class="btn secondary" id="btnNewTaskFromTasks">➕ Поручение</button>
                 </div>
-                <div class="tab-content">
-                    <div class="filter-row" style="margin-bottom: 8px;">
-                        <select class="select" id="filterStatus">
-                            <option value="all">Все статусы</option>
-                            <option value="new">Новое</option>
-                            <option value="in_progress">В работе</option>
-                            <option value="done">Исполнено</option>
-                            <option value="overdue">Просрочено</option>
-                        </select>
-                        <select class="select" id="filterLevel">
-                            <option value="all">Все уровни</option>
-                            <option value="region">Область → район</option>
-                            <option value="district">Район → организация</option>
-                            <option value="org">Внутри организации</option>
-                        </select>
-                        <input class="input" id="filterSearch" placeholder="Поиск по тексту поручения..." />
-                        <button class="btn secondary" id="btnResetFilters">Сбросить</button>
-                    </div>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>№</th>
-                                <th>Текст поручения</th>
-                                <th>Уровень</th>
-                                <th>Ответственный</th>
-                                <th>Срок</th>
-                                <th>Статус</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tasksTableBody">
-                            <!-- наполняется скриптом -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="helper-text" style="margin-top: 4px;">
-                        ✦ Создание поручений доступно только для: Руководитель управления, Заместитель, Начальник отдела.
-                    </div>
+
+                <div class="filter-row">
+                    <select class="select" id="filterStatus">
+                        <option value="all">Все статусы</option>
+                        <option value="new">Новое</option>
+                        <option value="in_progress">В работе</option>
+                        <option value="done">Исполнено</option>
+                        <option value="overdue">Просрочено</option>
+                    </select>
+                    <input class="input" id="filterText" placeholder="Поиск по тексту поручения..." />
                 </div>
-            </section>
+
+                <div class="tasks-list" id="tasksList">
+                    <!-- заполняется скриптом -->
+                </div>
+                <div class="muted-small" style="margin-top:8px;">
+                    Создавать поручения могут только сотрудники управления. Гости могут просматривать только публичную информацию.
+                </div>
+            </div>
         </section>
 
-        <!-- TABLES PAGE -->
-        <section id="page-tables" class="page" style="display:none;">
-            <section class="card">
-                <div class="card-header">
+        <!-- EVENTS / SECTIONS / RESULTS -->
+        <section id="screen-events" class="screen">
+            <div class="card">
+                <div class="card-title-row">
                     <div>
-                        <div class="card-title">Таблицы и отчёты</div>
-                        <div class="card-subtitle">Шаблоны для обязательного заполнения подведомственными организациями</div>
+                        <div class="card-title">Спортивная жизнь региона</div>
+                        <div class="card-subtitle">Мероприятия, секции, тренеры и результаты спортсменов</div>
                     </div>
                 </div>
-                <div class="tab-content">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="tableType">Тип таблицы / отчёта</label>
-                            <select class="select" id="tableType">
-                                <option value="events">План спортивных мероприятий</option>
-                                <option value="infrastructure">Состояние спортивных объектов</option>
-                                <option value="staff">Кадровая информация</option>
-                                <option value="finance">Финансирование и расходы</option>
-                            </select>
-                            <div class="helper-text">
-                                В реальном приложении здесь будет формирование конкретного шаблона (колонки, формат, проверки).
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="tablePeriod">Отчётный период</label>
-                            <input class="input" id="tablePeriod" placeholder="Например: I квартал 2026 г." />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Статус загрузки</label>
-                            <div class="mini-table">
-                                <div class="mini-table-header">
-                                    <span>Организации</span>
-                                    <span>Статус</span>
-                                </div>
-                                <table>
-                                    <tbody>
-                                    <tr>
-                                        <td>ДЮСШ г. Караганды</td>
-                                        <td><span class="status-pill status-done">Файл загружен</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Отдел спорта г. Темиртау</td>
-                                        <td><span class="status-pill status-in-progress">Черновик</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Стадион «Шахтёр»</td>
-                                        <td><span class="status-pill status-new">Ожидается</span></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Действия</label>
-                            <button class="btn" id="btnDownloadTemplate">Скачать шаблон (Excel)</button>
-                            <button class="btn secondary" id="btnUploadReport" style="margin-top: 6px;">Загрузить заполненный файл</button>
-                            <div class="helper-text">
-                                Здесь подключается загрузка/скачивание файлов через ваш сервер и Telegram Bot API.
-                            </div>
-                        </div>
+
+                <div class="pill-switch">
+                    <button id="tabEvents" class="active">Мероприятия</button>
+                    <button id="tabSections">Секции и тренеры</button>
+                    <button id="tabResults">Результаты</button>
+                </div>
+
+                <!-- EVENTS -->
+                <div id="eventsPanel">
+                    <div class="list-simple" id="eventsList">
+                        <!-- демо-мероприятия -->
                     </div>
                 </div>
-            </section>
+
+                <!-- SECTIONS -->
+                <div id="sectionsPanel" style="display:none;">
+                    <div class="list-simple" id="sectionsList">
+                        <!-- демо-секции -->
+                    </div>
+                </div>
+
+                <!-- RESULTS -->
+                <div id="resultsPanel" style="display:none;">
+                    <div class="list-simple" id="resultsList">
+                        <!-- демо-результаты -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI SCREEN -->
+        <section id="screen-ai" class="screen">
+            <div class="card">
+                <div class="card-title-row">
+                    <div>
+                        <div class="card-title">ИИ-ассистент Управления</div>
+                        <div class="card-subtitle">Вопросы по спорту, объектам и проектам области</div>
+                    </div>
+                </div>
+
+                <div class="ai-suggestions">
+                    <div class="ai-chip" data-q="Сколько спортивных сооружений в области?">Сколько сооружений в области?</div>
+                    <div class="ai-chip" data-q="На какой стадии проект спортивного кластера?">Стадия спорткластера?</div>
+                    <div class="ai-chip" data-q="Какие спортивные секции есть для детей?">Секции для детей</div>
+                    <div class="ai-chip" data-q="Что сейчас строится в сфере спорта?">Что строится?</div>
+                    <div class="ai-chip" data-q="Где можно найти дворец спорта или стадион рядом?">Ближайшие объекты</div>
+                </div>
+
+                <div class="ai-chat-window" id="aiChat">
+                    <div class="ai-msg ai-msg-bot"><span>Здравствуйте! Я виртуальный ассистент Управления ФКиС Карагандинской области. Задайте вопрос или выберите один из вариантов выше.</span></div>
+                </div>
+
+                <div class="ai-input-row">
+                    <input class="input" id="aiInput" placeholder="Задайте вопрос по спорту, объектам, секциям..." />
+                    <button class="btn" id="aiSendBtn">➤</button>
+                </div>
+                <div class="muted-small" style="margin-top:4px;">
+                    В реальной версии здесь подключается ваш сервер и ИИ-модель с актуальными данными.
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE SCREEN -->
+        <section id="screen-profile" class="screen">
+            <div class="card">
+                <div class="card-title-row">
+                    <div>
+                        <div class="card-title">Профиль пользователя</div>
+                        <div class="card-subtitle">Должность, организация и права доступа</div>
+                    </div>
+                </div>
+
+                <div class="profile-list">
+                    <div class="profile-row">
+                        <span class="label">Имя (из Telegram)</span>
+                        <span id="profileName">–</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="label">Текущая роль</span>
+                        <span id="profileRole">–</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="label">Организация</span>
+                        <span id="profileOrg">–</span>
+                    </div>
+                    <div class="profile-row">
+                        <span class="label">Уровень доступа</span>
+                        <span id="profileAccess">–</span>
+                    </div>
+                </div>
+
+                <div style="margin-top:12px; display:flex; flex-direction:column; gap:6px;">
+                    <button class="btn secondary" id="btnChangeRole">Изменить должность и организацию</button>
+                    <button class="btn ghost" id="btnResetToGuest">Войти как гость</button>
+                </div>
+                <div class="helper-text" style="margin-top:8px;">
+                    Смена должности доступна только через профиль. Гость видит публичные разделы (ИИ-ассистент, мероприятия, секции, результаты).
+                </div>
+            </div>
         </section>
     </main>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav-wrapper">
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-screen="home">
+                <span class="icon">🏠</span>
+                <span class="label">Главная</span>
+            </div>
+            <div class="nav-item" data-screen="tasks">
+                <span class="icon">📝</span>
+                <span class="label">Поручения</span>
+            </div>
+            <div class="nav-item" data-screen="events">
+                <span class="icon">📅</span>
+                <span class="label">Мероприятия</span>
+            </div>
+            <div class="nav-item" data-screen="ai">
+                <span class="icon">🤖</span>
+                <span class="label">ИИ</span>
+            </div>
+            <div class="nav-item" data-screen="profile">
+                <span class="icon">👤</span>
+                <span class="label">Профиль</span>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<!-- FULLSCREEN ROLE MODAL -->
+<div class="role-modal-fullscreen" id="roleModal">
+    <div class="role-logo"></div>
+    <div class="role-title">Выбор должности и организации</div>
+    <div class="role-subtitle">Для работы внутри системы выберите свою должность. Для населения можно войти как гость.</div>
+
+    <div class="role-form">
+        <div class="field-group">
+            <div class="role-helper">Должность</div>
+            <select class="select" id="roleSelect">
+                <!-- наполняется скриптом -->
+            </select>
+        </div>
+
+        <div class="field-group">
+            <div class="role-helper">Подведомственная организация / отдел спорта</div>
+            <select class="select" id="orgSelect">
+                <!-- наполняется скриптом -->
+            </select>
+        </div>
+
+        <div class="field-group">
+            <button class="btn" id="btnConfirmRole">Продолжить</button>
+        </div>
+        <div class="helper-text">
+            Если вы не сотрудник Управления, выберите роль «Гость». Вы сможете пользоваться ИИ-ассистентом, просматривать мероприятия, секции и результаты спортсменов.
+        </div>
+    </div>
+</div>
+
+<!-- MODALS (BOTTOM SHEETS) -->
+<div class="modal-backdrop" id="modalNewTaskBackdrop">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <div>
+                <div class="modal-title">Новое поручение</div>
+                <div class="modal-subtitle">Укажите получателя, текст, дедлайн и при необходимости таблицу</div>
+            </div>
+            <button class="modal-close" data-close="modalNewTaskBackdrop">✕</button>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">Тип получателя</label>
+            <div style="display:flex; gap:6px;">
+                <button class="btn-mini" data-recipient-type="person" id="btnRecipientPerson">👤 Сотрудник</button>
+                <button class="btn-mini" data-recipient-type="org" id="btnRecipientOrg">🏛 Организация</button>
+            </div>
+        </div>
+
+        <div class="field-group" id="recipientPersonGroup">
+            <label class="field-label" for="recipientPersonSelect">Сотрудник Управления</label>
+            <select class="select" id="recipientPersonSelect">
+                <!-- заполняется скриптом -->
+            </select>
+        </div>
+
+        <div class="field-group" id="recipientOrgGroup" style="display:none;">
+            <label class="field-label" for="recipientOrgSelect">Подведомственная организация</label>
+            <select class="select" id="recipientOrgSelect">
+                <!-- заполняется скриптом -->
+            </select>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label" for="taskText">Текст поручения</label>
+            <textarea class="textarea" id="taskText" placeholder="Кратко опишите суть поручения..."></textarea>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label" for="taskDeadline">Дедлайн</label>
+            <input class="input" type="date" id="taskDeadline" />
+            <div class="muted-small" id="deadlineCountdownText"></div>
+        </div>
+
+        <!-- TABLE BUILDER -->
+        <div class="field-group">
+            <label class="field-label">Таблица для заполнения (опционально)</label>
+            <div class="table-builder">
+                <div class="table-builder-header">
+                    <div class="table-builder-title">Конструктор таблицы</div>
+                    <div class="table-builder-actions">
+                        <button class="btn-mini" id="btnAddColumn">+ колонка</button>
+                        <button class="btn-mini" id="btnAddRow">+ строка</button>
+                        <button class="btn-mini" id="btnClearTable">Очистить</button>
+                    </div>
+                </div>
+
+                <div class="columns-config" id="columnsConfig">
+                    <!-- конфигурация колонок -->
+                </div>
+
+                <div class="table-preview-wrapper">
+                    <table class="builder-table" id="builderTable">
+                        <!-- генерируется скриптом -->
+                    </table>
+                </div>
+
+                <div class="muted-small" style="margin-top:4px;">
+                    Вы можете добавлять столбцы и строки, менять названия колонок, выбирать тип данных (текст, число, дата).
+                    Для числовых колонок можно включить подсчёт суммы по столбцу.
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn secondary" data-close="modalNewTaskBackdrop">Отмена</button>
+            <button class="btn" id="btnSaveTask">Создать</button>
+        </div>
+    </div>
+</div>
+
+<!-- TASK DETAILS MODAL -->
+<div class="modal-backdrop" id="modalTaskDetailsBackdrop">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <div>
+                <div class="modal-title" id="taskDetailsTitle">Поручение</div>
+                <div class="modal-subtitle" id="taskDetailsMeta"></div>
+            </div>
+            <button class="modal-close" data-close="modalTaskDetailsBackdrop">✕</button>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">Текст поручения</label>
+            <div class="muted-small" id="taskDetailsText"></div>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">Статус</label>
+            <select class="select" id="taskDetailsStatus">
+                <option value="new">Новое</option>
+                <option value="in_progress">В работе</option>
+                <option value="done">Исполнено</option>
+                <option value="overdue">Просрочено</option>
+            </select>
+        </div>
+
+        <div class="field-group">
+            <label class="field-label">Таблица</label>
+            <div class="table-preview-wrapper">
+                <table class="builder-table" id="taskDetailsTable">
+                    <!-- генерируется скриптом -->
+                </table>
+            </div>
+            <div class="muted-small">
+                В этом режиме таблица только для просмотра. Заполнение и отправка фактических данных может быть реализована в отдельном интерфейсе исполнителя.
+            </div>
+        </div>
+
+        <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn secondary" data-close="modalTaskDetailsBackdrop">Закрыть</button>
+            <button class="btn" id="btnUpdateTaskStatus">Сохранить</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    // -----------------------
-    // Телеграм WebApp интеграция (минимум)
-    // -----------------------
-    (function initTelegram() {
+    // -------------
+    // ДАННЫЕ РОЛЕЙ И ОРГАНИЗАЦИЙ
+    // -------------
+    const roles = [
+        { id: 'guest', label: 'Гость (население)', person: 'Публичный пользователь', access: 'Публичные разделы: ИИ, мероприятия, секции, результаты' },
+
+        { id: 'head', label: 'Руководитель управления', person: 'Сапиев С.Ж.', access: 'Полный доступ: поручения, отчёты, контроль' },
+        { id: 'deputy', label: 'Заместитель руководителя', person: 'Есимханов Д.Ж.', access: 'Создание поручений в своей зоне ответственности' },
+        { id: 'hr_main', label: 'Главный специалист по кадровым вопросам', person: 'Жакаева Ж.Т.', access: 'Кадровые поручения и отчётность' },
+        { id: 'legal_main', label: 'Главный специалист по орг.-правовой работе', person: 'Такирова Ш.Р.', access: 'Орг.-правовые поручения, согласования' },
+        { id: 'eco_head', label: 'Руководитель отдела экономики и финансового обеспечения', person: 'Кумисбек А.А.', access: 'Финансовые поручения, лимиты, отчёты' },
+        { id: 'highsport_head', label: 'Руководитель отдела спорта высших достижений и спортивного резерва', person: 'Нокин Д.Б.', access: 'Поручения по спорту высших достижений' },
+        { id: 'mass_head', label: 'Руководитель отдела физкультурно-массовой работы', person: 'Әшірбек Н.Ж.', access: 'Поручения по массовому спорту и мероприятиям' },
+
+        { id: 'mass_spec_main', label: 'Главный специалист развития массового и инвалидного спорта', person: 'Тлеубеков Р.М.', access: 'Исполнение и подготовка отчётов по массовому и адаптивному спорту' },
+        { id: 'infra_spec_main', label: 'Главный специалист развития спортивной инфраструктуры', person: 'Усенбеков С.С.', access: 'Поручения по объектам, инфраструктуре, паспортам' },
+
+        // Прикомандированные специалисты — отдельные должности
+        { id: 'infra_attached_kasenov', label: 'Прикомандированный специалист развития спортивной инфраструктуры', person: 'Касенов Е.К.', access: 'Исполнение поручений по инфраструктуре' },
+        { id: 'infra_attached_zhapparova', label: 'Прикомандированный специалист развития спортивной инфраструктуры', person: 'Жаппарова К.Т.', access: 'Исполнение поручений по инфраструктуре' },
+        { id: 'nat_sport_attached', label: 'Прикомандированный специалист развития национальных видов спорта', person: 'Есмагамбетов М.М.', access: 'Исполнение поручений по национальным видам спорта' },
+    ];
+
+    // Подведомственные организации: 41 + 13 отделов спорта регионов = 54
+    const orgs = [
+        // 13 отделов спорта регионов
+        { id: 'dept_karaganda', name: 'Отдел физической культуры и спорта г. Караганда' },
+        { id: 'dept_temirtau', name: 'Отдел физической культуры и спорта г. Темиртау' },
+        { id: 'dept_balkhash', name: 'Отдел физической культуры и спорта г. Балхаш' },
+        { id: 'dept_saran', name: 'Отдел физической культуры и спорта г. Сарань' },
+        { id: 'dept_sakhtinsk', name: 'Отдел физической культуры и спорта г. Шахтинск' },
+        { id: 'dept_priozersk', name: 'Отдел физической культуры и спорта г. Приозерск' },
+        { id: 'dept_abai', name: 'Отдел физической культуры и спорта Абайского района' },
+        { id: 'dept_aktogai', name: 'Отдел физической культуры и спорта Актогайского района' },
+        { id: 'dept_bukhar', name: 'Отдел физической культуры и спорта Бухар-жырауского района' },
+        { id: 'dept_karkaraly', name: 'Отдел физической культуры и спорта Каркаралинского района' },
+        { id: 'dept_osakarov', name: 'Отдел физической культуры и спорта Осакаровского района' },
+        { id: 'dept_nura', name: 'Отдел физической культуры и спорта Нуринского района' },
+        { id: 'dept_shet', name: 'Отдел физической культуры и спорта Шетского района' },
+
+        // Категории подведомственных спортивных организаций:
+        // 13 ОСДЮШОР
+        ...Array.from({ length: 13 }, (_, i) => ({
+            id: `osdyushor_${i + 1}`,
+            name: `ОСДЮШОР №${i + 1}`
+        })),
+        // 8 СДЮШОР
+        ...Array.from({ length: 8 }, (_, i) => ({
+            id: `sdyushor_${i + 1}`,
+            name: `СДЮШОР №${i + 1}`
+        })),
+        // 14 ДЮСШ
+        ...Array.from({ length: 14 }, (_, i) => ({
+            id: `dyussh_${i + 1}`,
+            name: `ДЮСШ №${i + 1}`
+        })),
+        { id: 'osshikor', name: 'ОСШИКОР' },
+        { id: 'cpore', name: 'ЦПОР' },
+        { id: 'shvsm_olymp', name: 'ШВСМ по олимпийским видам спорта' },
+        { id: 'shvsm_non_olymp', name: 'ШВСМ по неолимпийским видам спорта' },
+        { id: 'center_mass_kids', name: 'Центр развития массового и детского спорта' },
+        { id: 'fiz_disp', name: 'Физкультурный диспансер' },
+    ];
+
+    // Пользователи (должности) для назначения поручений — берем из roles, кроме гостя
+    const staffRecipients = roles.filter(r => r.id !== 'guest').map(r => ({
+        id: r.id,
+        label: `${r.label} – ${r.person}`
+    }));
+
+    // -------------
+    // СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+    // -------------
+    let currentUser = {
+        roleId: 'guest',
+        orgId: orgs[0]?.id || null,
+        name: 'Пользователь Telegram'
+    };
+
+    // Массив поручений
+    let tasks = [];
+
+    // Состояние конструктора таблицы для создаваемого поручения
+    let tableBuilderState = {
+        columns: [], // { id, title, type, sum }
+        rows: []     // [ [value, value, ...], ... ]
+    };
+
+    let selectedTaskId = null;
+
+    // -------------
+    // УТИЛИТЫ
+    // -------------
+    function $(id) {
+        return document.getElementById(id);
+    }
+
+    function getRoleById(id) {
+        return roles.find(r => r.id === id) || null;
+    }
+
+    function getOrgById(id) {
+        return orgs.find(o => o.id === id) || null;
+    }
+
+    function saveUserToStorage() {
+        try {
+            localStorage.setItem('ufks_user', JSON.stringify(currentUser));
+        } catch (e) {}
+    }
+
+    function loadUserFromStorage() {
+        try {
+            const raw = localStorage.getItem('ufks_user');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && parsed.roleId && getRoleById(parsed.roleId)) {
+                    currentUser = parsed;
+                }
+            }
+        } catch (e) {}
+    }
+
+    function formatDateHuman(dateStr) {
+        if (!dateStr) return 'Не указан';
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
+
+    function computeDeadlineCountdown(dateStr) {
+        if (!dateStr) return '';
+        const deadline = new Date(dateStr);
+        const now = new Date();
+        if (isNaN(deadline.getTime())) return '';
+        const diffMs = deadline - now;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+
+        if (diffMs < 0) {
+            return `Срок истёк ${Math.abs(diffDays)} дн. назад`;
+        }
+        return `До дедлайна: ${diffDays} дн. ${diffHours} ч.`;
+    }
+
+    function getStatusLabel(status) {
+        switch (status) {
+            case 'new': return 'Новое';
+            case 'in_progress': return 'В работе';
+            case 'done': return 'Исполнено';
+            case 'overdue': return 'Просрочено';
+            default: return '—';
+        }
+    }
+
+    // -------------
+    // ИНИЦИАЛИЗАЦИЯ РОЛЕЙ И ОРГАНИЗАЦИЙ
+    // -------------
+    function initRoleAndOrgSelects() {
+        const roleSelect = $('roleSelect');
+        const orgSelect = $('orgSelect');
+
+        roleSelect.innerHTML = '';
+        roles.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = `${r.label} (${r.person})`;
+            if (r.id === 'guest') {
+                opt.textContent = 'Гость (население)';
+            }
+            roleSelect.appendChild(opt);
+        });
+
+        orgSelect.innerHTML = '';
+        orgs.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.id;
+            opt.textContent = o.name;
+            orgSelect.appendChild(opt);
+        });
+
+        // Заполняем получателей-сотрудников
+        const recipientPersonSelect = $('recipientPersonSelect');
+        recipientPersonSelect.innerHTML = '';
+        staffRecipients.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.label;
+            recipientPersonSelect.appendChild(opt);
+        });
+
+        // Организации для поручения
+        const recipientOrgSelect = $('recipientOrgSelect');
+        recipientOrgSelect.innerHTML = '';
+        orgs.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.id;
+            opt.textContent = o.name;
+            recipientOrgSelect.appendChild(opt);
+        });
+    }
+
+    // -------------
+    // ОТОБРАЖЕНИЕ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+    // -------------
+    function updateUserUI() {
+        const role = getRoleById(currentUser.roleId) || getRoleById('guest');
+        const org = getOrgById(currentUser.orgId) || orgs[0];
+
+        $('headerCurrentRole').textContent = role.label;
+        $('chipRoleSummary').textContent = `Роль: ${role.label}`;
+        $('profileRole').textContent = `${role.label}${role.person ? ' — ' + role.person : ''}`;
+        $('profileOrg').textContent = org ? org.name : 'Не выбрана';
+        $('profileAccess').textContent = role.access || '—';
+        $('profileName').textContent = currentUser.name || 'Пользователь Telegram';
+
+        // Навигация по доступу (пока просто подсказки, без жесткого запрета)
+        const canCreateTasks = role.id !== 'guest';
+        $('btnOpenNewTask').disabled = !canCreateTasks;
+        $('btnNewTaskFromTasks').disabled = !canCreateTasks;
+
+        // Визуально подсказка для гостя
+        if (!canCreateTasks) {
+            $('btnOpenNewTask').style.opacity = '0.6';
+            $('btnNewTaskFromTasks').style.opacity = '0.6';
+        } else {
+            $('btnOpenNewTask').style.opacity = '1';
+            $('btnNewTaskFromTasks').style.opacity = '1';
+        }
+    }
+
+    // -------------
+    // НАВИГАЦИЯ ПО ЭКРАНАМ
+    // -------------
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const screen = $('screen-' + screenId);
+        if (screen) screen.classList.add('active');
+
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            if (item.dataset.screen === screenId) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    function initBottomNav() {
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const screenId = item.dataset.screen;
+                switchScreen(screenId);
+            });
+        });
+    }
+
+    // -------------
+    // МОДАЛКИ (ОБЩЕЕ)
+    // -------------
+    function openModal(id) {
+        const el = $(id);
+        if (el) el.classList.add('visible');
+    }
+
+    function closeModal(id) {
+        const el = $(id);
+        if (el) el.classList.remove('visible');
+    }
+
+    function initModalCloseButtons() {
+        document.querySelectorAll('.modal-close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.close;
+                if (target) closeModal(target);
+            });
+        });
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) {
+                    backdrop.classList.remove('visible');
+                }
+            });
+        });
+    }
+
+    // -------------
+    // РОЛЬ ПРИ ВХОДЕ
+    // -------------
+    function showRoleModalIfNeeded() {
+        const modal = $('roleModal');
+        if (!currentUser.roleId) {
+            modal.classList.add('visible');
+        } else {
+            // Проставляем значения в селекторы
+            const roleSelect = $('roleSelect');
+            const orgSelect = $('orgSelect');
+            if (roleSelect && getRoleById(currentUser.roleId)) {
+                roleSelect.value = currentUser.roleId;
+            }
+            if (orgSelect && getOrgById(currentUser.orgId)) {
+                orgSelect.value = currentUser.orgId;
+            }
+        }
+    }
+
+    function initRoleModal() {
+        const modal = $('roleModal');
+        const btnConfirm = $('btnConfirmRole');
+
+        btnConfirm.addEventListener('click', () => {
+            const roleId = $('roleSelect').value;
+            const orgId = $('orgSelect').value;
+
+            if (!roleId) return;
+            const role = getRoleById(roleId) || getRoleById('guest');
+            currentUser.roleId = role.id;
+            currentUser.orgId = orgId || orgs[0].id;
+
+            saveUserToStorage();
+            updateUserUI();
+
+            modal.classList.remove('visible');
+        });
+    }
+
+    // -------------
+    // КНОПКИ НА ГЛАВНОМ ЭКРАНЕ
+    // -------------
+    function initHomeButtons() {
+        $('btnOpenNewTask').addEventListener('click', () => {
+            const role = getRoleById(currentUser.roleId);
+            if (role.id === 'guest') {
+                alert('Создавать поручения могут только сотрудники Управления. Войдите под своей должностью через профиль.');
+                return;
+            }
+            resetNewTaskForm();
+            openModal('modalNewTaskBackdrop');
+        });
+
+        $('btnGotoTasksScreen').addEventListener('click', () => {
+            switchScreen('tasks');
+        });
+
+        $('btnGotoAiScreen').addEventListener('click', () => {
+            switchScreen('ai');
+        });
+
+        $('btnGotoEventsScreen').addEventListener('click', () => {
+            switchScreen('events');
+        });
+
+        $('btnGotoProfileScreen').addEventListener('click', () => {
+            switchScreen('profile');
+        });
+
+        $('btnGuestInfo').addEventListener('click', () => {
+            alert('Режим гостя предназначен для населения: доступ к ИИ-ассистенту, мероприятиям, секциям и результатам. Для работы с поручениями войдите под должностью.');
+        });
+
+        $('btnOpenProfileFromHeader').addEventListener('click', () => {
+            switchScreen('profile');
+        });
+
+        $('btnNewTaskFromTasks').addEventListener('click', () => {
+            const role = getRoleById(currentUser.roleId);
+            if (role.id === 'guest') {
+                alert('Создавать поручения могут только сотрудники Управления. Войдите под своей должностью через профиль.');
+                return;
+            }
+            resetNewTaskForm();
+            openModal('modalNewTaskBackdrop');
+        });
+    }
+
+    // -------------
+    // ПРОФИЛЬ
+    // -------------
+    function initProfileActions() {
+        $('btnChangeRole').addEventListener('click', () => {
+            $('roleModal').classList.add('visible');
+        });
+
+        $('btnResetToGuest').addEventListener('click', () => {
+            currentUser.roleId = 'guest';
+            currentUser.orgId = orgs[0]?.id || null;
+            saveUserToStorage();
+            updateUserUI();
+            $('roleModal').classList.add('visible');
+        });
+    }
+
+    // -------------
+    // ТЕЛЕГРАМ ИНИТ
+    // -------------
+    function initTelegram() {
         if (window.Telegram && window.Telegram.WebApp) {
             const tg = window.Telegram.WebApp;
             tg.ready();
-            // Можно установить тему под тёмный/светлый Telegram
-            document.body.style.background = tg.colorScheme === 'dark' ? '#020617' : '#f5f6f8';
-            document.body.dataset.tgTheme = tg.colorScheme;
-
-            const userLabel = document.getElementById('sidebarUser');
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                userLabel.textContent = tg.initDataUnsafe.user.first_name + (tg.initDataUnsafe.user.last_name ? (' ' + tg.initDataUnsafe.user.last_name) : '');
-            } else {
-                userLabel.textContent = 'Пользователь Telegram';
+                const u = tg.initDataUnsafe.user;
+                currentUser.name = u.first_name + (u.last_name ? (' ' + u.last_name) : '');
             }
-        }
-    })();
-
-    // -----------------------
-    // Демо-данные поручений
-    // (в боевом варианте они приходят с сервера)
-    // -----------------------
-    const tasks = [
-        {
-            id: 1,
-            text: 'Подготовить сводный план массовых спортивных мероприятий на II квартал',
-            level: 'region',
-            levelLabel: 'Область → район',
-            responsible: 'Отдел массового спорта',
-            deadline: '15.03.2026',
-            status: 'in_progress'
-        },
-        {
-            id: 2,
-            text: 'Обновить сведения о состоянии спортивных объектов (стадион, манеж, ДЮСШ)',
-            level: 'district',
-            levelLabel: 'Район → организация',
-            responsible: 'Отдел ФКиС г. Караганды',
-            deadline: '01.04.2026',
-            status: 'new'
-        },
-        {
-            id: 3,
-            text: 'Представить отчёт о выполнении нормативов ГТО среди школьников',
-            level: 'district',
-            levelLabel: 'Район → организация',
-            responsible: 'Отдел ФКиС г. Темиртау',
-            deadline: '28.02.2026',
-            status: 'overdue'
-        },
-        {
-            id: 4,
-            text: 'Согласовать график учебно-тренировочных сборов сборной области',
-            level: 'region',
-            levelLabel: 'Область → район',
-            responsible: 'Отдел спорта высших достижений',
-            deadline: '05.03.2026',
-            status: 'done'
-        },
-        {
-            id: 5,
-            text: 'Представить информацию по кадровому обеспечению тренерского состава',
-            level: 'org',
-            levelLabel: 'Внутри организации',
-            responsible: 'ДЮСШ г. Караганды',
-            deadline: '10.03.2026',
-            status: 'in_progress'
-        },
-        {
-            id: 6,
-            text: 'Обновить паспорт спортивного объекта «Стадион Шахтёр»',
-            level: 'org',
-            levelLabel: 'Внутри организации',
-            responsible: 'Стадион «Шахтёр»',
-            deadline: '20.03.2026',
-            status: 'new'
-        },
-        {
-            id: 7,
-            text: 'Подготовить свод по финансированию участия в республиканских соревнованиях',
-            level: 'region',
-            levelLabel: 'Область → район',
-            responsible: 'Финансово-экономический отдел',
-            deadline: '30.03.2026',
-            status: 'in_progress'
-        },
-        {
-            id: 8,
-            text: 'Предоставить фотоотчёт о проведении областного турнира по футболу',
-            level: 'district',
-            levelLabel: 'Район → организация',
-            responsible: 'Отдел ФКиС г. Балхаша',
-            deadline: '18.03.2026',
-            status: 'done'
-        }
-    ];
-
-    const statusLabels = {
-        new: 'Новое',
-        in_progress: 'В работе',
-        done: 'Исполнено',
-        overdue: 'Просрочено'
-    };
-
-    function getStatusClass(status) {
-        switch (status) {
-            case 'new': return 'status-new';
-            case 'in_progress': return 'status-in-progress';
-            case 'done': return 'status-done';
-            case 'overdue': return 'status-overdue';
-            default: return '';
         }
     }
 
-    // -----------------------
-    // Навигация между страницами
-    // -----------------------
-    const navItems = document.querySelectorAll('.nav-item');
-    const pages = document.querySelectorAll('.page');
-    const pageTitle = document.getElementById('pageTitle');
-
-    const pageTitleMap = {
-        dashboard: 'Сводка по управлению',
-        structure: 'Структура управления',
-        tasks: 'Реестр поручений',
-        tables: 'Таблицы и отчёты'
-    };
-
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const page = item.dataset.page;
-            navItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-
-            pages.forEach(p => p.style.display = 'none');
-            document.getElementById('page-' + page).style.display = 'block';
-
-            pageTitle.textContent = pageTitleMap[page] || '';
-        });
-    });
-
-    document.getElementById('btnGotoTasks').addEventListener('click', () => {
-        document.querySelector('.nav-item[data-page="tasks"]').click();
-    });
-
-    // -----------------------
-    // Рендер таблицы поручений
-    // -----------------------
-    const tasksTableBody = document.getElementById('tasksTableBody');
-    const filterStatus = document.getElementById('filterStatus');
-    const filterLevel = document.getElementById('filterLevel');
-    const filterSearch = document.getElementById('filterSearch');
-    const sidebarTasksCount = document.getElementById('sidebarTasksCount');
-    const totalTasksBadge = document.getElementById('totalTasksBadge');
-
+    // -------------
+    // ПРИКАЗЫ / ПОРУЧЕНИЯ — РЕНДЕР
+    // -------------
     function renderTasks() {
-        const statusValue = filterStatus.value;
-        const levelValue = filterLevel.value;
-        const searchValue = filterSearch.value.toLowerCase();
+        const container = $('tasksList');
+        const filterStatus = $('filterStatus').value;
+        const filterText = $('filterText').value.toLowerCase();
+
+        container.innerHTML = '';
 
         const filtered = tasks.filter(t => {
-            if (statusValue !== 'all' && t.status !== statusValue) return false;
-            if (levelValue !== 'all' && t.level !== levelValue) return false;
-            if (searchValue && !t.text.toLowerCase().includes(searchValue)) return false;
+            if (filterStatus !== 'all' && t.status !== filterStatus) return false;
+            if (filterText && !t.text.toLowerCase().includes(filterText)) return false;
             return true;
         });
 
-        tasksTableBody.innerHTML = '';
-        filtered.forEach((t, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${t.text}</td>
-                <td><span class="tag">${t.levelLabel}</span></td>
-                <td>${t.responsible}</td>
-                <td>${t.deadline}</td>
-                <td><span class="status-pill ${getStatusClass(t.status)}">${statusLabels[t.status]}</span></td>
-            `;
-            tasksTableBody.appendChild(tr);
-        });
-
-        sidebarTasksCount.textContent = tasks.length;
-        totalTasksBadge.textContent = 'Всего: ' + tasks.length;
-    }
-
-    filterStatus.addEventListener('change', renderTasks);
-    filterLevel.addEventListener('change', renderTasks);
-    filterSearch.addEventListener('input', () => {
-        // небольшая задержка не нужна, фильтрация лёгкая
-        renderTasks();
-    });
-
-    document.getElementById('btnResetFilters').addEventListener('click', () => {
-        filterStatus.value = 'all';
-        filterLevel.value = 'all';
-        filterSearch.value = '';
-        renderTasks();
-    });
-
-    // -----------------------
-    // Статусы для дашборда и контрольные точки
-    // -----------------------
-    const dashboardStatusTable = document.getElementById('dashboardStatusTable');
-    const milestonesTable = document.getElementById('milestonesTable');
-
-    function renderDashboard() {
-        // Подсчёт статусов
-        const counters = {
-            new: 0,
-            in_progress: 0,
-            done: 0,
-            overdue: 0
-        };
-        tasks.forEach(t => counters[t.status]++);
-
-        dashboardStatusTable.innerHTML = '';
-        Object.keys(counters).forEach(key => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${statusLabels[key]}</td>
-                <td>${counters[key]}</td>
-            `;
-            dashboardStatusTable.appendChild(tr);
-        });
-
-        // Контрольные точки — просто берём первые 4 поручения
-        milestonesTable.innerHTML = '';
-        tasks.slice(0, 4).forEach(t => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${t.deadline}</td>
-                <td>${t.text}</td>
-                <td>${t.responsible}</td>
-                <td><span class="status-pill ${getStatusClass(t.status)}">${statusLabels[t.status]}</span></td>
-            `;
-            milestonesTable.appendChild(tr);
-        });
-    }
-
-    // -----------------------
-    // Роли и уровни доступа (демо)
-    // -----------------------
-    const roleSelect = document.getElementById('roleSelect');
-    const currentRoleLabel = document.getElementById('currentRoleLabel');
-    const sidebarRole = document.getElementById('sidebarRole');
-    const sidebarLevel = document.getElementById('sidebarLevel');
-
-    const roleInfo = {
-        guest: { label: 'Гость / просмотр', level: 'только чтение' },
-        head: { label: 'Руководитель управления', level: 'полный доступ' },
-        deputy: { label: 'Заместитель руководителя', level: 'создание поручений в своей зоне' },
-        department_head: { label: 'Начальник отдела', level: 'поручения по своему направлению' },
-        specialist: { label: 'Главный специалист', level: 'исполнение и отчётность' },
-        org_head: { label: 'Руководитель спорторганизации', level: 'исполнение, загрузка отчётов' }
-    };
-
-    function updateRoleUI() {
-        const value = roleSelect.value;
-        const info = roleInfo[value];
-        currentRoleLabel.textContent = info.label;
-        sidebarRole.textContent = info.label;
-        sidebarLevel.textContent = info.level;
-
-        // Ограничение создания поручений для некоторых ролей
-        const btnNewTask = document.getElementById('btnNewTask');
-        if (['head', 'deputy', 'department_head'].includes(value)) {
-            btnNewTask.disabled = false;
-            btnNewTask.style.opacity = '1';
-        } else {
-            btnNewTask.disabled = true;
-            btnNewTask.style.opacity = '0.5';
+        if (filtered.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'muted-small';
+            empty.textContent = 'Поручения пока не созданы.';
+            container.appendChild(empty);
+            return;
         }
+
+        filtered.forEach(task => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.dataset.id = task.id;
+
+            const role = getRoleById(task.creatorRoleId);
+            const recipientTitle = task.recipientType === 'person'
+                ? staffRecipients.find(r => r.id === task.recipientId)?.label || 'Сотрудник'
+                : getOrgById(task.recipientId)?.name || 'Организация';
+
+            const statusLabel = getStatusLabel(task.status);
+            const countdown = computeDeadlineCountdown(task.deadline);
+
+            const statusClassMap = {
+                'new': 'new',
+                'in_progress': 'in_progress',
+                'done': 'done',
+                'overdue': 'overdue'
+            };
+
+            card.innerHTML = `
+                <div class="task-top-row">
+                    <div class="task-title">${task.text || '(Без текста)'}</div>
+                    <span class="badge-status ${statusClassMap[task.status] || ''}">
+                        ${statusLabel}
+                    </span>
+                </div>
+                <div class="task-meta">
+                    Кому: ${recipientTitle}
+                </div>
+                <div class="task-meta">
+                    Дедлайн: <span class="badge-deadline">${formatDateHuman(task.deadline)}</span>
+                    ${countdown ? ' · ' + countdown : ''}
+                </div>
+                <div class="task-meta">
+                    Создано: ${role ? role.label : '—'}
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                openTaskDetails(task.id);
+            });
+
+            container.appendChild(card);
+        });
     }
 
-    roleSelect.addEventListener('change', updateRoleUI);
+    // -------------
+    // НОВОЕ ПОРУЧЕНИЕ — КОНСТРУКТОР ТАБЛИЦЫ
+    // -------------
+    function resetTableBuilder() {
+        tableBuilderState = {
+            columns: [],
+            rows: []
+        };
+        renderColumnsConfig();
+        renderBuilderTable();
+    }
 
-    // -----------------------
-    // Кнопки «Новое поручение», «Скачать шаблон», «Загрузить отчёт»
-    // (сейчас просто алерты, дальше можно привязать сервер)
-    // -----------------------
-    document.getElementById('btnNewTask').addEventListener('click', () => {
-        alert('Здесь будет форма создания поручения (через ваш сервер). Роли: Руководитель / Заместитель / Начальник отдела.');
-    });
+    function addColumn() {
+        const id = 'col_' + (tableBuilderState.columns.length + 1);
+        tableBuilderState.columns.push({
+            id,
+            title: 'Колонка ' + tableBuilderState.columns.length,
+            type: 'text',
+            sum: false
+        });
+        // Для каждой существующей строки добавляем пустую ячейку
+        tableBuilderState.rows.forEach(row => row.push(''));
+        renderColumnsConfig();
+        renderBuilderTable();
+    }
 
-    document.getElementById('btnDownloadTemplate').addEventListener('click', () => {
-        alert('Здесь можно отдать ссылку на скачивание Excel-шаблона с вашего сервера.');
-    });
+    function removeColumn(colId) {
+        const idx = tableBuilderState.columns.findIndex(c => c.id === colId);
+        if (idx === -1) return;
+        tableBuilderState.columns.splice(idx, 1);
+        tableBuilderState.rows.forEach(row => row.splice(idx, 1));
+        renderColumnsConfig();
+        renderBuilderTable();
+    }
 
-    document.getElementById('btnUploadReport').addEventListener('click', () => {
-        alert('Здесь должна открываться форма загрузки файла и отправки его на сервер.');
-    });
+    function addRow() {
+        const colsCount = tableBuilderState.columns.length;
+        const row = Array.from({ length: colsCount }, () => '');
+        tableBuilderState.rows.push(row);
+        renderBuilderTable();
+    }
 
-    document.getElementById('btnSyncTelegram').addEventListener('click', () => {
-        alert('В боевой версии роль будет определяться автоматически по данным Telegram-пользователя и вашей базе.');
-    });
+    function clearTable() {
+        tableBuilderState.rows = [];
+        tableBuilderState.columns = [];
+        renderColumnsConfig();
+        renderBuilderTable();
+    }
 
-    // -----------------------
-    // Инициализация
-    // -----------------------
-    function init() {
+    function renderColumnsConfig() {
+        const container = $('columnsConfig');
+        container.innerHTML = '';
+
+        if (tableBuilderState.columns.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'muted-small';
+            empty.textContent = 'Добавьте хотя бы одну колонку, чтобы начать работать с таблицей.';
+            container.appendChild(empty);
+            return;
+        }
+
+        tableBuilderState.columns.forEach((col, index) => {
+            const row = document.createElement('div');
+            row.className = 'column-config-row';
+
+            row.innerHTML = `
+                <div>
+                    <input class="input" value="${col.title}" data-col-id="${col.id}" data-field="title" />
+                    <small>Колонка ${index + 1}</small>
+                </div>
+                <div>
+                    <select class="select" data-col-id="${col.id}" data-field="type">
+                        <option value="text"${col.type === 'text' ? ' selected' : ''}>Текст</option>
+                        <option value="number"${col.type === 'number' ? ' selected' : ''}>Число (с суммой)</option>
+                        <option value="date"${col.type === 'date' ? ' selected' : ''}>Дата</option>
+                    </select>
+                    <small class="sum-label">
+                        <input type="checkbox" data-col-id="${col.id}" data-field="sum" ${col.sum ? 'checked' : ''} ${col.type !== 'number' ? 'disabled' : ''} />
+                        &nbsp;Итого по колонке
+                    </small>
+                </div>
+                <button class="btn-icon-small" data-remove-col="${col.id}" title="Удалить колонку">✕</button>
+            `;
+
+            container.appendChild(row);
+        });
+
+        // Обработчики ввода по колонкам
+        container.querySelectorAll('input[data-col-id][data-field="title"]').forEach(input => {
+            input.addEventListener('input', () => {
+                const col = tableBuilderState.columns.find(c => c.id === input.dataset.colId);
+                if (col) {
+                    col.title = input.value;
+                    renderBuilderTable(); // обновить заголовки
+                }
+            });
+        });
+
+        container.querySelectorAll('select[data-col-id][data-field="type"]').forEach(select => {
+            select.addEventListener('change', () => {
+                const col = tableBuilderState.columns.find(c => c.id === select.dataset.colId);
+                if (col) {
+                    col.type = select.value;
+                    if (col.type !== 'number') {
+                        col.sum = false;
+                    }
+                    renderColumnsConfig();
+                    renderBuilderTable();
+                }
+            });
+        });
+
+        container.querySelectorAll('input[data-col-id][data-field="sum"]').forEach(ch => {
+            ch.addEventListener('change', () => {
+                const col = tableBuilderState.columns.find(c => c.id === ch.dataset.colId);
+                if (col && col.type === 'number') {
+                    col.sum = ch.checked;
+                    renderBuilderTable();
+                }
+            });
+        });
+
+        container.querySelectorAll('button[data-remove-col]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                removeColumn(btn.dataset.removeCol);
+            });
+        });
+    }
+
+    function renderBuilderTable() {
+        const table = $('builderTable');
+        table.innerHTML = '';
+
+        if (tableBuilderState.columns.length === 0) {
+            table.innerHTML = `
+                <tbody>
+                    <tr><td class="muted-small">Таблица ещё не настроена.</td></tr>
+                </tbody>
+            `;
+            return;
+        }
+
+        const thead = document.createElement('thead');
+        const trHead = document.createElement('tr');
+        tableBuilderState.columns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col.title || 'Колонка';
+            trHead.appendChild(th);
+        });
+        thead.appendChild(trHead);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+
+        tableBuilderState.rows.forEach((row, rowIndex) => {
+            const tr = document.createElement('tr');
+            tableBuilderState.columns.forEach((col, colIndex) => {
+                const td = document.createElement('td');
+                const input = document.createElement('input');
+                input.className = 'builder-input';
+                input.value = row[colIndex] || '';
+                input.dataset.rowIndex = rowIndex;
+                input.dataset.colIndex = colIndex;
+
+                if (col.type === 'number') {
+                    input.type = 'number';
+                } else if (col.type === 'date') {
+                    input.type = 'date';
+                } else {
+                    input.type = 'text';
+                }
+
+                input.addEventListener('input', () => {
+                    let value = input.value;
+                    if (col.type === 'number') {
+                        // оставляем строку, но для суммирования будем парсить
+                    }
+                    tableBuilderState.rows[rowIndex][colIndex] = value;
+                    renderFooterRow(); // обновить суммы
+                });
+
+                td.appendChild(input);
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+
+        renderFooterRow();
+    }
+
+    function renderFooterRow() {
+        const table = $('builderTable');
+        // удалить старый tfoot
+        const oldTfoot = table.querySelector('tfoot');
+        if (oldTfoot) oldTfoot.remove();
+
+        const hasColumnsWithSum = tableBuilderState.columns.some(c => c.type === 'number' && c.sum);
+        if (!hasColumnsWithSum || tableBuilderState.rows.length === 0) return;
+
+        const tfoot = document.createElement('tfoot');
+        const tr = document.createElement('tr');
+        tr.className = 'builder-footer';
+
+        tableBuilderState.columns.forEach((col, colIndex) => {
+            const td = document.createElement('td');
+            if (col.type === 'number' && col.sum) {
+                let sum = 0;
+                tableBuilderState.rows.forEach(row => {
+                    const val = parseFloat(row[colIndex]);
+                    if (!isNaN(val)) sum += val;
+                });
+                td.textContent = sum.toLocaleString('ru-RU');
+            } else if (colIndex === 0) {
+                td.textContent = 'Итого';
+            } else {
+                td.textContent = '';
+            }
+            tr.appendChild(td);
+        });
+
+        tfoot.appendChild(tr);
+        table.appendChild(tfoot);
+    }
+
+    function initTableBuilderControls() {
+        $('btnAddColumn').addEventListener('click', () => {
+            addColumn();
+        });
+        $('btnAddRow').addEventListener('click', () => {
+            if (tableBuilderState.columns.length === 0) {
+                addColumn();
+            }
+            addRow();
+        });
+        $('btnClearTable').addEventListener('click', () => {
+            if (confirm('Очистить таблицу полностью?')) {
+                clearTable();
+            }
+        });
+    }
+
+    // -------------
+    // НОВОЕ ПОРУЧЕНИЕ — ФОРМА
+    // -------------
+    let currentRecipientType = 'person'; // 'person' or 'org'
+
+    function setRecipientType(type) {
+        currentRecipientType = type;
+        if (type === 'person') {
+            $('recipientPersonGroup').style.display = 'block';
+            $('recipientOrgGroup').style.display = 'none';
+        } else {
+            $('recipientPersonGroup').style.display = 'none';
+            $('recipientOrgGroup').style.display = 'block';
+        }
+
+        // Подсветка кнопок
+        $('btnRecipientPerson').style.background = type === 'person' ? '#e5f0ff' : '#f9fafb';
+        $('btnRecipientOrg').style.background = type === 'org' ? '#e5f0ff' : '#f9fafb';
+    }
+
+    function resetNewTaskForm() {
+        setRecipientType('person');
+        $('taskText').value = '';
+        $('taskDeadline').value = '';
+        $('deadlineCountdownText').textContent = '';
+        resetTableBuilder();
+    }
+
+    function initNewTaskForm() {
+        $('btnRecipientPerson').addEventListener('click', () => setRecipientType('person'));
+        $('btnRecipientOrg').addEventListener('click', () => setRecipientType('org'));
+
+        $('taskDeadline').addEventListener('change', () => {
+            $('deadlineCountdownText').textContent = computeDeadlineCountdown($('taskDeadline').value);
+        });
+
+        $('btnSaveTask').addEventListener('click', () => {
+            const role = getRoleById(currentUser.roleId);
+            if (role.id === 'guest') {
+                alert('Создавать поручения могут только сотрудники Управления.');
+                return;
+            }
+
+            const text = $('taskText').value.trim();
+            const deadline = $('taskDeadline').value;
+            let recipientId = null;
+
+            if (currentRecipientType === 'person') {
+                recipientId = $('recipientPersonSelect').value;
+            } else {
+                recipientId = $('recipientOrgSelect').value;
+            }
+
+            if (!text) {
+                alert('Пожалуйста, укажите текст поручения.');
+                return;
+            }
+            if (!deadline) {
+                alert('Пожалуйста, выберите дедлайн.');
+                return;
+            }
+            if (!recipientId) {
+                alert('Пожалуйста, выберите получателя.');
+                return;
+            }
+
+            const newTask = {
+                id: 'task_' + (tasks.length + 1) + '_' + Date.now(),
+                text,
+                status: 'new',
+                creatorRoleId: currentUser.roleId,
+                recipientType: currentRecipientType,
+                recipientId,
+                deadline,
+                createdAt: new Date().toISOString(),
+                table: JSON.parse(JSON.stringify(tableBuilderState))
+            };
+
+            tasks.unshift(newTask);
+            renderTasks();
+            closeModal('modalNewTaskBackdrop');
+        });
+    }
+
+    // -------------
+    // ДЕТАЛИ ПОРУЧЕНИЯ
+    // -------------
+    function openTaskDetails(taskId) {
+        const task = tasks.find(t => t.id === taskId);
+        if (!task) return;
+        selectedTaskId = taskId;
+
+        $('taskDetailsTitle').textContent = 'Поручение';
+        const recipientTitle = task.recipientType === 'person'
+            ? (staffRecipients.find(r => r.id === task.recipientId)?.label || 'Сотрудник')
+            : (getOrgById(task.recipientId)?.name || 'Организация');
+
+        $('taskDetailsMeta').textContent = `Кому: ${recipientTitle} · Дедлайн: ${formatDateHuman(task.deadline)}`;
+        $('taskDetailsText').textContent = task.text;
+        $('taskDetailsStatus').value = task.status;
+
+        const table = $('taskDetailsTable');
+        table.innerHTML = '';
+
+        if (!task.table || !task.table.columns || task.table.columns.length === 0) {
+            table.innerHTML = '<tbody><tr><td class="muted-small">Таблица к поручению не прикреплена.</td></tr></tbody>';
+        } else {
+            const columns = task.table.columns;
+            const rows = task.table.rows || [];
+
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            columns.forEach(col => {
+                const th = document.createElement('th');
+                th.textContent = col.title || 'Колонка';
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                columns.forEach((col, colIndex) => {
+                    const td = document.createElement('td');
+                    const val = row[colIndex] || '';
+                    td.textContent = val;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Футер с суммами, если есть
+            const hasColumnsWithSum = columns.some(c => c.type === 'number' && c.sum);
+            if (hasColumnsWithSum && rows.length > 0) {
+                const tfoot = document.createElement('tfoot');
+                const tr = document.createElement('tr');
+                tr.className = 'builder-footer';
+
+                columns.forEach((col, colIndex) => {
+                    const td = document.createElement('td');
+                    if (col.type === 'number' && col.sum) {
+                        let sum = 0;
+                        rows.forEach(r => {
+                            const val = parseFloat(r[colIndex]);
+                            if (!isNaN(val)) sum += val;
+                        });
+                        td.textContent = sum.toLocaleString('ru-RU');
+                    } else if (colIndex === 0) {
+                        td.textContent = 'Итого';
+                    }
+                    tr.appendChild(td);
+                });
+
+                tfoot.appendChild(tr);
+                table.appendChild(tfoot);
+            }
+        }
+
+        openModal('modalTaskDetailsBackdrop');
+    }
+
+    function initTaskDetailsActions() {
+        $('btnUpdateTaskStatus').addEventListener('click', () => {
+            if (!selectedTaskId) return;
+            const task = tasks.find(t => t.id === selectedTaskId);
+            if (!task) return;
+
+            task.status = $('taskDetailsStatus').value;
+            renderTasks();
+            closeModal('modalTaskDetailsBackdrop');
+        });
+    }
+
+    // -------------
+    // МЕРОПРИЯТИЯ / СЕКЦИИ / РЕЗУЛЬТАТЫ — ДЕМО ДАННЫЕ
+    // -------------
+    const demoEvents = [
+        {
+            title: 'Областной турнир по футболу среди юношей',
+            date: '2025-12-10',
+            place: 'г. Караганда, стадион «Шахтёр»',
+            org: 'Отдел ФКиС г. Караганда'
+        },
+        {
+            title: 'Фестиваль массового бега «Здоровая область»',
+            date: '2025-12-20',
+            place: 'г. Темиртау, набережная',
+            org: 'Отдел ФКиС г. Темиртау'
+        }
+    ];
+
+    const demoSections = [
+        {
+            sport: 'Футбол',
+            place: 'ДЮСШ №1 г. Караганды',
+            trainer: 'Иванов А.А.',
+            schedule: 'Пн, Ср, Пт — 15:00'
+        },
+        {
+            sport: 'Бокс',
+            place: 'ОСДЮШОР №3',
+            trainer: 'Сергеев Б.Б.',
+            schedule: 'Вт, Чт, Сб — 17:00'
+        }
+    ];
+
+    const demoResults = [
+        {
+            athlete: 'Петров Д.',
+            org: 'ШВСМ по олимпийским видам спорта',
+            event: 'Чемпионат РК по лёгкой атлетике',
+            result: '1 место',
+            date: '2025-11-01'
+        },
+        {
+            athlete: 'Садыкова М.',
+            org: 'ЦПОР',
+            event: 'Кубок Азии по таэквондо',
+            result: '2 место',
+            date: '2025-10-15'
+        }
+    ];
+
+    function renderEventsSectionsResults() {
+        const eventsList = $('eventsList');
+        eventsList.innerHTML = '';
+        demoEvents.forEach(e => {
+            const item = document.createElement('div');
+            item.className = 'list-item-simple';
+            item.innerHTML = `
+                <div class="list-item-title">${e.title}</div>
+                <div class="list-item-meta">Дата: ${formatDateHuman(e.date)} · Место: ${e.place}</div>
+                <div class="list-item-meta">Ответственный: ${e.org}</div>
+            `;
+            eventsList.appendChild(item);
+        });
+
+        const sectionsList = $('sectionsList');
+        sectionsList.innerHTML = '';
+        demoSections.forEach(s => {
+            const item = document.createElement('div');
+            item.className = 'list-item-simple';
+            item.innerHTML = `
+                <div class="list-item-title">${s.sport}</div>
+                <div class="list-item-meta">Локация: ${s.place}</div>
+                <div class="list-item-meta">Тренер: ${s.trainer} · Расписание: ${s.schedule}</div>
+            `;
+            sectionsList.appendChild(item);
+        });
+
+        const resultsList = $('resultsList');
+        resultsList.innerHTML = '';
+        demoResults.forEach(r => {
+            const item = document.createElement('div');
+            item.className = 'list-item-simple';
+            item.innerHTML = `
+                <div class="list-item-title">${r.athlete}</div>
+                <div class="list-item-meta">${r.event} · Результат: ${r.result}</div>
+                <div class="list-item-meta">Организация: ${r.org} · Дата: ${formatDateHuman(r.date)}</div>
+            `;
+            resultsList.appendChild(item);
+        });
+    }
+
+    function initEventsTabs() {
+        const tabEvents = $('tabEvents');
+        const tabSections = $('tabSections');
+        const tabResults = $('tabResults');
+
+        function setPanel(panel) {
+            $('eventsPanel').style.display = panel === 'events' ? 'block' : 'none';
+            $('sectionsPanel').style.display = panel === 'sections' ? 'block' : 'none';
+            $('resultsPanel').style.display = panel === 'results' ? 'block' : 'none';
+
+            tabEvents.classList.toggle('active', panel === 'events');
+            tabSections.classList.toggle('active', panel === 'sections');
+            tabResults.classList.toggle('active', panel === 'results');
+        }
+
+        tabEvents.addEventListener('click', () => setPanel('events'));
+        tabSections.addEventListener('click', () => setPanel('sections'));
+        tabResults.addEventListener('click', () => setPanel('results'));
+    }
+
+    // -------------
+    // ИИ-АССИСТЕНТ (ДЕМО)
+    // -------------
+    function addAiMessage(from, text) {
+        const chat = $('aiChat');
+        const wrap = document.createElement('div');
+        wrap.className = 'ai-msg ' + (from === 'user' ? 'ai-msg-user' : 'ai-msg-bot');
+        const span = document.createElement('span');
+        span.textContent = text;
+        wrap.appendChild(span);
+        chat.appendChild(wrap);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function handleAiQuestion(q) {
+        addAiMessage('user', q);
+
+        // Очень простая демонстрационная логика
+        let answer = 'Я сохранил ваш вопрос. В боевой версии ассистент будет отвечать по базе данных Управления.';
+
+        const lower = q.toLowerCase();
+
+        if (lower.includes('сооруж') || lower.includes('объект')) {
+            answer = 'В области функционирует более 400 спортивных сооружений разных уровней. Точная цифра и разрез по районам будет подгружаться из базы данных.';
+        } else if (lower.includes('кластер')) {
+            answer = 'Проект «Спортивный кластер» находится в стадии проектирования/реализации. В реальной системе здесь будет отображаться актуальный статус по данным отдела инфраструктуры.';
+        } else if (lower.includes('секц') || lower.includes('тренер')) {
+            answer = 'В области действуют секции по футболу, боксу, лёгкой атлетике, единоборствам и другим видам. В разделе «Секции и тренеры» можно будет найти расписание и контакты.';
+        } else if (lower.includes('строит') || lower.includes('реконструк')) {
+            answer = 'Ведётся строительство и реконструкция ряда объектов спорта. Ассистент сможет выдавать список по районам и срокам сдачи.';
+        }
+
+        setTimeout(() => {
+            addAiMessage('bot', answer);
+        }, 300);
+    }
+
+    function initAiAssistant() {
+        document.querySelectorAll('.ai-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const q = chip.dataset.q || chip.textContent;
+                handleAiQuestion(q);
+            });
+        });
+
+        $('aiSendBtn').addEventListener('click', () => {
+            const val = $('aiInput').value.trim();
+            if (!val) return;
+            $('aiInput').value = '';
+            handleAiQuestion(val);
+        });
+
+        $('aiInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('aiSendBtn').click();
+            }
+        });
+    }
+
+    // -------------
+    // INIT
+    // -------------
+    function initFilters() {
+        $('filterStatus').addEventListener('change', renderTasks);
+        $('filterText').addEventListener('input', renderTasks);
+    }
+
+    function initApp() {
+        initTelegram();
+        loadUserFromStorage();
+        initRoleAndOrgSelects();
+        initRoleModal();
+        showRoleModalIfNeeded();
+        updateUserUI();
+
+        initBottomNav();
+        initModalCloseButtons();
+        initHomeButtons();
+        initProfileActions();
+        initTableBuilderControls();
+        initNewTaskForm();
+        initTaskDetailsActions();
+        initEventsTabs();
+        initAiAssistant();
+        initFilters();
+
         renderTasks();
-        renderDashboard();
-        roleSelect.value = 'guest';
-        updateRoleUI();
+        renderEventsSectionsResults();
     }
 
-    init();
+    document.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
