@@ -774,3 +774,4 @@ function resetEmployee() {
     MODE = null;
     showScreen("modeScreen");
 }
+
