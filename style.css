@@ -1,1 +1,435 @@
+/* =============================================================
+   ОСНОВНОЙ СТИЛЬ ПРИЛОЖЕНИЯ
+   Apple-style, белый фон, тени, минимализм
+============================================================= */
 
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #f5f6fa;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    color: #111827;
+    height: 100%;
+}
+
+/* Экран */
+.screen {
+    display: none;
+    padding: 16px;
+    padding-bottom: 90px; /* место под нижнее меню */
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Заголовки */
+.screen-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+
+/* =============================================================
+   КНОПКИ
+============================================================= */
+
+.btn {
+    border-radius: 14px;
+    border: none;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.btn.wide {
+    width: 100%;
+}
+
+.btn.primary {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+}
+
+.btn.primary:hover {
+    box-shadow: 0 8px 28px rgba(37, 99, 235, 0.55);
+    transform: translateY(-1px);
+}
+
+.btn.secondary {
+    background: white;
+    color: #1f2937;
+    border: 1px solid #d1d5db;
+}
+
+.btn.danger {
+    background: #ef4444;
+    color: white;
+}
+
+
+/* =============================================================
+   ЭКРАН ВЫБОРА РЕЖИМА
+============================================================= */
+
+.mode-container {
+    background: white;
+    padding: 26px 20px 22px;
+    border-radius: 22px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.15);
+    border: 1px solid rgba(209,213,219,0.7);
+    text-align: center;
+    max-width: 390px;
+    margin: 40px auto;
+}
+
+.mode-container h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.mode-container .logo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+.mode-container .subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+
+/* =============================================================
+   СПИСКИ / ЛИСТЫ
+============================================================= */
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.list-item {
+    background: white;
+    padding: 12px 14px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.12);
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.list-item:hover {
+    transform: translateY(-1px);
+}
+
+.list-item-title {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.list-item-sub {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+
+/* =============================================================
+   ШАПКА
+============================================================= */
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.header-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    padding: 6px;
+    object-fit: contain;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.header-role {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.header-org {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+
+/* =============================================================
+   ПЛИТКИ ГЛАВНОГО МЕНЮ
+============================================================= */
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.menu-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 18px 14px;
+    border-radius: 18px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 10px 26px rgba(15,23,42,0.15);
+    text-align: left;
+    transition: 0.12s;
+}
+
+.menu-btn:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =============================================================
+   НИЖНЕЕ МЕНЮ
+============================================================= */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #0f172a;
+    padding: 6px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(148,163,184,0.5);
+}
+
+.nav-item {
+    color: #9ca3af;
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.12s;
+}
+
+.nav-item.active {
+    background: rgba(37, 99, 235, 0.35);
+    color: white;
+}
+
+
+/* =============================================================
+   ФОРМЫ
+============================================================= */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form label {
+    font-size: 14px;
+    color: #374151;
+}
+
+.form input,
+.form textarea,
+.form select {
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.15s;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.25);
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* =============================================================
+   ПРОФИЛЬ
+============================================================= */
+
+.profile-block {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 14px;
+    border-radius: 18px;
+    box-shadow: 0 10px 26px rgba(15,23,42,0.12);
+}
+
+.profile-label {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+
+/* =============================================================
+   ИИ ЧАТ
+============================================================= */
+
+.chat-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 8px 26px rgba(15,23,42,0.15);
+    min-height: 280px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin-bottom: 8px;
+}
+
+.chat-bubble {
+    padding: 8px 12px;
+    border-radius: 16px;
+    max-width: 85%;
+    display: inline-block;
+    font-size: 14px;
+}
+
+.chat-message.user {
+    text-align: right;
+}
+
+.chat-message.user .chat-bubble {
+    background: #e0edff;
+}
+
+.chat-message.bot .chat-bubble {
+    background: #f3f4f6;
+}
+
+.chat-input-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.chat-input-box input {
+    flex: 1;
+    border-radius: 999px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+}
+
+.chat-input-box button {
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-size: 22px;
+}
+
+
+/* =============================================================
+   ТАБЛИЦА (КОНСТРУКТОР)
+============================================================= */
+
+.table-editor {
+    overflow-x: auto;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 8px 26px rgba(0,0,0,0.1);
+}
+
+.table-editor table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-editor th,
+.table-editor td {
+    border: 1px solid #e5e7eb;
+    padding: 6px;
+    font-size: 14px;
+}
+
+.table-editor input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+
+/* =============================================================
+   СПИСОК ПОРУЧЕНИЙ
+============================================================= */
+
+.task-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 12px;
+    box-shadow: 0 8px 26px rgba(15,23,42,0.12);
+    margin-bottom: 12px;
+}
+
+.task-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.task-meta {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+
+/* =============================================================
+   АДАПТИВ
+============================================================= */
+
+@media (max-width: 420px) {
+    .menu-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
