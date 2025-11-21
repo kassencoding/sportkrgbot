@@ -8,7 +8,7 @@
     <!-- Стили -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Telegram WebApp -->
+    <!-- Telegram WebApp (не мешает работе в браузере) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
@@ -19,9 +19,10 @@
 <!-- ============================================================= -->
 <div id="modeScreen" class="screen active">
     <div class="mode-container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Coat_of_Arms_of_Karagandy_Obl.svg/200px-Coat_of_Arms_of_Karagandy_Obl.svg.png"
-             class="logo" alt="Герб">
-
+        <!-- Герб: загрузить файл img/karaganda_gerb.png в репо -->
+        <div class="mode-logo-wrap">
+            <img src="img/karaganda_gerb.png" class="logo" alt="Герб Карагандинской области">
+        </div>
         <h1>Добро пожаловать</h1>
         <div class="subtitle">
             Управление физической культуры и спорта Карагандинской области
@@ -50,13 +51,24 @@
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН 2 — ВЫБОР ДОЛЖНОСТИ                                     -->
+<!-- ЭКРАН 1.5 — ВЫБОР ОТДЕЛА (Только для Управления)              -->
 <!-- ============================================================= -->
-<div id="roleSelectScreen" class="screen">
-    <div class="screen-title">Выберите должность</div>
-    <div class="list-container" id="roleList"></div>
+<div id="deptSelectScreen" class="screen">
+    <div class="screen-title">Выберите отдел</div>
+    <div class="list-container" id="departmentList"></div>
 
     <button class="btn secondary wide" onclick="backToOrg()">Назад</button>
+</div>
+
+
+<!-- ============================================================= -->
+<!-- ЭКРАН 2 — ВЫБОР СОТРУДНИКА / ДОЛЖНОСТИ                        -->
+<!-- ============================================================= -->
+<div id="roleSelectScreen" class="screen">
+    <div class="screen-title">Выберите сотрудника</div>
+    <div class="list-container" id="roleList"></div>
+
+    <button class="btn secondary wide" onclick="backFromRole()">Назад</button>
 </div>
 
 
@@ -65,36 +77,75 @@
 <!-- ============================================================= -->
 <div id="employeeHome" class="screen">
     <div class="header">
-        <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Coat_of_Arms_of_Karagandy_Obl.svg/200px-Coat_of_Arms_of_Karagandy_Obl.svg.png">
+        <div class="header-logo-circle">
+            <img src="img/karaganda_gerb.png" class="header-logo" alt="Герб">
+        </div>
         <div>
             <div class="header-role" id="empRole">—</div>
             <div class="header-org" id="empOrg">—</div>
         </div>
     </div>
 
-    <div class="menu-grid">
-        <button class="menu-btn" onclick="openDatabase()">База данных</button>
-        <button class="menu-btn" onclick="openCreateTask()">Создать поручение</button>
-        <button class="menu-btn" onclick="openTasksScreen()">Список поручений</button>
-        <button class="menu-btn" onclick="openAIChat()">ИИ-ассистент</button>
+    <!-- Горизонтальная строка плиток -->
+    <div class="menu-row">
+        <button class="menu-pill" onclick="openCreateTask()">
+            <span class="pill-icon">➕</span>
+            <span class="pill-label">Создать поручение</span>
+        </button>
+        <button class="menu-pill" onclick="openTasksScreen()">
+            <span class="pill-icon">📝</span>
+            <span class="pill-label">Поручения</span>
+        </button>
+        <button class="menu-pill" onclick="openDatabase()">
+            <span class="pill-icon">📚</span>
+            <span class="pill-label">База данных</span>
+        </button>
+        <button class="menu-pill" onclick="openAIChat()">
+            <span class="pill-icon">🤖</span>
+            <span class="pill-label">ИИ</span>
+        </button>
     </div>
 
     <!-- нижнее меню -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="goEmployeeHome()">🏠</div>
-        <div class="nav-item" onclick="openDatabase()">📚</div>
-        <div class="nav-item" onclick="openTasksScreen()">🗂️</div>
-        <div class="nav-item" onclick="openAIChat()">🤖</div>
-        <div class="nav-item" onclick="openProfile()">⚙️</div>
+        <div class="nav-item active" onclick="goEmployeeHome()">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Главная</span>
+        </div>
+        <div class="nav-item" onclick="openTasksScreen()">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">Поручения</span>
+        </div>
+        <div class="nav-item" onclick="openDatabase()">
+            <span class="nav-icon">📚</span>
+            <span class="nav-label">База</span>
+        </div>
+        <div class="nav-item" onclick="openAIChat()">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-label">ИИ</span>
+        </div>
+        <div class="nav-item" onclick="openProfile()">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Профиль</span>
+        </div>
     </div>
 </div>
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — ПРОФИЛЬ СОТРУДНИКА                                   -->
+<!-- ПРОФИЛЬ СОТРУДНИКА                                           -->
 <!-- ============================================================= -->
 <div id="employeeProfile" class="screen">
-    <div class="screen-title">Профиль</div>
+    <div class="screen-title">Профиль сотрудника</div>
+
+    <div class="avatar-block">
+        <div class="avatar-circle">
+            <img id="employeeAvatarImg" alt="Фото сотрудника">
+            <span id="employeeAvatarPlaceholder">Фото</span>
+        </div>
+        <button class="btn secondary small" onclick="uploadEmployeePhoto()">Изменить фото</button>
+        <input type="file" id="employeeAvatarInput" accept="image/*" capture="environment" style="display:none" onchange="handleEmployeePhoto(this)">
+    </div>
 
     <div class="profile-block">
         <div class="profile-label">Должность</div>
@@ -105,11 +156,34 @@
     </div>
 
     <button class="btn danger wide" onclick="resetEmployee()">Выйти из аккаунта</button>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="goEmployeeHome()">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Главная</span>
+        </div>
+        <div class="nav-item" onclick="openTasksScreen()">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">Поручения</span>
+        </div>
+        <div class="nav-item" onclick="openDatabase()">
+            <span class="nav-icon">📚</span>
+            <span class="nav-label">База</span>
+        </div>
+        <div class="nav-item" onclick="openAIChat()">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-label">ИИ</span>
+        </div>
+        <div class="nav-item active">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Профиль</span>
+        </div>
+    </div>
 </div>
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — БАЗА ДАННЫХ СОТРУДНИКА                               -->
+<!-- БАЗА ДАННЫХ СОТРУДНИКА                                       -->
 <!-- ============================================================= -->
 <div id="databaseScreen" class="screen">
     <div class="screen-title">База данных</div>
@@ -117,13 +191,12 @@
     <div id="dbSectionList" class="db-list"></div>
 
     <button class="btn primary wide" onclick="addDbSection()">Добавить раздел</button>
-
     <button class="btn secondary wide" onclick="goEmployeeHome()">Назад</button>
 </div>
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — СОЗДАНИЕ ПОРУЧЕНИЯ                                   -->
+<!-- СОЗДАНИЕ ПОРУЧЕНИЯ                                           -->
 <!-- ============================================================= -->
 <div id="createTaskScreen" class="screen">
     <div class="screen-title">Новое поручение</div>
@@ -133,17 +206,17 @@
         <select id="taskTarget"></select>
 
         <label>Описание</label>
-        <textarea id="taskDescription"></textarea>
+        <textarea id="taskDescription" placeholder="Опишите суть поручения..."></textarea>
 
         <label>Дедлайн</label>
         <input type="date" id="taskDeadline">
     </div>
 
-    <div class="screen-title">Таблица</div>
+    <div class="screen-title small-title">Таблица поручения</div>
 
     <div id="tableEditor" class="table-editor"></div>
 
-    <div style="display:flex; gap:10px;">
+    <div class="table-controls">
         <button class="btn secondary" onclick="addTableColumn()">+ столбец</button>
         <button class="btn secondary" onclick="addTableRow()">+ строка</button>
     </div>
@@ -154,7 +227,7 @@
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — СПИСОК ПОРУЧЕНИЙ                                     -->
+<!-- СПИСОК ПОРУЧЕНИЙ                                             -->
 <!-- ============================================================= -->
 <div id="tasksScreen" class="screen">
     <div class="screen-title">Поручения</div>
@@ -166,7 +239,7 @@
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — ИИ-ЧАТ                                               -->
+<!-- ИИ-ЧАТ                                                       -->
 <!-- ============================================================= -->
 <div id="aiScreen" class="screen">
     <div class="screen-title">ИИ-ассистент</div>
@@ -174,7 +247,7 @@
     <div id="aiChat" class="chat-container"></div>
 
     <div class="chat-input-box">
-        <input id="aiMessage" placeholder="Ваш вопрос...">
+        <input id="aiMessage" placeholder="Ваш вопрос..." />
         <button onclick="sendAI()">➤</button>
     </div>
 
@@ -183,35 +256,73 @@
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — ГОСТЬ: ГЛАВНАЯ                                      -->
+<!-- ГОСТЬ — ГЛАВНАЯ                                              -->
 <!-- ============================================================= -->
 <div id="guestHome" class="screen">
     <div class="header guest">
-        <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Coat_of_Arms_of_Karagandy_Obl.svg/200px-Coat_of_Arms_of_Karagandy_Obl.svg.png">
-        <div class="header-title">Гостевой режим</div>
+        <div class="header-logo-circle">
+            <img src="img/karaganda_gerb.png" class="header-logo" alt="Герб">
+        </div>
+        <div>
+            <div class="header-title">Гостевой режим</div>
+            <div class="header-org">Информация для населения</div>
+        </div>
     </div>
 
-    <div class="menu-grid">
-        <button class="menu-btn" onclick="openGuestProfile()">Профиль</button>
-        <button class="menu-btn" onclick="openAIChat()">Задать вопрос ИИ</button>
-        <button class="menu-btn" onclick="openGuestEvents()">Мероприятия</button>
-        <button class="menu-btn" onclick="openGuestSections()">Секции</button>
-        <button class="menu-btn" onclick="openGuestResults()">Результаты</button>
+    <div class="menu-row">
+        <button class="menu-pill" onclick="openAIChat()">
+            <span class="pill-icon">🤖</span>
+            <span class="pill-label">Задать вопрос ИИ</span>
+        </button>
+        <button class="menu-pill" onclick="openGuestRequestInfo()">
+            <span class="pill-icon">📨</span>
+            <span class="pill-label">Запросить информацию</span>
+        </button>
+        <button class="menu-pill" onclick="openGuestEvents()">
+            <span class="pill-icon">📅</span>
+            <span class="pill-label">Мероприятия</span>
+        </button>
+        <button class="menu-pill" onclick="openGuestSections()">
+            <span class="pill-icon">🏟️</span>
+            <span class="pill-label">Секции</span>
+        </button>
+        <button class="menu-pill" onclick="openGuestResults()">
+            <span class="pill-icon">🏅</span>
+            <span class="pill-label">Новости и результаты</span>
+        </button>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="goGuestHome()">🏠</div>
-        <div class="nav-item" onclick="openAIChat()">🤖</div>
-        <div class="nav-item" onclick="openGuestProfile()">⚙️</div>
+        <div class="nav-item active" onclick="goGuestHome()">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Главная</span>
+        </div>
+        <div class="nav-item" onclick="openAIChat()">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-label">ИИ</span>
+        </div>
+        <div class="nav-item" onclick="openGuestProfile()">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Профиль</span>
+        </div>
     </div>
 </div>
 
 
 <!-- ============================================================= -->
-<!-- ЭКРАН — Профиль гостя                                        -->
+<!-- ПРОФИЛЬ ГОСТЯ                                                -->
 <!-- ============================================================= -->
 <div id="guestProfile" class="screen">
     <div class="screen-title">Профиль гостя</div>
+
+    <div class="avatar-block">
+        <div class="avatar-circle">
+            <img id="guestAvatarImg" alt="Фото гостя">
+            <span id="guestAvatarPlaceholder">Фото</span>
+        </div>
+        <button class="btn secondary small" onclick="uploadGuestPhoto()">Изменить фото</button>
+        <input type="file" id="guestAvatarInput" accept="image/*" capture="environment" style="display:none" onchange="handleGuestPhoto(this)">
+    </div>
 
     <div class="form">
         <label>ФИО</label>
@@ -230,9 +341,8 @@
 
 
 <!-- ============================================================= -->
-<!-- JAVASCRIPT -->
+<!-- SCRIPTS -->
 <!-- ============================================================= -->
 <script src="script.js"></script>
-
 </body>
 </html>
