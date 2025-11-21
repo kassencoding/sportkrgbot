@@ -16,11 +16,11 @@
 <div id="modeScreen" class="screen active">
     <div class="card welcome-card">
         <div class="welcome-logo-wrap">
-            <!-- Герб: сейчас путь img/karaganda_gerb.jpeg -->
+            <!-- Герб: путь img/karaganda_gerb.jpeg -->
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="welcome-logo" />
         </div>
         <h1 class="welcome-title">Служебная система</h1>
-        <p className="welcome-subtitle">
+        <p class="welcome-subtitle">
             Управление физической культуры и спорта Карагандинской области
         </p>
 
@@ -72,51 +72,61 @@
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="header-logo" />
         </div>
         <div class="header-text">
-            <div id="empRole" class="header-role">Должность не выбрана</div>
             <div id="empOrg" class="header-org">Организация</div>
+            <div id="empRole" class="header-role">Должность не выбрана</div>
         </div>
     </div>
 
-    <div class="menu-row">
-        <button class="menu-pill" onclick="openCreateTask()">
-            <span class="pill-icon">➕</span>
-            <span class="pill-label">Создать поручение</span>
-        </button>
-        <button class="menu-pill" onclick="openTasksScreen()">
-            <span class="pill-icon">📝</span>
-            <span class="pill-label">Поручения</span>
-        </button>
-        <button class="menu-pill" onclick="openDatabase()">
-            <span class="pill-icon">📚</span>
-            <span class="pill-label">База данных</span>
-        </button>
-        <button class="menu-pill" onclick="openAIChat()">
-            <span class="pill-icon">🤖</span>
-            <span class="pill-label">ИИ-ассистент</span>
-        </button>
+    <div class="avatar-block">
+        <div class="avatar-circle">
+            <img id="employeeAvatarImg" alt="Аватар сотрудника" />
+            <span id="employeeAvatarPlaceholder">👤</span>
+        </div>
+        <button class="btn btn-secondary btn-small" onclick="triggerEmployeePhoto()">Изменить фото</button>
+        <!-- УБРАН capture, чтобы работала медиатека -->
+        <input id="employeeAvatarInput" type="file" accept="image/*" style="display:none" onchange="handleEmployeePhoto(this)" />
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="goEmployeeHome()">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Главная</span>
-        </div>
-        <div class="nav-item" onclick="openTasksScreen()">
-            <span class="nav-icon">📝</span>
-            <span class="nav-label">Поручения</span>
-        </div>
-        <div class="nav-item" onclick="openDatabase()">
-            <span class="nav-icon">📚</span>
-            <span class="nav-label">База</span>
-        </div>
-        <div class="nav-item" onclick="openAIChat()">
-            <span class="nav-icon">🤖</span>
-            <span class="nav-label">ИИ</span>
-        </div>
-        <div class="nav-item" onclick="openEmployeeProfile()">
-            <span class="nav-icon">👤</span>
-            <span class="nav-label">Профиль</span>
-        </div>
+    <div class="menu-list">
+        <button class="menu-btn" onclick="openCreateTask()">
+            <div class="menu-btn-icon">➕</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Создать поручение</div>
+                <div class="menu-btn-subtitle">Формирование поручения с таблицей и дедлайном</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openTasksScreen()">
+            <div class="menu-btn-icon">📝</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Поручения</div>
+                <div class="menu-btn-subtitle">Список всех поручений и статусов</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openDatabase()">
+            <div class="menu-btn-icon">📚</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">База данных</div>
+                <div class="menu-btn-subtitle">Разделы по направлению вашей работы</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openAIChat()">
+            <div class="menu-btn-icon">🤖</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">ИИ-ассистент</div>
+                <div class="menu-btn-subtitle">Вопросы по данным вашей базы</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openEmployeeProfile()">
+            <div class="menu-btn-icon">👤</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Профиль</div>
+                <div class="menu-btn-subtitle">Должность, организация и фото</div>
+            </div>
+        </button>
     </div>
 </div>
 
@@ -129,45 +139,21 @@
 
     <div class="avatar-block">
         <div class="avatar-circle">
-            <img id="employeeAvatarImg" alt="Аватар" />
-            <span id="employeeAvatarPlaceholder">Фото</span>
+            <img id="employeeAvatarImg_profile" alt="Аватар" />
+            <span id="employeeAvatarPlaceholder_profile">👤</span>
         </div>
         <button class="btn btn-secondary btn-small" onclick="triggerEmployeePhoto()">Изменить фото</button>
-        <input id="employeeAvatarInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="handleEmployeePhoto(this)" />
     </div>
 
     <div class="profile-card">
-        <div class="profile-label">Должность</div>
-        <div id="profileRole">—</div>
-
         <div class="profile-label">Организация</div>
         <div id="profileOrg">—</div>
+
+        <div class="profile-label">Должность и ФИО</div>
+        <div id="profileRole">—</div>
     </div>
 
-    <button class="btn btn-danger full" onclick="resetEmployee()">Выйти</button>
-
-    <div class="bottom-nav">
-        <div class="nav-item" onclick="goEmployeeHome()">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Главная</span>
-        </div>
-        <div class="nav-item" onclick="openTasksScreen()">
-            <span class="nav-icon">📝</span>
-            <span class="nav-label">Поручения</span>
-        </div>
-        <div class="nav-item" onclick="openDatabase()">
-            <span class="nav-icon">📚</span>
-            <span class="nav-label">База</span>
-        </div>
-        <div class="nav-item" onclick="openAIChat()">
-            <span class="nav-icon">🤖</span>
-            <span class="nav-label">ИИ</span>
-        </div>
-        <div class="nav-item active">
-            <span class="nav-icon">👤</span>
-            <span class="nav-label">Профиль</span>
-        </div>
-    </div>
+    <button class="btn btn-danger full" onclick="resetEmployee()">Выйти из кабинета</button>
 </div>
 
 <!-- =================== БАЗА ДАННЫХ СОТРУДНИКА =================== -->
@@ -190,11 +176,14 @@
     </div>
 
     <div class="form">
-        <label>Кому</label>
+        <label>Кому (организация)</label>
         <select id="taskTarget"></select>
 
+        <label>Конкретный сотрудник (необязательно)</label>
+        <input id="taskTargetPerson" placeholder="ФИО или должность" />
+
         <label>Описание поручения</label>
-        <textarea id="taskDescription" placeholder="Опишите суть поручения..."></textarea>
+        <textarea id="taskDescription" placeholder="Например: Подготовить отчёт, предоставить информацию, загрузить фото..."></textarea>
 
         <label>Дедлайн</label>
         <input type="date" id="taskDeadline" />
@@ -243,47 +232,51 @@
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="header-logo" />
         </div>
         <div class="header-text">
-            <div class="header-role">Гостевой режим</div>
-            <div class="header-org">Информация для населения</div>
+            <div class="header-org">Гостевой режим</div>
+            <div class="header-role">Информация для населения</div>
         </div>
     </div>
 
-    <div class="menu-row">
-        <button class="menu-pill" onclick="openAIChat()">
-            <span class="pill-icon">🤖</span>
-            <span class="pill-label">Задать вопрос ИИ</span>
+    <div class="menu-list">
+        <button class="menu-btn" onclick="openAIChat()">
+            <div class="menu-btn-icon">🤖</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Спросить у ИИ</div>
+                <div class="menu-btn-subtitle">Ответы по сооружениям, секциям, проектам</div>
+            </div>
         </button>
-        <button class="menu-pill" onclick="openGuestRequestInfo()">
-            <span class="pill-icon">📨</span>
-            <span class="pill-label">Запросить информацию</span>
-        </button>
-        <button class="menu-pill" onclick="openGuestEvents()">
-            <span class="pill-icon">📅</span>
-            <span class="pill-label">Мероприятия</span>
-        </button>
-        <button class="menu-pill" onclick="openGuestSections()">
-            <span class="pill-icon">🏟️</span>
-            <span class="pill-label">Секции</span>
-        </button>
-        <button class="menu-pill" onclick="openGuestResults()">
-            <span class="pill-icon">🏅</span>
-            <span class="pill-label">Результаты</span>
-        </button>
-    </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="showScreen('guestHome')">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Главная</span>
-        </div>
-        <div class="nav-item" onclick="openAIChat()">
-            <span class="nav-icon">🤖</span>
-            <span class="nav-label">ИИ</span>
-        </div>
-        <div class="nav-item" onclick="openGuestProfile()">
-            <span class="nav-icon">👤</span>
-            <span class="nav-label">Профиль</span>
-        </div>
+        <button class="menu-btn" onclick="openGuestRequestInfo()">
+            <div class="menu-btn-icon">📨</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Запросить информацию</div>
+                <div class="menu-btn-subtitle">Официальный запрос в адрес управления</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openGuestEvents()">
+            <div class="menu-btn-icon">📅</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Календарь мероприятий</div>
+                <div class="menu-btn-subtitle">Ближайшие соревнования и акции</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openGuestSections()">
+            <div class="menu-btn-icon">🏟️</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Список спортивных секций</div>
+                <div class="menu-btn-subtitle">Где и у кого можно тренироваться</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="openGuestResults()">
+            <div class="menu-btn-icon">🏅</div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Действующие и старые результаты</div>
+                <div class="menu-btn-subtitle">Итоги выступлений спортсменов области</div>
+            </div>
+        </button>
     </div>
 </div>
 
@@ -297,10 +290,11 @@
     <div class="avatar-block">
         <div class="avatar-circle">
             <img id="guestAvatarImg" alt="Фото гостя" />
-            <span id="guestAvatarPlaceholder">Фото</span>
+            <span id="guestAvatarPlaceholder">👤</span>
         </div>
         <button class="btn btn-secondary btn-small" onclick="triggerGuestPhoto()">Изменить фото</button>
-        <input id="guestAvatarInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="handleGuestPhoto(this)" />
+        <!-- УБРАН capture -->
+        <input id="guestAvatarInput" type="file" accept="image/*" style="display:none" onchange="handleGuestPhoto(this)" />
     </div>
 
     <div class="form">
@@ -321,10 +315,15 @@
 <div id="guestEvents" class="screen">
     <div class="top-bar">
         <button class="top-back" onclick="showScreen('guestHome')">← Назад</button>
-        <div class="top-title">Мероприятия</div>
+        <div class="top-title">Календарь мероприятий</div>
     </div>
     <div class="info-placeholder">
-        Здесь будут выводиться ближайшие спортивные мероприятия, которые сотрудники заполняют в базе данных.
+        <div class="info-title">Пример событий:</div>
+        <ul class="info-list">
+            <li>Областной турнир по футболу среди юношей U17 — 12.12.2025</li>
+            <li>Массовый забег «Здоровая Караганда» — 20.12.2025</li>
+            <li>Чемпионат области по боксу — 05.01.2026</li>
+        </ul>
     </div>
 </div>
 
@@ -335,7 +334,12 @@
         <div class="top-title">Секции и тренеры</div>
     </div>
     <div class="info-placeholder">
-        Здесь будут разделы секций, тренеров и расписание, сформированные из данных сотрудников.
+        <div class="info-title">Примеры секций:</div>
+        <ul class="info-list">
+            <li>Футбол — стадион «Шахтёр», тренер: Иванов И.И.</li>
+            <li>Бокс — ДЮСШ №1, тренер: Садыков Б.Б.</li>
+            <li>Плавание — бассейн «Дельфин», тренер: Петрова А.А.</li>
+        </ul>
     </div>
 </div>
 
@@ -346,7 +350,12 @@
         <div class="top-title">Новости и результаты</div>
     </div>
     <div class="info-placeholder">
-        Здесь будут новости, результаты спортсменов и информация по соревнованиям.
+        <div class="info-title">Примеры результатов:</div>
+        <ul class="info-list">
+            <li>Золото на чемпионате РК по боксу — 2025, вес до 69 кг.</li>
+            <li>Серебро на международном турнире по борьбе — 2024.</li>
+            <li>Бронза на Кубке РК по плаванию — 2025.</li>
+        </ul>
     </div>
 </div>
 
