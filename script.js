@@ -11,17 +11,25 @@ let tasks = [];
 
 // Структура таблицы поручения
 let table = {
-    columns: [ { id: 0, title: "Колонка 1", type: "text" } ],
-    rows: [ [""] ]
+    columns: [{ id: 0, title: "Колонка 1", type: "text" }],
+    rows: [[""]]
 };
 
 // =================== УТИЛИТЫ LOCALSTORAGE ===================
 function saveLocal(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+        console.warn("Не удалось сохранить в localStorage", e);
+    }
 }
 function loadLocal(key, def = null) {
-    const v = localStorage.getItem(key);
-    return v ? JSON.parse(v) : def;
+    try {
+        const v = localStorage.getItem(key);
+        return v ? JSON.parse(v) : def;
+    } catch (e) {
+        return def;
+    }
 }
 
 // =================== ПОКАЗ ЭКРАНОВ ===================
@@ -34,33 +42,33 @@ function showScreen(id) {
 // =================== ДАННЫЕ ОРГАНИЗАЦИЙ И СТРУКТУРЫ ===================
 
 const ORGANIZATIONS = [
-    { type: "main", name: "Управление физической культуры и спорта Карагандинской области" },
+    { type: "main", level: 0, name: "Управление физической культуры и спорта Карагандинской области" },
 
-    { type: "region", name: "Отдел спорта г. Караганда" },
-    { type: "region", name: "Отдел спорта г. Темиртау" },
-    { type: "region", name: "Отдел спорта г. Балхаш" },
-    { type: "region", name: "Отдел спорта г. Сарань" },
-    { type: "region", name: "Отдел спорта г. Шахтинск" },
-    { type: "region", name: "Отдел спорта г. Приозерск" },
-    { type: "region", name: "Отдел спорта Абайского района" },
-    { type: "region", name: "Отдел спорта Актогайского района" },
-    { type: "region", name: "Отдел спорта Бухар-Жырауского района" },
-    { type: "region", name: "Отдел спорта Каркаралинского района" },
-    { type: "region", name: "Отдел спорта Осакаровского района" },
-    { type: "region", name: "Отдел спорта Нуринского района" },
-    { type: "region", name: "Отдел спорта Шетского района" },
+    { type: "region", level: 1, name: "Отдел спорта г. Караганда" },
+    { type: "region", level: 1, name: "Отдел спорта г. Темиртау" },
+    { type: "region", level: 1, name: "Отдел спорта г. Балхаш" },
+    { type: "region", level: 1, name: "Отдел спорта г. Сарань" },
+    { type: "region", level: 1, name: "Отдел спорта г. Шахтинск" },
+    { type: "region", level: 1, name: "Отдел спорта г. Приозерск" },
+    { type: "region", level: 1, name: "Отдел спорта Абайского района" },
+    { type: "region", level: 1, name: "Отдел спорта Актогайского района" },
+    { type: "region", level: 1, name: "Отдел спорта Бухар-Жырауского района" },
+    { type: "region", level: 1, name: "Отдел спорта Каркаралинского района" },
+    { type: "region", level: 1, name: "Отдел спорта Осакаровского района" },
+    { type: "region", level: 1, name: "Отдел спорта Нуринского района" },
+    { type: "region", level: 1, name: "Отдел спорта Шетского района" },
 
-    { type: "org", name: "ОСДЮШОР №1" },
-    { type: "org", name: "ОСДЮШОР №2" },
-    { type: "org", name: "СДЮШОР №1" },
-    { type: "org", name: "ДЮСШ №1" },
-    { type: "org", name: "ДЮСШ №2" },
-    { type: "org", name: "ОСШИКОР" },
-    { type: "org", name: "ЦПОР" },
-    { type: "org", name: "ШВСМ (олимп.)" },
-    { type: "org", name: "ШВСМ (неолимп.)" },
-    { type: "org", name: "Центр массового спорта" },
-    { type: "org", name: "Физкультурный диспансер" }
+    { type: "org", level: 2, name: "ОСДЮШОР №1" },
+    { type: "org", level: 2, name: "ОСДЮШОР №2" },
+    { type: "org", level: 2, name: "СДЮШОР №1" },
+    { type: "org", level: 2, name: "ДЮСШ №1" },
+    { type: "org", level: 2, name: "ДЮСШ №2" },
+    { type: "org", level: 2, name: "ОСШИКОР" },
+    { type: "org", level: 2, name: "ЦПОР" },
+    { type: "org", level: 2, name: "ШВСМ (олимп.)" },
+    { type: "org", level: 2, name: "ШВСМ (неолимп.)" },
+    { type: "org", level: 2, name: "Центр массового и детского спорта" },
+    { type: "org", level: 2, name: "Физкультурный диспансер" }
 ];
 
 const MAIN_DEPARTMENTS = [
@@ -129,6 +137,37 @@ window.onload = () => {
     employeeDB = loadLocal("employeeDB", {});
     tasks = loadLocal("tasks", []);
 
+    // Если поручений нет — создаём образцы
+    if (!tasks || tasks.length === 0) {
+        tasks = [
+            {
+                id: Date.now(),
+                target: "Отдел спорта г. Караганда",
+                targetPerson: "",
+                description: "Подготовить отчёт о проведённых массовых мероприятиях за месяц",
+                deadline: "2025-12-20",
+                table: null
+            },
+            {
+                id: Date.now() + 1,
+                target: "ДЮСШ №1",
+                targetPerson: "",
+                description: "Предоставить информацию по тренерскому составу",
+                deadline: "2025-12-25",
+                table: null
+            },
+            {
+                id: Date.now() + 2,
+                target: "ОСДЮШОР №1",
+                targetPerson: "",
+                description: "Загрузить фотоотчёт о соревнованиях",
+                deadline: "2026-01-05",
+                table: null
+            }
+        ];
+        saveLocal("tasks", tasks);
+    }
+
     const guestProfile = loadLocal("guestProfile", null);
     if (guestProfile) {
         document.getElementById("guestFio").value = guestProfile.fio || "";
@@ -142,7 +181,6 @@ window.onload = () => {
     const guestAvatar = loadLocal("guestAvatar", null);
     if (guestAvatar) setGuestAvatar(guestAvatar);
 
-    // по умолчанию включаем экран выбора режима
     showScreen("modeScreen");
 };
 
@@ -171,7 +209,7 @@ function buildOrganizationList() {
 }
 
 function selectOrganization(org) {
-    currentOrganization = org.name;
+    currentOrganization = org;
     if (org.type === "main") {
         buildDepartmentList();
         showScreen("deptSelectScreen");
@@ -200,7 +238,7 @@ function selectDepartment(deptId) {
     showScreen("roleSelectScreen");
 }
 
-// =================== СПИСОК СОТРУДНИКОВ ПО ОТДЕЛУ ===================
+// =================== СОТРУДНИКИ ПО ОТДЕЛУ ===================
 function buildEmployeesForDepartment() {
     const dept = MAIN_DEPARTMENTS.find(d => d.id === currentDepartmentId);
     const container = document.getElementById("roleList");
@@ -216,7 +254,7 @@ function buildEmployeesForDepartment() {
     });
 }
 
-// =================== СПИСОК ДОЛЖНОСТЕЙ ДЛЯ ПОДВЕДОМСТВЕННЫХ ===================
+// =================== РОЛИ ДЛЯ ПОДВЕДОМСТВЕННЫХ ОРГАНИЗАЦИЙ ===================
 function buildOrgRoles() {
     const container = document.getElementById("roleList");
     container.innerHTML = "";
@@ -231,7 +269,7 @@ function buildOrgRoles() {
 
 // Назад из выбора роли
 function backFromRole() {
-    if (currentOrganization && currentOrganization.includes("Управление")) {
+    if (currentOrganization && currentOrganization.type === "main") {
         showScreen("deptSelectScreen");
     } else {
         showScreen("orgSelectScreen");
@@ -242,11 +280,15 @@ function backFromRole() {
 function selectRole(role) {
     currentRole = role;
 
+    const orgName = currentOrganization ? currentOrganization.name : "Организация";
+
     document.getElementById("empRole").textContent = role;
-    document.getElementById("empOrg").textContent = currentOrganization;
+    document.getElementById("empOrg").textContent = orgName;
 
     document.getElementById("profileRole").textContent = role;
-    document.getElementById("profileOrg").textContent = currentOrganization;
+    document.getElementById("profileOrg").textContent = orgName;
+
+    syncEmployeeAvatarProfile();
 
     showScreen("employeeHome");
 }
@@ -258,6 +300,34 @@ function setEmployeeAvatar(dataUrl) {
     img.src = dataUrl;
     img.style.display = "block";
     ph.style.display = "none";
+
+    // Профиль
+    const img2 = document.getElementById("employeeAvatarImg_profile");
+    const ph2 = document.getElementById("employeeAvatarPlaceholder_profile");
+    if (img2 && ph2) {
+        img2.src = dataUrl;
+        img2.style.display = "block";
+        ph2.style.display = "none";
+    }
+}
+
+function syncEmployeeAvatarProfile() {
+    const dataUrl = loadLocal("employeeAvatar", null);
+    if (dataUrl) {
+        setEmployeeAvatar(dataUrl);
+    } else {
+        const img = document.getElementById("employeeAvatarImg");
+        const ph = document.getElementById("employeeAvatarPlaceholder");
+        img.style.display = "none";
+        ph.style.display = "block";
+
+        const img2 = document.getElementById("employeeAvatarImg_profile");
+        const ph2 = document.getElementById("employeeAvatarPlaceholder_profile");
+        if (img2 && ph2) {
+            img2.style.display = "none";
+            ph2.style.display = "block";
+        }
+    }
 }
 
 function triggerEmployeePhoto() {
@@ -306,6 +376,7 @@ function goEmployeeHome() {
     showScreen("employeeHome");
 }
 function openEmployeeProfile() {
+    syncEmployeeAvatarProfile();
     showScreen("employeeProfile");
 }
 function openDatabase() {
@@ -368,13 +439,61 @@ function sendGuestRequest() {
 }
 
 // =================== БАЗА ДАННЫХ СОТРУДНИКА ===================
+function getDefaultSectionsForRole(role) {
+    const r = (role || "").toLowerCase();
+
+    if (r.includes("инфраструктур")) {
+        return [
+            { title: "Паспорт спортивных объектов", text: "Список объектов, адрес, вместимость, профиль." },
+            { title: "Состояние сооружений", text: "Текущие показатели, замечания, потребность в ремонте." },
+            { title: "Строительство и ремонт", text: "Планы, сметы, этапы реализации." }
+        ];
+    }
+    if (r.includes("массового") || r.includes("массовой") || r.includes("инвалидного")) {
+        return [
+            { title: "Массовые мероприятия", text: "Календарь массовых спортивных мероприятий." },
+            { title: "Инвалидный спорт", text: "Программы, секции, участие людей с ОВЗ." },
+            { title: "Охват населения", text: "Статистика по участникам и возрастным группам." }
+        ];
+    }
+    if (r.includes("высших достижений") || r.includes("резерва")) {
+        return [
+            { title: "Сборные команды", text: "Состав, тренеры, календарь сборов." },
+            { title: "Подготовка к стартам", text: "Планы тренировки, УТС, контрольные старты." },
+            { title: "Результаты спортсменов", text: "Выступления на РК, ЧМ, ОИ и т.д." }
+        ];
+    }
+    if (r.includes("экономики") || r.includes("финансового")) {
+        return [
+            { title: "Сметы и лимиты", text: "Годовые сметы по организациям и мероприятиям." },
+            { title: "Освоение средств", text: "Фактические расходы, остатки, перераспределение." },
+            { title: "Финансирование мероприятий", text: "Расходы по календарю соревнований." }
+        ];
+    }
+    if (r.includes("кадров") || r.includes("кадровым")) {
+        return [
+            { title: "Штатное расписание", text: "Список должностей и занятость." },
+            { title: "Кадровый резерв", text: "Перечень кандидатов и перспективных специалистов." },
+            { title: "Обучение и повышение квалификации", text: "Курсы, семинары, аттестации." }
+        ];
+    }
+
+    return [
+        { title: "Общие сведения", text: "Краткая информация по вашему направлению." },
+        { title: "Планы работы", text: "Основные задачи и плановые мероприятия." },
+        { title: "Отчёты", text: "Итоговые отчёты и аналитика." }
+    ];
+}
+
 function buildDatabaseList() {
     const container = document.getElementById("dbSectionList");
     container.innerHTML = "";
 
     if (!currentRole) return;
 
-    if (!employeeDB[currentRole]) employeeDB[currentRole] = [];
+    if (!employeeDB[currentRole] || employeeDB[currentRole].length === 0) {
+        employeeDB[currentRole] = getDefaultSectionsForRole(currentRole);
+    }
 
     employeeDB[currentRole].forEach((sec, i) => {
         const div = document.createElement("div");
@@ -465,22 +584,38 @@ function openCreateTask() {
     showScreen("createTaskScreen");
 }
 
+// Специалист не может выбирать уровень выше своего
 function buildTaskTargets() {
     const sel = document.getElementById("taskTarget");
     sel.innerHTML = "";
+
+    if (!currentOrganization) return;
+
+    const myLevel = currentOrganization.level ?? 1;
+
     ORGANIZATIONS.forEach(o => {
-        const opt = document.createElement("option");
-        opt.value = o.name;
-        opt.textContent = o.name;
-        sel.appendChild(opt);
+        if ((o.level ?? 1) >= myLevel) {
+            const opt = document.createElement("option");
+            opt.value = o.name;
+            opt.textContent = o.name;
+            sel.appendChild(opt);
+        }
     });
+
+    // если по какой-то причине список пуст — хотя бы своя организация
+    if (!sel.value && currentOrganization) {
+        const opt = document.createElement("option");
+        opt.value = currentOrganization.name;
+        opt.textContent = currentOrganization.name;
+        sel.appendChild(opt);
+    }
 }
 
 // инициализация таблицы
 function initTableEditor() {
     table = {
-        columns: [ { id: 0, title: "Колонка 1", type: "text" } ],
-        rows: [ [""] ]
+        columns: [{ id: 0, title: "Колонка 1", type: "text" }],
+        rows: [[""]]
     };
     renderTable();
 }
@@ -539,7 +674,8 @@ function renderTable() {
             if (col.type === "number") {
                 let sum = 0;
                 table.rows.forEach(row => {
-                    const v = parseFloat(row[ci].replace(",", "."));
+                    const raw = (row[ci] || "").toString().replace(",", ".");
+                    const v = parseFloat(raw);
                     if (!isNaN(v)) sum += v;
                 });
                 td.textContent = "Σ " + sum;
@@ -582,6 +718,7 @@ function editCell(r, c, v) {
 // Сохранение поручения
 function saveTask() {
     const target = document.getElementById("taskTarget").value;
+    const targetPerson = document.getElementById("taskTargetPerson").value.trim();
     const desc = document.getElementById("taskDescription").value.trim();
     const deadline = document.getElementById("taskDeadline").value;
 
@@ -593,6 +730,7 @@ function saveTask() {
     const task = {
         id: Date.now(),
         target,
+        targetPerson,
         description: desc,
         deadline,
         table: JSON.parse(JSON.stringify(table))
@@ -621,6 +759,7 @@ function renderTasks() {
         div.innerHTML = `
             <div class="task-title">${t.description}</div>
             <div class="task-meta">Кому: ${t.target}</div>
+            <div class="task-meta">${t.targetPerson ? "Сотрудник: " + t.targetPerson : ""}</div>
             <div class="task-meta">Дедлайн: ${t.deadline || "не указан"}</div>
         `;
         container.appendChild(div);
@@ -632,5 +771,6 @@ function resetEmployee() {
     currentOrganization = null;
     currentRole = null;
     currentDepartmentId = null;
+    MODE = null;
     showScreen("modeScreen");
 }
