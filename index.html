@@ -2,534 +2,30 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>Управление спорта — Система поручений</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>УФКиС Карагандинской области — Служебная система</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Telegram WebApp (опционально, не ломает работу в браузере) -->
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <style>
-    /* ===== БАЗА ===== */
-
-    * {
-        box-sizing: border-box;
-    }
-
-    html, body {
-        margin: 0;
-        padding: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-        background: #f4f5f9;
-        color: #111827;
-    }
-
-    body {
-        min-height: 100vh;
-    }
-
-    /* Общий контейнер-экран */
-    .screen {
-        display: none;
-        padding: 16px 16px 80px; /* место под нижнее меню */
-        max-width: 480px;
-        margin: 0 auto;
-    }
-
-    .screen.active {
-        display: block;
-    }
-
-    /* Заголовки экранов */
-    .screen-title {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 12px;
-    }
-
-    /* ===== КНОПКИ ===== */
-
-    .btn {
-        border-radius: 999px;
-        border: none;
-        padding: 10px 16px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.12s ease-out;
-    }
-
-    .btn.primary {
-        background: #2563eb;
-        color: #ffffff;
-        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
-    }
-
-    .btn.primary:hover {
-        box-shadow: 0 18px 40px rgba(37, 99, 235, 0.55);
-        transform: translateY(-1px);
-    }
-
-    .btn.secondary {
-        background: #ffffff;
-        color: #111827;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    }
-
-    .btn.secondary:hover {
-        transform: translateY(-1px);
-    }
-
-    .btn.danger {
-        background: #ef4444;
-        color: #ffffff;
-        box-shadow: 0 10px 28px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn.wide {
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .btn:active {
-        transform: translateY(1px);
-        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.35);
-    }
-
-    /* ===== ЭКРАН ВЫБОРА РЕЖИМА ===== */
-
-    #modeScreen {
-        display: block; /* начальный экран */
-        padding-top: 40px;
-    }
-
-    .mode-container {
-        max-width: 380px;
-        margin: 0 auto;
-        text-align: center;
-        padding: 24px 18px 18px;
-        background: #ffffff;
-        border-radius: 24px;
-        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
-        border: 1px solid rgba(209, 213, 219, 0.9);
-    }
-
-    .mode-container .logo {
-        width: 72px;
-        height: 72px;
-        object-fit: contain;
-        margin-bottom: 12px;
-    }
-
-    .mode-container h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    .mode-container .subtitle {
-        margin-top: 4px;
-        margin-bottom: 16px;
-        font-size: 13px;
-        color: #6b7280;
-    }
-
-    /* ===== ЛИСТЫ / СПИСКИ ===== */
-
-    .list-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .list-item {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 10px 12px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
-        border: 1px solid #e5e7eb;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-    }
-
-    .list-item-title {
-        font-size: 15px;
-        font-weight: 500;
-    }
-
-    .list-item-sub {
-        font-size: 12px;
-        color: #6b7280;
-    }
-
-    /* ===== ХЕДЕР ===== */
-
-    .header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-        margin-top: 8px;
-    }
-
-    .header.guest {
-        justify-content: flex-start;
-    }
-
-    .header-logo {
-        width: 42px;
-        height: 42px;
-        border-radius: 14px;
-        background: #ffffff;
-        object-fit: contain;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
-    }
-
-    .header-role {
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .header-org {
-        font-size: 12px;
-        color: #6b7280;
-    }
-
-    .header-title {
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    /* ===== ГЛАВНОЕ МЕНЮ (плитки) ===== */
-
-    .menu-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    .menu-btn {
-        border-radius: 18px;
-        border: 1px solid #e5e7eb;
-        padding: 14px 10px;
-        background: #ffffff;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        text-align: left;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
-        transition: all 0.1s ease-out;
-    }
-
-    .menu-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
-    }
-
-    .menu-btn:active {
-        transform: translateY(1px);
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.22);
-    }
-
-    /* ===== НИЖНЕЕ МЕНЮ ===== */
-
-    .bottom-nav {
-        position: fixed;
-        bottom: 12px;
-        left: 0;
-        right: 0;
-        margin: 0 auto;
-        max-width: 480px;
-        background: #0b1020;
-        border-radius: 18px;
-        padding: 4px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        box-shadow: 0 18px 46px rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(148, 163, 184, 0.8);
-        z-index: 20;
-    }
-
-    .nav-item {
-        flex: 1;
-        text-align: center;
-        color: #9ca3af;
-        padding: 6px 0;
-        font-size: 16px;
-        border-radius: 999px;
-        cursor: pointer;
-        transition: all 0.12s ease-out;
-    }
-
-    .nav-item.active {
-        background: rgba(37, 99, 235, 0.32);
-        color: #e5e7eb;
-    }
-
-    /* ===== ФОРМЫ ===== */
-
-    .form {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 16px;
-    }
-
-    .form label {
-        font-size: 13px;
-        color: #4b5563;
-    }
-
-    .form input,
-    .form textarea,
-    .form select {
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        padding: 8px 10px;
-        font-size: 14px;
-        font-family: inherit;
-        background: #ffffff;
-        outline: none;
-        transition: border-color 0.1s ease-out, box-shadow 0.1s ease-out;
-    }
-
-    .form input:focus,
-    .form textarea:focus,
-    .form select:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
-    }
-
-    .form textarea {
-        resize: vertical;
-        min-height: 80px;
-    }
-
-    /* ===== ПРОФИЛЬ ===== */
-
-    .profile-block {
-        background: #ffffff;
-        border-radius: 18px;
-        padding: 12px 12px 10px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
-        border: 1px solid #e5e7eb;
-        margin-bottom: 16px;
-    }
-
-    .profile-label {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 6px;
-    }
-
-    /* ===== ЧАТ ИИ ===== */
-
-    .chat-container {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 10px;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
-        border: 1px solid #e5e7eb;
-        min-height: 200px;
-        max-height: 340px;
-        overflow-y: auto;
-        margin-bottom: 10px;
-        font-size: 13px;
-    }
-
-    .chat-message {
-        margin-bottom: 6px;
-    }
-
-    .chat-message.user {
-        text-align: right;
-    }
-
-    .chat-bubble {
-        display: inline-block;
-        padding: 6px 9px;
-        border-radius: 16px;
-        max-width: 90%;
-        word-wrap: break-word;
-    }
-
-    .chat-message.user .chat-bubble {
-        background: #e0edff;
-        color: #111827;
-    }
-
-    .chat-message.bot .chat-bubble {
-        background: #f3f4f6;
-        color: #111827;
-    }
-
-    .chat-input-box {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        margin-bottom: 14px;
-    }
-
-    .chat-input-box input {
-        flex: 1;
-        padding: 8px 10px;
-        border-radius: 999px;
-        border: 1px solid #e5e7eb;
-        outline: none;
-        font-size: 14px;
-        background: #ffffff;
-    }
-
-    .chat-input-box input:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
-    }
-
-    .chat-input-box button {
-        border-radius: 999px;
-        border: none;
-        width: 42px;
-        height: 42px;
-        background: #2563eb;
-        color: #ffffff;
-        font-size: 18px;
-        cursor: pointer;
-        box-shadow: 0 10px 26px rgba(37, 99, 235, 0.55);
-    }
-
-    /* ===== ТАБЛИЦА ПОРУЧЕНИЯ ===== */
-
-    .table-editor {
-        background: #ffffff;
-        border-radius: 14px;
-        border: 1px solid #e5e7eb;
-        padding: 8px;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
-        overflow-x: auto;
-        margin-bottom: 12px;
-    }
-
-    .table-editor table {
-        border-collapse: collapse;
-        width: 100%;
-        min-width: 280px;
-        font-size: 13px;
-    }
-
-    .table-editor th,
-    .table-editor td {
-        border: 1px solid #e5e7eb;
-        padding: 4px 6px;
-    }
-
-    .table-editor th {
-        background: #f9fafb;
-        font-weight: 500;
-    }
-
-    .table-editor input,
-    .table-editor select {
-        width: 100%;
-        border: none;
-        outline: none;
-        font-size: 13px;
-        background: transparent;
-    }
-
-    /* ===== СПИСОК ПОРУЧЕНИЙ ===== */
-
-    #tasksList .task-card {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 10px 12px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
-        border: 1px solid #e5e7eb;
-        margin-bottom: 8px;
-    }
-
-    .task-title {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 4px;
-    }
-
-    .task-meta {
-        font-size: 12px;
-        color: #6b7280;
-    }
-
-    /* ===== БАЗА ДАННЫХ ===== */
-
-    .db-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .db-section {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 10px 10px 8px;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.14);
-        border: 1px solid #e5e7eb;
-    }
-
-    .db-section input {
-        width: 100%;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        padding: 6px 8px;
-        font-size: 13px;
-        margin-bottom: 6px;
-    }
-
-    .db-section textarea {
-        width: 100%;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        padding: 6px 8px;
-        font-size: 13px;
-        min-height: 80px;
-        resize: vertical;
-    }
-
-    /* ===== АДАПТИВ ===== */
-
-    @media (max-width: 400px) {
-        .menu-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .mode-container {
-            margin: 8px;
-        }
-
-        .bottom-nav {
-            left: 6px;
-            right: 6px;
-            bottom: 8px;
-        }
-    }
-    </style>
 </head>
+
 <body>
 
-<!-- ============================
-     ЭКРАН ВЫБОРА РЕЖИМА
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН 0 — ВЫБОР РЕЖИМА                                        -->
+<!-- ============================================================= -->
 <div id="modeScreen" class="screen active">
     <div class="mode-container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Coat_of_arms_of_Karagandy_Province.png"
-             class="logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Coat_of_Arms_of_Karagandy_Obl.svg/200px-Coat_of_Arms_of_Karagandy_Obl.svg.png"
+             class="logo" alt="Герб">
+
         <h1>Добро пожаловать</h1>
-        <p class="subtitle">В систему Управления физической культуры и спорта Карагандинской области</p>
+        <div class="subtitle">
+            Управление физической культуры и спорта Карагандинской области
+        </div>
 
         <button class="btn primary wide" onclick="selectMode('employee')">
             Я сотрудник
@@ -542,195 +38,95 @@
 </div>
 
 
-
-<!-- ============================
-     ЭКРАН ВЫБОРА ОРГАНИЗАЦИИ
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН 1 — ВЫБОР ОРГАНИЗАЦИИ                                   -->
+<!-- ============================================================= -->
 <div id="orgSelectScreen" class="screen">
-    <h2 class="screen-title">Выберите организацию</h2>
-
-    <div class="list-container" id="organizationList">
-        <!-- генерируется скриптом -->
-    </div>
+    <div class="screen-title">Выберите организацию</div>
+    <div class="list-container" id="organizationList"></div>
 
     <button class="btn secondary wide" onclick="backToMode()">Назад</button>
 </div>
 
 
-
-<!-- ============================
-     ЭКРАН ВЫБОРА ДОЛЖНОСТИ
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН 2 — ВЫБОР ДОЛЖНОСТИ                                     -->
+<!-- ============================================================= -->
 <div id="roleSelectScreen" class="screen">
-    <h2 class="screen-title">Выберите должность</h2>
-
-    <div class="list-container" id="roleList">
-        <!-- генерируется скриптом -->
-    </div>
+    <div class="screen-title">Выберите должность</div>
+    <div class="list-container" id="roleList"></div>
 
     <button class="btn secondary wide" onclick="backToOrg()">Назад</button>
 </div>
 
 
-
-<!-- ============================
-     ГЛАВНЫЙ ЭКРАН СОТРУДНИКА
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН 3 — ГЛАВНЫЙ ЭКРАН СОТРУДНИКА                            -->
+<!-- ============================================================= -->
 <div id="employeeHome" class="screen">
     <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Coat_of_arms_of_Karagandy_Province.png" class="header-logo">
+        <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Coat_of_Arms_of_Karagandy_Obl.svg/200px-Coat_of_Arms_of_Karagandy_Obl.svg.png">
         <div>
-            <div id="empRole" class="header-role"></div>
-            <div id="empOrg" class="header-org"></div>
+            <div class="header-role" id="empRole">—</div>
+            <div class="header-org" id="empOrg">—</div>
         </div>
     </div>
 
     <div class="menu-grid">
-        <button class="menu-btn" onclick="openCreateTask()">
-            Создать поручение
-        </button>
-        <button class="menu-btn" onclick="openTasksScreen()">
-            Поручения
-        </button>
-        <button class="menu-btn" onclick="openDatabase()">
-            База данных
-        </button>
-        <button class="menu-btn" onclick="openAIChat()">
-            ИИ-ассистент
-        </button>
+        <button class="menu-btn" onclick="openDatabase()">База данных</button>
+        <button class="menu-btn" onclick="openCreateTask()">Создать поручение</button>
+        <button class="menu-btn" onclick="openTasksScreen()">Список поручений</button>
+        <button class="menu-btn" onclick="openAIChat()">ИИ-ассистент</button>
     </div>
 
-    <!-- Нижнее меню -->
+    <!-- нижнее меню -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="goEmployeeHome()">🏠</div>
-        <div class="nav-item" onclick="openTasksScreen()">📝</div>
         <div class="nav-item" onclick="openDatabase()">📚</div>
+        <div class="nav-item" onclick="openTasksScreen()">🗂️</div>
         <div class="nav-item" onclick="openAIChat()">🤖</div>
-        <div class="nav-item" onclick="openProfile()">👤</div>
+        <div class="nav-item" onclick="openProfile()">⚙️</div>
     </div>
 </div>
 
 
-
-<!-- ============================
-     ГЛАВНЫЙ ЭКРАН ГОСТЯ
-============================= -->
-<div id="guestHome" class="screen">
-    <div class="header guest">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Coat_of_arms_of_Karagandy_Province.png" class="header-logo">
-        <div class="header-title">Информационный центр</div>
-    </div>
-
-    <div class="menu-grid">
-        <button class="menu-btn" onclick="openAIChat()">
-            ИИ-ассистент
-        </button>
-        <button class="menu-btn" onclick="openGuestEvents()">
-            Мероприятия
-        </button>
-        <button class="menu-btn" onclick="openGuestSections()">
-            Секции и тренеры
-        </button>
-        <button class="menu-btn" onclick="openGuestResults()">
-            Результаты спортсменов
-        </button>
-    </div>
-
-    <!-- Нижнее меню -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="goGuestHome()">🏠</div>
-        <div class="nav-item" onclick="openAIChat()">🤖</div>
-        <div class="nav-item" onclick="openGuestEvents()">📅</div>
-        <div class="nav-item" onclick="openGuestResults()">🏅</div>
-        <div class="nav-item" onclick="openGuestProfile()">👤</div>
-    </div>
-</div>
-
-
-
-<!-- ============================
-    ПРОФИЛЬ СОТРУДНИКА
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН — ПРОФИЛЬ СОТРУДНИКА                                   -->
+<!-- ============================================================= -->
 <div id="employeeProfile" class="screen">
-    <h2 class="screen-title">Профиль</h2>
+    <div class="screen-title">Профиль</div>
 
     <div class="profile-block">
-        <div class="profile-label">Должность:</div>
-        <div id="profileRole"></div>
+        <div class="profile-label">Должность</div>
+        <div id="profileRole">—</div>
 
-        <div class="profile-label">Организация:</div>
-        <div id="profileOrg"></div>
+        <div class="profile-label">Организация</div>
+        <div id="profileOrg">—</div>
     </div>
 
-    <button class="btn primary wide" onclick="openDatabase()">База данных</button>
-    <button class="btn secondary wide" onclick="resetEmployee()">Сменить должность</button>
-    <button class="btn danger wide" onclick="logout()">Выйти</button>
-
-    <div class="bottom-nav">
-        <div class="nav-item" onclick="goEmployeeHome()">🏠</div>
-        <div class="nav-item" onclick="openTasksScreen()">📝</div>
-        <div class="nav-item" onclick="openDatabase()">📚</div>
-        <div class="nav-item" onclick="openAIChat()">🤖</div>
-        <div class="nav-item active" onclick="openProfile()">👤</div>
-    </div>
+    <button class="btn danger wide" onclick="resetEmployee()">Выйти из аккаунта</button>
 </div>
 
 
+<!-- ============================================================= -->
+<!-- ЭКРАН — БАЗА ДАННЫХ СОТРУДНИКА                               -->
+<!-- ============================================================= -->
+<div id="databaseScreen" class="screen">
+    <div class="screen-title">База данных</div>
 
-<!-- ============================
-     ПРОФИЛЬ ГОСТЯ
-============================= -->
-<div id="guestProfile" class="screen">
-    <h2 class="screen-title">Ваши данные</h2>
+    <div id="dbSectionList" class="db-list"></div>
 
-    <div class="form">
-        <label>ФИО</label>
-        <input id="guestFio" type="text">
+    <button class="btn primary wide" onclick="addDbSection()">Добавить раздел</button>
 
-        <label>Номер телефона</label>
-        <input id="guestPhone" type="text">
-
-        <label>ИИН</label>
-        <input id="guestIin" type="text">
-    </div>
-
-    <button class="btn primary wide" onclick="saveGuestProfile()">Сохранить</button>
-    <button class="btn danger wide" onclick="logout()">Выйти</button>
-
-    <div class="bottom-nav">
-        <div class="nav-item" onclick="goGuestHome()">🏠</div>
-        <div class="nav-item" onclick="openAIChat()">🤖</div>
-        <div class="nav-item" onclick="openGuestEvents()">📅</div>
-        <div class="nav-item" onclick="openGuestResults()">🏅</div>
-        <div class="nav-item active" onclick="openGuestProfile()">👤</div>
-    </div>
+    <button class="btn secondary wide" onclick="goEmployeeHome()">Назад</button>
 </div>
 
 
-
-<!-- ============================
-     ЭКРАН ИИ ЧАТА
-============================= -->
-<div id="aiScreen" class="screen">
-    <h2 class="screen-title">ИИ-ассистент</h2>
-
-    <div id="aiChat" class="chat-container"></div>
-
-    <div class="chat-input-box">
-        <input type="text" id="aiMessage" placeholder="Введите вопрос...">
-        <button onclick="sendAI()">➤</button>
-    </div>
-
-    <button class="btn secondary wide" onclick="backFromAI()">Назад</button>
-</div>
-
-
-
-<!-- ============================
-     ЭКРАН СОЗДАНИЯ ПОРУЧЕНИЯ
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН — СОЗДАНИЕ ПОРУЧЕНИЯ                                   -->
+<!-- ============================================================= -->
 <div id="createTaskScreen" class="screen">
-    <h2 class="screen-title">Новое поручение</h2>
+    <div class="screen-title">Новое поручение</div>
 
     <div class="form">
         <label>Кому</label>
@@ -743,575 +139,100 @@
         <input type="date" id="taskDeadline">
     </div>
 
-    <h3>Таблица</h3>
-    <div id="tableEditor" class="table-editor">
-        <!-- генерируется JS -->
-    </div>
+    <div class="screen-title">Таблица</div>
 
-    <button class="btn secondary" onclick="addTableRow()">Добавить строку</button>
-    <button class="btn secondary" onclick="addTableColumn()">Добавить столбец</button>
+    <div id="tableEditor" class="table-editor"></div>
+
+    <div style="display:flex; gap:10px;">
+        <button class="btn secondary" onclick="addTableColumn()">+ столбец</button>
+        <button class="btn secondary" onclick="addTableRow()">+ строка</button>
+    </div>
 
     <button class="btn primary wide" onclick="saveTask()">Создать поручение</button>
     <button class="btn secondary wide" onclick="backFromCreateTask()">Назад</button>
 </div>
 
 
-
-<!-- ============================
-     ЭКРАН СПИСКА ПОРУЧЕНИЙ
-============================= -->
+<!-- ============================================================= -->
+<!-- ЭКРАН — СПИСОК ПОРУЧЕНИЙ                                     -->
+<!-- ============================================================= -->
 <div id="tasksScreen" class="screen">
-    <h2 class="screen-title">Поручения</h2>
+    <div class="screen-title">Поручения</div>
 
-    <div id="tasksList" class="list-container"></div>
+    <div id="tasksList"></div>
 
     <button class="btn secondary wide" onclick="goEmployeeHome()">Назад</button>
 </div>
 
 
+<!-- ============================================================= -->
+<!-- ЭКРАН — ИИ-ЧАТ                                               -->
+<!-- ============================================================= -->
+<div id="aiScreen" class="screen">
+    <div class="screen-title">ИИ-ассистент</div>
 
-<!-- ============================
-     ЭКРАН БАЗЫ ДАННЫХ
-============================= -->
-<div id="databaseScreen" class="screen">
-    <h2 class="screen-title">База данных</h2>
+    <div id="aiChat" class="chat-container"></div>
 
-    <div id="dbSectionList" class="db-list">
-        <!-- генерируется -->
+    <div class="chat-input-box">
+        <input id="aiMessage" placeholder="Ваш вопрос...">
+        <button onclick="sendAI()">➤</button>
     </div>
 
-    <button class="btn secondary wide" onclick="addDbSection()">Добавить раздел</button>
-    <button class="btn secondary wide" onclick="goEmployeeHome()">Назад</button>
+    <button class="btn secondary wide" onclick="backFromAI()">Назад</button>
 </div>
 
 
-<script>
-/* ============================================================
-   ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-============================================================ */
-
-let MODE = null; // employee / guest
-
-let currentOrganization = null;
-let currentRole = null;
-
-let employeeDB = {};        // данные сотрудников по разделам
-let tasks = [];             // список поручений
-
-let table = {
-    columns: ["Колонка 1"],
-    rows: [ [""] ]
-};
-
-
-/* ============================================================
-   УТИЛИТЫ
-============================================================ */
-
-function showScreen(id) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-}
-
-function saveLocal(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-}
-
-function loadLocal(key, def = null) {
-    const v = localStorage.getItem(key);
-    return v ? JSON.parse(v) : def;
-}
-
-
-/* ============================================================
-   ЗАПУСК ПРИЛОЖЕНИЯ
-============================================================ */
-
-window.onload = () => {
-    // загружаем локальные данные
-    employeeDB = loadLocal("employeeDB", {});
-    tasks = loadLocal("tasksList", []);
-
-    const guestData = loadLocal("guestProfile", null);
-    if (guestData) {
-        document.getElementById("guestFio").value = guestData.fio;
-        document.getElementById("guestPhone").value = guestData.phone;
-        document.getElementById("guestIin").value = guestData.iin;
-    }
-};
-
-
-/* ============================================================
-   1. ВЫБОР РЕЖИМА
-============================================================ */
-
-function selectMode(mode) {
-    MODE = mode;
-
-    if (mode === "employee") {
-        showOrganizationList();
-        showScreen("orgSelectScreen");
-    } else {
-        showScreen("guestHome");
-    }
-}
-
-function backToMode() {
-    showScreen("modeScreen");
-}
-
-
-/* ============================================================
-   2. СПИСКИ ОРГАНИЗАЦИЙ И ДОЛЖНОСТЕЙ
-============================================================ */
-
-// весь список организаций
-const ORGANIZATIONS = [
-    { type: "main", name: "Управление физической культуры и спорта Карагандинской области" },
-
-    { type: "region", name: "Отдел спорта г. Караганда" },
-    { type: "region", name: "Отдел спорта г. Темиртау" },
-    { type: "region", name: "Отдел спорта г. Балхаш" },
-    { type: "region", name: "Отдел спорта г. Сарань" },
-    { type: "region", name: "Отдел спорта г. Шахтинск" },
-    { type: "region", name: "Отдел спорта г. Приозерск" },
-    { type: "region", name: "Отдел спорта Абайского района" },
-    { type: "region", name: "Отдел спорта Актогайского района" },
-    { type: "region", name: "Отдел спорта Бухар-Жырауского района" },
-    { type: "region", name: "Отдел спорта Каркаралинского района" },
-    { type: "region", name: "Отдел спорта Осакаровского района" },
-    { type: "region", name: "Отдел спорта Нуринского района" },
-    { type: "region", name: "Отдел спорта Шетского района" },
-
-    { type: "org", name: "ОСДЮШОР №1" },
-    { type: "org", name: "ОСДЮШОР №2" },
-    { type: "org", name: "ОСДЮШОР №3" },
-    { type: "org", name: "СДЮШОР №1" },
-    { type: "org", name: "СДЮШОР №2" },
-    { type: "org", name: "ДЮСШ №1" },
-    { type: "org", name: "ДЮСШ №2" },
-    { type: "org", name: "ДЮСШ №3" },
-    { type: "org", name: "ОСШИКОР" },
-    { type: "org", name: "ЦПОР" },
-    { type: "org", name: "ШВСМ (олимп.)" },
-    { type: "org", name: "ШВСМ (неолимп.)" },
-    { type: "org", name: "Центр массового спорта" },
-    { type: "org", name: "Физкультурный диспансер" },
-];
-
-
-// должности управления
-const ROLES_MAIN = [
-    "Руководитель управления",
-    "Заместитель руководителя",
-    "Главный специалист по кадровым вопросам",
-    "Главный специалист по организационно-правовой работе",
-    "Руководитель отдела экономики",
-    "Руководитель отдела спорта высших достижений",
-    "Руководитель отдела физкультурно-массовой работы",
-    "Главный специалист развития массового и инвалидного спорта",
-    "Главный специалист развития спортивной инфраструктуры",
-    "Прикомандированный специалист (Касенов Е.К.)",
-    "Прикомандированный специалист (Жаппарова К.Т.)",
-    "Прикомандированный специалист национальных видов спорта (Есмагамбетов М.М.)"
-];
-
-// должности для подведомственных организаций (пример)
-const ORG_DEFAULT_ROLES = [
-    "Руководитель организации",
-    "Главный тренер",
-    "Старший тренер",
-    "Администратор",
-    "Специалист по спорту",
-    "Методист"
-];
-
-
-function showOrganizationList() {
-    const container = document.getElementById("organizationList");
-    container.innerHTML = "";
-
-    ORGANIZATIONS.forEach(org => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.innerHTML = `
-            <div class="list-item-title">${org.name}</div>
-            <div class="list-item-sub">${org.type === "main" ? "Управление" :
-                                        org.type === "region" ? "Регион" :
-                                        "Организация"}</div>
-        `;
-        div.onclick = () => selectOrganization(org);
-        container.appendChild(div);
-    });
-}
-
-function selectOrganization(org) {
-    currentOrganization = org.name;
-    showRolesForOrganization();
-    showScreen("roleSelectScreen");
-}
-
-function backToOrg() {
-    showScreen("orgSelectScreen");
-}
-
-function showRolesForOrganization() {
-    const container = document.getElementById("roleList");
-    container.innerHTML = "";
-
-    let roles = [];
-    if (currentOrganization.includes("Управление")) roles = ROLES_MAIN;
-    else roles = ORG_DEFAULT_ROLES;
-
-    roles.forEach(role => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.innerHTML = `
-            <div class="list-item-title">${role}</div>
-            <div class="list-item-sub">Должность</div>
-        `;
-        div.onclick = () => selectRole(role);
-        container.appendChild(div);
-    });
-}
-
-
-function selectRole(role) {
-    currentRole = role;
-
-    document.getElementById("empRole").innerText = role;
-    document.getElementById("empOrg").innerText = currentOrganization;
-    document.getElementById("profileRole").innerText = role;
-    document.getElementById("profileOrg").innerText = currentOrganization;
-
-    showScreen("employeeHome");
-}
-
-
-/* ============================================================
-   3. ПРОФИЛЬ ГОСТЯ
-============================================================ */
-
-function openGuestProfile() {
-    showScreen("guestProfile");
-}
-
-function saveGuestProfile() {
-    const fio = document.getElementById("guestFio").value.trim();
-    const phone = document.getElementById("guestPhone").value.trim();
-    const iin = document.getElementById("guestIin").value.trim();
-
-    if (!fio || !phone || !iin) {
-        alert("Пожалуйста, заполните все поля");
-        return;
-    }
-
-    const data = { fio, phone, iin };
-    saveLocal("guestProfile", data);
-
-    alert("Данные сохранены");
-    showScreen("guestHome");
-}
-
-
-/* ============================================================
-   4. НИЖНЕЕ МЕНЮ СОТРУДНИКА
-============================================================ */
-
-function goEmployeeHome() {
-    showScreen("employeeHome");
-}
-
-function openProfile() {
-    showScreen("employeeProfile");
-}
-
-function openDatabase() {
-    buildDatabaseList();
-    showScreen("databaseScreen");
-}
-
-function openTasksScreen() {
-    renderTasks();
-    showScreen("tasksScreen");
-}
-
-function openAIChat() {
-    showScreen("aiScreen");
-}
-
-
-/* ============================================================
-   5. НИЖНЕЕ МЕНЮ ГОСТЯ
-============================================================ */
-
-function goGuestHome() {
-    showScreen("guestHome");
-}
-
-function openGuestEvents() {
-    alert("Данные мероприятий берутся из общей базы сотрудников");
-}
-
-function openGuestSections() {
-    alert("Данные секций берутся из базы данных организации");
-}
-
-function openGuestResults() {
-    alert("Результаты спортсменов берутся из базы сотрудников");
-}
-
-
-/* ============================================================
-   6. БАЗА ДАННЫХ (СОТРУДНИК)
-============================================================ */
-
-function buildDatabaseList() {
-    const container = document.getElementById("dbSectionList");
-    container.innerHTML = "";
-
-    if (!employeeDB[currentRole]) employeeDB[currentRole] = [];
-
-    employeeDB[currentRole].forEach((sec, index) => {
-        const div = document.createElement("div");
-        div.className = "db-section";
-        div.innerHTML = `
-            <input 
-                type="text" 
-                value="${sec.title}" 
-                oninput="updateDbTitle(${index}, this.value)"
-            >
-            <textarea oninput="updateDbText(${index}, this.value)">${sec.text}</textarea>
-        `;
-        container.appendChild(div);
-    });
-
-    saveLocal("employeeDB", employeeDB);
-}
-
-function addDbSection() {
-    if (!employeeDB[currentRole]) employeeDB[currentRole] = [];
-
-    employeeDB[currentRole].push({
-        title: "Новый раздел",
-        text: ""
-    });
-
-    buildDatabaseList();
-}
-
-function updateDbTitle(index, value) {
-    employeeDB[currentRole][index].title = value;
-    saveLocal("employeeDB", employeeDB);
-}
-
-function updateDbText(index, value) {
-    employeeDB[currentRole][index].text = value;
-    saveLocal("employeeDB", employeeDB);
-}
-
-
-/* ============================================================
-   7. ИИ ЧАТ
-============================================================ */
-
-function sendAI() {
-    const input = document.getElementById("aiMessage");
-    const text = input.value.trim();
-    if (!text) return;
-
-    addAIMessage("user", text);
-    input.value = "";
-
-    setTimeout(() => {
-        const answer = generateAIAnswer(text);
-        addAIMessage("bot", answer);
-    }, 300);
-}
-
-function addAIMessage(type, text) {
-    const chat = document.getElementById("aiChat");
-
-    const div = document.createElement("div");
-    div.className = `chat-message ${type}`;
-    div.innerHTML = `<div class="chat-bubble">${text}</div>`;
-
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-}
-
-function generateAIAnswer(q) {
-    // ИИ ищет ответ в базе данных сотрудника
-    let base = employeeDB[currentRole] || [];
-
-    let allText = base.map(x => x.title + " " + x.text).join(" ");
-
-    if (!allText.trim()) {
-        return "База данных пока пуста. Добавьте информацию в профиль.";
-    }
-
-    if (q.length < 4) return "Уточните вопрос.";
-
-    if (allText.toLowerCase().includes(q.toLowerCase())) {
-        return "Информация по вашему запросу присутствует в базе данных:
-
-" + allText.substring(0, 400);
-    }
-
-    return "Мне не удалось найти точную информацию в базе данных сотрудника.";
-}
-
-function backFromAI() {
-    if (MODE === "guest") showScreen("guestHome");
-    else showScreen("employeeHome");
-}
-
-
-/* ============================================================
-   8. СОЗДАНИЕ ПОРУЧЕНИЯ + ТАБЛИЦА
-============================================================ */
-
-function openCreateTask() {
-    initTableEditor();
-    buildTaskTargets();
-    showScreen("createTaskScreen");
-}
-
-function backFromCreateTask() {
-    showScreen("employeeHome");
-}
-
-function buildTaskTargets() {
-    const select = document.getElementById("taskTarget");
-    select.innerHTML = "";
-
-    ORGANIZATIONS.forEach(o => {
-        const opt = document.createElement("option");
-        opt.value = o.name;
-        opt.textContent = o.name;
-        select.appendChild(opt);
-    });
-}
-
-function initTableEditor() {
-    renderTable();
-}
-
-function addTableRow() {
-    table.rows.push(Array(table.columns.length).fill(""));
-    renderTable();
-}
-
-function addTableColumn() {
-    table.columns.push("Колонка " + (table.columns.length + 1));
-    table.rows = table.rows.map(r => [...r, ""]);
-    renderTable();
-}
-
-function renderTable() {
-    const div = document.getElementById("tableEditor");
-    div.innerHTML = "";
-
-    const tableEl = document.createElement("table");
-
-    const thead = document.createElement("thead");
-    const tr = document.createElement("tr");
-    table.columns.forEach((col, i) => {
-        const th = document.createElement("th");
-        th.innerHTML = `
-            <input 
-                value="${col}" 
-                oninput="renameColumn(${i}, this.value)"
-            >
-        `;
-        tr.appendChild(th);
-    });
-    thead.appendChild(tr);
-    tableEl.appendChild(thead);
-
-    const tbody = document.createElement("tbody");
-    table.rows.forEach((row, ri) => {
-        const tr = document.createElement("tr");
-        row.forEach((cell, ci) => {
-            const td = document.createElement("td");
-            td.innerHTML = `
-                <input 
-                    value="${cell}" 
-                    oninput="editCell(${ri}, ${ci}, this.value)"
-                >
-            `;
-            tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-    });
-    tableEl.appendChild(tbody);
-
-    div.appendChild(tableEl);
-}
-
-function renameColumn(i, value) {
-    table.columns[i] = value;
-}
-
-function editCell(r, c, value) {
-    table.rows[r][c] = value;
-}
-
-function saveTask() {
-    const task = {
-        id: Date.now(),
-        target: document.getElementById("taskTarget").value,
-        description: document.getElementById("taskDescription").value,
-        deadline: document.getElementById("taskDeadline").value,
-        table: JSON.parse(JSON.stringify(table))
-    };
-
-    tasks.push(task);
-    saveLocal("tasksList", tasks);
-
-    alert("Поручение создано");
-
-    showScreen("employeeHome");
-    renderTasks();
-}
-
-
-/* ============================================================
-   9. СПИСОК ПОРУЧЕНИЙ
-============================================================ */
-
-function renderTasks() {
-    const list = document.getElementById("tasksList");
-    list.innerHTML = "";
-
-    tasks.forEach(t => {
-        const card = document.createElement("div");
-        card.className = "task-card";
-        card.innerHTML = `
-            <div class="task-title">${t.description}</div>
-            <div class="task-meta">Кому: ${t.target}</div>
-            <div class="task-meta">Дедлайн: ${t.deadline}</div>
-        `;
-        list.appendChild(card);
-    });
-}
-
-
-/* ============================================================
-   10. ВЫХОД И СБРОС
-============================================================ */
-
-function resetEmployee() {
-    currentRole = null;
-    currentOrganization = null;
-    showScreen("modeScreen");
-}
-
-function logout() {
-    MODE = null;
-    showScreen("modeScreen");
-}
-</script>
+<!-- ============================================================= -->
+<!-- ЭКРАН — ГОСТЬ: ГЛАВНАЯ                                      -->
+<!-- ============================================================= -->
+<div id="guestHome" class="screen">
+    <div class="header guest">
+        <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Coat_of_Arms_of_Karagandy_Obl.svg/200px-Coat_of_Arms_of_Karagandy_Obl.svg.png">
+        <div class="header-title">Гостевой режим</div>
+    </div>
+
+    <div class="menu-grid">
+        <button class="menu-btn" onclick="openGuestProfile()">Профиль</button>
+        <button class="menu-btn" onclick="openAIChat()">Задать вопрос ИИ</button>
+        <button class="menu-btn" onclick="openGuestEvents()">Мероприятия</button>
+        <button class="menu-btn" onclick="openGuestSections()">Секции</button>
+        <button class="menu-btn" onclick="openGuestResults()">Результаты</button>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="goGuestHome()">🏠</div>
+        <div class="nav-item" onclick="openAIChat()">🤖</div>
+        <div class="nav-item" onclick="openGuestProfile()">⚙️</div>
+    </div>
+</div>
+
+
+<!-- ============================================================= -->
+<!-- ЭКРАН — Профиль гостя                                        -->
+<!-- ============================================================= -->
+<div id="guestProfile" class="screen">
+    <div class="screen-title">Профиль гостя</div>
+
+    <div class="form">
+        <label>ФИО</label>
+        <input id="guestFio">
+
+        <label>Телефон</label>
+        <input id="guestPhone">
+
+        <label>ИИН</label>
+        <input id="guestIin">
+    </div>
+
+    <button class="btn primary wide" onclick="saveGuestProfile()">Сохранить</button>
+    <button class="btn secondary wide" onclick="goGuestHome()">Назад</button>
+</div>
+
+
+<!-- ============================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================= -->
+<script src="script.js"></script>
 
 </body>
 </html>
