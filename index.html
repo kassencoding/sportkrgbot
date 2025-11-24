@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="style.css" />
 
-    <!-- Telegram WebApp (не мешает обычному браузеру) -->
+    <!-- Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -16,7 +16,6 @@
 <div id="modeScreen" class="screen active">
     <div class="card welcome-card">
         <div class="welcome-logo-wrap">
-            <!-- Герб: путь img/karaganda_gerb.jpeg -->
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="welcome-logo" />
         </div>
         <h1 class="welcome-title">Служебная система</h1>
@@ -38,27 +37,42 @@
 <!-- =================== ЭКРАН ВЫБОРА ОРГАНИЗАЦИИ =================== -->
 <div id="orgSelectScreen" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('modeScreen')">← Назад</button>
+        <button class="top-back" onclick="showScreen('modeScreen')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Выбор организации</div>
     </div>
 
     <div id="organizationList" class="list"></div>
 </div>
 
-<!-- =================== ЭКРАН ВЫБОРА ОТДЕЛА (ДЛЯ УПРАВЛЕНИЯ) =================== -->
+<!-- =================== ЭКРАН ВЫБОРА ОТДЕЛА =================== -->
 <div id="deptSelectScreen" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('orgSelectScreen')">← Назад</button>
+        <button class="top-back" onclick="showScreen('orgSelectScreen')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Выбор отдела</div>
     </div>
 
     <div id="departmentList" class="list"></div>
 </div>
 
-<!-- =================== ЭКРАН ВЫБОРА СОТРУДНИКА / ДОЛЖНОСТИ =================== -->
+<!-- =================== ЭКРАН ВЫБОРА СОТРУДНИКА =================== -->
 <div id="roleSelectScreen" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="backFromRole()">← Назад</button>
+        <button class="top-back" onclick="backFromRole()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Выбор сотрудника</div>
     </div>
 
@@ -80,151 +94,100 @@
     <div class="avatar-block">
         <div class="avatar-circle">
             <img id="employeeAvatarImg" alt="Аватар сотрудника" />
-            <span id="employeeAvatarPlaceholder">👤</span>
+            <span id="employeeAvatarPlaceholder">
+                <!-- User Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="32" height="32">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.314 0-6 2.686-6 6h12c0-3.314-2.686-6-6-6z" />
+                </svg>
+            </span>
         </div>
         <button class="btn btn-secondary btn-small" onclick="triggerEmployeePhoto()">Изменить фото</button>
-        <!-- УБРАН capture, чтобы работала медиатека -->
         <input id="employeeAvatarInput" type="file" accept="image/*" style="display:none" onchange="handleEmployeePhoto(this)" />
     </div>
-
     <div class="menu-list">
+
+        <!-- СОЗДАТЬ ПОРУЧЕНИЕ -->
         <button class="menu-btn" onclick="openCreateTask()">
-            <div class="menu-btn-icon">➕</div>
+            <div class="menu-btn-icon">
+                <!-- Plus Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4v16m8-8H4" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Создать поручение</div>
                 <div class="menu-btn-subtitle">Формирование поручения с таблицей и дедлайном</div>
             </div>
         </button>
 
+        <!-- СПИСОК ПОРУЧЕНИЙ -->
         <button class="menu-btn" onclick="openTasksScreen()">
-            <div class="menu-btn-icon">📝</div>
+            <div class="menu-btn-icon">
+                <!-- Document Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v12a2 2 0 01-2 2z" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Поручения</div>
                 <div class="menu-btn-subtitle">Список всех поручений и статусов</div>
             </div>
         </button>
 
+        <!-- БАЗА ДАННЫХ -->
         <button class="menu-btn" onclick="openDatabase()">
-            <div class="menu-btn-icon">📚</div>
+            <div class="menu-btn-icon">
+                <!-- Archive Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 7h18M5 7l2-3h10l2 3m-1 0v11a2 2 0 01-2 2H7a2 2 0 01-2-2V7z" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">База данных</div>
                 <div class="menu-btn-subtitle">Разделы по направлению вашей работы</div>
             </div>
         </button>
 
+        <!-- ИИ-АССИСТЕНТ -->
         <button class="menu-btn" onclick="openAIChat()">
-            <div class="menu-btn-icon">🤖</div>
+            <div class="menu-btn-icon">
+                <!-- Sparkles Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v2m6.364 1.364l-1.414 1.414M21 12h-2m-1.636 6.364l-1.414-1.414M12 19v2M7.05 18.364l1.414-1.414M5 12H3m4.05-7.364L8.464 7.05" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">ИИ-ассистент</div>
                 <div class="menu-btn-subtitle">Вопросы по данным вашей базы</div>
             </div>
         </button>
 
+        <!-- ПРОФИЛЬ -->
         <button class="menu-btn" onclick="openEmployeeProfile()">
-            <div class="menu-btn-icon">👤</div>
+            <div class="menu-btn-icon">
+                <!-- User Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.314 0-6 2.686-6 6h12c0-3.314-2.686-6-6-6z" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Профиль</div>
                 <div class="menu-btn-subtitle">Должность, организация и фото</div>
             </div>
         </button>
+
     </div>
-</div>
-
-<!-- =================== ПРОФИЛЬ СОТРУДНИКА =================== -->
-<div id="employeeProfile" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="goEmployeeHome()">← Назад</button>
-        <div class="top-title">Профиль сотрудника</div>
-    </div>
-
-    <div class="avatar-block">
-        <div class="avatar-circle">
-            <img id="employeeAvatarImg_profile" alt="Аватар" />
-            <span id="employeeAvatarPlaceholder_profile">👤</span>
-        </div>
-        <button class="btn btn-secondary btn-small" onclick="triggerEmployeePhoto()">Изменить фото</button>
-    </div>
-
-    <div class="profile-card">
-        <div class="profile-label">Организация</div>
-        <div id="profileOrg">—</div>
-
-        <div class="profile-label">Должность и ФИО</div>
-        <div id="profileRole">—</div>
-    </div>
-
-    <button class="btn btn-danger full" onclick="resetEmployee()">Выйти из кабинета</button>
-</div>
-
-<!-- =================== БАЗА ДАННЫХ СОТРУДНИКА =================== -->
-<div id="databaseScreen" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="goEmployeeHome()">← Назад</button>
-        <div class="top-title">База данных</div>
-    </div>
-
-    <div id="dbSectionList" class="db-list"></div>
-
-    <button class="btn btn-primary full" onclick="addDbSection()">Добавить раздел</button>
-</div>
-
-<!-- =================== СОЗДАНИЕ ПОРУЧЕНИЯ =================== -->
-<div id="createTaskScreen" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="goEmployeeHome()">← Назад</button>
-        <div class="top-title">Новое поручение</div>
-    </div>
-
-    <div class="form">
-        <label>Кому (организация)</label>
-        <select id="taskTarget"></select>
-
-        <label>Конкретный сотрудник (необязательно)</label>
-        <input id="taskTargetPerson" placeholder="ФИО или должность" />
-
-        <label>Описание поручения</label>
-        <textarea id="taskDescription" placeholder="Например: Подготовить отчёт, предоставить информацию, загрузить фото..."></textarea>
-
-        <label>Дедлайн</label>
-        <input type="date" id="taskDeadline" />
-    </div>
-
-    <div class="sub-title">Таблица в поручении</div>
-    <div id="tableEditor" class="table-editor"></div>
-
-    <div class="table-controls">
-        <button class="btn btn-secondary" onclick="addTableColumn()">+ Столбец</button>
-        <button class="btn btn-secondary" onclick="addTableRow()">+ Строка</button>
-    </div>
-
-    <button class="btn btn-primary full" onclick="saveTask()">Сохранить поручение</button>
-</div>
-
-<!-- =================== СПИСОК ПОРУЧЕНИЙ =================== -->
-<div id="tasksScreen" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="goEmployeeHome()">← Назад</button>
-        <div class="top-title">Поручения</div>
-    </div>
-
-    <div id="tasksList" class="tasks-list"></div>
-</div>
-
-<!-- =================== ИИ-ЧАТ =================== -->
-<div id="aiScreen" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="backFromAI()">← Назад</button>
-        <div class="top-title">ИИ-ассистент</div>
-    </div>
-
-    <div id="aiChat" class="chat-container"></div>
-
-    <div class="chat-input-box">
-        <input id="aiMessage" placeholder="Ваш вопрос..." />
-        <button onclick="sendAI()">➤</button>
-    </div>
-</div>
-
 <!-- =================== ГЛАВНЫЙ ЭКРАН ГОСТЯ =================== -->
 <div id="guestHome" class="screen">
     <div class="header">
@@ -238,62 +201,145 @@
     </div>
 
     <div class="menu-list">
+
+        <!-- Спросить у ИИ -->
         <button class="menu-btn" onclick="openAIChat()">
-            <div class="menu-btn-icon">🤖</div>
+            <div class="menu-btn-icon">
+                <!-- Sparkles Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v2m6.364 1.364l-1.414 1.414M21 12h-2m-1.636 6.364l-1.414-1.414M12 19v2M7.05 18.364l1.414-1.414M5 12H3m4.05-7.364L8.464 7.05" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Спросить у ИИ</div>
                 <div class="menu-btn-subtitle">Ответы по сооружениям, секциям, проектам</div>
             </div>
         </button>
 
+        <!-- Запросить информацию -->
         <button class="menu-btn" onclick="openGuestRequestInfo()">
-            <div class="menu-btn-icon">📨</div>
+            <div class="menu-btn-icon">
+                <!-- Envelope Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 4h16v16H4V4zm0 4l8 4 8-4" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Запросить информацию</div>
                 <div class="menu-btn-subtitle">Официальный запрос в адрес управления</div>
             </div>
         </button>
 
+        <!-- Календарь мероприятий -->
         <button class="menu-btn" onclick="openGuestEvents()">
-            <div class="menu-btn-icon">📅</div>
+            <div class="menu-btn-icon">
+                <!-- Calendar Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3M4 11h16M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Календарь мероприятий</div>
                 <div class="menu-btn-subtitle">Ближайшие соревнования и акции</div>
             </div>
         </button>
 
+        <!-- Список спортивных секций -->
         <button class="menu-btn" onclick="openGuestSections()">
-            <div class="menu-btn-icon">🏟️</div>
+            <div class="menu-btn-icon">
+                <!-- Stadium Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 21V8l9-5 9 5v13H3zm4-4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Список спортивных секций</div>
                 <div class="menu-btn-subtitle">Где и у кого можно тренироваться</div>
             </div>
         </button>
 
+        <!-- Результаты -->
         <button class="menu-btn" onclick="openGuestResults()">
-            <div class="menu-btn-icon">🏅</div>
+            <div class="menu-btn-icon">
+                <!-- Trophy Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 21h8m-4-4c-3.314 0-6-2.686-6-6V5h12v6c0 3.314-2.686 6-6 6zm-6-9a3 3 0 01-3-3h3v3zm12 0V5h3a3 3 0 01-3 3z" />
+                </svg>
+            </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Действующие и старые результаты</div>
                 <div class="menu-btn-subtitle">Итоги выступлений спортсменов области</div>
             </div>
         </button>
+
     </div>
 </div>
+<!-- =================== ИИ-ЧАТ =================== -->
+<div id="aiScreen" class="screen">
+    <div class="top-bar">
+        <button class="top-back" onclick="backFromAI()">
+            <!-- Back Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
+        <div class="top-title">ИИ-ассистент</div>
+    </div>
 
+    <div id="aiChat" class="chat-container"></div>
+
+    <div class="chat-input-box">
+        <input id="aiMessage" placeholder="Ваш вопрос..." />
+
+        <button onclick="sendAI()">
+            <!-- Send Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+</div>
 <!-- =================== ПРОФИЛЬ ГОСТЯ =================== -->
 <div id="guestProfile" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('guestHome')">← Назад</button>
+        <button class="top-back" onclick="showScreen('guestHome')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Профиль гостя</div>
     </div>
 
     <div class="avatar-block">
         <div class="avatar-circle">
             <img id="guestAvatarImg" alt="Фото гостя" />
-            <span id="guestAvatarPlaceholder">👤</span>
+            <span id="guestAvatarPlaceholder">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" width="32" height="32">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.314 0-6 2.686-6 6h12c0-3.314-2.686-6-6-6z" />
+                </svg>
+            </span>
         </div>
         <button class="btn btn-secondary btn-small" onclick="triggerGuestPhoto()">Изменить фото</button>
-        <!-- УБРАН capture -->
         <input id="guestAvatarInput" type="file" accept="image/*" style="display:none" onchange="handleGuestPhoto(this)" />
     </div>
 
@@ -311,12 +357,21 @@
     <button class="btn btn-primary full" onclick="saveGuestProfile()">Сохранить</button>
 </div>
 
+
 <!-- =================== ГОСТЬ — МЕРОПРИЯТИЯ =================== -->
 <div id="guestEvents" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('guestHome')">← Назад</button>
+        <button class="top-back" onclick="showScreen('guestHome')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Календарь мероприятий</div>
     </div>
+
     <div class="info-placeholder">
         <div class="info-title">Пример событий:</div>
         <ul class="info-list">
@@ -327,12 +382,21 @@
     </div>
 </div>
 
+
 <!-- =================== ГОСТЬ — СЕКЦИИ =================== -->
 <div id="guestSections" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('guestHome')">← Назад</button>
+        <button class="top-back" onclick="showScreen('guestHome')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Секции и тренеры</div>
     </div>
+
     <div class="info-placeholder">
         <div class="info-title">Примеры секций:</div>
         <ul class="info-list">
@@ -343,12 +407,21 @@
     </div>
 </div>
 
+
 <!-- =================== ГОСТЬ — РЕЗУЛЬТАТЫ =================== -->
 <div id="guestResults" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('guestHome')">← Назад</button>
+        <button class="top-back" onclick="showScreen('guestHome')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Новости и результаты</div>
     </div>
+
     <div class="info-placeholder">
         <div class="info-title">Примеры результатов:</div>
         <ul class="info-list">
@@ -359,10 +432,18 @@
     </div>
 </div>
 
+
 <!-- =================== ГОСТЬ — ЗАПРОС ИНФОРМАЦИИ =================== -->
 <div id="guestRequest" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('guestHome')">← Назад</button>
+        <button class="top-back" onclick="showScreen('guestHome')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+            </svg>
+            Назад
+        </button>
         <div class="top-title">Запрос информации</div>
     </div>
 
@@ -376,6 +457,7 @@
 
     <button class="btn btn-primary full" onclick="sendGuestRequest()">Отправить запрос (демо)</button>
 </div>
+
 
 <script src="script.js"></script>
 </body>
