@@ -526,8 +526,34 @@ function updateDbText(i, v) {
     saveLocal("employeeDB", employeeDB);
 }
 
+// =================== КОНТЕКСТ ДЛЯ ИИ ИЗ БАЗЫ СОТРУДНИКА ===================
+function buildEmployeeContext() {
+    if (!MODE || MODE !== "employee") return "";
+    if (!currentRole || !employeeDB[currentRole] || employeeDB[currentRole].length === 0) return "";
+
+    const sections = employeeDB[currentRole];
+    const orgName = currentOrganization ? currentOrganization.name : "Организация не выбрана";
+    const roleName = currentRole;
+
+    const contextParts = sections.map(sec => {
+        const title = (sec.title || "").trim();
+        const text = (sec.text || "").trim();
+        return `${title ? title + ": " : ""}${text}`;
+    });
+
+    const contextText = contextParts.join("\n\n");
+
+    return `
+Должность: ${roleName}
+Организация: ${orgName}
+
+Внутренняя база сотрудника (служебная информация):
+${contextText}
+    `.trim();
+}
+
 // =================== ИИ-ЧАТ ===================
-function sendAI() {
+async function sendAI() {
     const input = document.getElementById("aiMessage");
     const text = input.value.trim();
     if (!text) return;
@@ -535,10 +561,48 @@ function sendAI() {
     addAIMessage("user", text);
     input.value = "";
 
-    setTimeout(() => {
-        const answer = generateAIAnswer(text);
+    // Готовим вопрос для backend-а с учётом базы
+    let questionForBackend = text;
+    const employeeContext = buildEmployeeContext();
+
+    if (employeeContext) {
+        questionForBackend =
+            "Ниже предоставлен служебный контекст сотрудника Управления физической культуры и спорта Карагандинской области.\n" +
+            "Отвечай, опираясь в первую очередь на эти данные. Если точной информации нет, делай аккуратные выводы и обязательно помечай, что это оценка.\n\n" +
+            employeeContext +
+            "\n\nВопрос сотрудника:\n" +
+            text;
+    } else if (MODE === "guest") {
+        questionForBackend =
+            "Ты — ИИ-ассистент гостевого режима Управления физической культуры и спорта Карагандинской области. " +
+            "Отвечай населению кратко и официально. Вопрос:\n" + text;
+    }
+
+    try {
+        const res = await fetch("https://considerate-appreciation-production.up.railway.app/ask", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ question: questionForBackend })
+        });
+
+        if (!res.ok) {
+            console.error("Backend error status:", res.status);
+            const fallback = generateAIAnswer(text);
+            addAIMessage("bot", fallback);
+            return;
+        }
+
+        const data = await res.json();
+        const answer = data.answer || generateAIAnswer(text);
+
         addAIMessage("bot", answer);
-    }, 300);
+    } catch (e) {
+        console.error("Ошибка запроса к backend:", e);
+        const fallback = generateAIAnswer(text);
+        addAIMessage("bot", fallback);
+    }
 }
 
 function addAIMessage(type, text) {
@@ -555,21 +619,41 @@ function generateAIAnswer(q) {
 
     if (MODE === "employee") {
         if (!currentRole || !employeeDB[currentRole] || employeeDB[currentRole].length === 0) {
-            return "Для вашей должности база данных пока пустая. Заполните разделы в «База данных».";
+            return "Для вашей должности база данных пока пустая. Заполните разделы в «База данных», чтобы ИИ мог опираться на ваши материалы.";
         }
-        const text = employeeDB[currentRole]
-            .map(s => s.title + ". " + s.text)
-            .join(" ")
+
+        const sections = employeeDB[currentRole];
+
+        const fullText = sections
+            .map(s => ((s.title || "") + ". " + (s.text || "")))
+            .join(" \n")
             .toLowerCase();
-        if (text.includes(query)) {
-            return "Нашёл информацию по вашему вопросу в базе данных:\n\n" +
-                text.substring(0, 400) + (text.length > 400 ? "..." : "");
+
+        if (fullText.includes(query)) {
+            const matchedSections = sections.filter(s => {
+                const t = ((s.title || "") + " " + (s.text || "")).toLowerCase();
+                return t.includes(query);
+            });
+
+            const top = matchedSections.slice(0, 3).map(s => {
+                const t = (s.text || "").trim();
+                return `• ${s.title || "Раздел"} — ${t || "описание отсутствует"}`;
+            });
+
+            if (top.length > 0) {
+                return (
+                    "Нашёл информацию по вашему вопросу в вашей служебной базе данных:\n\n" +
+                    top.join("\n\n") +
+                    "\n\n(Ответ сгенерирован на основе ваших служебных разделов. При необходимости уточните данные в базе.)"
+                );
+            }
         }
-        return "В вашей базе данных точного ответа не нашлось. Дополните разделы или переформулируйте вопрос.";
+
+        return "В вашей служебной базе данных точного ответа не нашлось. Дополните разделы в «База данных» или переформулируйте вопрос.";
     }
 
-    // Для гостя — пока демо-ответ
-    return "ИИ-ассистент гостевого режима будет использовать обобщённые данные Управления. Пока это демо-ответ.";
+    // Гостевой режим — резервный ответ, если backend недоступен
+    return "Сейчас ИИ-ассистент гостевого режима недоступен. Пожалуйста, попробуйте повторить запрос позже или обратитесь в Управление физической культуры и спорта Карагандинской области.";
 }
 
 function backFromAI() {
@@ -774,4 +858,3 @@ function resetEmployee() {
     MODE = null;
     showScreen("modeScreen");
 }
-
