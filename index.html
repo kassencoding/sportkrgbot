@@ -34,31 +34,117 @@
     </div>
 </div>
 
-<!-- =================== ВЫБОР ОРГАНИЗАЦИИ =================== -->
-<div id="orgSelectScreen" class="screen">
+<!-- =================== НОВЫЙ ВЫБОР КАТЕГОРИИ СОТРУДНИКА =================== -->
+<div id="employeeCategoryScreen" class="screen">
     <div class="top-bar">
         <button class="top-back" onclick="showScreen('modeScreen')">← Назад</button>
-        <div class="top-title">Выбор организации</div>
+        <div class="top-title">Выбор категории</div>
     </div>
-    <div id="organizationList" class="list"></div>
+
+    <div class="menu-list">
+        <button class="menu-btn" onclick="selectEmployeeCategory('management')">
+            <div class="menu-btn-icon">
+                <!-- Иконка "Управление" -->
+                <img src="img/icon-category-management.svg" alt="" width="22" height="22" />
+            </div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Управление</div>
+                <div class="menu-btn-subtitle">Руководство и отделы Управления</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="selectEmployeeCategory('org')">
+            <div class="menu-btn-icon">
+                <!-- Иконка "Подведомственные организации" -->
+                <img src="img/icon-category-org.svg" alt="" width="22" height="22" />
+            </div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Подведомственные организации</div>
+                <div class="menu-btn-subtitle">ДЮСШ, ОСДЮШОР, центры и др.</div>
+            </div>
+        </button>
+
+        <button class="menu-btn" onclick="selectEmployeeCategory('region')">
+            <div class="menu-btn-icon">
+                <!-- Иконка "Отделы спорта" -->
+                <img src="img/icon-category-region.svg" alt="" width="22" height="22" />
+            </div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Отделы спорта</div>
+                <div class="menu-btn-subtitle">Города и районы области</div>
+            </div>
+        </button>
+    </div>
 </div>
 
-<!-- =================== ВЫБОР ОТДЕЛА =================== -->
-<div id="deptSelectScreen" class="screen">
+<!-- =================== НОВЫЙ ВЫБОР ПОДРАЗДЕЛЕНИЯ =================== -->
+<div id="employeeUnitScreen" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="showScreen('orgSelectScreen')">← Назад</button>
-        <div class="top-title">Выбор отдела</div>
+        <button class="top-back" onclick="backFromEmployeeUnit()">← Назад</button>
+        <div class="top-title" id="employeeUnitTitle">Выбор подразделения</div>
     </div>
-    <div id="departmentList" class="list"></div>
+    <div id="employeeUnitList" class="list"></div>
 </div>
 
-<!-- =================== ВЫБОР СОТРУДНИКА / ДОЛЖНОСТИ =================== -->
-<div id="roleSelectScreen" class="screen">
+<!-- =================== НОВЫЙ ВЫБОР СОТРУДНИКА =================== -->
+<div id="employeePersonScreen" class="screen">
     <div class="top-bar">
-        <button class="top-back" onclick="backFromRole()">← Назад</button>
-        <div class="top-title">Выбор сотрудника</div>
+        <button class="top-back" onclick="backFromEmployeePerson()">← Назад</button>
+        <div class="top-title" id="employeePersonTitle">Выбор сотрудника</div>
     </div>
-    <div id="roleList" class="list"></div>
+    <div id="employeePersonList" class="list"></div>
+</div>
+
+<!-- =================== НОВЫЙ ЭКРАН ВВОДА ПАРОЛЯ =================== -->
+<div id="employeePasswordScreen" class="screen">
+    <div class="top-bar">
+        <button class="top-back" onclick="backFromPassword()">← Назад</button>
+        <div class="top-title">Вход в кабинет</div>
+    </div>
+
+    <div class="card">
+        <div class="profile-label">Организация</div>
+        <div id="loginOrgLabel">—</div>
+
+        <div class="profile-label">Должность и ФИО</div>
+        <div id="loginRoleLabel">—</div>
+    </div>
+
+    <div class="form">
+        <label>Пароль</label>
+        <input id="employeePasswordInput" type="password" placeholder="123" />
+        <small class="hint">
+            При первом входе используйте пароль 123. Затем вы создадите свой пароль.
+        </small>
+    </div>
+
+    <button class="btn btn-primary full" onclick="loginEmployee()">Войти</button>
+</div>
+
+<!-- =================== НОВЫЙ ЭКРАН СОЗДАНИЯ ПАРОЛЯ =================== -->
+<div id="employeeCreatePasswordScreen" class="screen">
+    <div class="top-bar">
+        <button class="top-back" onclick="backFromCreatePassword()">← Назад</button>
+        <div class="top-title">Создание пароля</div>
+    </div>
+
+    <div class="card">
+        <div class="profile-label">Организация</div>
+        <div id="createPassOrgLabel">—</div>
+
+        <div class="profile-label">Должность и ФИО</div>
+        <div id="createPassRoleLabel">—</div>
+    </div>
+
+    <div class="form">
+        <label>Новый пароль</label>
+        <input id="employeeNewPassword1" type="password" />
+
+        <label>Повторите новый пароль</label>
+        <input id="employeeNewPassword2" type="password" />
+    </div>
+
+    <button class="btn btn-primary full" onclick="saveNewEmployeePassword()">Сохранить пароль и войти</button>
 </div>
 
 <!-- =================== ГЛАВНЫЙ ЭКРАН СОТРУДНИКА =================== -->
@@ -71,6 +157,10 @@
             <div id="empOrg" class="header-org">Организация</div>
             <div id="empRole" class="header-role">Должность не выбрана</div>
         </div>
+        <!-- Переключатель темы (сотрудник) -->
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Переключить тему">
+            <img id="themeIconEmployee" src="img/icon-theme-light.svg" alt="" />
+        </button>
     </div>
 
     <div class="avatar-block">
@@ -263,6 +353,10 @@
             <div class="header-org">Гостевой режим</div>
             <div class="header-role">Информация для населения</div>
         </div>
+        <!-- Переключатель темы (гость) -->
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Переключить тему">
+            <img id="themeIconGuest" src="img/icon-theme-light.svg" alt="" />
+        </button>
     </div>
 
     <div class="menu-list">
@@ -273,7 +367,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 22c4.97 0 9-3.582 9-8
                     0-3.314-2.686-6-6-6H6c-2.761 0-5
-                    2.239-5 5 0 2.577 2.422 5 5 5h1v3l4-3h1z"/>
+                    2.239-5 5 0 2.577 2.422 5 5 5h1v3л4-3h1z"/>
                 </svg>
             </div>
             <div class="menu-btn-text">
@@ -326,7 +420,7 @@
         <button class="menu-btn" onclick="openGuestResults()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
-                    <path d="M12 2l3 7h7l-5.5 4.5 2.5 7L12 17l-7 3.5 2.5-7L2 9h7z"/>
+                    <path d="M12 2l3 7h7л-5.5 4.5 2.5 7L12 17л-7 3.5 2.5-7L2 9h7z"/>
                 </svg>
             </div>
             <div class="menu-btn-text">
