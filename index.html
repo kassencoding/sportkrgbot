@@ -42,10 +42,11 @@
     </div>
 
     <div class="menu-list">
+
+        <!-- Управление -->
         <button class="menu-btn" onclick="selectEmployeeCategory('management')">
             <div class="menu-btn-icon">
-                <!-- Иконка "Управление" -->
-                <img src="img/icon-category-management.svg" alt="" width="22" height="22" />
+                <img src="img/building.svg" alt="Управление" width="26" height="26" />
             </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Управление</div>
@@ -53,10 +54,10 @@
             </div>
         </button>
 
+        <!-- Подведомственные организации -->
         <button class="menu-btn" onclick="selectEmployeeCategory('org')">
             <div class="menu-btn-icon">
-                <!-- Иконка "Подведомственные организации" -->
-                <img src="img/icon-category-org.svg" alt="" width="22" height="22" />
+                <img src="img/school.svg" alt="Организации" width="26" height="26" />
             </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Подведомственные организации</div>
@@ -64,16 +65,17 @@
             </div>
         </button>
 
+        <!-- Отделы спорта (районы/города) -->
         <button class="menu-btn" onclick="selectEmployeeCategory('region')">
             <div class="menu-btn-icon">
-                <!-- Иконка "Отделы спорта" -->
-                <img src="img/icon-category-region.svg" alt="" width="22" height="22" />
+                <img src="img/stadium.svg" alt="Отделы спорта" width="26" height="26" />
             </div>
             <div class="menu-btn-text">
                 <div class="menu-btn-title">Отделы спорта</div>
                 <div class="menu-btn-subtitle">Города и районы области</div>
             </div>
         </button>
+
     </div>
 </div>
 
@@ -158,10 +160,10 @@
             <div id="empRole" class="header-role">Должность не выбрана</div>
         </div>
         <!-- Переключатель темы (сотрудник) -->
-        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Переключить тему">
-            <img id="themeIconEmployee" src="img/icon-theme-light.svg" alt="" />
-        </button>
-    </div>
+        <div class="theme-toggle-btn" onclick="toggleTheme()">
+    <img id="theme-icon" src="img/sun.svg">
+</div>
+
 
     <div class="avatar-block">
         <div class="avatar-circle">
