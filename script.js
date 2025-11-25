@@ -15,6 +15,15 @@ let table = {
     rows: [[""]]
 };
 
+// Новый стейт для выбора сотрудника
+let currentEmployeeCategory = null; // 'management' | 'org' | 'region'
+let currentUnitList = []; // список подразделений (отделов, организаций)
+let currentUnit = null;   // выбранное подразделение
+let selectedEmployee = null; // объект с данными выбранного сотрудника
+
+// Тема интерфейса
+let currentTheme = "light";
+
 // =================== УТИЛИТЫ LOCALSTORAGE ===================
 function saveLocal(key, value) {
     try {
@@ -23,6 +32,7 @@ function saveLocal(key, value) {
         console.warn("Не удалось сохранить в localStorage", e);
     }
 }
+
 function loadLocal(key, def = null) {
     try {
         const v = localStorage.getItem(key);
@@ -122,7 +132,7 @@ const MAIN_DEPARTMENTS = [
     }
 ];
 
-// Типовые должности для подведомственных организаций
+// Типовые должности для подведомственных организаций / отделов спорта
 const ORG_ROLES = [
     "Руководитель организации",
     "Старший тренер",
@@ -131,6 +141,39 @@ const ORG_ROLES = [
     "Администратор",
     "Специалист по спорту"
 ];
+
+// =================== ТЕМА (СВЕТЛАЯ / ТЁМНАЯ) ===================
+function applyTheme(theme) {
+    currentTheme = theme === "dark" ? "dark" : "light";
+    if (currentTheme === "dark") {
+        document.body.classList.add("dark");
+    } else {
+        document.body.classList.remove("dark");
+    }
+
+    // Обновляем иконки, если они есть
+    const empIcon = document.getElementById("themeIconEmployee");
+    const guestIcon = document.getElementById("themeIconGuest");
+    const iconPath =
+        currentTheme === "dark"
+            ? "img/icon-theme-dark.svg"
+            : "img/icon-theme-light.svg";
+
+    if (empIcon) empIcon.src = iconPath;
+    if (guestIcon) guestIcon.src = iconPath;
+
+    saveLocal("uiTheme", currentTheme);
+}
+
+function initTheme() {
+    const saved = loadLocal("uiTheme", "light");
+    applyTheme(saved || "light");
+}
+
+function toggleTheme() {
+    const next = currentTheme === "light" ? "dark" : "light";
+    applyTheme(next);
+}
 
 // =================== ИНИЦИАЛИЗАЦИЯ ===================
 window.onload = () => {
@@ -181,6 +224,7 @@ window.onload = () => {
     const guestAvatar = loadLocal("guestAvatar", null);
     if (guestAvatar) setGuestAvatar(guestAvatar);
 
+    initTheme();
     showScreen("modeScreen");
 };
 
@@ -188,105 +232,327 @@ window.onload = () => {
 function selectMode(mode) {
     MODE = mode;
     if (mode === "employee") {
-        buildOrganizationList();
-        showScreen("orgSelectScreen");
+        // Новый поток: выбор категории сотрудника
+        currentEmployeeCategory = null;
+        currentUnitList = [];
+        currentUnit = null;
+        selectedEmployee = null;
+        showScreen("employeeCategoryScreen");
     } else {
+        // Гостевой режим
         showScreen("guestHome");
     }
 }
 
-// =================== ВЫБОР ОРГАНИЗАЦИИ ===================
-function buildOrganizationList() {
-    const container = document.getElementById("organizationList");
-    container.innerHTML = "";
-    ORGANIZATIONS.forEach(org => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.textContent = org.name;
-        div.onclick = () => selectOrganization(org);
-        container.appendChild(div);
-    });
+// =================== НОВЫЙ ВЫБОР СОТРУДНИКА ===================
+
+// Получаем главную организацию (управление)
+function getMainOrg() {
+    return ORGANIZATIONS.find(o => o.type === "main") || {
+        type: "main",
+        level: 0,
+        name: "Управление физической культуры и спорта Карагандинской области"
+    };
 }
 
-function selectOrganization(org) {
-    currentOrganization = org;
-    if (org.type === "main") {
-        buildDepartmentList();
-        showScreen("deptSelectScreen");
-    } else {
-        buildOrgRoles();
-        showScreen("roleSelectScreen");
+function selectEmployeeCategory(category) {
+    // category: 'management' | 'org' | 'region'
+    currentEmployeeCategory = category;
+    currentUnitList = [];
+    currentUnit = null;
+    selectedEmployee = null;
+
+    const titleEl = document.getElementById("employeeUnitTitle");
+    const listEl = document.getElementById("employeeUnitList");
+    if (!listEl) return;
+
+    listEl.innerHTML = "";
+
+    if (category === "management") {
+        if (titleEl) titleEl.textContent = "Выбор отдела управления";
+
+        currentUnitList = MAIN_DEPARTMENTS.map(d => ({
+            type: "dept",
+            id: d.id,
+            name: d.name
+        }));
+
+    } else if (category === "org") {
+        if (titleEl) titleEl.textContent = "Выбор подведомственной организации";
+
+        currentUnitList = ORGANIZATIONS
+            .filter(o => o.type === "org")
+            .map(o => ({
+                type: "org",
+                org: o,
+                name: o.name
+            }));
+
+    } else if (category === "region") {
+        if (titleEl) titleEl.textContent = "Выбор отдела спорта";
+
+        currentUnitList = ORGANIZATIONS
+            .filter(o => o.type === "region")
+            .map(o => ({
+                type: "region",
+                org: o,
+                name: o.name
+            }));
     }
-}
 
-// =================== ОТДЕЛЫ УПРАВЛЕНИЯ ===================
-function buildDepartmentList() {
-    const container = document.getElementById("departmentList");
-    container.innerHTML = "";
-    MAIN_DEPARTMENTS.forEach(dept => {
+    currentUnitList.forEach((u, idx) => {
         const div = document.createElement("div");
         div.className = "list-item";
-        div.textContent = dept.name;
-        div.onclick = () => selectDepartment(dept.id);
-        container.appendChild(div);
+        div.textContent = u.name || (u.org && u.org.name) || "Подразделение";
+        div.onclick = () => selectEmployeeUnit(idx);
+        listEl.appendChild(div);
     });
+
+    showScreen("employeeUnitScreen");
 }
 
-function selectDepartment(deptId) {
-    currentDepartmentId = deptId;
-    buildEmployeesForDepartment();
-    showScreen("roleSelectScreen");
+function backFromEmployeeUnit() {
+    // Возврат к выбору категории
+    showScreen("employeeCategoryScreen");
 }
 
-// =================== СОТРУДНИКИ ПО ОТДЕЛУ ===================
-function buildEmployeesForDepartment() {
-    const dept = MAIN_DEPARTMENTS.find(d => d.id === currentDepartmentId);
-    const container = document.getElementById("roleList");
-    container.innerHTML = "";
-    if (!dept) return;
+function selectEmployeeUnit(index) {
+    if (index < 0 || index >= currentUnitList.length) return;
+    currentUnit = currentUnitList[index];
 
-    dept.employees.forEach(emp => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.textContent = emp;
-        div.onclick = () => selectRole(emp);
-        container.appendChild(div);
-    });
-}
+    const titleEl = document.getElementById("employeePersonTitle");
+    const listEl = document.getElementById("employeePersonList");
+    if (!listEl) return;
+    listEl.innerHTML = "";
 
-// =================== РОЛИ ДЛЯ ПОДВЕДОМСТВЕННЫХ ОРГАНИЗАЦИЙ ===================
-function buildOrgRoles() {
-    const container = document.getElementById("roleList");
-    container.innerHTML = "";
-    ORG_ROLES.forEach(r => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.textContent = r;
-        div.onclick = () => selectRole(r);
-        container.appendChild(div);
-    });
-}
-
-// Назад из выбора роли
-function backFromRole() {
-    if (currentOrganization && currentOrganization.type === "main") {
-        showScreen("deptSelectScreen");
+    let persons = [];
+    if (currentEmployeeCategory === "management") {
+        const dept = MAIN_DEPARTMENTS.find(d => d.id === currentUnit.id);
+        persons = dept ? dept.employees : [];
+        if (titleEl) titleEl.textContent = "Выбор сотрудника отдела";
     } else {
-        showScreen("orgSelectScreen");
+        // Временно используем типовые роли
+        persons = ORG_ROLES.slice();
+        if (titleEl) titleEl.textContent = "Выбор должности";
     }
+
+    persons.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "list-item";
+        div.textContent = p;
+        div.onclick = () => selectEmployeePerson(p);
+        listEl.appendChild(div);
+    });
+
+    showScreen("employeePersonScreen");
 }
 
-// =================== ВЫБОР КОНКРЕТНОГО СОТРУДНИКА/РОЛИ ===================
-function selectRole(role) {
-    currentRole = role;
+function backFromEmployeePerson() {
+    showScreen("employeeUnitScreen");
+}
 
-    const orgName = currentOrganization ? currentOrganization.name : "Организация";
+// Вспомогательная: получаем название организации для выбранного сотрудника
+function getSelectedOrgName() {
+    if (!currentEmployeeCategory) return "Организация";
 
-    document.getElementById("empRole").textContent = role;
-    document.getElementById("empOrg").textContent = orgName;
+    if (currentEmployeeCategory === "management") {
+        const mainOrg = getMainOrg();
+        return mainOrg.name;
+    }
 
-    document.getElementById("profileRole").textContent = role;
-    document.getElementById("profileOrg").textContent = orgName;
+    if (currentUnit && currentUnit.org) {
+        return currentUnit.org.name;
+    }
+
+    return "Организация";
+}
+
+// Генерация ключа для хранения пароля
+function normalizeForKey(str) {
+    return (str || "")
+        .toString()
+        .toLowerCase()
+        .replace(/[()\.\,\s«»"'/№\-]+/g, "");
+}
+
+function extractFioFromEmployeeLine(line) {
+    // Формат: "Должность (ФИО)"
+    const text = (line || "").toString();
+    const open = text.lastIndexOf("(");
+    const close = text.lastIndexOf(")");
+    if (open !== -1 && close !== -1 && close > open) {
+        return text.substring(open + 1, close).trim();
+    }
+    return text.trim();
+}
+
+function getPasswordKeyForSelected() {
+    if (!selectedEmployee) return null;
+    const orgName = getSelectedOrgName();
+
+    let base;
+    if (currentEmployeeCategory === "management") {
+        const fio = extractFioFromEmployeeLine(selectedEmployee.person);
+        base = normalizeForKey(fio);
+    } else {
+        // Пока в подведомственных и отделах спорта у нас только роль
+        base = normalizeForKey(selectedEmployee.person);
+    }
+
+    const orgKey = normalizeForKey(orgName);
+    return `pass_${base}_${orgKey}`;
+}
+
+function selectEmployeePerson(personText) {
+    selectedEmployee = {
+        category: currentEmployeeCategory,
+        unit: currentUnit,
+        person: personText
+    };
+
+    const orgLabel = document.getElementById("loginOrgLabel");
+    const roleLabel = document.getElementById("loginRoleLabel");
+    const orgName = getSelectedOrgName();
+
+    if (orgLabel) orgLabel.textContent = orgName;
+    if (roleLabel) roleLabel.textContent = personText;
+
+    const passInput = document.getElementById("employeePasswordInput");
+    if (passInput) passInput.value = "";
+
+    showScreen("employeePasswordScreen");
+}
+
+function backFromPassword() {
+    showScreen("employeePersonScreen");
+}
+
+function backFromCreatePassword() {
+    showScreen("employeePasswordScreen");
+}
+
+// Вход сотрудника по паролю
+function loginEmployee() {
+    if (!selectedEmployee) {
+        alert("Сначала выберите сотрудника.");
+        return;
+    }
+
+    const passInput = document.getElementById("employeePasswordInput");
+    if (!passInput) return;
+    const pwd = passInput.value.trim();
+    if (!pwd) {
+        alert("Введите пароль.");
+        return;
+    }
+
+    const key = getPasswordKeyForSelected();
+    if (!key) {
+        alert("Не удалось определить ключ пароля.");
+        return;
+    }
+
+    const savedPwd = loadLocal(key, null);
+
+    if (!savedPwd) {
+        // Первый вход — нужен только пароль 123
+        if (pwd !== "123") {
+            alert("При первом входе используйте пароль 123.");
+            return;
+        }
+
+        // Идём на экран создания нового пароля
+        const orgLabel = document.getElementById("createPassOrgLabel");
+        const roleLabel = document.getElementById("createPassRoleLabel");
+        const orgName = getSelectedOrgName();
+
+        if (orgLabel) orgLabel.textContent = orgName;
+        if (roleLabel) roleLabel.textContent = selectedEmployee.person || "Сотрудник";
+
+        const p1 = document.getElementById("employeeNewPassword1");
+        const p2 = document.getElementById("employeeNewPassword2");
+        if (p1) p1.value = "";
+        if (p2) p2.value = "";
+
+        showScreen("employeeCreatePasswordScreen");
+        return;
+    }
+
+    // Сохранённый пароль уже есть — проверяем
+    if (pwd !== savedPwd) {
+        alert("Неверный пароль.");
+        return;
+    }
+
+    // Успешный вход
+    proceedEmployeeLoginAfterPassword();
+}
+
+// Сохранение нового пароля и вход
+function saveNewEmployeePassword() {
+    if (!selectedEmployee) {
+        alert("Сначала выберите сотрудника.");
+        return;
+    }
+
+    const p1 = document.getElementById("employeeNewPassword1");
+    const p2 = document.getElementById("employeeNewPassword2");
+    if (!p1 || !p2) return;
+
+    const v1 = p1.value.trim();
+    const v2 = p2.value.trim();
+
+    if (!v1 || !v2) {
+        alert("Введите новый пароль и его подтверждение.");
+        return;
+    }
+    if (v1 !== v2) {
+        alert("Пароли не совпадают.");
+        return;
+    }
+
+    const key = getPasswordKeyForSelected();
+    if (!key) {
+        alert("Не удалось сохранить пароль.");
+        return;
+    }
+
+    saveLocal(key, v1);
+    alert("Пароль сохранён.");
+
+    proceedEmployeeLoginAfterPassword();
+}
+
+// Общая логика после успешной проверки пароля
+function proceedEmployeeLoginAfterPassword() {
+    const orgName = getSelectedOrgName();
+    const mainOrg = getMainOrg();
+
+    if (currentEmployeeCategory === "management") {
+        currentOrganization = mainOrg;
+        currentDepartmentId = selectedEmployee.unit ? selectedEmployee.unit.id : null;
+    } else if (selectedEmployee.unit && selectedEmployee.unit.org) {
+        currentOrganization = selectedEmployee.unit.org;
+        currentDepartmentId = null;
+    } else {
+        currentOrganization = mainOrg;
+        currentDepartmentId = null;
+    }
+
+    MODE = "employee";
+
+    // Выбранная "роль" — текст person
+    const roleText = selectedEmployee.person || "Сотрудник";
+    currentRole = roleText;
+
+    // Обновляем шапку и профиль, как раньше делал selectRole
+    const orgLabel = currentOrganization ? currentOrganization.name : orgName;
+
+    document.getElementById("empOrg").textContent = orgLabel;
+    document.getElementById("empRole").textContent = roleText;
+
+    document.getElementById("profileOrg").textContent = orgLabel;
+    document.getElementById("profileRole").textContent = roleText;
 
     syncEmployeeAvatarProfile();
 
@@ -318,8 +584,10 @@ function syncEmployeeAvatarProfile() {
     } else {
         const img = document.getElementById("employeeAvatarImg");
         const ph = document.getElementById("employeeAvatarPlaceholder");
-        img.style.display = "none";
-        ph.style.display = "block";
+        if (img && ph) {
+            img.style.display = "none";
+            ph.style.display = "block";
+        }
 
         const img2 = document.getElementById("employeeAvatarImg_profile");
         const ph2 = document.getElementById("employeeAvatarPlaceholder_profile");
@@ -331,7 +599,8 @@ function syncEmployeeAvatarProfile() {
 }
 
 function triggerEmployeePhoto() {
-    document.getElementById("employeeAvatarInput").click();
+    const input = document.getElementById("employeeAvatarInput");
+    if (input) input.click();
 }
 
 function handleEmployeePhoto(input) {
@@ -356,7 +625,8 @@ function setGuestAvatar(dataUrl) {
 }
 
 function triggerGuestPhoto() {
-    document.getElementById("guestAvatarInput").click();
+    const input = document.getElementById("guestAvatarInput");
+    if (input) input.click();
 }
 
 function handleGuestPhoto(input) {
@@ -868,6 +1138,9 @@ function resetEmployee() {
     currentRole = null;
     currentDepartmentId = null;
     MODE = null;
+    currentEmployeeCategory = null;
+    currentUnitList = [];
+    currentUnit = null;
+    selectedEmployee = null;
     showScreen("modeScreen");
 }
-
