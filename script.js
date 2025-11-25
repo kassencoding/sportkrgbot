@@ -561,7 +561,6 @@ async function sendAI() {
     addAIMessage("user", text);
     input.value = "";
 
-    // Готовим вопрос для backend-а с учётом базы
     let questionForBackend = text;
     const employeeContext = buildEmployeeContext();
 
@@ -575,23 +574,23 @@ async function sendAI() {
     } else if (MODE === "guest") {
         questionForBackend =
             "Ты — ИИ-ассистент гостевого режима Управления физической культуры и спорта Карагандинской области. " +
-            "Отвечай населению кратко и официально. Вопрос:\n" + text;
+            "Отвечай населению кратко и официально. Вопрос:\n" +
+            text;
     }
 
     try {
-        const res = await fetch("https://considerate-appreciation-production.up.railway.app/ask", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // ВАЖНО: поле question — так, как ожидает backend
-            body: JSON.stringify({ question: questionForBackend })
-        });
+        const res = await fetch(
+            "https://considerate-appreciation-production.up.railway.app/ask",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: questionForBackend })
+            }
+        );
 
         if (!res.ok) {
-            console.error("Backend error status:", res.status);
-            const fallback = generateAIAnswer(text);
-            addAIMessage("bot", fallback);
+            console.error("Backend error:", res.status);
+            addAIMessage("bot", generateAIAnswer(text));
             return;
         }
 
@@ -599,29 +598,79 @@ async function sendAI() {
         try {
             data = await res.json();
         } catch (e) {
-            console.error("Не удалось распарсить JSON от backend:", e);
+            console.error("JSON parse error:", e);
         }
 
         let answer = generateAIAnswer(text);
 
         if (data) {
-            if (typeof data === "string") {
-                answer = data;
-            } else if (typeof data.answer === "string") {
-                answer = data.answer;
-            } else if (typeof data.response === "string") {
-                answer = data.response;
-            } else if (typeof data.reply === "string") {
-                answer = data.reply;
-            }
+            if (typeof data === "string") answer = data;
+            else if (typeof data.answer === "string") answer = data.answer;
+            else if (typeof data.response === "string") answer = data.response;
+            else if (typeof data.reply === "string") answer = data.reply;
         }
 
         addAIMessage("bot", answer);
-    } catch (e) {
-        console.error("Ошибка запроса к backend:", e);
-        const fallback = generateAIAnswer(text);
-        addAIMessage("bot", fallback);
+    } catch (err) {
+        console.error("Fetch error:", err);
+        addAIMessage("bot", generateAIAnswer(text));
     }
+}
+
+function addAIMessage(type, text) {
+    const chat = document.getElementById("aiChat");
+    const div = document.createElement("div");
+    div.className = "chat-message " + type;
+    div.innerHTML = `<div class="chat-bubble">${text}</div>`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function generateAIAnswer(q) {
+    const query = q.toLowerCase();
+
+    if (MODE === "employee") {
+        if (!currentRole || !employeeDB[currentRole] || employeeDB[currentRole].length === 0) {
+            return "Для вашей должности база данных пока пустая. Заполните разделы в «База данных», чтобы ИИ мог опираться на ваши материалы.";
+        }
+
+        const sections = employeeDB[currentRole];
+
+        const fullText = sections
+            .map(s => ((s.title || "") + ". " + (s.text || "")))
+            .join(" \n")
+            .toLowerCase();
+
+        if (fullText.includes(query)) {
+            const matchedSections = sections.filter(s => {
+                const t = ((s.title || "") + " " + (s.text || "")).toLowerCase();
+                return t.includes(query);
+            });
+
+            const top = matchedSections.slice(0, 3).map(s => {
+                const t = (s.text || "").trim();
+                return `• ${s.title || "Раздел"} — ${t || "описание отсутствует"}`;
+            });
+
+            if (top.length > 0) {
+                return (
+                    "Нашёл информацию по вашему вопросу в вашей служебной базе данных:\n\n" +
+                    top.join("\n\n") +
+                    "\n\n(Ответ сгенерирован на основе ваших служебных разделов. При необходимости уточните данные в базе.)"
+                );
+            }
+        }
+
+        return "В вашей служебной базе данных точного ответа не нашлось. Дополните разделы в «База данных» или переформулируйте вопрос.";
+    }
+
+    // Гостевой режим — резервный ответ, если backend недоступен
+    return "Сейчас ИИ-ассистент гостевого режима недоступен. Пожалуйста, попробуйте повторить запрос позже или обратитесь в Управление физической культуры и спорта Карагандинской области.";
+}
+
+function backFromAI() {
+    if (MODE === "guest") showScreen("guestHome");
+    else showScreen("employeeHome");
 }
 
 // =================== СОЗДАНИЕ ПОРУЧЕНИЙ + ТАБЛИЦА ===================
@@ -821,4 +870,3 @@ function resetEmployee() {
     MODE = null;
     showScreen("modeScreen");
 }
-
