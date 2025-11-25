@@ -151,29 +151,40 @@
 
 <!-- =================== ГЛАВНЫЙ ЭКРАН СОТРУДНИКА =================== -->
 <div id="employeeHome" class="screen">
+
+    <!-- ШАПКА -->
     <div class="header">
         <div class="header-logo-circle">
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="header-logo" />
         </div>
+
         <div class="header-text">
             <div id="empOrg" class="header-org">Организация</div>
             <div id="empRole" class="header-role">Должность не выбрана</div>
         </div>
-        <!-- Переключатель темы (сотрудник) -->
+
+        <!-- Переключатель темы -->
         <div class="theme-toggle-btn" onclick="toggleTheme()">
-    <img id="theme-icon" src="img/sun.svg">
-</div>
+            <img id="theme-icon" src="img/sun.svg" alt="theme" />
+        </div>
+    </div> <!-- ← закрываем header! -->
 
-
+    <!-- АВАТАР -->
     <div class="avatar-block">
         <div class="avatar-circle">
             <img id="employeeAvatarImg" alt="Аватар сотрудника" />
             <span id="employeeAvatarPlaceholder">👤</span>
         </div>
-        <button class="btn btn-secondary btn-small" onclick="triggerEmployeePhoto()">Изменить фото</button>
-        <input id="employeeAvatarInput" type="file" accept="image/*" style="display:none" onchange="handleEmployeePhoto(this)" />
+
+        <button class="btn btn-secondary btn-small" onclick="triggerEmployeePhoto()">
+            Изменить фото
+        </button>
+
+        <input id="employeeAvatarInput" type="file" accept="image/*"
+               style="display:none" onchange="handleEmployeePhoto(this)" />
     </div>
 
+    <!-- МЕНЮ -->
     <div class="menu-list">
 
         <!-- Создать поручение -->
