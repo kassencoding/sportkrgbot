@@ -580,7 +580,7 @@ async function sendAI() {
 
     try {
         const res = await fetch(
-            "https://considerate-appreciation-production.up.railway.app/ask",
+            "https://gidcity-ai-backend-production.up.railway.app/ask",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -870,3 +870,4 @@ function resetEmployee() {
     MODE = null;
     showScreen("modeScreen");
 }
+
