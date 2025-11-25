@@ -525,6 +525,8 @@ function saveNewEmployeePassword() {
 
 // Общая логика после успешной проверки пароля
 function proceedEmployeeLoginAfterPassword() {
+    // После успешной проверки пароля настраиваем организацию и отдел
+
     const orgName = getSelectedOrgName();
     const mainOrg = getMainOrg();
 
@@ -556,8 +558,70 @@ function proceedEmployeeLoginAfterPassword() {
 
     syncEmployeeAvatarProfile();
 
+    // Обновляем шапку и блок аватара (должность + ФИО)
+    updateEmployeeHeaderAndAvatar();
+
     showScreen("employeeHome");
 }
+
+
+// Обновление шапки и блока аватара после входа сотрудника
+function updateEmployeeHeaderAndAvatar() {
+    try {
+        const deptEl = document.getElementById("empDeptName");
+        const posEl = document.getElementById("empPosition");
+        const nameEl = document.getElementById("empFullName");
+
+        // Определяем подпись подразделения в шапке
+        let deptLabel = "";
+        if (currentEmployeeCategory === "management") {
+            // Для управления показываем название отдела
+            if (currentUnit && currentUnit.name) {
+                deptLabel = currentUnit.name;
+            }
+        } else if (currentEmployeeCategory === "org") {
+            // Для подведомственных организаций — общий ярлык
+            deptLabel = "Подведомственная организация";
+        } else if (currentEmployeeCategory === "region") {
+            // Для отделов спорта — само название отдела спорта
+            if (currentUnit && currentUnit.org && currentUnit.org.name) {
+                deptLabel = currentUnit.org.name;
+            }
+        }
+
+        if (deptEl) {
+            deptEl.textContent = deptLabel;
+        }
+
+        // Текст роли, как он был выбран
+        const personText = selectedEmployee && selectedEmployee.person
+            ? selectedEmployee.person.toString()
+            : (currentRole || "");
+
+        // Разделяем "Должность (ФИО)" на должность и ФИО (если есть скобки)
+        let posTitle = personText;
+        let fioShort = "";
+        const open = personText.lastIndexOf("(");
+        const close = personText.lastIndexOf(")");
+        if (open !== -1 && close !== -1 && close > open) {
+            posTitle = personText.substring(0, open).trim();
+            fioShort = personText.substring(open + 1, close).trim();
+        }
+
+        if (posEl) {
+            posEl.textContent = posTitle || "Сотрудник";
+        }
+
+        // Пока у нас нет отдельной модалки ФИО, показываем то, что есть в скобках (инициалы),
+        // если нет — просто пусто.
+        if (nameEl) {
+            nameEl.textContent = fioShort;
+        }
+    } catch (e) {
+        console.error("Ошибка при обновлении шапки сотрудника:", e);
+    }
+}
+
 
 // =================== АВАТАРЫ СОТРУДНИКА ===================
 function setEmployeeAvatar(dataUrl) {
