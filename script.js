@@ -1,3 +1,18 @@
+
+// Firebase Init
+const firebaseConfig = {
+  apiKey: "AIzaSyCZ4lC-EnTU3Z90RQZLEJnUq8373pW_G24",
+  authDomain: "gid-sport.firebaseapp.com",
+  projectId: "gid-sport",
+  storageBucket: "gid-sport.firebasestorage.app",
+  messagingSenderId: "632213586370",
+  appId: "1:632213586370:web:668ce6a30aa9df8aa4565b",
+  measurementId: "G-VBMP6CQ9Q7"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+
 // =================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ===================
 let MODE = null; // 'employee' или 'guest'
 let currentOrganization = null;
