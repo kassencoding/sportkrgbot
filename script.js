@@ -1590,10 +1590,86 @@ async function saveUiButtonIconGlobal(id) {
         const snap = await ref.get();
         const current = snap.exists && snap.data() && snap.data().icons ? snap.data().icons : {};
         current[id] = uiButtonsConfig[id].iconDataUrl;
-        await ref.set({ icons: current, updatedAt: new Date().toISOString() }, { merge:true });
-        alert('Иконка сохранена глобально.');
+        try {
+            await ref.set({ icons: current, updatedAt: new Date().toISOString() }, { merge:true });
+            alert('Иконка сохранена глобально.');
+        } catch (ee) {
+            console.warn('Global save failed', ee);
+            const fallback = loadLocal('uiButtonsGlobalFallback', {});
+            fallback[id] = uiButtonsConfig[id].iconDataUrl;
+            saveLocal('uiButtonsGlobalFallback', fallback);
+            // Show admin notice if exists
+            const notice = document.getElementById('adminNotice');
+            if (notice) notice.style.display = 'block';
+            alert('Ошибка сохранения глобально: ' + (ee && ee.message ? ee.message : 'missing or insufficient permissions') + '\n\nИконка сохранена локально. Чтобы разрешить глобальное сохранение, откройте Firebase Console → Firestore → Rules и настройте доступ для админов.');
+        }
     } catch(e) {
         console.warn(e);
         alert('Ошибка сохранения глобально: ' + e.message);
     }
 }
+
+
+
+
+// ====== LANGUAGES (RU / KK) ======
+const TRANSLATIONS = {
+  ru: {
+    welcome_title: "Служебная система",
+    welcome_subtitle: "Управление физической культуры и спорта Карагандинской области",
+    btn_employee: "Я сотрудник",
+    btn_guest: "Я гость"
+  },
+  kk: {
+    welcome_title: "Қызмет жүйесі",
+    welcome_subtitle: "Қарағанды облысының дене шынықтыру және спорт басқармасы",
+    btn_employee: "Мен қызметкермін",
+    btn_guest: "Мен қонақпын"
+  }
+};
+
+function changeLanguage(lang) {
+  if (!TRANSLATIONS[lang]) lang = 'ru';
+  saveLocal('uiLang', lang);
+  applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.ru;
+  // Welcome
+  const wt = document.querySelector('.welcome-title');
+  const ws = document.querySelector('.welcome-subtitle');
+  const be = document.querySelector('.welcome-buttons .btn.btn-primary');
+  const bg = document.querySelector('.welcome-buttons .btn.btn-secondary');
+  if (wt) wt.textContent = t.welcome_title;
+  if (ws) ws.textContent = t.welcome_subtitle;
+  if (be) be.textContent = t.btn_employee;
+  if (bg) bg.textContent = t.btn_guest;
+
+  // Update UI button labels from UI_BUTTONS translations if present
+  UI_BUTTONS.forEach(meta => {
+    const btn = document.querySelector(`[data-button-id="${meta.id}"]`);
+    if (!btn) return;
+    const titleEl = btn.querySelector('.menu-btn-title');
+    if (titleEl) {
+      // prefer translation key that matches id
+      if (t[meta.id]) titleEl.textContent = t[meta.id];
+      else {
+        const cfg = uiButtonsConfig[meta.id];
+        titleEl.textContent = (cfg && cfg.label) || meta.defaultLabel;
+      }
+    }
+  });
+
+  // Apply text for elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if (t[k]) el.textContent = t[k];
+  });
+}
+
+// load language on init
+(function(){
+  const savedLang = loadLocal('uiLang', 'ru');
+  setTimeout(()=>applyLanguage(savedLang), 200);
+})();
