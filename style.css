@@ -147,7 +147,7 @@ body {
 .welcome-logo-wrap {
     width: 90px;
     height: 90px;
-    border-radius: 30px;
+    border-radius: 50%; /* perfectly circular */
     background: rgba(255,255,255,0.9);
     margin: 0 auto 12px;
     display: flex;
@@ -162,7 +162,7 @@ body {
     width: 72px;
     height: 72px;
     object-fit: cover;
-    border-radius: 22px;
+    border-radius: 50%; /* circular */
 }
 
 .welcome-title {
@@ -840,7 +840,7 @@ body.dark .info-placeholder {
 
 
 /* Interface settings preview constraints */
-.interface-icon-row { display:flex; align-items:center; gap:10px; }
+.interface-icon-row { display:flex; align-items:center; gap:12px; justify-content:space-between; padding:8px 6px; }
 .interface-icon-preview img { max-width:64px; max-height:64px; object-fit:cover; border-radius:10px; border:1px solid rgba(0,0,0,0.06); }
 .interface-icon-actions { display:flex; gap:8px; align-items:center; }
 
