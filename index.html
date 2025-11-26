@@ -13,7 +13,6 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
 
 </head>
 <body>
@@ -173,6 +172,13 @@
         <div class="theme-toggle-btn" onclick="toggleTheme()">
             <img id="theme-icon" src="img/sun.svg" alt="theme" />
         </div>
+        <div class="lang-wrap" style="margin-left:8px;">
+          <select id="languageToggle" aria-label="Язык" onchange="changeLanguage(this.value)" style="padding:6px 10px; border-radius:10px; background:rgba(255,255,255,0.02); color:var(--text);">
+            <option value="ru">Русский</option>
+            <option value="kk">Қазақша</option>
+          </select>
+        </div>
+
     </div> <!-- ← закрываем header! -->
 
     <!-- АВАТАР -->
@@ -565,10 +571,6 @@
 </div>
 
 <!-- =================== АДМИН ПАНЕЛЬ =================== -->
-
-<div id="adminNotice" class="card" style="display:none; margin-bottom:12px;">
-  <div style="font-size:13px; color:var(--text-muted)">При попытке сохранения иконок было зафиксировано ограничение прав в Firestore. Сохранение произведено локально. Чтобы разрешить глобальное сохранение, настройте правила Firestore в Firebase Console (разрешить запись в документ settings/uiButtons для администратора).</div>
-</div>
 <div id="adminPanelScreen" class="screen">
     <div class="top-bar">
         <button class="top-back" onclick="resetEmployee()">← Выйти</button>
