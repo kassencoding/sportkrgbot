@@ -546,5 +546,35 @@
 </div>
 
 <script src="script.js"></script>
+
+<!-- =================== АДМИН ПАНЕЛЬ =================== -->
+<div id="adminPanelScreen" class="screen">
+    <div class="top-bar">
+        <button class="top-back" onclick="resetEmployee()">← Выйти</button>
+        <div class="top-title">Админ-панель</div>
+    </div>
+
+    <div class="menu-list">
+
+        <button class="menu-btn" onclick="openInterfaceSettings()">
+            <div class="menu-btn-icon">
+                <img src="img/settings.svg" width="26" height="26" />
+            </div>
+            <div class="menu-btn-text">
+                <div class="menu-btn-title">Настройка интерфейса</div>
+                <div class="menu-btn-subtitle">Изменить иконки и надписи кнопок</div>
+            </div>
+        </button>
+
+        <div class="card" style="margin-top:15px;">
+            <div class="profile-label">Рассылка всем сотрудникам</div>
+            <textarea id="adminBroadcastText" placeholder="Введите текст сообщения"
+                      style="height:90px;"></textarea>
+            <button class="btn btn-primary full" onclick="sendAdminBroadcast()">Отправить</button>
+        </div>
+
+    </div>
+</div>
+
 </body>
 </html>
