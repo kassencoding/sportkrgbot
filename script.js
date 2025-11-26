@@ -1561,3 +1561,206 @@ function handleUiButtonIconChange(id, input) {
     };
     reader.readAsDataURL(file);
 }
+
+
+
+// ====== Admin icons & avatar sync additions ======
+
+// Global pending admin icons
+if (typeof __GLOBAL === 'undefined') window.__GLOBAL = {};
+window.__GLOBAL.pendingAdminIcons = window.__GLOBAL.pendingAdminIcons || {};
+window.__GLOBAL.unsubIcons = window.__GLOBAL.unsubIcons || null;
+
+// Start listening to global icons
+function startGlobalIconsListener() {
+  try {
+    if (!db) return;
+    if (window.__GLOBAL.unsubIcons) return;
+    window.__GLOBAL.unsubIcons = db.collection('global').doc('icons')
+      .onSnapshot(doc => {
+        if (!doc.exists) return;
+        const data = doc.data();
+        if (!data || !data.icons) return;
+        const icons = data.icons;
+        // apply to uiButtonsConfig and UI
+        Object.keys(icons).forEach(id => {
+          if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+          uiButtonsConfig[id].iconDataUrl = icons[id];
+        });
+        saveUiButtonsConfig();
+        applyUiButtonsConfig();
+        console.log('[GLOBAL] applied icons from remote', Object.keys(icons));
+      }, err => console.warn('[GLOBAL] icons listener error', err));
+    console.log('[GLOBAL] listener started');
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
+// Render admin buttons list
+function renderAdminButtonsList() {
+  const container = document.getElementById('adminButtonsList');
+  if (!container) return;
+  container.innerHTML = '';
+  UI_BUTTONS.forEach(meta => {
+    const row = document.createElement('div');
+    row.className = 'admin-button-row';
+    const left = document.createElement('div');
+    left.style.display='flex'; left.style.alignItems='center'; left.style.gap='12px';
+    const title = document.createElement('div'); title.textContent = meta.defaultLabel; title.style.minWidth='180px';
+    const preview = document.createElement('img'); preview.className='admin-icon-preview';
+    const cfg = uiButtonsConfig[meta.id];
+    preview.src = (cfg && cfg.iconDataUrl) ? cfg.iconDataUrl : 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+    const controls = document.createElement('div'); controls.className='admin-icon-controls';
+    const fileBtn = document.createElement('button'); fileBtn.className='btn btn-secondary btn-small'; fileBtn.textContent='Загрузить';
+    fileBtn.onclick = ()=> {
+      const input = document.createElement('input'); input.type='file'; input.accept='image/*';
+      input.onchange = e => {
+        const f = e.target.files[0]; if(!f) return;
+        const reader = new FileReader();
+        reader.onload = ()=> {
+          preview.src = reader.result;
+          window.__GLOBAL.pendingAdminIcons[meta.id] = reader.result;
+        };
+        reader.readAsDataURL(f);
+      };
+      input.click();
+    };
+    const delBtn = document.createElement('button'); delBtn.className='btn btn-danger btn-small'; delBtn.textContent='Удалить';
+    delBtn.onclick = ()=> {
+      preview.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+      window.__GLOBAL.pendingAdminIcons[meta.id] = null;
+    };
+    controls.appendChild(fileBtn); controls.appendChild(delBtn);
+    left.appendChild(preview); left.appendChild(title);
+    row.appendChild(left); row.appendChild(controls);
+    container.appendChild(row);
+  });
+}
+
+// Admin save: push to Firestore
+async function adminSaveAll() {
+  try {
+    const ref = db.collection('global').doc('icons');
+    const snap = await ref.get();
+    const current = snap.exists && snap.data() && snap.data().icons ? snap.data().icons : {};
+    const merged = {...current};
+    Object.keys(window.__GLOBAL.pendingAdminIcons).forEach(k=>{
+      const v = window.__GLOBAL.pendingAdminIcons[k];
+      if (v===null) delete merged[k];
+      else if (v) merged[k]=v;
+    });
+    await ref.set({ icons: merged, updatedAt: new Date().toISOString() }, { merge:true });
+    // apply locally
+    Object.keys(merged).forEach(id => {
+      if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+      uiButtonsConfig[id].iconDataUrl = merged[id];
+    });
+    saveUiButtonsConfig();
+    applyUiButtonsConfig();
+    window.__GLOBAL.pendingAdminIcons = {};
+    alert('Иконки сохранены и применены глобально.');
+  } catch(e) { console.warn(e); alert('Ошибка сохранения: '+e.message); }
+}
+
+function adminDiscardAll() {
+  window.__GLOBAL.pendingAdminIcons = {};
+  renderAdminButtonsList();
+  alert('Изменения отменены.');
+}
+
+// Avatar: save to remote (users/{userId}/app/avatar) and start listener per user
+let __USER_AVATAR = window.__USER_AVATAR || { unsub: null };
+async function saveMyAvatarToRemote(dataUrl) {
+  if (!currentUserId) { saveLocal(getEmployeeAvatarKey(), dataUrl); return; }
+  try {
+    await db.collection('users').doc(currentUserId).collection('app').doc('avatar')
+      .set({ dataUrl, updatedAt: new Date().toISOString() }, { merge:true });
+    saveLocal(getEmployeeAvatarKey(), dataUrl);
+  } catch(e) { console.warn('[AVATAR] save failed', e); }
+}
+
+function startUserAvatarListener(userId) {
+  if (!userId) return;
+  stopUserAvatarListener();
+  try {
+    __USER_AVATAR.unsub = db.collection('users').doc(userId).collection('app').doc('avatar')
+      .onSnapshot(doc => {
+        if (!doc.exists) return;
+        const d = doc.data();
+        if (!d || !d.dataUrl) return;
+        setEmployeeAvatar(d.dataUrl);
+        saveLocal(getEmployeeAvatarKey(), d.dataUrl);
+      }, err=>console.warn('[AVATAR] listener error', err));
+  } catch(e){ console.warn(e); }
+}
+
+function stopUserAvatarListener() {
+  if (__USER_AVATAR.unsub) { try{ __USER_AVATAR.unsub(); }catch(e){} __USER_AVATAR.unsub=null; }
+}
+
+// remove avatar (remote + local)
+async function removeMyAvatar() {
+  if (!currentUserId) {
+    saveLocal(getEmployeeAvatarKey(), null);
+    setEmployeeAvatar('');
+    alert('Аватар удалён локально.');
+    return;
+  }
+  try {
+    await db.collection('users').doc(currentUserId).collection('app').doc('avatar').delete();
+  } catch(e){ console.warn(e); }
+  saveLocal(getEmployeeAvatarKey(), null);
+  setEmployeeAvatar('');
+  alert('Аватар удалён.');
+}
+
+// override existing handleEmployeePhoto to also push to remote
+if (typeof handleEmployeePhoto === 'function') {
+  const originalHandle = handleEmployeePhoto;
+  handleEmployeePhoto = function(input) {
+    const file = input.files ? input.files[0] : null;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result;
+      saveLocal(getEmployeeAvatarKey(), dataUrl);
+      setEmployeeAvatar(dataUrl);
+      // push remote if logged in
+      if (currentUserId && db) {
+        try {
+          await db.collection('users').doc(currentUserId).collection('app').doc('avatar')
+            .set({ dataUrl, updatedAt: new Date().toISOString() }, { merge:true });
+        } catch(e){ console.warn('[AVATAR] upload failed', e); }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+}
+
+// Ensure login lifecycle hooks call start/stop listeners
+function _ensureLoginHooks() {
+  // Try to find proceedEmployeeLoginAfterPassword and wrap if exists
+  if (typeof proceedEmployeeLoginAfterPassword === 'function') {
+    const orig = proceedEmployeeLoginAfterPassword;
+    proceedEmployeeLoginAfterPassword = function() {
+      orig.apply(this, arguments);
+      // after login actions
+      if (currentUserId) {
+        startRealtimeSyncForUser && startRealtimeSyncForUser(currentUserId);
+        startUserAvatarListener && startUserAvatarListener(currentUserId);
+      }
+    };
+  }
+  if (typeof resetEmployee === 'function') {
+    const orig2 = resetEmployee;
+    resetEmployee = function() {
+      orig2.apply(this, arguments);
+      stopRealtimeSync && stopRealtimeSync();
+      stopUserAvatarListener && stopUserAvatarListener();
+    };
+  }
+}
+setTimeout(_ensureLoginHooks, 300);
+startGlobalIconsListener();
+// ====== end admin/avatar additions ======
