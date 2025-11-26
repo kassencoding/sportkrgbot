@@ -13,6 +13,9 @@ let tasks = [];
 let currentUserId = null;
 let aiChatHistory = [];
 
+// Секретный пароль админа (скрытый вход в админ-панель)
+const ADMIN_SECRET_PASSWORD = "superadmin09";
+
 // Структура таблицы поручения
 let table = {
     columns: [{ id: 0, title: "Колонка 1", type: "text" }],
@@ -401,7 +404,7 @@ function getTasksKey() {
     return currentUserId ? `tasks_${currentUserId}` : "tasks";
 }
 function getAIChatKey() {
-    if (MODE === "employee" && currentUserId) return `aiChat_${currentUserId}`;
+    if ((MODE === "employee" || MODE === "admin") && currentUserId) return `aiChat_${currentUserId}`;
     return "aiChat_guest";
 }
 function getEmployeeAvatarKey() {
@@ -524,6 +527,13 @@ function loginEmployee() {
         return;
     }
 
+    // ==== СКРЫТЫЙ ВХОД АДМИНА ПО СУПЕР-ПАРОЛЮ ====
+    if (pwd === ADMIN_SECRET_PASSWORD) {
+        enterAdminMode();
+        return;
+    }
+    // ==== КОНЕЦ БЛОКА АДМИНА ====
+
     const key = getPasswordKeyForSelected();
     if (!key) {
         alert("Не удалось определить ключ пароля.");
@@ -565,7 +575,6 @@ function loginEmployee() {
     // Успешный вход
     proceedEmployeeLoginAfterPassword();
 }
-
 // Сохранение нового пароля и вход
 function saveNewEmployeePassword() {
     if (!selectedEmployee) {
