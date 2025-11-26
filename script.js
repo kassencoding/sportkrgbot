@@ -1,4 +1,3 @@
-
 // Firebase Init
 const firebaseConfig = {
   apiKey: "AIzaSyCZ4lC-EnTU3Z90RQZLEJnUq8373pW_G24",
@@ -1428,4 +1427,137 @@ function sendAdminBroadcast() {
 
     alert("Сообщение сохранено локально.");
     if (area) area.value = "";
+}
+
+
+
+// ================= FIRESTORE UI SYNC (ADDED) =================
+
+// Документ с настройками кнопок (общий для всех)
+const uiDocRef = db.collection("settings").doc("uiButtons");
+
+// Переопределяем загрузку настроек интерфейса
+function loadUiButtonsConfig() {
+    // Подпишемся на изменения из Firestore
+    uiDocRef.onSnapshot((doc) => {
+        const data = doc.exists ? doc.data() : {};
+        uiButtonsConfig = data || {};
+        // Кладём в localStorage как кеш
+        saveLocal("uiButtonsConfig", uiButtonsConfig);
+        applyUiButtonsConfig();
+    }, (err) => {
+        console.error("Firestore uiButtons onSnapshot error", err);
+        // Резервный вариант — берём из localStorage
+        uiButtonsConfig = loadLocal("uiButtonsConfig", {});
+        applyUiButtonsConfig();
+    });
+}
+
+// Переопределяем сохранение настроек интерфейса
+function saveUiButtonsConfig() {
+    // Локальный кеш
+    saveLocal("uiButtonsConfig", uiButtonsConfig);
+    // Отправляем в Firestore (общий документ)
+    uiDocRef.set(uiButtonsConfig, { merge: true }).catch(err => {
+        console.error("save uiButtons to Firestore error", err);
+    });
+}
+
+// Переопределяем применение настроек к кнопкам (добавляем hidden и order)
+function applyUiButtonsConfig() {
+    UI_BUTTONS.forEach((meta, index) => {
+        const id = meta.id;
+        const cfg = uiButtonsConfig[id] || {};
+
+        const btn = document.querySelector(`[data-button-id="${id}"]`);
+        if (!btn) return;
+
+        // Подпись
+        const titleEl = btn.querySelector(".menu-btn-title");
+        if (titleEl) {
+            titleEl.textContent = cfg.label || meta.defaultLabel;
+        }
+
+        // Иконка
+        const iconEl = btn.querySelector(".menu-btn-icon");
+        if (iconEl && cfg.iconDataUrl) {
+            iconEl.innerHTML = `<img src="${cfg.iconDataUrl}" width="26" height="26" />`;
+        }
+
+        // Скрытие
+        if (cfg.hidden) {
+            btn.style.display = "none";
+        } else {
+            btn.style.display = "";
+        }
+
+        // Порядок
+        const order = typeof cfg.order === "number" ? cfg.order : index;
+        btn.style.order = order;
+    });
+}
+
+// Обновление подписи кнопки из экрана настроек
+function updateUiButtonLabel(id, value) {
+    if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+    uiButtonsConfig[id].label = value;
+    saveUiButtonsConfig();
+}
+
+// Переключение скрытия кнопки
+function toggleUiButtonHidden(id, hidden) {
+    if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+    uiButtonsConfig[id].hidden = hidden;
+    saveUiButtonsConfig();
+}
+
+// Перемещение кнопки вверх/вниз
+function moveUiButton(id, delta) {
+    // Собираем текущий список id по порядку
+    const ids = UI_BUTTONS.map(b => b.id);
+    // Сортируем по order
+    ids.sort((a, b) => {
+        const oa = (uiButtonsConfig[a] && typeof uiButtonsConfig[a].order === "number")
+            ? uiButtonsConfig[a].order
+            : ids.indexOf(a);
+        const ob = (uiButtonsConfig[b] && typeof uiButtonsConfig[b].order === "number")
+            ? uiButtonsConfig[b].order
+            : ids.indexOf(b);
+        return oa - ob;
+    });
+
+    const index = ids.indexOf(id);
+    if (index < 0) return;
+
+    const newIndex = index + delta;
+    if (newIndex < 0 || newIndex >= ids.length) return;
+
+    const tmp = ids[index];
+    ids[index] = ids[newIndex];
+    ids[newIndex] = tmp;
+
+    ids.forEach((btnId, i) => {
+        if (!uiButtonsConfig[btnId]) uiButtonsConfig[btnId] = {};
+        uiButtonsConfig[btnId].order = i;
+    });
+
+    saveUiButtonsConfig();
+}
+
+// Загрузка иконки кнопки (base64 в Firestore)
+function handleUiButtonIconChange(id, input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+        uiButtonsConfig[id].iconDataUrl = reader.result;
+        saveUiButtonsConfig();
+        // Обновим экран, если открыт
+        if (typeof openInterfaceSettings === "function") {
+            openInterfaceSettings();
+        }
+    };
+    reader.readAsDataURL(file);
 }
