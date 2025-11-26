@@ -1246,3 +1246,47 @@ function resetEmployee() {
     if (chat) chat.innerHTML = "";
     showScreen("modeScreen");
 }
+
+
+// =================== РЕЖИМ АДМИНА ===================
+function enterAdminMode() {
+    MODE = "admin";
+    currentUserId = "admin_master";
+
+    currentOrganization = { name: "Админ-панель" };
+    currentDepartmentId = null;
+    currentRole = "Главный администратор";
+
+    loadEmployeeDBForCurrentUser();
+    loadTasksForCurrentUser();
+    loadAIChatForCurrentUser();
+
+    if (document.getElementById("empOrg")) document.getElementById("empOrg").textContent = "Админ-панель";
+    if (document.getElementById("empRole")) document.getElementById("empRole").textContent = "Главный администратор";
+
+    if (document.getElementById("profileOrg")) document.getElementById("profileOrg").textContent = "Админ-панель";
+    if (document.getElementById("profileRole")) document.getElementById("profileRole").textContent = "Главный администратор";
+
+    syncEmployeeAvatarProfile();
+    showScreen("adminPanelScreen");
+}
+
+function openInterfaceSettings() {
+    alert("Настройка интерфейса скоро будет доступна.");
+}
+
+function sendAdminBroadcast() {
+    const area = document.getElementById("adminBroadcastText");
+    const text = area ? area.value.trim() : "";
+    if (!text) {
+        alert("Введите текст сообщения.");
+        return;
+    }
+
+    const msgs = loadLocal("globalAdminMessages", []);
+    msgs.push({ id: Date.now(), text, time: new Date().toISOString() });
+    saveLocal("globalAdminMessages", msgs);
+
+    alert("Сообщение сохранено локально.");
+    if (area) area.value = "";
+}
