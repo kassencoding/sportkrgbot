@@ -1376,12 +1376,7 @@ function openInterfaceSettings() {
                             : "<span class='hint'>По умолчанию</span>"
                     }
                 </div>
-                <div class="interface-icon-actions">
-                    <button class="btn btn-danger btn-small" onclick="deleteUiButtonIcon('${meta.id}')">Удалить</button>
-                    <button class="btn btn-primary btn-small" onclick="saveUiButtonIconGlobalServer('${meta.id}')">Сохранить глобально</button>
-                </div>
             </div>
-        </div>
         `;
         container.appendChild(card);
     });
@@ -1500,7 +1495,6 @@ function applyUiButtonsConfig() {
         const order = typeof cfg.order === "number" ? cfg.order : index;
         btn.style.order = order;
     });
-    try{ applyThemeToggleIcon(); }catch(e){}
 }
 
 // Обновление подписи кнопки из экрана настроек
@@ -1569,219 +1563,29 @@ function handleUiButtonIconChange(id, input) {
 }
 
 
-// Delete icon locally for UI button
-function deleteUiButtonIcon(id) {
-    if (uiButtonsConfig[id]) {
-        delete uiButtonsConfig[id].iconDataUrl;
-        saveUiButtonsConfig();
-        applyUiButtonsConfig();
-        openInterfaceSettings();
-        alert('Иконка удалена локально.');
+
+// Ensure welcome mode buttons work: bind click handlers if missing
+function bindModeButtons() {
+  try {
+    const emp = document.querySelector('.welcome-buttons .btn.btn-primary');
+    const guest = document.querySelector('.welcome-buttons .btn.btn-secondary');
+    if (emp && !emp.getAttribute('data-bound')) {
+      emp.addEventListener('click', ()=> selectMode && selectMode('employee'));
+      emp.setAttribute('data-bound','1');
     }
+    if (guest && !guest.getAttribute('data-bound')) {
+      guest.addEventListener('click', ()=> selectMode && selectMode('guest'));
+      guest.setAttribute('data-bound','1');
+    }
+  } catch(e){ console.warn('bindModeButtons', e); }
 }
-
-// Save single ui button icon to global/icons in Firestore (server: Storage + Firestore)
-async function uploadDataUrlToStorage(iconId, dataUrl) {
-    if (typeof firebase === 'undefined' || !firebase.storage) {
-        throw new Error('Firebase Storage SDK not available');
-    }
-    const storageRef = firebase.storage().ref().child(`global/icons/${iconId}.png`);
-    // upload as data_url
-    await storageRef.putString(dataUrl, 'data_url');
-    const downloadURL = await storageRef.getDownloadURL();
-    return downloadURL;
-}
-
-async function saveUiButtonIconGlobalServer(id) {
-    if (!uiButtonsConfig[id] || !uiButtonsConfig[id].iconDataUrl) {
-        alert('Нет иконки для сохранения.');
-        return;
-    }
-    try {
-        const dataUrl = uiButtonsConfig[id].iconDataUrl;
-        // upload to Storage
-        const url = await uploadDataUrlToStorage(id, dataUrl);
-        // write to Firestore doc global/icons
-        const ref = db.collection('global').doc('icons');
-        await db.runTransaction(async tx => {
-            const doc = await tx.get(ref);
-            const current = (doc.exists && doc.data().icons) ? doc.data().icons : {};
-            current[id] = url;
-            tx.set(ref, { icons: current, updatedAt: new Date().toISOString() }, { merge: true });
-        });
-        // apply locally and persist
-        uiButtonsConfig[id] = uiButtonsConfig[id] || {};
-        uiButtonsConfig[id].iconDataUrl = url;
-        saveUiButtonsConfig();
-        applyUiButtonsConfig();
-        alert('Иконка загружена на сервер и сохранена глобально.');
-        return url;
-    } catch (e) {
-        console.warn('saveUiButtonIconGlobalServer error', e);
-        // fallback to localStorage and show admin notice
-        const fallback = loadLocal('uiButtonsGlobalFallback', {});
-        fallback[id] = uiButtonsConfig[id] ? uiButtonsConfig[id].iconDataUrl : null;
-        saveLocal('uiButtonsGlobalFallback', fallback);
-        const notice = document.getElementById('adminNotice');
-        if (notice) notice.style.display = 'block';
-        alert('Ошибка сохранения глобально: ' + (e && e.message ? e.message : 'unknown') + '\nСохранено локально.');
-    }
-}
-
-// Save all pending admin icons: upload to Storage then merge into Firestore global/icons
-async function adminSaveAllServer() {
-    const pending = window.__GLOBAL && window.__GLOBAL.pendingAdminIcons ? { ...window.__GLOBAL.pendingAdminIcons } : null;
-    if (!pending || Object.keys(pending).length === 0) {
-        alert('Нет изменений для сохранения.');
-        return;
-    }
-    const ref = db.collection('global').doc('icons');
-    const uploaded = {};
-    try {
-        // upload each pending that has dataUrl (null means delete)
-        for (const id of Object.keys(pending)) {
-            const v = pending[id];
-            if (v === null) {
-                uploaded[id] = null;
-            } else if (v) {
-                const url = await uploadDataUrlToStorage(id, v);
-                uploaded[id] = url;
-            }
-        }
-        // merge on server
-        await db.runTransaction(async tx => {
-            const doc = await tx.get(ref);
-            const current = (doc.exists && doc.data().icons) ? doc.data().icons : {};
-            Object.keys(uploaded).forEach(k => {
-                if (uploaded[k] === null) delete current[k];
-                else current[k] = uploaded[k];
-            });
-            tx.set(ref, { icons: current, updatedAt: new Date().toISOString() }, { merge: true });
-        });
-        // apply locally and clear pending
-        Object.keys(uploaded).forEach(k => {
-            if (!uiButtonsConfig[k]) uiButtonsConfig[k] = {};
-            if (uploaded[k] === null) delete uiButtonsConfig[k].iconDataUrl;
-            else uiButtonsConfig[k].iconDataUrl = uploaded[k];
-        });
-        saveUiButtonsConfig();
-        applyUiButtonsConfig();
-        window.__GLOBAL.pendingAdminIcons = {};
-        alert('Иконки загружены и применены глобально.');
-    } catch (e) {
-        console.warn('adminSaveAllServer failed', e);
-        const fallback = loadLocal('uiButtonsGlobalFallback', {});
-        Object.keys(pending).forEach(k => { fallback[k] = pending[k]; });
-        saveLocal('uiButtonsGlobalFallback', fallback);
-        const notice = document.getElementById('adminNotice');
-        if (notice) notice.style.display = 'block';
-        alert('Ошибка сохранения глобально: ' + (e && e.message ? e.message : 'unknown') + '\nСохранено локально.');
-    }
-}
-    try {
-        const ref = db.collection('global').doc('icons');
-        const snap = await ref.get();
-        const current = snap.exists && snap.data() && snap.data().icons ? snap.data().icons : {};
-        current[id] = uiButtonsConfig[id].iconDataUrl;
-        try {
-            await ref.set({ icons: current, updatedAt: new Date().toISOString() }, { merge:true });
-            alert('Иконка сохранена глобально.');
-        } catch (ee) {
-            console.warn('Global save failed', ee);
-            const fallback = loadLocal('uiButtonsGlobalFallback', {});
-            fallback[id] = uiButtonsConfig[id].iconDataUrl;
-            saveLocal('uiButtonsGlobalFallback', fallback);
-            // Show admin notice if exists
-            const notice = document.getElementById('adminNotice');
-            if (notice) notice.style.display = 'block';
-            alert('Ошибка сохранения глобально: ' + (ee && ee.message ? ee.message : 'missing or insufficient permissions') + '\n\nИконка сохранена локально. Чтобы разрешить глобальное сохранение, откройте Firebase Console → Firestore → Rules и настройте доступ для админов.');
-        }
-    } catch(e) {
-        console.warn(e);
-        alert('Ошибка сохранения глобально: ' + e.message);
-    }
-}
-
-
-
-
-// ====== LANGUAGES (RU / KK) ======
-const TRANSLATIONS = {
-  ru: {
-    welcome_title: "Служебная система",
-    welcome_subtitle: "Управление физической культуры и спорта Карагандинской области",
-    btn_employee: "Я сотрудник",
-    btn_guest: "Я гость"
-  },
-  kk: {
-    welcome_title: "Қызмет жүйесі",
-    welcome_subtitle: "Қарағанды облысының дене шынықтыру және спорт басқармасы",
-    btn_employee: "Мен қызметкермін",
-    btn_guest: "Мен қонақпын"
-  }
-};
+// call on load
+setTimeout(bindModeButtons, 300);
 
 function changeLanguage(lang) {
-  if (!TRANSLATIONS[lang]) lang = 'ru';
-  saveLocal('uiLang', lang);
-  applyLanguage(lang);
+  try { if (typeof saveLocal === 'function') saveLocal('uiLang', lang); } catch(e) {}
+  if (typeof applyLanguage === 'function') applyLanguage(lang);
 }
 
-function applyLanguage(lang) {
-  const t = TRANSLATIONS[lang] || TRANSLATIONS.ru;
-  // Welcome
-  const wt = document.querySelector('.welcome-title');
-  const ws = document.querySelector('.welcome-subtitle');
-  const be = document.querySelector('.welcome-buttons .btn.btn-primary');
-  const bg = document.querySelector('.welcome-buttons .btn.btn-secondary');
-  if (wt) wt.textContent = t.welcome_title;
-  if (ws) ws.textContent = t.welcome_subtitle;
-  if (be) be.textContent = t.btn_employee;
-  if (bg) bg.textContent = t.btn_guest;
 
-  // Update UI button labels from UI_BUTTONS translations if present
-  UI_BUTTONS.forEach(meta => {
-    const btn = document.querySelector(`[data-button-id="${meta.id}"]`);
-    if (!btn) return;
-    const titleEl = btn.querySelector('.menu-btn-title');
-    if (titleEl) {
-      // prefer translation key that matches id
-      if (t[meta.id]) titleEl.textContent = t[meta.id];
-      else {
-        const cfg = uiButtonsConfig[meta.id];
-        titleEl.textContent = (cfg && cfg.label) || meta.defaultLabel;
-      }
-    }
-  });
-
-  // Apply text for elements with data-i18n
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k = el.getAttribute('data-i18n');
-    if (t[k]) el.textContent = t[k];
-  });
-}
-
-// load language on init
-(function(){
-  const savedLang = loadLocal('uiLang', 'ru');
-  setTimeout(()=>applyLanguage(savedLang), 200);
-})();
-
-
-
-// Ensure theme toggle icon uses uiButtonsConfig entry if present
-function applyThemeToggleIcon() {
-    try {
-        const cfg = uiButtonsConfig['theme_toggle'] || uiButtonsConfig['theme'] || {};
-        const url = cfg.iconDataUrl;
-        const empIcon = document.getElementById('theme-icon') || document.getElementById('themeIconGuest');
-        if (empIcon) {
-            if (url && url.startsWith('http')) empIcon.src = url;
-            else if (url && url.startsWith('data:')) empIcon.src = url;
-            else {
-                // fallback to local assets depending on theme
-                empIcon.src = currentTheme === 'dark' ? 'img/icon-theme-dark.svg' : 'img/icon-theme-light.svg';
-            }
-        }
-    } catch(e) { console.warn(e); }
-}
+setTimeout(function(){ try{ applyThemeToggleIcon && applyThemeToggleIcon(); }catch(e){} }, 500);
