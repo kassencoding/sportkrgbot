@@ -564,6 +564,10 @@
 </div>
 
 <!-- =================== АДМИН ПАНЕЛЬ =================== -->
+
+<div id="adminNotice" class="card" style="display:none; margin-bottom:12px;">
+  <div style="font-size:13px; color:var(--text-muted)">При попытке сохранения иконок было зафиксировано ограничение прав в Firestore. Сохранение произведено локально. Чтобы разрешить глобальное сохранение, настройте правила Firestore в Firebase Console (разрешить запись в документ settings/uiButtons для администратора).</div>
+</div>
 <div id="adminPanelScreen" class="screen">
     <div class="top-bar">
         <button class="top-back" onclick="resetEmployee()">← Выйти</button>
