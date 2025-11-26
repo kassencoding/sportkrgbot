@@ -825,3 +825,64 @@ body.dark .info-placeholder {
 
 .menu-btn-icon { width:56px !important; height:56px !important; display:flex; align-items:center; justify-content:center; border-radius:12px; overflow:hidden; }
 .menu-btn-icon img, .menu-btn-icon svg { width:36px !important; height:36px !important; object-fit:contain !important; }
+
+
+
+/* ====== APPENDED FIXES: icon previews, welcome emblem, avatar, theme icon ====== */
+.menu-btn-icon {
+  width:56px !important;
+  height:56px !important;
+  min-width:56px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:12px !important;
+  overflow:hidden !important;
+  background: rgba(255,255,255,0.02);
+}
+.menu-btn-icon img, .menu-btn-icon svg {
+  max-width:40px !important;
+  max-height:40px !important;
+  object-fit:contain !important;
+  display:block !important;
+}
+.interface-icon-preview {
+  width:64px !important;
+  height:64px !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:10px;
+  background: var(--bg-card);
+}
+.interface-icon-preview img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.welcome-card { display:flex; flex-direction:column; align-items:center; text-align:center; }
+.welcome-logo-wrap {
+  width:80px;
+  height:80px;
+  border-radius:999px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin: 6px auto 10px;
+}
+.welcome-logo-wrap img { width:100%; height:100%; object-fit:contain; object-position:center center; }
+.avatar-circle img, #employeeAvatarImg {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  display:block;
+}
+#themeIconEmployee, #themeIconGuest, #theme-icon {
+  width:22px !important;
+  height:22px !important;
+  object-fit:contain !important;
+}
