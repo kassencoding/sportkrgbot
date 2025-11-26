@@ -1589,3 +1589,82 @@ function changeLanguage(lang) {
 
 
 setTimeout(function(){ try{ applyThemeToggleIcon && applyThemeToggleIcon(); }catch(e){} }, 500);
+
+
+
+/* HOTFIX: robust UI bindings, theme & language helpers (inserted by assistant) */
+window.addEventListener('error', function(e){ try{ console.error('Global error:', e && e.message, 'at', e && (e.filename+':'+e.lineno)); }catch(_){}});
+try{ if (typeof selectMode === 'function' && !window.selectMode) window.selectMode = selectMode; }catch(e){};
+(function bindWelcomeButtonsRobust(){
+  let attempts = 0;
+  const maxAttempts = 30;
+  const tryBind = function(){
+    attempts++;
+    const btnEmployee = document.getElementById('btnEmployeeMode') || document.querySelector('.welcome-buttons .btn.btn-primary');
+    const btnGuest = document.getElementById('btnGuestMode') || document.querySelector('.welcome-buttons .btn.btn-secondary');
+    if (btnEmployee && !btnEmployee.dataset.bound) {
+      btnEmployee.addEventListener('click', function(e){ try{ (window.selectMode || selectMode) && (window.selectMode || selectMode)('employee'); }catch(err){ console.warn('selectMode error', err); } });
+      btnEmployee.dataset.bound = '1';
+    }
+    if (btnGuest && !btnGuest.dataset.bound) {
+      btnGuest.addEventListener('click', function(e){ try{ (window.selectMode || selectMode) && (window.selectMode || selectMode)('guest'); }catch(err){ console.warn('selectMode error', err); } });
+      btnGuest.dataset.bound = '1';
+    }
+    if ((btnEmployee && btnEmployee.dataset.bound) && (btnGuest && btnGuest.dataset.bound)) return;
+    if (attempts < maxAttempts) setTimeout(tryBind, 200);
+    else console.warn('bindWelcomeButtonsRobust: elements not found after attempts');
+  };
+  setTimeout(tryBind, 150);
+})();
+
+function applyTheme(theme) {
+  try {
+    window.currentTheme = (theme === 'dark' ? 'dark' : 'light');
+    if (window.currentTheme === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
+    const iconPath = (window.currentTheme === 'dark') ? 'img/icon-theme-dark.svg' : 'img/icon-theme-light.svg';
+    const el1 = document.getElementById('themeIconEmployee') || document.getElementById('theme-icon');
+    const el2 = document.getElementById('themeIconGuest');
+    if (el1) try{ el1.src = iconPath; }catch(e){}
+    if (el2) try{ el2.src = iconPath; }catch(e){}
+    try { if (typeof saveLocal === 'function') saveLocal('uiTheme', window.currentTheme); } catch(e){}
+  } catch(e){ console.warn('applyTheme error', e); }
+}
+
+function applyThemeToggleIconFromConfig() {
+  try {
+    const cfg = (window.uiButtonsConfig && (uiButtonsConfig['theme_toggle'] || uiButtonsConfig['theme']));
+    const el = document.getElementById('themeIconEmployee') || document.getElementById('theme-icon') || document.querySelector('.theme-toggle-btn img');
+    if (!el) return;
+    if (cfg && cfg.iconDataUrl) el.src = cfg.iconDataUrl;
+    else { const path = (window.currentTheme === 'dark') ? 'img/icon-theme-dark.svg' : 'img/icon-theme-light.svg'; el.src = path; }
+  } catch(e){ console.warn('applyThemeToggleIconFromConfig', e); }
+}
+
+function applyLanguage(lang) {
+  try {
+    const t = (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS[lang]) ? TRANSLATIONS[lang] : (TRANSLATIONS && TRANSLATIONS.ru) || {};
+    const wt = document.querySelector('.welcome-title'); if (wt && t.welcome_title) wt.textContent = t.welcome_title;
+    const ws = document.querySelector('.welcome-subtitle'); if (ws && t.welcome_subtitle) ws.textContent = t.welcome_subtitle;
+    const be = document.getElementById('btnEmployeeMode') || document.querySelector('.welcome-buttons .btn.btn-primary');
+    const bg = document.getElementById('btnGuestMode') || document.querySelector('.welcome-buttons .btn.btn-secondary');
+    if (be && t.btn_employee) be.textContent = t.btn_employee;
+    if (bg && t.btn_guest) bg.textContent = t.btn_guest;
+    try { const sel = document.getElementById('languageToggle'); if (sel) sel.value = lang; } catch(e){}
+    if (t.ui_buttons && window.UI_BUTTONS) {
+      UI_BUTTONS.forEach(meta => {
+        const newLabel = t.ui_buttons[meta.id];
+        if (newLabel) {
+          const btn = document.querySelector('[data-button-id="'+meta.id+'"]');
+          if (btn) { const titleEl = btn.querySelector('.menu-btn-title') || btn.querySelector('.menu-btn-text'); if (titleEl) titleEl.textContent = newLabel; }
+        }
+      });
+    }
+  } catch(e) { console.warn('applyLanguage error', e); }
+}
+
+function changeLanguage(lang) {
+  try { if (!lang || (typeof TRANSLATIONS === 'undefined') || !TRANSLATIONS[lang]) lang = 'ru'; if (typeof saveLocal === 'function') saveLocal('uiLang', lang); applyLanguage(lang); } catch(e) { console.warn('changeLanguage error', e); }
+}
+
+try { const savedLang = (typeof loadLocal === 'function') ? loadLocal('uiLang','ru') : 'ru'; setTimeout(function(){ applyLanguage(savedLang); try{ applyThemeToggleIconFromConfig(); } catch(e){} }, 200); } catch(e) {}
+/* end HOTFIX */
