@@ -31,6 +31,60 @@ let selectedEmployee = null; // объект с данными выбранно�
 // Тема интерфейса
 let currentTheme = "light";
 
+// =================== НАСТРОЙКИ ИНТЕРФЕЙСА (КНОПКИ) ===================
+// Описываем все кнопки, которые админ может настраивать
+const UI_BUTTONS = [
+    { id: "employee_create_task", type: "employee", defaultLabel: "Создать поручение" },
+    { id: "employee_tasks", type: "employee", defaultLabel: "Поручения" },
+    { id: "employee_database", type: "employee", defaultLabel: "База данных" },
+    { id: "employee_ai_assistant", type: "employee", defaultLabel: "ИИ-ассистент" },
+    { id: "employee_profile", type: "employee", defaultLabel: "Профиль" },
+
+    { id: "guest_ai", type: "guest", defaultLabel: "Спросить у ИИ" },
+    { id: "guest_request", type: "guest", defaultLabel: "Запросить информацию" },
+    { id: "guest_calendar", type: "guest", defaultLabel: "Календарь мероприятий" },
+    { id: "guest_sections", type: "guest", defaultLabel: "Список спортивных секций" },
+    { id: "guest_results", type: "guest", defaultLabel: "Действующие и старые результаты" },
+
+    { id: "org_management", type: "org", defaultLabel: "Управление" },
+    { id: "org_orgs", type: "org", defaultLabel: "Подведомственные организации" },
+    { id: "org_regions", type: "org", defaultLabel: "Отделы спорта" }
+];
+
+let uiButtonsConfig = {}; // { [id]: { label, iconDataUrl } }
+
+// Загрузка настроек интерфейса (пока из localStorage)
+function loadUiButtonsConfig() {
+    uiButtonsConfig = loadLocal("uiButtonsConfig", {});
+}
+
+// Сохранение настроек интерфейса
+function saveUiButtonsConfig() {
+    saveLocal("uiButtonsConfig", uiButtonsConfig);
+}
+
+// Применение настроек интерфейса к реальным кнопкам на экране
+function applyUiButtonsConfig() {
+    UI_BUTTONS.forEach(meta => {
+        const cfg = uiButtonsConfig[meta.id];
+        const btn = document.querySelector(`[data-button-id="${meta.id}"]`);
+        if (!btn) return;
+
+        const titleEl = btn.querySelector(".menu-btn-title");
+        if (titleEl) {
+            titleEl.textContent = (cfg && cfg.label) || meta.defaultLabel;
+        }
+
+        if (cfg && cfg.iconDataUrl) {
+            const iconEl = btn.querySelector(".menu-btn-icon");
+            if (iconEl) {
+                iconEl.innerHTML = `<img src="${cfg.iconDataUrl}" width="26" height="26" />`;
+            }
+        }
+    });
+}
+
+
 // =================== УТИЛИТЫ LOCALSTORAGE ===================
 function saveLocal(key, value) {
     try {
@@ -198,7 +252,11 @@ window.onload = () => {
     const guestAvatar = loadLocal("guestAvatar", null);
     if (guestAvatar) setGuestAvatar(guestAvatar);
 
+    // Загружаем и применяем настройки интерфейса
+    loadUiButtonsConfig();
     initTheme();
+    applyUiButtonsConfig();
+
     showScreen("modeScreen");
 };
 
@@ -1272,8 +1330,74 @@ function enterAdminMode() {
 }
 
 function openInterfaceSettings() {
-    alert("Настройка интерфейса скоро будет доступна.");
+    // Построение списка на экране настроек
+    const container = document.getElementById("interfaceSettingsList");
+    if (!container) {
+        alert("Экран настроек интерфейса не найден.");
+        return;
+    }
+    container.innerHTML = "";
+
+    UI_BUTTONS.forEach(meta => {
+        const cfg = uiButtonsConfig[meta.id] || {};
+        const card = document.createElement("div");
+        card.className = "card interface-card";
+        card.innerHTML = `
+            <div class="profile-label">Кнопка: ${meta.id}</div>
+            <label>Подпись</label>
+            <input type="text" value="${(cfg.label || meta.defaultLabel).replace(/"/g, '&quot;')}"
+                   oninput="updateUiButtonLabel('${meta.id}', this.value)" />
+
+            <label style="margin-top:8px;">Иконка</label>
+            <div class="interface-icon-row">
+                <button class="btn btn-secondary btn-small" onclick="triggerUiButtonIcon('${meta.id}')">
+                    Выбрать иконку
+                </button>
+                <input type="file" accept="image/*" id="uiIconInput_${meta.id}"
+                       style="display:none" onchange="handleUiButtonIconChange('${meta.id}', this)" />
+                <div class="interface-icon-preview">
+                    ${
+                        cfg.iconDataUrl
+                            ? `<img src="${cfg.iconDataUrl}" alt="icon" />`
+                            : "<span class='hint'>По умолчанию</span>"
+                    }
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    showScreen("interfaceSettingsScreen");
 }
+
+function updateUiButtonLabel(id, value) {
+    if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+    uiButtonsConfig[id].label = value;
+    saveUiButtonsConfig();
+    applyUiButtonsConfig();
+}
+
+function triggerUiButtonIcon(id) {
+    const input = document.getElementById("uiIconInput_" + id);
+    if (input) input.click();
+}
+
+function handleUiButtonIconChange(id, input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
+        uiButtonsConfig[id].iconDataUrl = reader.result;
+        saveUiButtonsConfig();
+        applyUiButtonsConfig();
+        // Обновим превью
+        openInterfaceSettings();
+    };
+    reader.readAsDataURL(file);
+}
+
 
 function sendAdminBroadcast() {
     const area = document.getElementById("adminBroadcastText");
