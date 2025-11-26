@@ -838,16 +838,8 @@ body.dark .info-placeholder {
 
 
 
-/* Admin and avatar preview constraints */
-.admin-icon-preview {
-  width:64px;
-  height:64px;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 6px 18px rgba(2,6,23,0.08);
-}
-.admin-buttons-list { display:flex; flex-direction:column; gap:10px; }
-.admin-button-row { display:flex; align-items:center; gap:12px; justify-content:space-between; }
-.admin-icon-controls { display:flex; align-items:center; gap:8px; }
-img.avatar-preview, .welcome-logo, .header-logo, .welcome-logo-wrap img { max-width:120px; max-height:120px; object-fit:cover; }
+
+/* Interface settings preview constraints */
+.interface-icon-row { display:flex; align-items:center; gap:10px; }
+.interface-icon-preview img { max-width:64px; max-height:64px; object-fit:cover; border-radius:10px; border:1px solid rgba(0,0,0,0.06); }
+.interface-icon-actions { display:flex; gap:8px; align-items:center; }
