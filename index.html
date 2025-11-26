@@ -23,18 +23,14 @@
         <div class="welcome-logo-wrap">
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="welcome-logo" />
         </div>
-        <h1 class="welcome-title">Служебная система</h1>
-        <p class="welcome-subtitle">
+        <h1 class="welcome-title" data-i18n="welcome_title">Служебная система</h1>
+        <p class="welcome-subtitle" data-i18n="welcome_subtitle">
             Управление физической культуры и спорта Карагандинской области
         </p>
 
         <div class="welcome-buttons">
-            <button class="btn btn-primary" onclick="selectMode('employee')">
-                Я сотрудник
-            </button>
-            <button class="btn btn-secondary" onclick="selectMode('guest')">
-                Я гость
-            </button>
+            <button id="btnEmployeeMode" class="btn btn-primary" onclick="selectMode('employee')" onclick="selectMode && selectMode(\'employee\')">Я сотрудник</button>
+            <button id="btnGuestMode" class="btn btn-secondary" onclick="selectMode('guest')" onclick="selectMode && selectMode(\'guest\')">Я гость</button>
         </div>
     </div>
 </div>
