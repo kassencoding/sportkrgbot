@@ -9,6 +9,10 @@ let employeeDB = {};
 // Список поручений
 let tasks = [];
 
+// Текущий пользователь (сотрудник) и его чат
+let currentUserId = null;
+let aiChatHistory = [];
+
 // Структура таблицы поручения
 let table = {
     columns: [{ id: 0, title: "Колонка 1", type: "text" }],
@@ -177,39 +181,9 @@ function toggleTheme() {
 
 // =================== ИНИЦИАЛИЗАЦИЯ ===================
 window.onload = () => {
-    employeeDB = loadLocal("employeeDB", {});
-    tasks = loadLocal("tasks", []);
-
-    // Если поручений нет — создаём образцы
-    if (!tasks || tasks.length === 0) {
-        tasks = [
-            {
-                id: Date.now(),
-                target: "Отдел спорта г. Караганда",
-                targetPerson: "",
-                description: "Подготовить отчёт о проведённых массовых мероприятиях за месяц",
-                deadline: "2025-12-20",
-                table: null
-            },
-            {
-                id: Date.now() + 1,
-                target: "ДЮСШ №1",
-                targetPerson: "",
-                description: "Предоставить информацию по тренерскому составу",
-                deadline: "2025-12-25",
-                table: null
-            },
-            {
-                id: Date.now() + 2,
-                target: "ОСДЮШОР №1",
-                targetPerson: "",
-                description: "Загрузить фотоотчёт о соревнованиях",
-                deadline: "2026-01-05",
-                table: null
-            }
-        ];
-        saveLocal("tasks", tasks);
-    }
+    // Глобальное состояние по сотрудникам будет подгружаться после выбора и входа
+    employeeDB = {};
+    tasks = [];
 
     const guestProfile = loadLocal("guestProfile", null);
     if (guestProfile) {
@@ -217,9 +191,6 @@ window.onload = () => {
         document.getElementById("guestPhone").value = guestProfile.phone || "";
         document.getElementById("guestIin").value = guestProfile.iin || "";
     }
-
-    const empAvatar = loadLocal("employeeAvatar", null);
-    if (empAvatar) setEmployeeAvatar(empAvatar);
 
     const guestAvatar = loadLocal("guestAvatar", null);
     if (guestAvatar) setGuestAvatar(guestAvatar);
@@ -403,6 +374,113 @@ function getPasswordKeyForSelected() {
     return `pass_${base}_${orgKey}`;
 }
 
+
+// Генерация userId для выбранного сотрудника (ФИО/должность + организация)
+function getUserIdForSelected() {
+    if (!selectedEmployee) return null;
+    const orgName = getSelectedOrgName();
+
+    let base;
+    if (selectedEmployee.category === "management") {
+        const fio = extractFioFromEmployeeLine(selectedEmployee.person);
+        base = normalizeForKey(fio);
+    } else {
+        // Для подведомственных организаций пока используем должность
+        base = normalizeForKey(selectedEmployee.person);
+    }
+
+    const orgKey = normalizeForKey(orgName);
+    return `${base}_${orgKey}`;
+}
+
+// Ключи для localStorage под конкретного пользователя
+function getEmployeeDBKey() {
+    return currentUserId ? `employeeDB_${currentUserId}` : "employeeDB";
+}
+function getTasksKey() {
+    return currentUserId ? `tasks_${currentUserId}` : "tasks";
+}
+function getAIChatKey() {
+    if (MODE === "employee" && currentUserId) return `aiChat_${currentUserId}`;
+    return "aiChat_guest";
+}
+function getEmployeeAvatarKey() {
+    return currentUserId ? `employeeAvatar_${currentUserId}` : "employeeAvatar";
+}
+
+// Загрузка/сохранение базы данных сотрудника
+function loadEmployeeDBForCurrentUser() {
+    const key = getEmployeeDBKey();
+    employeeDB = loadLocal(key, {});
+}
+function saveEmployeeDBForCurrentUser() {
+    const key = getEmployeeDBKey();
+    saveLocal(key, employeeDB);
+}
+
+// Загрузка/сохранение поручений сотрудника
+function loadTasksForCurrentUser() {
+    const key = getTasksKey();
+    tasks = loadLocal(key, []);
+
+    // Если поручений нет — создаём образцы (они будут индивидуальны для сотрудника)
+    if (!tasks || tasks.length === 0) {
+        tasks = [
+            {
+                id: Date.now(),
+                target: "Отдел спорта г. Караганда",
+                targetPerson: "",
+                description: "Подготовить отчёт о проведённых массовых мероприятиях за месяц",
+                deadline: "2025-12-20",
+                table: null
+            },
+            {
+                id: Date.now() + 1,
+                target: "ДЮСШ №1",
+                targetPerson: "",
+                description: "Предоставить информацию по тренерскому составу",
+                deadline: "2025-12-25",
+                table: null
+            },
+            {
+                id: Date.now() + 2,
+                target: "ОСДЮШОР №1",
+                targetPerson: "",
+                description: "Загрузить фотоотчёт о соревнованиях",
+                deadline: "2026-01-05",
+                table: null
+            }
+        ];
+        saveTasksForCurrentUser();
+    }
+}
+function saveTasksForCurrentUser() {
+    const key = getTasksKey();
+    saveLocal(key, tasks);
+}
+
+// Загрузка/сохранение чата с ИИ
+function loadAIChatForCurrentUser() {
+    const key = getAIChatKey();
+    aiChatHistory = loadLocal(key, []);
+
+    const chat = document.getElementById("aiChat");
+    if (!chat) return;
+    chat.innerHTML = "";
+
+    aiChatHistory.forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "chat-message " + msg.type;
+        div.innerHTML = `<div class="chat-bubble">${msg.text}</div>`;
+        chat.appendChild(div);
+    });
+    chat.scrollTop = chat.scrollHeight;
+}
+function saveAIChatForCurrentUser() {
+    const key = getAIChatKey();
+    saveLocal(key, aiChatHistory);
+}
+
 function selectEmployeePerson(personText) {
     selectedEmployee = {
         category: currentEmployeeCategory,
@@ -545,6 +623,12 @@ function proceedEmployeeLoginAfterPassword() {
     const roleText = selectedEmployee.person || "Сотрудник";
     currentRole = roleText;
 
+    // Устанавливаем текущего пользователя и подгружаем его данные
+    currentUserId = getUserIdForSelected();
+    loadEmployeeDBForCurrentUser();
+    loadTasksForCurrentUser();
+    loadAIChatForCurrentUser();
+
     // Обновляем шапку и профиль, как раньше делал selectRole
     const orgLabel = currentOrganization ? currentOrganization.name : orgName;
 
@@ -578,7 +662,7 @@ function setEmployeeAvatar(dataUrl) {
 }
 
 function syncEmployeeAvatarProfile() {
-    const dataUrl = loadLocal("employeeAvatar", null);
+    const dataUrl = loadLocal(getEmployeeAvatarKey(), null);
     if (dataUrl) {
         setEmployeeAvatar(dataUrl);
     } else {
@@ -609,7 +693,7 @@ function handleEmployeePhoto(input) {
     const reader = new FileReader();
     reader.onload = () => {
         const dataUrl = reader.result;
-        saveLocal("employeeAvatar", dataUrl);
+        saveLocal(getEmployeeAvatarKey(), dataUrl);
         setEmployeeAvatar(dataUrl);
     };
     reader.readAsDataURL(file);
@@ -658,6 +742,7 @@ function openTasksScreen() {
     showScreen("tasksScreen");
 }
 function openAIChat() {
+    loadAIChatForCurrentUser();
     showScreen("aiScreen");
 }
 
@@ -774,7 +859,7 @@ function buildDatabaseList() {
         `;
         container.appendChild(div);
     });
-    saveLocal("employeeDB", employeeDB);
+    saveEmployeeDBForCurrentUser();
 }
 
 function addDbSection() {
@@ -789,11 +874,11 @@ function addDbSection() {
 
 function updateDbTitle(i, v) {
     employeeDB[currentRole][i].title = v;
-    saveLocal("employeeDB", employeeDB);
+    saveEmployeeDBForCurrentUser();
 }
 function updateDbText(i, v) {
     employeeDB[currentRole][i].text = v;
-    saveLocal("employeeDB", employeeDB);
+    saveEmployeeDBForCurrentUser();
 }
 
 // =================== КОНТЕКСТ ДЛЯ ИИ ИЗ БАЗЫ СОТРУДНИКА ===================
@@ -894,6 +979,10 @@ function addAIMessage(type, text) {
     div.innerHTML = `<div class="chat-bubble">${text}</div>`;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
+
+    // Сохраняем историю чата для текущего пользователя / гостя
+    aiChatHistory.push({ type, text });
+    saveAIChatForCurrentUser();
 }
 
 function generateAIAnswer(q) {
@@ -1103,7 +1192,7 @@ function saveTask() {
     };
 
     tasks.push(task);
-    saveLocal("tasks", tasks);
+    saveTasksForCurrentUser();
 
     alert("Поручение сохранено");
     showScreen("employeeHome");
@@ -1142,5 +1231,9 @@ function resetEmployee() {
     currentUnitList = [];
     currentUnit = null;
     selectedEmployee = null;
+    currentUserId = null;
+    aiChatHistory = [];
+    const chat = document.getElementById("aiChat");
+    if (chat) chat.innerHTML = "";
     showScreen("modeScreen");
 }
