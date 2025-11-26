@@ -44,7 +44,7 @@
     <div class="menu-list">
 
         <!-- Управление -->
-        <button class="menu-btn" onclick="selectEmployeeCategory('management')">
+        <button class="menu-btn" data-button-id="org_management" onclick="selectEmployeeCategory('management')">
             <div class="menu-btn-icon">
                 <img src="img/building.svg" alt="Управление" width="26" height="26" />
             </div>
@@ -55,7 +55,7 @@
         </button>
 
         <!-- Подведомственные организации -->
-        <button class="menu-btn" onclick="selectEmployeeCategory('org')">
+        <button class="menu-btn" data-button-id="org_orgs" onclick="selectEmployeeCategory('org')">
             <div class="menu-btn-icon">
                 <img src="img/school.svg" alt="Организации" width="26" height="26" />
             </div>
@@ -66,7 +66,7 @@
         </button>
 
         <!-- Отделы спорта (районы/города) -->
-        <button class="menu-btn" onclick="selectEmployeeCategory('region')">
+        <button class="menu-btn" data-button-id="org_regions" onclick="selectEmployeeCategory('region')">
             <div class="menu-btn-icon">
                 <img src="img/stadium.svg" alt="Отделы спорта" width="26" height="26" />
             </div>
@@ -188,7 +188,7 @@
     <div class="menu-list">
 
         <!-- Создать поручение -->
-        <button class="menu-btn" onclick="openCreateTask()">
+        <button class="menu-btn" data-button-id="employee_create_task" onclick="openCreateTask()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 5v14M5 12h14"/>
@@ -201,7 +201,7 @@
         </button>
 
         <!-- Поручения -->
-        <button class="menu-btn" onclick="openTasksScreen()">
+        <button class="menu-btn" data-button-id="employee_tasks" onclick="openTasksScreen()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M7 4h10M7 9h10M7 14h6M5 20h14a2 2 0 0 0 2-2V6a2
@@ -215,7 +215,7 @@
         </button>
 
         <!-- База данных -->
-        <button class="menu-btn" onclick="openDatabase()">
+        <button class="menu-btn" data-button-id="employee_database" onclick="openDatabase()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M4 19h16M4 12h16M4 5h16"/>
@@ -228,7 +228,7 @@
         </button>
 
         <!-- ИИ ассистент -->
-        <button class="menu-btn" onclick="openAIChat()">
+        <button class="menu-btn" data-button-id="employee_ai_assistant" onclick="openAIChat()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 22c4.97 0 9-3.582 9-8
@@ -243,7 +243,7 @@
         </button>
 
         <!-- Профиль -->
-        <button class="menu-btn" onclick="openEmployeeProfile()">
+        <button class="menu-btn" data-button-id="employee_profile" onclick="openEmployeeProfile()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <circle cx="12" cy="8" r="4"/>
@@ -375,7 +375,7 @@
     <div class="menu-list">
 
         <!-- Спросить у ИИ -->
-        <button class="menu-btn" onclick="openAIChat()">
+        <button class="menu-btn" data-button-id="guest_ai" onclick="openAIChat()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 22c4.97 0 9-3.582 9-8
@@ -390,7 +390,7 @@
         </button>
 
         <!-- Запросить информацию -->
-        <button class="menu-btn" onclick="openGuestRequestInfo()">
+        <button class="menu-btn" data-button-id="guest_request" onclick="openGuestRequestInfo()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M4 4h16v16H4z"/>
@@ -404,7 +404,7 @@
         </button>
 
         <!-- Мероприятия -->
-        <button class="menu-btn" onclick="openGuestEvents()">
+        <button class="menu-btn" data-button-id="guest_calendar" onclick="openGuestEvents()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M4 6h16M8 2v4M16 2v4M4 10h16v10H4z"/>
@@ -417,7 +417,7 @@
         </button>
 
         <!-- Секции -->
-        <button class="menu-btn" onclick="openGuestSections()">
+        <button class="menu-btn" data-button-id="guest_sections" onclick="openGuestSections()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M3 21h18M3 10h18M3 3h18"/>
@@ -430,7 +430,7 @@
         </button>
 
         <!-- Результаты -->
-        <button class="menu-btn" onclick="openGuestResults()">
+        <button class="menu-btn" data-button-id="guest_results" onclick="openGuestResults()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 2l3 7h7л-5.5 4.5 2.5 7L12 17л-7 3.5 2.5-7L2 9h7z"/>
@@ -546,6 +546,17 @@
 </div>
 
 <script src="script.js"></script>
+
+
+<!-- =================== НАСТРОЙКИ ИНТЕРФЕЙСА (АДМИН) =================== -->
+<div id="interfaceSettingsScreen" class="screen">
+    <div class="top-bar">
+        <button class="top-back" onclick="showScreen('adminPanelScreen')">← Назад</button>
+        <div class="top-title">Настройка интерфейса</div>
+    </div>
+
+    <div id="interfaceSettingsList" class="menu-list"></div>
+</div>
 
 <!-- =================== АДМИН ПАНЕЛЬ =================== -->
 <div id="adminPanelScreen" class="screen">
