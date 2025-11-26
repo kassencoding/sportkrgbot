@@ -1378,7 +1378,7 @@ function openInterfaceSettings() {
                 </div>
                 <div class="interface-icon-actions">
                     <button class="btn btn-danger btn-small" onclick="deleteUiButtonIcon('${meta.id}')">Удалить</button>
-                    <button class="btn btn-primary btn-small" onclick="saveUiButtonIconGlobal('${meta.id}')">Сохранить глобально</button>
+                    <button class="btn btn-primary btn-small" onclick="saveUiButtonIconGlobalServer('${meta.id}')">Сохранить глобально</button>
                 </div>
             </div>
         </div>
@@ -1500,6 +1500,7 @@ function applyUiButtonsConfig() {
         const order = typeof cfg.order === "number" ? cfg.order : index;
         btn.style.order = order;
     });
+    try{ applyThemeToggleIcon(); }catch(e){}
 }
 
 // Обновление подписи кнопки из экрана настроек
@@ -1579,12 +1580,104 @@ function deleteUiButtonIcon(id) {
     }
 }
 
-// Save single ui button icon to global/icons in Firestore
-async function saveUiButtonIconGlobal(id) {
+// Save single ui button icon to global/icons in Firestore (server: Storage + Firestore)
+async function uploadDataUrlToStorage(iconId, dataUrl) {
+    if (typeof firebase === 'undefined' || !firebase.storage) {
+        throw new Error('Firebase Storage SDK not available');
+    }
+    const storageRef = firebase.storage().ref().child(`global/icons/${iconId}.png`);
+    // upload as data_url
+    await storageRef.putString(dataUrl, 'data_url');
+    const downloadURL = await storageRef.getDownloadURL();
+    return downloadURL;
+}
+
+async function saveUiButtonIconGlobalServer(id) {
     if (!uiButtonsConfig[id] || !uiButtonsConfig[id].iconDataUrl) {
         alert('Нет иконки для сохранения.');
         return;
     }
+    try {
+        const dataUrl = uiButtonsConfig[id].iconDataUrl;
+        // upload to Storage
+        const url = await uploadDataUrlToStorage(id, dataUrl);
+        // write to Firestore doc global/icons
+        const ref = db.collection('global').doc('icons');
+        await db.runTransaction(async tx => {
+            const doc = await tx.get(ref);
+            const current = (doc.exists && doc.data().icons) ? doc.data().icons : {};
+            current[id] = url;
+            tx.set(ref, { icons: current, updatedAt: new Date().toISOString() }, { merge: true });
+        });
+        // apply locally and persist
+        uiButtonsConfig[id] = uiButtonsConfig[id] || {};
+        uiButtonsConfig[id].iconDataUrl = url;
+        saveUiButtonsConfig();
+        applyUiButtonsConfig();
+        alert('Иконка загружена на сервер и сохранена глобально.');
+        return url;
+    } catch (e) {
+        console.warn('saveUiButtonIconGlobalServer error', e);
+        // fallback to localStorage and show admin notice
+        const fallback = loadLocal('uiButtonsGlobalFallback', {});
+        fallback[id] = uiButtonsConfig[id] ? uiButtonsConfig[id].iconDataUrl : null;
+        saveLocal('uiButtonsGlobalFallback', fallback);
+        const notice = document.getElementById('adminNotice');
+        if (notice) notice.style.display = 'block';
+        alert('Ошибка сохранения глобально: ' + (e && e.message ? e.message : 'unknown') + '\nСохранено локально.');
+    }
+}
+
+// Save all pending admin icons: upload to Storage then merge into Firestore global/icons
+async function adminSaveAllServer() {
+    const pending = window.__GLOBAL && window.__GLOBAL.pendingAdminIcons ? { ...window.__GLOBAL.pendingAdminIcons } : null;
+    if (!pending || Object.keys(pending).length === 0) {
+        alert('Нет изменений для сохранения.');
+        return;
+    }
+    const ref = db.collection('global').doc('icons');
+    const uploaded = {};
+    try {
+        // upload each pending that has dataUrl (null means delete)
+        for (const id of Object.keys(pending)) {
+            const v = pending[id];
+            if (v === null) {
+                uploaded[id] = null;
+            } else if (v) {
+                const url = await uploadDataUrlToStorage(id, v);
+                uploaded[id] = url;
+            }
+        }
+        // merge on server
+        await db.runTransaction(async tx => {
+            const doc = await tx.get(ref);
+            const current = (doc.exists && doc.data().icons) ? doc.data().icons : {};
+            Object.keys(uploaded).forEach(k => {
+                if (uploaded[k] === null) delete current[k];
+                else current[k] = uploaded[k];
+            });
+            tx.set(ref, { icons: current, updatedAt: new Date().toISOString() }, { merge: true });
+        });
+        // apply locally and clear pending
+        Object.keys(uploaded).forEach(k => {
+            if (!uiButtonsConfig[k]) uiButtonsConfig[k] = {};
+            if (uploaded[k] === null) delete uiButtonsConfig[k].iconDataUrl;
+            else uiButtonsConfig[k].iconDataUrl = uploaded[k];
+        });
+        saveUiButtonsConfig();
+        applyUiButtonsConfig();
+        window.__GLOBAL.pendingAdminIcons = {};
+        alert('Иконки загружены и применены глобально.');
+    } catch (e) {
+        console.warn('adminSaveAllServer failed', e);
+        const fallback = loadLocal('uiButtonsGlobalFallback', {});
+        Object.keys(pending).forEach(k => { fallback[k] = pending[k]; });
+        saveLocal('uiButtonsGlobalFallback', fallback);
+        const notice = document.getElementById('adminNotice');
+        if (notice) notice.style.display = 'block';
+        alert('Ошибка сохранения глобально: ' + (e && e.message ? e.message : 'unknown') + '\nСохранено локально.');
+    }
+}
     try {
         const ref = db.collection('global').doc('icons');
         const snap = await ref.get();
@@ -1673,3 +1766,22 @@ function applyLanguage(lang) {
   const savedLang = loadLocal('uiLang', 'ru');
   setTimeout(()=>applyLanguage(savedLang), 200);
 })();
+
+
+
+// Ensure theme toggle icon uses uiButtonsConfig entry if present
+function applyThemeToggleIcon() {
+    try {
+        const cfg = uiButtonsConfig['theme_toggle'] || uiButtonsConfig['theme'] || {};
+        const url = cfg.iconDataUrl;
+        const empIcon = document.getElementById('theme-icon') || document.getElementById('themeIconGuest');
+        if (empIcon) {
+            if (url && url.startsWith('http')) empIcon.src = url;
+            else if (url && url.startsWith('data:')) empIcon.src = url;
+            else {
+                // fallback to local assets depending on theme
+                empIcon.src = currentTheme === 'dark' ? 'img/icon-theme-dark.svg' : 'img/icon-theme-light.svg';
+            }
+        }
+    } catch(e) { console.warn(e); }
+}
