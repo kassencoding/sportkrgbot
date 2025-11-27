@@ -9,11 +9,6 @@
 
     <!-- Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
 </head>
 <body>
 
@@ -23,14 +18,18 @@
         <div class="welcome-logo-wrap">
             <img src="img/karaganda_gerb.jpeg" alt="Герб" class="welcome-logo" />
         </div>
-        <h1 class="welcome-title" data-i18n="welcome_title">Служебная система</h1>
-        <p class="welcome-subtitle" data-i18n="welcome_subtitle">
+        <h1 class="welcome-title">Служебная система</h1>
+        <p class="welcome-subtitle">
             Управление физической культуры и спорта Карагандинской области
         </p>
 
         <div class="welcome-buttons">
-            <button id="btnEmployeeMode" class="btn btn-primary" onclick="selectMode('employee')" onclick="selectMode && selectMode(\'employee\')">Я сотрудник</button>
-            <button id="btnGuestMode" class="btn btn-secondary" onclick="selectMode('guest')" onclick="selectMode && selectMode(\'guest\')">Я гость</button>
+            <button class="btn btn-primary" onclick="selectMode('employee')">
+                Я сотрудник
+            </button>
+            <button class="btn btn-secondary" onclick="selectMode('guest')">
+                Я гость
+            </button>
         </div>
     </div>
 </div>
@@ -45,7 +44,7 @@
     <div class="menu-list">
 
         <!-- Управление -->
-        <button class="menu-btn" data-button-id="org_management" onclick="selectEmployeeCategory('management')">
+        <button class="menu-btn" onclick="selectEmployeeCategory('management')">
             <div class="menu-btn-icon">
                 <img src="img/building.svg" alt="Управление" width="26" height="26" />
             </div>
@@ -56,7 +55,7 @@
         </button>
 
         <!-- Подведомственные организации -->
-        <button class="menu-btn" data-button-id="org_orgs" onclick="selectEmployeeCategory('org')">
+        <button class="menu-btn" onclick="selectEmployeeCategory('org')">
             <div class="menu-btn-icon">
                 <img src="img/school.svg" alt="Организации" width="26" height="26" />
             </div>
@@ -67,7 +66,7 @@
         </button>
 
         <!-- Отделы спорта (районы/города) -->
-        <button class="menu-btn" data-button-id="org_regions" onclick="selectEmployeeCategory('region')">
+        <button class="menu-btn" onclick="selectEmployeeCategory('region')">
             <div class="menu-btn-icon">
                 <img src="img/stadium.svg" alt="Отделы спорта" width="26" height="26" />
             </div>
@@ -168,13 +167,6 @@
         <div class="theme-toggle-btn" onclick="toggleTheme()">
             <img id="theme-icon" src="img/sun.svg" alt="theme" />
         </div>
-        <div class="lang-wrap" style="margin-left:8px;">
-          <select id="languageToggle" aria-label="Язык" onchange="changeLanguage(this.value)" style="padding:6px 10px; border-radius:10px; background:rgba(255,255,255,0.02); color:var(--text);">
-            <option value="ru">Русский</option>
-            <option value="kk">Қазақша</option>
-          </select>
-        </div>
-
     </div> <!-- ← закрываем header! -->
 
     <!-- АВАТАР -->
@@ -196,7 +188,7 @@
     <div class="menu-list">
 
         <!-- Создать поручение -->
-        <button class="menu-btn" data-button-id="employee_create_task" onclick="openCreateTask()">
+        <button class="menu-btn" onclick="openCreateTask()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 5v14M5 12h14"/>
@@ -209,7 +201,7 @@
         </button>
 
         <!-- Поручения -->
-        <button class="menu-btn" data-button-id="employee_tasks" onclick="openTasksScreen()">
+        <button class="menu-btn" onclick="openTasksScreen()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M7 4h10M7 9h10M7 14h6M5 20h14a2 2 0 0 0 2-2V6a2
@@ -223,7 +215,7 @@
         </button>
 
         <!-- База данных -->
-        <button class="menu-btn" data-button-id="employee_database" onclick="openDatabase()">
+        <button class="menu-btn" onclick="openDatabase()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M4 19h16M4 12h16M4 5h16"/>
@@ -236,7 +228,7 @@
         </button>
 
         <!-- ИИ ассистент -->
-        <button class="menu-btn" data-button-id="employee_ai_assistant" onclick="openAIChat()">
+        <button class="menu-btn" onclick="openAIChat()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 22c4.97 0 9-3.582 9-8
@@ -251,7 +243,7 @@
         </button>
 
         <!-- Профиль -->
-        <button class="menu-btn" data-button-id="employee_profile" onclick="openEmployeeProfile()">
+        <button class="menu-btn" onclick="openEmployeeProfile()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <circle cx="12" cy="8" r="4"/>
@@ -383,7 +375,7 @@
     <div class="menu-list">
 
         <!-- Спросить у ИИ -->
-        <button class="menu-btn" data-button-id="guest_ai" onclick="openAIChat()">
+        <button class="menu-btn" onclick="openAIChat()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 22c4.97 0 9-3.582 9-8
@@ -398,7 +390,7 @@
         </button>
 
         <!-- Запросить информацию -->
-        <button class="menu-btn" data-button-id="guest_request" onclick="openGuestRequestInfo()">
+        <button class="menu-btn" onclick="openGuestRequestInfo()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M4 4h16v16H4z"/>
@@ -412,7 +404,7 @@
         </button>
 
         <!-- Мероприятия -->
-        <button class="menu-btn" data-button-id="guest_calendar" onclick="openGuestEvents()">
+        <button class="menu-btn" onclick="openGuestEvents()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M4 6h16M8 2v4M16 2v4M4 10h16v10H4z"/>
@@ -425,7 +417,7 @@
         </button>
 
         <!-- Секции -->
-        <button class="menu-btn" data-button-id="guest_sections" onclick="openGuestSections()">
+        <button class="menu-btn" onclick="openGuestSections()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M3 21h18M3 10h18M3 3h18"/>
@@ -438,7 +430,7 @@
         </button>
 
         <!-- Результаты -->
-        <button class="menu-btn" data-button-id="guest_results" onclick="openGuestResults()">
+        <button class="menu-btn" onclick="openGuestResults()">
             <div class="menu-btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" stroke="black" fill="none" stroke-width="2">
                     <path d="M12 2l3 7h7л-5.5 4.5 2.5 7L12 17л-7 3.5 2.5-7L2 9h7z"/>
@@ -554,46 +546,5 @@
 </div>
 
 <script src="script.js"></script>
-
-
-<!-- =================== НАСТРОЙКИ ИНТЕРФЕЙСА (АДМИН) =================== -->
-<div id="interfaceSettingsScreen" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="showScreen('adminPanelScreen')">← Назад</button>
-        <div class="top-title">Настройка интерфейса</div>
-    </div>
-
-    <div id="interfaceSettingsList" class="menu-list"></div>
-</div>
-
-<!-- =================== АДМИН ПАНЕЛЬ =================== -->
-<div id="adminPanelScreen" class="screen">
-    <div class="top-bar">
-        <button class="top-back" onclick="resetEmployee()">← Выйти</button>
-        <div class="top-title">Админ-панель</div>
-    </div>
-
-    <div class="menu-list">
-
-        <button class="menu-btn" onclick="openInterfaceSettings()">
-            <div class="menu-btn-icon">
-                <img src="img/settings.svg" width="26" height="26" />
-            </div>
-            <div class="menu-btn-text">
-                <div class="menu-btn-title">Настройка интерфейса</div>
-                <div class="menu-btn-subtitle">Изменить иконки и надписи кнопок</div>
-            </div>
-        </button>
-
-        <div class="card" style="margin-top:15px;">
-            <div class="profile-label">Рассылка всем сотрудникам</div>
-            <textarea id="adminBroadcastText" placeholder="Введите текст сообщения"
-                      style="height:90px;"></textarea>
-            <button class="btn btn-primary full" onclick="sendAdminBroadcast()">Отправить</button>
-        </div>
-
-    </div>
-</div>
-
 </body>
 </html>
