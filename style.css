@@ -886,3 +886,25 @@ body.dark .info-placeholder {
   height:22px !important;
   object-fit:contain !important;
 }
+
+
+/* Added overrides */
+.mode-buttons .btn {
+    width: 90% !important;
+}
+
+.welcome-logo img {
+    width: 180px !important;
+    height: auto !important;
+}
+
+.header-logo img {
+    width: 100% !important;
+    height: auto !important;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
