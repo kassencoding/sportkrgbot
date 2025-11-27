@@ -1,17 +1,3 @@
-// Firebase Init
-const firebaseConfig = {
-  apiKey: "AIzaSyCZ4lC-EnTU3Z90RQZLEJnUq8373pW_G24",
-  authDomain: "gid-sport.firebaseapp.com",
-  projectId: "gid-sport",
-  storageBucket: "gid-sport.firebasestorage.app",
-  messagingSenderId: "632213586370",
-  appId: "1:632213586370:web:668ce6a30aa9df8aa4565b",
-  measurementId: "G-VBMP6CQ9Q7"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-
 // =================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ===================
 let MODE = null; // 'employee' или 'guest'
 let currentOrganization = null;
@@ -22,13 +8,6 @@ let currentRole = null;
 let employeeDB = {};
 // Список поручений
 let tasks = [];
-
-// Текущий пользователь (сотрудник) и его чат
-let currentUserId = null;
-let aiChatHistory = [];
-
-// Секретный пароль админа (скрытый вход в админ-панель)
-const ADMIN_SECRET_PASSWORD = "superadmin09";
 
 // Структура таблицы поручения
 let table = {
@@ -44,60 +23,6 @@ let selectedEmployee = null; // объект с данными выбранно�
 
 // Тема интерфейса
 let currentTheme = "light";
-
-// =================== НАСТРОЙКИ ИНТЕРФЕЙСА (КНОПКИ) ===================
-// Описываем все кнопки, которые админ может настраивать
-const UI_BUTTONS = [
-    { id: "employee_create_task", type: "employee", defaultLabel: "Создать поручение" },
-    { id: "employee_tasks", type: "employee", defaultLabel: "Поручения" },
-    { id: "employee_database", type: "employee", defaultLabel: "База данных" },
-    { id: "employee_ai_assistant", type: "employee", defaultLabel: "ИИ-ассистент" },
-    { id: "employee_profile", type: "employee", defaultLabel: "Профиль" },
-
-    { id: "guest_ai", type: "guest", defaultLabel: "Спросить у ИИ" },
-    { id: "guest_request", type: "guest", defaultLabel: "Запросить информацию" },
-    { id: "guest_calendar", type: "guest", defaultLabel: "Календарь мероприятий" },
-    { id: "guest_sections", type: "guest", defaultLabel: "Список спортивных секций" },
-    { id: "guest_results", type: "guest", defaultLabel: "Действующие и старые результаты" },
-
-    { id: "org_management", type: "org", defaultLabel: "Управление" },
-    { id: "org_orgs", type: "org", defaultLabel: "Подведомственные организации" },
-    { id: "org_regions", type: "org", defaultLabel: "Отделы спорта" }
-];
-
-let uiButtonsConfig = {}; // { [id]: { label, iconDataUrl } }
-
-// Загрузка настроек интерфейса (пока из localStorage)
-function loadUiButtonsConfig() {
-    uiButtonsConfig = loadLocal("uiButtonsConfig", {});
-}
-
-// Сохранение настроек интерфейса
-function saveUiButtonsConfig() {
-    saveLocal("uiButtonsConfig", uiButtonsConfig);
-}
-
-// Применение настроек интерфейса к реальным кнопкам на экране
-function applyUiButtonsConfig() {
-    UI_BUTTONS.forEach(meta => {
-        const cfg = uiButtonsConfig[meta.id];
-        const btn = document.querySelector(`[data-button-id="${meta.id}"]`);
-        if (!btn) return;
-
-        const titleEl = btn.querySelector(".menu-btn-title");
-        if (titleEl) {
-            titleEl.textContent = (cfg && cfg.label) || meta.defaultLabel;
-        }
-
-        if (cfg && cfg.iconDataUrl) {
-            const iconEl = btn.querySelector(".menu-btn-icon");
-            if (iconEl) {
-                iconEl.innerHTML = `<img src="${cfg.iconDataUrl}" width="26" height="26" />`;
-            }
-        }
-    });
-}
-
 
 // =================== УТИЛИТЫ LOCALSTORAGE ===================
 function saveLocal(key, value) {
@@ -252,9 +177,39 @@ function toggleTheme() {
 
 // =================== ИНИЦИАЛИЗАЦИЯ ===================
 window.onload = () => {
-    // Глобальное состояние по сотрудникам будет подгружаться после выбора и входа
-    employeeDB = {};
-    tasks = [];
+    employeeDB = loadLocal("employeeDB", {});
+    tasks = loadLocal("tasks", []);
+
+    // Если поручений нет — создаём образцы
+    if (!tasks || tasks.length === 0) {
+        tasks = [
+            {
+                id: Date.now(),
+                target: "Отдел спорта г. Караганда",
+                targetPerson: "",
+                description: "Подготовить отчёт о проведённых массовых мероприятиях за месяц",
+                deadline: "2025-12-20",
+                table: null
+            },
+            {
+                id: Date.now() + 1,
+                target: "ДЮСШ №1",
+                targetPerson: "",
+                description: "Предоставить информацию по тренерскому составу",
+                deadline: "2025-12-25",
+                table: null
+            },
+            {
+                id: Date.now() + 2,
+                target: "ОСДЮШОР №1",
+                targetPerson: "",
+                description: "Загрузить фотоотчёт о соревнованиях",
+                deadline: "2026-01-05",
+                table: null
+            }
+        ];
+        saveLocal("tasks", tasks);
+    }
 
     const guestProfile = loadLocal("guestProfile", null);
     if (guestProfile) {
@@ -263,14 +218,13 @@ window.onload = () => {
         document.getElementById("guestIin").value = guestProfile.iin || "";
     }
 
+    const empAvatar = loadLocal("employeeAvatar", null);
+    if (empAvatar) setEmployeeAvatar(empAvatar);
+
     const guestAvatar = loadLocal("guestAvatar", null);
     if (guestAvatar) setGuestAvatar(guestAvatar);
 
-    // Загружаем и применяем настройки интерфейса
-    loadUiButtonsConfig();
     initTheme();
-    applyUiButtonsConfig();
-
     showScreen("modeScreen");
 };
 
@@ -449,113 +403,6 @@ function getPasswordKeyForSelected() {
     return `pass_${base}_${orgKey}`;
 }
 
-
-// Генерация userId для выбранного сотрудника (ФИО/должность + организация)
-function getUserIdForSelected() {
-    if (!selectedEmployee) return null;
-    const orgName = getSelectedOrgName();
-
-    let base;
-    if (selectedEmployee.category === "management") {
-        const fio = extractFioFromEmployeeLine(selectedEmployee.person);
-        base = normalizeForKey(fio);
-    } else {
-        // Для подведомственных организаций пока используем должность
-        base = normalizeForKey(selectedEmployee.person);
-    }
-
-    const orgKey = normalizeForKey(orgName);
-    return `${base}_${orgKey}`;
-}
-
-// Ключи для localStorage под конкретного пользователя
-function getEmployeeDBKey() {
-    return currentUserId ? `employeeDB_${currentUserId}` : "employeeDB";
-}
-function getTasksKey() {
-    return currentUserId ? `tasks_${currentUserId}` : "tasks";
-}
-function getAIChatKey() {
-    if ((MODE === "employee" || MODE === "admin") && currentUserId) return `aiChat_${currentUserId}`;
-    return "aiChat_guest";
-}
-function getEmployeeAvatarKey() {
-    return currentUserId ? `employeeAvatar_${currentUserId}` : "employeeAvatar";
-}
-
-// Загрузка/сохранение базы данных сотрудника
-function loadEmployeeDBForCurrentUser() {
-    const key = getEmployeeDBKey();
-    employeeDB = loadLocal(key, {});
-}
-function saveEmployeeDBForCurrentUser() {
-    const key = getEmployeeDBKey();
-    saveLocal(key, employeeDB);
-}
-
-// Загрузка/сохранение поручений сотрудника
-function loadTasksForCurrentUser() {
-    const key = getTasksKey();
-    tasks = loadLocal(key, []);
-
-    // Если поручений нет — создаём образцы (они будут индивидуальны для сотрудника)
-    if (!tasks || tasks.length === 0) {
-        tasks = [
-            {
-                id: Date.now(),
-                target: "Отдел спорта г. Караганда",
-                targetPerson: "",
-                description: "Подготовить отчёт о проведённых массовых мероприятиях за месяц",
-                deadline: "2025-12-20",
-                table: null
-            },
-            {
-                id: Date.now() + 1,
-                target: "ДЮСШ №1",
-                targetPerson: "",
-                description: "Предоставить информацию по тренерскому составу",
-                deadline: "2025-12-25",
-                table: null
-            },
-            {
-                id: Date.now() + 2,
-                target: "ОСДЮШОР №1",
-                targetPerson: "",
-                description: "Загрузить фотоотчёт о соревнованиях",
-                deadline: "2026-01-05",
-                table: null
-            }
-        ];
-        saveTasksForCurrentUser();
-    }
-}
-function saveTasksForCurrentUser() {
-    const key = getTasksKey();
-    saveLocal(key, tasks);
-}
-
-// Загрузка/сохранение чата с ИИ
-function loadAIChatForCurrentUser() {
-    const key = getAIChatKey();
-    aiChatHistory = loadLocal(key, []);
-
-    const chat = document.getElementById("aiChat");
-    if (!chat) return;
-    chat.innerHTML = "";
-
-    aiChatHistory.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "chat-message " + msg.type;
-        div.innerHTML = `<div class="chat-bubble">${msg.text}</div>`;
-        chat.appendChild(div);
-    });
-    chat.scrollTop = chat.scrollHeight;
-}
-function saveAIChatForCurrentUser() {
-    const key = getAIChatKey();
-    saveLocal(key, aiChatHistory);
-}
-
 function selectEmployeePerson(personText) {
     selectedEmployee = {
         category: currentEmployeeCategory,
@@ -599,13 +446,6 @@ function loginEmployee() {
         return;
     }
 
-    // ==== СКРЫТЫЙ ВХОД АДМИНА ПО СУПЕР-ПАРОЛЮ ====
-    if (pwd === ADMIN_SECRET_PASSWORD) {
-        enterAdminMode();
-        return;
-    }
-    // ==== КОНЕЦ БЛОКА АДМИНА ====
-
     const key = getPasswordKeyForSelected();
     if (!key) {
         alert("Не удалось определить ключ пароля.");
@@ -647,6 +487,7 @@ function loginEmployee() {
     // Успешный вход
     proceedEmployeeLoginAfterPassword();
 }
+
 // Сохранение нового пароля и вход
 function saveNewEmployeePassword() {
     if (!selectedEmployee) {
@@ -704,12 +545,6 @@ function proceedEmployeeLoginAfterPassword() {
     const roleText = selectedEmployee.person || "Сотрудник";
     currentRole = roleText;
 
-    // Устанавливаем текущего пользователя и подгружаем его данные
-    currentUserId = getUserIdForSelected();
-    loadEmployeeDBForCurrentUser();
-    loadTasksForCurrentUser();
-    loadAIChatForCurrentUser();
-
     // Обновляем шапку и профиль, как раньше делал selectRole
     const orgLabel = currentOrganization ? currentOrganization.name : orgName;
 
@@ -743,7 +578,7 @@ function setEmployeeAvatar(dataUrl) {
 }
 
 function syncEmployeeAvatarProfile() {
-    const dataUrl = loadLocal(getEmployeeAvatarKey(), null);
+    const dataUrl = loadLocal("employeeAvatar", null);
     if (dataUrl) {
         setEmployeeAvatar(dataUrl);
     } else {
@@ -774,7 +609,7 @@ function handleEmployeePhoto(input) {
     const reader = new FileReader();
     reader.onload = () => {
         const dataUrl = reader.result;
-        saveLocal(getEmployeeAvatarKey(), dataUrl);
+        saveLocal("employeeAvatar", dataUrl);
         setEmployeeAvatar(dataUrl);
     };
     reader.readAsDataURL(file);
@@ -823,7 +658,6 @@ function openTasksScreen() {
     showScreen("tasksScreen");
 }
 function openAIChat() {
-    loadAIChatForCurrentUser();
     showScreen("aiScreen");
 }
 
@@ -940,7 +774,7 @@ function buildDatabaseList() {
         `;
         container.appendChild(div);
     });
-    saveEmployeeDBForCurrentUser();
+    saveLocal("employeeDB", employeeDB);
 }
 
 function addDbSection() {
@@ -955,11 +789,11 @@ function addDbSection() {
 
 function updateDbTitle(i, v) {
     employeeDB[currentRole][i].title = v;
-    saveEmployeeDBForCurrentUser();
+    saveLocal("employeeDB", employeeDB);
 }
 function updateDbText(i, v) {
     employeeDB[currentRole][i].text = v;
-    saveEmployeeDBForCurrentUser();
+    saveLocal("employeeDB", employeeDB);
 }
 
 // =================== КОНТЕКСТ ДЛЯ ИИ ИЗ БАЗЫ СОТРУДНИКА ===================
@@ -1060,10 +894,6 @@ function addAIMessage(type, text) {
     div.innerHTML = `<div class="chat-bubble">${text}</div>`;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
-
-    // Сохраняем историю чата для текущего пользователя / гостя
-    aiChatHistory.push({ type, text });
-    saveAIChatForCurrentUser();
 }
 
 function generateAIAnswer(q) {
@@ -1273,7 +1103,7 @@ function saveTask() {
     };
 
     tasks.push(task);
-    saveTasksForCurrentUser();
+    saveLocal("tasks", tasks);
 
     alert("Поручение сохранено");
     showScreen("employeeHome");
@@ -1312,359 +1142,5 @@ function resetEmployee() {
     currentUnitList = [];
     currentUnit = null;
     selectedEmployee = null;
-    currentUserId = null;
-    aiChatHistory = [];
-    const chat = document.getElementById("aiChat");
-    if (chat) chat.innerHTML = "";
     showScreen("modeScreen");
 }
-
-
-// =================== РЕЖИМ АДМИНА ===================
-function enterAdminMode() {
-    MODE = "admin";
-    currentUserId = "admin_master";
-
-    currentOrganization = { name: "Админ-панель" };
-    currentDepartmentId = null;
-    currentRole = "Главный администратор";
-
-    loadEmployeeDBForCurrentUser();
-    loadTasksForCurrentUser();
-    loadAIChatForCurrentUser();
-
-    if (document.getElementById("empOrg")) document.getElementById("empOrg").textContent = "Админ-панель";
-    if (document.getElementById("empRole")) document.getElementById("empRole").textContent = "Главный администратор";
-
-    if (document.getElementById("profileOrg")) document.getElementById("profileOrg").textContent = "Админ-панель";
-    if (document.getElementById("profileRole")) document.getElementById("profileRole").textContent = "Главный администратор";
-
-    syncEmployeeAvatarProfile();
-    showScreen("adminPanelScreen");
-}
-
-function openInterfaceSettings() {
-    // Построение списка на экране настроек
-    const container = document.getElementById("interfaceSettingsList");
-    if (!container) {
-        alert("Экран настроек интерфейса не найден.");
-        return;
-    }
-    container.innerHTML = "";
-
-    UI_BUTTONS.forEach(meta => {
-        const cfg = uiButtonsConfig[meta.id] || {};
-        const card = document.createElement("div");
-        card.className = "card interface-card";
-        card.innerHTML = `
-            <div class="profile-label">Кнопка: ${meta.id}</div>
-            <label>Подпись</label>
-            <input type="text" value="${(cfg.label || meta.defaultLabel).replace(/"/g, '&quot;')}"
-                   oninput="updateUiButtonLabel('${meta.id}', this.value)" />
-
-            <label style="margin-top:8px;">Иконка</label>
-            <div class="interface-icon-row">
-                <button class="btn btn-secondary btn-small" onclick="triggerUiButtonIcon('${meta.id}')">
-                    Выбрать иконку
-                </button>
-                <input type="file" accept="image/*" id="uiIconInput_${meta.id}"
-                       style="display:none" onchange="handleUiButtonIconChange('${meta.id}', this)" />
-                <div class="interface-icon-preview">
-                    ${
-                        cfg.iconDataUrl
-                            ? `<img src="${cfg.iconDataUrl}" alt="icon" />`
-                            : "<span class='hint'>По умолчанию</span>"
-                    }
-                </div>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-
-    showScreen("interfaceSettingsScreen");
-}
-
-function updateUiButtonLabel(id, value) {
-    if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
-    uiButtonsConfig[id].label = value;
-    saveUiButtonsConfig();
-    applyUiButtonsConfig();
-}
-
-function triggerUiButtonIcon(id) {
-    const input = document.getElementById("uiIconInput_" + id);
-    if (input) input.click();
-}
-
-function handleUiButtonIconChange(id, input) {
-    const file = input.files && input.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-        if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
-        uiButtonsConfig[id].iconDataUrl = reader.result;
-        saveUiButtonsConfig();
-        applyUiButtonsConfig();
-        // Обновим превью
-        openInterfaceSettings();
-    };
-    reader.readAsDataURL(file);
-}
-
-
-function sendAdminBroadcast() {
-    const area = document.getElementById("adminBroadcastText");
-    const text = area ? area.value.trim() : "";
-    if (!text) {
-        alert("Введите текст сообщения.");
-        return;
-    }
-
-    const msgs = loadLocal("globalAdminMessages", []);
-    msgs.push({ id: Date.now(), text, time: new Date().toISOString() });
-    saveLocal("globalAdminMessages", msgs);
-
-    alert("Сообщение сохранено локально.");
-    if (area) area.value = "";
-}
-
-
-
-// ================= FIRESTORE UI SYNC (ADDED) =================
-
-// Документ с настройками кнопок (общий для всех)
-const uiDocRef = db.collection("settings").doc("uiButtons");
-
-// Переопределяем загрузку настроек интерфейса
-function loadUiButtonsConfig() {
-    // Подпишемся на изменения из Firestore
-    uiDocRef.onSnapshot((doc) => {
-        const data = doc.exists ? doc.data() : {};
-        uiButtonsConfig = data || {};
-        // Кладём в localStorage как кеш
-        saveLocal("uiButtonsConfig", uiButtonsConfig);
-        applyUiButtonsConfig();
-    }, (err) => {
-        console.error("Firestore uiButtons onSnapshot error", err);
-        // Резервный вариант — берём из localStorage
-        uiButtonsConfig = loadLocal("uiButtonsConfig", {});
-        applyUiButtonsConfig();
-    });
-}
-
-// Переопределяем сохранение настроек интерфейса
-function saveUiButtonsConfig() {
-    // Локальный кеш
-    saveLocal("uiButtonsConfig", uiButtonsConfig);
-    // Отправляем в Firestore (общий документ)
-    uiDocRef.set(uiButtonsConfig, { merge: true }).catch(err => {
-        console.error("save uiButtons to Firestore error", err);
-    });
-}
-
-// Переопределяем применение настроек к кнопкам (добавляем hidden и order)
-function applyUiButtonsConfig() {
-    UI_BUTTONS.forEach((meta, index) => {
-        const id = meta.id;
-        const cfg = uiButtonsConfig[id] || {};
-
-        const btn = document.querySelector(`[data-button-id="${id}"]`);
-        if (!btn) return;
-
-        // Подпись
-        const titleEl = btn.querySelector(".menu-btn-title");
-        if (titleEl) {
-            titleEl.textContent = cfg.label || meta.defaultLabel;
-        }
-
-        // Иконка
-        const iconEl = btn.querySelector(".menu-btn-icon");
-        if (iconEl && cfg.iconDataUrl) {
-            iconEl.innerHTML = `<img src="${cfg.iconDataUrl}" width="26" height="26" />`;
-        }
-
-        // Скрытие
-        if (cfg.hidden) {
-            btn.style.display = "none";
-        } else {
-            btn.style.display = "";
-        }
-
-        // Порядок
-        const order = typeof cfg.order === "number" ? cfg.order : index;
-        btn.style.order = order;
-    });
-}
-
-// Обновление подписи кнопки из экрана настроек
-function updateUiButtonLabel(id, value) {
-    if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
-    uiButtonsConfig[id].label = value;
-    saveUiButtonsConfig();
-}
-
-// Переключение скрытия кнопки
-function toggleUiButtonHidden(id, hidden) {
-    if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
-    uiButtonsConfig[id].hidden = hidden;
-    saveUiButtonsConfig();
-}
-
-// Перемещение кнопки вверх/вниз
-function moveUiButton(id, delta) {
-    // Собираем текущий список id по порядку
-    const ids = UI_BUTTONS.map(b => b.id);
-    // Сортируем по order
-    ids.sort((a, b) => {
-        const oa = (uiButtonsConfig[a] && typeof uiButtonsConfig[a].order === "number")
-            ? uiButtonsConfig[a].order
-            : ids.indexOf(a);
-        const ob = (uiButtonsConfig[b] && typeof uiButtonsConfig[b].order === "number")
-            ? uiButtonsConfig[b].order
-            : ids.indexOf(b);
-        return oa - ob;
-    });
-
-    const index = ids.indexOf(id);
-    if (index < 0) return;
-
-    const newIndex = index + delta;
-    if (newIndex < 0 || newIndex >= ids.length) return;
-
-    const tmp = ids[index];
-    ids[index] = ids[newIndex];
-    ids[newIndex] = tmp;
-
-    ids.forEach((btnId, i) => {
-        if (!uiButtonsConfig[btnId]) uiButtonsConfig[btnId] = {};
-        uiButtonsConfig[btnId].order = i;
-    });
-
-    saveUiButtonsConfig();
-}
-
-// Загрузка иконки кнопки (base64 в Firestore)
-function handleUiButtonIconChange(id, input) {
-    const file = input.files && input.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-        if (!uiButtonsConfig[id]) uiButtonsConfig[id] = {};
-        uiButtonsConfig[id].iconDataUrl = reader.result;
-        saveUiButtonsConfig();
-        // Обновим экран, если открыт
-        if (typeof openInterfaceSettings === "function") {
-            openInterfaceSettings();
-        }
-    };
-    reader.readAsDataURL(file);
-}
-
-
-
-// Ensure welcome mode buttons work: bind click handlers if missing
-function bindModeButtons() {
-  try {
-    const emp = document.querySelector('.welcome-buttons .btn.btn-primary');
-    const guest = document.querySelector('.welcome-buttons .btn.btn-secondary');
-    if (emp && !emp.getAttribute('data-bound')) {
-      emp.addEventListener('click', ()=> selectMode && selectMode('employee'));
-      emp.setAttribute('data-bound','1');
-    }
-    if (guest && !guest.getAttribute('data-bound')) {
-      guest.addEventListener('click', ()=> selectMode && selectMode('guest'));
-      guest.setAttribute('data-bound','1');
-    }
-  } catch(e){ console.warn('bindModeButtons', e); }
-}
-// call on load
-setTimeout(bindModeButtons, 300);
-
-function changeLanguage(lang) {
-  try { if (typeof saveLocal === 'function') saveLocal('uiLang', lang); } catch(e) {}
-  if (typeof applyLanguage === 'function') applyLanguage(lang);
-}
-
-
-setTimeout(function(){ try{ applyThemeToggleIcon && applyThemeToggleIcon(); }catch(e){} }, 500);
-
-
-
-/* HOTFIX: robust UI bindings, theme & language helpers (inserted by assistant) */
-window.addEventListener('error', function(e){ try{ console.error('Global error:', e && e.message, 'at', e && (e.filename+':'+e.lineno)); }catch(_){}});
-try{ if (typeof selectMode === 'function' && !window.selectMode) window.selectMode = selectMode; }catch(e){};
-(function bindWelcomeButtonsRobust(){
-  let attempts = 0;
-  const maxAttempts = 30;
-  const tryBind = function(){
-    attempts++;
-    const btnEmployee = document.getElementById('btnEmployeeMode') || document.querySelector('.welcome-buttons .btn.btn-primary');
-    const btnGuest = document.getElementById('btnGuestMode') || document.querySelector('.welcome-buttons .btn.btn-secondary');
-    if (btnEmployee && !btnEmployee.dataset.bound) {
-      btnEmployee.addEventListener('click', function(e){ try{ (window.selectMode || selectMode) && (window.selectMode || selectMode)('employee'); }catch(err){ console.warn('selectMode error', err); } });
-      btnEmployee.dataset.bound = '1';
-    }
-    if (btnGuest && !btnGuest.dataset.bound) {
-      btnGuest.addEventListener('click', function(e){ try{ (window.selectMode || selectMode) && (window.selectMode || selectMode)('guest'); }catch(err){ console.warn('selectMode error', err); } });
-      btnGuest.dataset.bound = '1';
-    }
-    if ((btnEmployee && btnEmployee.dataset.bound) && (btnGuest && btnGuest.dataset.bound)) return;
-    if (attempts < maxAttempts) setTimeout(tryBind, 200);
-    else console.warn('bindWelcomeButtonsRobust: elements not found after attempts');
-  };
-  setTimeout(tryBind, 150);
-})();
-
-function applyTheme(theme) {
-  try {
-    window.currentTheme = (theme === 'dark' ? 'dark' : 'light');
-    if (window.currentTheme === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
-    const iconPath = (window.currentTheme === 'dark') ? 'img/icon-theme-dark.svg' : 'img/icon-theme-light.svg';
-    const el1 = document.getElementById('themeIconEmployee') || document.getElementById('theme-icon');
-    const el2 = document.getElementById('themeIconGuest');
-    if (el1) try{ el1.src = iconPath; }catch(e){}
-    if (el2) try{ el2.src = iconPath; }catch(e){}
-    try { if (typeof saveLocal === 'function') saveLocal('uiTheme', window.currentTheme); } catch(e){}
-  } catch(e){ console.warn('applyTheme error', e); }
-}
-
-function applyThemeToggleIconFromConfig() {
-  try {
-    const cfg = (window.uiButtonsConfig && (uiButtonsConfig['theme_toggle'] || uiButtonsConfig['theme']));
-    const el = document.getElementById('themeIconEmployee') || document.getElementById('theme-icon') || document.querySelector('.theme-toggle-btn img');
-    if (!el) return;
-    if (cfg && cfg.iconDataUrl) el.src = cfg.iconDataUrl;
-    else { const path = (window.currentTheme === 'dark') ? 'img/icon-theme-dark.svg' : 'img/icon-theme-light.svg'; el.src = path; }
-  } catch(e){ console.warn('applyThemeToggleIconFromConfig', e); }
-}
-
-function applyLanguage(lang) {
-  try {
-    const t = (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS[lang]) ? TRANSLATIONS[lang] : (TRANSLATIONS && TRANSLATIONS.ru) || {};
-    const wt = document.querySelector('.welcome-title'); if (wt && t.welcome_title) wt.textContent = t.welcome_title;
-    const ws = document.querySelector('.welcome-subtitle'); if (ws && t.welcome_subtitle) ws.textContent = t.welcome_subtitle;
-    const be = document.getElementById('btnEmployeeMode') || document.querySelector('.welcome-buttons .btn.btn-primary');
-    const bg = document.getElementById('btnGuestMode') || document.querySelector('.welcome-buttons .btn.btn-secondary');
-    if (be && t.btn_employee) be.textContent = t.btn_employee;
-    if (bg && t.btn_guest) bg.textContent = t.btn_guest;
-    try { const sel = document.getElementById('languageToggle'); if (sel) sel.value = lang; } catch(e){}
-    if (t.ui_buttons && window.UI_BUTTONS) {
-      UI_BUTTONS.forEach(meta => {
-        const newLabel = t.ui_buttons[meta.id];
-        if (newLabel) {
-          const btn = document.querySelector('[data-button-id="'+meta.id+'"]');
-          if (btn) { const titleEl = btn.querySelector('.menu-btn-title') || btn.querySelector('.menu-btn-text'); if (titleEl) titleEl.textContent = newLabel; }
-        }
-      });
-    }
-  } catch(e) { console.warn('applyLanguage error', e); }
-}
-
-function changeLanguage(lang) {
-  try { if (!lang || (typeof TRANSLATIONS === 'undefined') || !TRANSLATIONS[lang]) lang = 'ru'; if (typeof saveLocal === 'function') saveLocal('uiLang', lang); applyLanguage(lang); } catch(e) { console.warn('changeLanguage error', e); }
-}
-
-try { const savedLang = (typeof loadLocal === 'function') ? loadLocal('uiLang','ru') : 'ru'; setTimeout(function(){ applyLanguage(savedLang); try{ applyThemeToggleIconFromConfig(); } catch(e){} }, 200); } catch(e) {}
-/* end HOTFIX */
