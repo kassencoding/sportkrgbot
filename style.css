@@ -896,8 +896,7 @@ body.dark .info-placeholder {
 
 /* Wider entry buttons */
 .welcome-buttons .btn {
-    width: 90% !important;
-    max-width: 300px;
+    width: 100% !important;
 }
 
 /* Enlarge employee header logo */
