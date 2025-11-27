@@ -13,7 +13,7 @@ const translations = {
         organizations_desc: "ДЮСШ, ОСДЮШОР, центры и др.",
         regions: "Отделы спорта",
         regions_desc: "Города и районы области",
-        // ... shortened for demonstration
+        // ... здесь можно дальше расширять словарь
     },
     kz: {
         employee: "Қызметкер",
@@ -25,7 +25,7 @@ const translations = {
         organizations_desc: "БЖСМ, ОБЖСМ, орталықтар және т.б.",
         regions: "Спорт бөлімдері",
         regions_desc: "Қалалар мен аудандар",
-        // ... shortened for demonstration
+        // ... и здесь тоже
     }
 };
 
@@ -34,13 +34,13 @@ let currentLang = localStorage.getItem("lang") || "ru";
 function applyTranslations() {
     document.querySelectorAll("[data-i18n]").forEach(el => {
         const key = el.dataset.i18n;
-        const text = translations[currentLang][key];
+        const text = translations[currentLang]?.[key];
         if (text) el.textContent = text;
     });
 
     document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
         const key = el.dataset.i18nPlaceholder;
-        const text = translations[currentLang][key];
+        const text = translations[currentLang]?.[key];
         if (text) el.placeholder = text;
     });
 
@@ -603,7 +603,7 @@ function proceedEmployeeLoginAfterPassword() {
     const roleText = selectedEmployee.person || "Сотрудник";
     currentRole = roleText;
 
-    // Обновляем шапку и профиль, как раньше делал selectRole
+    // Обновляем шапку и профиль
     const orgLabel = currentOrganization ? currentOrganization.name : orgName;
 
     document.getElementById("empOrg").textContent = orgLabel;
@@ -1202,31 +1202,3 @@ function resetEmployee() {
     selectedEmployee = null;
     showScreen("modeScreen");
 }
-
-
-// =========================
-//      RU ↔ KZ LANGUAGE
-// =========================
-const translations = {
-    ru: { employee: "Я сотрудник", guest: "Я гость" },
-    kz: { employee: "Қызметкер", guest: "Қонақ" }
-};
-let currentLang = localStorage.getItem("lang") || "ru";
-
-function applyTranslations() {
-    document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const key = el.dataset.i18n;
-        if(translations[currentLang][key]){
-            el.textContent = translations[currentLang][key];
-        }
-    });
-    const btn = document.getElementById("langBtn");
-    if(btn) btn.textContent = currentLang.toUpperCase();
-}
-function toggleLanguage(){
-    currentLang = currentLang === "ru" ? "kz" : "ru";
-    localStorage.setItem("lang", currentLang);
-    applyTranslations();
-}
-document.addEventListener("DOMContentLoaded", applyTranslations);
-
