@@ -1144,3 +1144,26 @@ function resetEmployee() {
     selectedEmployee = null;
     showScreen("modeScreen");
 }
+
+
+// === Language System (RU/KZ Toggle) ===
+const translations = {
+  ru: { employee: "Я сотрудник", guest: "Я гость" },
+  kz: { employee: "Қызметкер", guest: "Қонақ" }
+};
+let currentLang = localStorage.getItem("lang") || "ru";
+
+function applyTranslations(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.dataset.i18n;
+    if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
+  });
+  const lb = document.getElementById("langBtn");
+  if(lb) lb.textContent = currentLang.toUpperCase();
+}
+function toggleLanguage(){
+  currentLang = currentLang === "ru" ? "kz" : "ru";
+  localStorage.setItem("lang", currentLang);
+  applyTranslations();
+}
+window.addEventListener("load", applyTranslations);
