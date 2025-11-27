@@ -1,3 +1,61 @@
+// =========================
+//        I18N — языки
+// =========================
+
+const translations = {
+    ru: {
+        employee: "Я сотрудник",
+        guest: "Я гость",
+        chooseCategory: "Выбор категории",
+        management: "Управление",
+        management_desc: "Руководство и отделы Управления",
+        organizations: "Подведомственные организации",
+        organizations_desc: "ДЮСШ, ОСДЮШОР, центры и др.",
+        regions: "Отделы спорта",
+        regions_desc: "Города и районы области",
+        // ... shortened for demonstration
+    },
+    kz: {
+        employee: "Қызметкер",
+        guest: "Қонақ",
+        chooseCategory: "Санатты таңдау",
+        management: "Басқарма",
+        management_desc: "Басқарманың басшылығы мен бөлімдері",
+        organizations: "Төменгі ұйымдар",
+        organizations_desc: "БЖСМ, ОБЖСМ, орталықтар және т.б.",
+        regions: "Спорт бөлімдері",
+        regions_desc: "Қалалар мен аудандар",
+        // ... shortened for demonstration
+    }
+};
+
+let currentLang = localStorage.getItem("lang") || "ru";
+
+function applyTranslations() {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        const text = translations[currentLang][key];
+        if (text) el.textContent = text;
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        const text = translations[currentLang][key];
+        if (text) el.placeholder = text;
+    });
+
+    const btn = document.getElementById("langBtn");
+    if (btn) btn.textContent = currentLang.toUpperCase();
+}
+
+function toggleLanguage() {
+    currentLang = currentLang === "ru" ? "kz" : "ru";
+    localStorage.setItem("lang", currentLang);
+    applyTranslations();
+}
+
+document.addEventListener("DOMContentLoaded", applyTranslations);
+
 // =================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ===================
 let MODE = null; // 'employee' или 'guest'
 let currentOrganization = null;
@@ -1171,3 +1229,4 @@ function toggleLanguage(){
     applyTranslations();
 }
 document.addEventListener("DOMContentLoaded", applyTranslations);
+
