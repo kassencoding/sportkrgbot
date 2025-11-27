@@ -888,23 +888,28 @@ body.dark .info-placeholder {
 }
 
 
-/* Added overrides */
-.mode-buttons .btn {
-    width: 90% !important;
-}
-
+/* Enlarged entry logo */
 .welcome-logo img {
     width: 180px !important;
     height: auto !important;
 }
 
+/* Wider entry buttons */
+.welcome-buttons .btn {
+    width: 90% !important;
+    max-width: 300px;
+}
+
+/* Enlarge employee header logo */
 .header-logo img {
-    width: 100% !important;
+    width: 90px !important;
     height: auto !important;
 }
 
-.profile-header {
+/* Center avatar, FIO, role */
+.profile-header, .header-text {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
 }
