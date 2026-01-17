@@ -1,1204 +1,670 @@
-// =========================
-//        I18N — языки
-// =========================
+// script.js
 
+// ================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==================
+let currentTheme = 'dark';   // 'dark' | 'light'
+let currentLang  = 'ru';     // 'ru' | 'kz'
+
+// ================== ПЕРЕВОДЫ ==================
 const translations = {
     ru: {
-        employee: "Я сотрудник",
-        guest: "Я гость",
-        chooseCategory: "Выбор категории",
-        management: "Управление",
-        management_desc: "Руководство и отделы Управления",
-        organizations: "Подведомственные организации",
-        organizations_desc: "ДЮСШ, ОСДЮШОР, центры и др.",
-        regions: "Отделы спорта",
-        regions_desc: "Города и районы области",
-        // ... здесь можно дальше расширять словарь
+        app_title: "Департамент физической культуры и спорта Карагандинской области",
+        welcome_title: "Добро пожаловать!",
+        welcome_subtitle: "Пожалуйста, выберите режим работы приложения.",
+        employee_mode: "Я сотрудник",
+        guest_mode: "Я гость",
+        theme: "Тема",
+        language: "Язык",
+
+        // Guest tabs
+        guest_tab_ai: "AI помощник",
+        guest_tab_sections: "Секции",
+        guest_tab_events: "Мероприятия",
+        guest_tab_news: "Новости",
+        guest_tab_request: "Заявка",
+
+        // Guest AI
+        guest_ai_title: "AI помощник",
+        guest_ai_placeholder: "Задайте свой вопрос о спорте или услугах...",
+        guest_ai_send: "Отправить",
+        guest_ai_empty: "Пожалуйста, введите вопрос.",
+
+        // Sections
+        guest_sections_title: "Спортивные секции",
+        guest_sections_search_placeholder: "Поиск секции по виду спорта или району",
+        guest_sections_filter: "Фильтры",
+
+        // Events
+        guest_events_title: "Спортивные мероприятия",
+        guest_events_filter: "Фильтры",
+        guest_events_see_all: "Смотреть все",
+
+        // News
+        guest_news_title: "Новости спорта",
+
+        // Request
+        guest_request_title: "Заявка на информацию",
+        guest_request_name: "ФИО",
+        guest_request_phone: "Телефон",
+        guest_request_topic: "Тема обращения",
+        guest_request_message: "Сообщение",
+        guest_request_send: "Отправить заявку",
+
+        // Employee login
+        employee_login_title: "Вход для сотрудников",
+        employee_login_iin: "ИИН",
+        employee_login_password: "Пароль",
+        employee_login_button: "Войти",
+        employee_login_error: "Неверный ИИН или пароль.",
+
+        // Employee bottom tabs
+        emp_tab_home: "Главная",
+        emp_tab_tasks: "Задачи",
+        emp_tab_db: "База знаний",
+        emp_tab_profile: "Профиль",
+
+        // Employee home
+        emp_home_title: "Главная",
+        emp_home_quick_actions: "Быстрые действия",
+        emp_home_action_new_task: "Новая задача",
+        emp_home_action_ai: "AI помощник",
+        emp_home_action_db: "База знаний",
+        emp_home_stats_title: "Статистика",
+        emp_home_stats_tasks: "Задачи",
+        emp_home_stats_requests: "Обращения",
+        emp_home_stats_answers: "Ответы AI",
+
+        // Employee tasks
+        emp_tasks_title: "Мои задачи",
+        emp_tasks_filter_all: "Все",
+        emp_tasks_filter_active: "Активные",
+        emp_tasks_filter_done: "Завершенные",
+        emp_tasks_empty: "Пока нет задач.",
+        emp_task_create_title: "Создание задачи",
+        emp_task_create_subject: "Тема",
+        emp_task_create_desc: "Описание",
+        emp_task_create_priority: "Приоритет",
+        emp_task_create_executor: "Исполнитель",
+        emp_task_create_button: "Создать задачу",
+        emp_task_created_ok: "Задача успешно создана.",
+
+        // Employee DB
+        emp_db_title: "База знаний",
+        emp_db_search_placeholder: "Поиск по вопросам и ответам",
+        emp_db_add_article: "Добавить запись",
+        emp_db_edit: "Редактировать",
+        emp_db_delete: "Удалить",
+        emp_db_empty: "Записей пока нет.",
+        emp_db_form_title: "Новая / редактирование записи",
+        emp_db_form_question: "Вопрос",
+        emp_db_form_answer: "Ответ",
+        emp_db_form_tags: "Теги (через запятую)",
+        emp_db_form_save: "Сохранить",
+        emp_db_saved_ok: "Запись сохранена.",
+
+        // Employee profile
+        emp_profile_title: "Профиль",
+        emp_profile_name: "ФИО",
+        emp_profile_role: "Должность",
+        emp_profile_region: "Регион / отдел",
+        emp_profile_logout: "Выйти",
+
+        // Common AI (employee side)
+        emp_ai_title: "AI помощник сотрудника",
+        emp_ai_placeholder: "Сформулируйте вопрос для AI...",
+        emp_ai_send: "Отправить"
     },
+
     kz: {
-        employee: "Қызметкер",
-        guest: "Қонақ",
-        chooseCategory: "Санатты таңдау",
-        management: "Басқарма",
-        management_desc: "Басқарманың басшылығы мен бөлімдері",
-        organizations: "Төменгі ұйымдар",
-        organizations_desc: "БЖСМ, ОБЖСМ, орталықтар және т.б.",
-        regions: "Спорт бөлімдері",
-        regions_desc: "Қалалар мен аудандар",
-        // ... и здесь тоже
+        app_title: "Қарағанды облысының дене шынықтыру және спорт департаменті",
+        welcome_title: "Қош келдіңіз!",
+        welcome_subtitle: "Өтінеміз, қолдану режимін таңдаңыз.",
+        employee_mode: "Мен қызметкермін",
+        guest_mode: "Мен қонақпын",
+        theme: "Тақырып",
+        language: "Тіл",
+
+        guest_tab_ai: "AI көмекші",
+        guest_tab_sections: "Секциялар",
+        guest_tab_events: "Іс-шаралар",
+        guest_tab_news: "Жаңалықтар",
+        guest_tab_request: "Өтініш",
+
+        guest_ai_title: "AI көмекші",
+        guest_ai_placeholder: "Спорт немесе қызметтер туралы сұрағыңызды қойыңыз...",
+        guest_ai_send: "Жіберу",
+        guest_ai_empty: "Өтінеміз, сұрақты жазыңыз.",
+
+        guest_sections_title: "Спорт секциялары",
+        guest_sections_search_placeholder: "Спорт түрі немесе аудан бойынша іздеу",
+        guest_sections_filter: "Сүзгілер",
+
+        guest_events_title: "Спорт іс-шаралары",
+        guest_events_filter: "Сүзгілер",
+        guest_events_see_all: "Барлығын көру",
+
+        guest_news_title: "Спорт жаңалықтары",
+
+        guest_request_title: "Ақпаратқа өтініш",
+        guest_request_name: "Аты-жөні",
+        guest_request_phone: "Телефон",
+        guest_request_topic: "Өтініш тақырыбы",
+        guest_request_message: "Хабарлама",
+        guest_request_send: "Өтінішті жіберу",
+
+        employee_login_title: "Қызметкерлерге кіру",
+        employee_login_iin: "ЖСН",
+        employee_login_password: "Құпиясөз",
+        employee_login_button: "Кіру",
+        employee_login_error: "ЖСН немесе құпиясөз қате.",
+
+        emp_tab_home: "Басты",
+        emp_tab_tasks: "Тапсырмалар",
+        emp_tab_db: "Білім базасы",
+        emp_tab_profile: "Профиль",
+
+        emp_home_title: "Басты",
+        emp_home_quick_actions: "Жылдам әрекеттер",
+        emp_home_action_new_task: "Жаңа тапсырма",
+        emp_home_action_ai: "AI көмекші",
+        emp_home_action_db: "Білім базасы",
+        emp_home_stats_title: "Статистика",
+        emp_home_stats_tasks: "Тапсырмалар",
+        emp_home_stats_requests: "Өтініштер",
+        emp_home_stats_answers: "AI жауаптары",
+
+        emp_tasks_title: "Менің тапсырмаларым",
+        emp_tasks_filter_all: "Барлығы",
+        emp_tasks_filter_active: "Белсенді",
+        emp_tasks_filter_done: "Аяқталған",
+        emp_tasks_empty: "Әзірге тапсырмалар жоқ.",
+        emp_task_create_title: "Тапсырма құру",
+        emp_task_create_subject: "Тақырып",
+        emp_task_create_desc: "Сипаттама",
+        emp_task_create_priority: "Басымдық",
+        emp_task_create_executor: "Орындаушы",
+        emp_task_create_button: "Тапсырма құру",
+        emp_task_created_ok: "Тапсырма сәтті құрылды.",
+
+        emp_db_title: "Білім базасы",
+        emp_db_search_placeholder: "Сұрақтар мен жауаптар бойынша іздеу",
+        emp_db_add_article: "Жазба қосу",
+        emp_db_edit: "Өңдеу",
+        emp_db_delete: "Жою",
+        emp_db_empty: "Әзірге жазбалар жоқ.",
+        emp_db_form_title: "Жаңа / өңдеу жазбасы",
+        emp_db_form_question: "Сұрақ",
+        emp_db_form_answer: "Жауап",
+        emp_db_form_tags: "Тегтер (үтір арқылы)",
+        emp_db_form_save: "Сақтау",
+        emp_db_saved_ok: "Жазба сақталды.",
+
+        emp_profile_title: "Профиль",
+        emp_profile_name: "Аты-жөні",
+        emp_profile_role: "Лауазым",
+        emp_profile_region: "Өңір / бөлім",
+        emp_profile_logout: "Шығу",
+
+        emp_ai_title: "Қызметкердің AI көмекшісі",
+        emp_ai_placeholder: "AI үшін сұрақты жазыңыз...",
+        emp_ai_send: "Жіберу"
     }
 };
 
-let currentLang = localStorage.getItem("lang") || "ru";
+// ================== ИНИЦИАЛИЗАЦИЯ ==================
+document.addEventListener('DOMContentLoaded', () => {
+    initMainScreen();
+    initThemeToggle();
+    initLanguageToggle();
+    initGuestMode();
+    initEmployeeMode();
+    applyTheme();
+    applyTranslations();
+});
+
+// ================== ОСНОВНОЙ ЭКРАН ==================
+function initMainScreen() {
+    const btnEmployee = document.getElementById('btnEmployeeMode');
+    const btnGuest    = document.getElementById('btnGuestMode');
+
+    if (btnEmployee) {
+        btnEmployee.addEventListener('click', () => {
+            showScreen('employeeLoginScreen');
+        });
+    }
+
+    if (btnGuest) {
+        btnGuest.addEventListener('click', () => {
+            showScreen('guestScreen');
+        });
+    }
+}
+
+function showScreen(screenId) {
+    const allScreens = document.querySelectorAll('.app-screen');
+    allScreens.forEach(s => s.classList.add('hidden'));
+
+    const target = document.getElementById(screenId);
+    if (target) target.classList.remove('hidden');
+}
+
+// ================== ТЕМА (ТЁМНАЯ / СВЕТЛАЯ) ==================
+function initThemeToggle() {
+    const themeToggles = document.querySelectorAll('[data-theme-toggle]');
+
+    themeToggles.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme();
+        });
+    });
+}
+
+function applyTheme() {
+    const root = document.documentElement;
+    if (currentTheme === 'dark') {
+        root.classList.remove('light-theme');
+        root.classList.add('dark-theme');
+    } else {
+        root.classList.remove('dark-theme');
+        root.classList.add('light-theme');
+    }
+
+    // Иконка солнце/луна
+    const iconUrl = currentTheme === 'dark'
+        ? 'https://api.iconify.design/ph/sun-bold.svg?color=white'
+        : 'https://api.iconify.design/ph/moon-bold.svg?color=%23222';
+
+    document.querySelectorAll('.theme-icon').forEach(img => {
+        img.src = iconUrl;
+    });
+}
+
+// ================== ЯЗЫК (RU / KZ) ==================
+function initLanguageToggle() {
+    const langButtons = document.querySelectorAll('[data-lang]');
+
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            if (!lang || !translations[lang]) return;
+            currentLang = lang;
+            applyTranslations();
+        });
+    });
+}
 
 function applyTranslations() {
-    document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.dataset.i18n;
-        const text = translations[currentLang]?.[key];
-        if (text) el.textContent = text;
+    const t = translations[currentLang];
+
+    // Текст по data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) {
+            el.textContent = t[key];
+        }
     });
 
-    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-        const key = el.dataset.i18nPlaceholder;
-        const text = translations[currentLang]?.[key];
-        if (text) el.placeholder = text;
+    // Placeholder'ы
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key]) {
+            el.placeholder = t[key];
+        }
     });
 
-    const btn = document.getElementById("langBtn");
-    if (btn) btn.textContent = currentLang.toUpperCase();
+    // Активная подсветка кнопок языка
+    const langButtons = document.querySelectorAll('[data-lang]');
+    langButtons.forEach(btn => {
+        if (btn.getAttribute('data-lang') === currentLang) {
+            btn.classList.add('lang-active');
+        } else {
+            btn.classList.remove('lang-active');
+        }
+    });
 }
 
-function toggleLanguage() {
-    currentLang = currentLang === "ru" ? "kz" : "ru";
-    localStorage.setItem("lang", currentLang);
-    applyTranslations();
+// ================== ГОСТЕВОЙ РЕЖИМ ==================
+function initGuestMode() {
+    initGuestTabs();
+    initGuestAI();
+    initGuestRequestForm();
 }
 
-document.addEventListener("DOMContentLoaded", applyTranslations);
+function initGuestTabs() {
+    const tabButtons = document.querySelectorAll('.guest-tab-button');
+    const tabScreens = document.querySelectorAll('.guest-tab-screen');
 
-// =================== ГЛОБАЛЬНОЕ СОСТОЯНИЕ ===================
-let MODE = null; // 'employee' или 'guest'
-let currentOrganization = null;
-let currentDepartmentId = null;
-let currentRole = null;
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-tab');
 
-// База данных по должности (employeeDB[role] = [{title,text},...])
-let employeeDB = {};
-// Список поручений
-let tasks = [];
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabScreens.forEach(s => s.classList.add('hidden'));
 
-// Структура таблицы поручения
-let table = {
-    columns: [{ id: 0, title: "Колонка 1", type: "text" }],
-    rows: [[""]]
-};
-
-// Новый стейт для выбора сотрудника
-let currentEmployeeCategory = null; // 'management' | 'org' | 'region'
-let currentUnitList = []; // список подразделений (отделов, организаций)
-let currentUnit = null;   // выбранное подразделение
-let selectedEmployee = null; // объект с данными выбранного сотрудника
-
-// Тема интерфейса
-let currentTheme = "light";
-
-// =================== УТИЛИТЫ LOCALSTORAGE ===================
-function saveLocal(key, value) {
-    try {
-        localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-        console.warn("Не удалось сохранить в localStorage", e);
-    }
-}
-
-function loadLocal(key, def = null) {
-    try {
-        const v = localStorage.getItem(key);
-        return v ? JSON.parse(v) : def;
-    } catch (e) {
-        return def;
-    }
-}
-
-// =================== ПОКАЗ ЭКРАНОВ ===================
-function showScreen(id) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    const el = document.getElementById(id);
-    if (el) el.classList.add("active");
-}
-
-// =================== ДАННЫЕ ОРГАНИЗАЦИЙ И СТРУКТУРЫ ===================
-
-const ORGANIZATIONS = [
-    { type: "main", level: 0, name: "Управление физической культуры и спорта Карагандинской области" },
-
-    { type: "region", level: 1, name: "Отдел спорта г. Караганда" },
-    { type: "region", level: 1, name: "Отдел спорта г. Темиртау" },
-    { type: "region", level: 1, name: "Отдел спорта г. Балхаш" },
-    { type: "region", level: 1, name: "Отдел спорта г. Сарань" },
-    { type: "region", level: 1, name: "Отдел спорта г. Шахтинск" },
-    { type: "region", level: 1, name: "Отдел спорта г. Приозерск" },
-    { type: "region", level: 1, name: "Отдел спорта Абайского района" },
-    { type: "region", level: 1, name: "Отдел спорта Актогайского района" },
-    { type: "region", level: 1, name: "Отдел спорта Бухар-Жырауского района" },
-    { type: "region", level: 1, name: "Отдел спорта Каркаралинского района" },
-    { type: "region", level: 1, name: "Отдел спорта Осакаровского района" },
-    { type: "region", level: 1, name: "Отдел спорта Нуринского района" },
-    { type: "region", level: 1, name: "Отдел спорта Шетского района" },
-
-    { type: "org", level: 2, name: "ОСДЮШОР №1" },
-    { type: "org", level: 2, name: "ОСДЮШОР №2" },
-    { type: "org", level: 2, name: "СДЮШОР №1" },
-    { type: "org", level: 2, name: "ДЮСШ №1" },
-    { type: "org", level: 2, name: "ДЮСШ №2" },
-    { type: "org", level: 2, name: "ОСШИКОР" },
-    { type: "org", level: 2, name: "ЦПОР" },
-    { type: "org", level: 2, name: "ШВСМ (олимп.)" },
-    { type: "org", level: 2, name: "ШВСМ (неолимп.)" },
-    { type: "org", level: 2, name: "Центр массового и детского спорта" },
-    { type: "org", level: 2, name: "Физкультурный диспансер" }
-];
-
-const MAIN_DEPARTMENTS = [
-    {
-        id: "lead",
-        name: "Руководство управления",
-        employees: [
-            "Руководитель управления (Сапиев С.Ж.)",
-            "Заместитель руководителя (Есимханов Д.Ж.)"
-        ]
-    },
-    {
-        id: "hr",
-        name: "Отдел кадров",
-        employees: [
-            "Главный специалист по кадровым вопросам (Жакаева Ж.Т.)"
-        ]
-    },
-    {
-        id: "org",
-        name: "Организационно-правовой отдел",
-        employees: [
-            "Главный специалист по организационной и правовой работе (Такирова Ш.Р.)"
-        ]
-    },
-    {
-        id: "economy",
-        name: "Отдел экономики и финансового обеспечения",
-        employees: [
-            "Руководитель отдела экономики и финансового обеспечения (Кумисбек А.А.)"
-        ]
-    },
-    {
-        id: "highsport",
-        name: "Отдел спорта высших достижений и спортивного резерва",
-        employees: [
-            "Руководитель отдела спорта высших достижений и спортивного резерва (Нокин Д.Б.)"
-        ]
-    },
-    {
-        id: "masssport",
-        name: "Отдел физкультурно-массовой работы",
-        employees: [
-            "Руководитель отдела физкультурно-массовой работы (Әшірбек Н.Ж.)",
-            "Главный специалист развития массового и инвалидного спорта (Тлеубеков Р.М.)",
-            "Главный специалист развития спортивной инфраструктуры (Усенбеков С.С.)",
-            "Прикомандированный специалист развития спортивной инфраструктуры (Касенов Е.К.)",
-            "Прикомандированный специалист развития спортивной инфраструктуры (Жаппарова К.Т.)",
-            "Прикомандированный специалист развития национальных видов спорта (Есмагамбетов М.М.)"
-        ]
-    }
-];
-
-// Типовые должности для подведомственных организаций / отделов спорта
-const ORG_ROLES = [
-    "Руководитель организации",
-    "Старший тренер",
-    "Тренер",
-    "Методист",
-    "Администратор",
-    "Специалист по спорту"
-];
-
-// =================== ТЕМА (СВЕТЛАЯ / ТЁМНАЯ) ===================
-function applyTheme(theme) {
-    currentTheme = theme === "dark" ? "dark" : "light";
-    if (currentTheme === "dark") {
-        document.body.classList.add("dark");
-    } else {
-        document.body.classList.remove("dark");
-    }
-
-    // Обновляем иконки, если они есть
-    const empIcon = document.getElementById("themeIconEmployee");
-    const guestIcon = document.getElementById("themeIconGuest");
-    const iconPath =
-        currentTheme === "dark"
-            ? "img/icon-theme-dark.svg"
-            : "img/icon-theme-light.svg";
-
-    if (empIcon) empIcon.src = iconPath;
-    if (guestIcon) guestIcon.src = iconPath;
-
-    saveLocal("uiTheme", currentTheme);
-}
-
-function initTheme() {
-    const saved = loadLocal("uiTheme", "light");
-    applyTheme(saved || "light");
-}
-
-function toggleTheme() {
-    const next = currentTheme === "light" ? "dark" : "light";
-    applyTheme(next);
-}
-
-// =================== ИНИЦИАЛИЗАЦИЯ ===================
-window.onload = () => {
-    employeeDB = loadLocal("employeeDB", {});
-    tasks = loadLocal("tasks", []);
-
-    // Если поручений нет — создаём образцы
-    if (!tasks || tasks.length === 0) {
-        tasks = [
-            {
-                id: Date.now(),
-                target: "Отдел спорта г. Караганда",
-                targetPerson: "",
-                description: "Подготовить отчёт о проведённых массовых мероприятиях за месяц",
-                deadline: "2025-12-20",
-                table: null
-            },
-            {
-                id: Date.now() + 1,
-                target: "ДЮСШ №1",
-                targetPerson: "",
-                description: "Предоставить информацию по тренерскому составу",
-                deadline: "2025-12-25",
-                table: null
-            },
-            {
-                id: Date.now() + 2,
-                target: "ОСДЮШОР №1",
-                targetPerson: "",
-                description: "Загрузить фотоотчёт о соревнованиях",
-                deadline: "2026-01-05",
-                table: null
-            }
-        ];
-        saveLocal("tasks", tasks);
-    }
-
-    const guestProfile = loadLocal("guestProfile", null);
-    if (guestProfile) {
-        document.getElementById("guestFio").value = guestProfile.fio || "";
-        document.getElementById("guestPhone").value = guestProfile.phone || "";
-        document.getElementById("guestIin").value = guestProfile.iin || "";
-    }
-
-    const empAvatar = loadLocal("employeeAvatar", null);
-    if (empAvatar) setEmployeeAvatar(empAvatar);
-
-    const guestAvatar = loadLocal("guestAvatar", null);
-    if (guestAvatar) setGuestAvatar(guestAvatar);
-
-    initTheme();
-    showScreen("modeScreen");
-};
-
-// =================== ВЫБОР РЕЖИМА ===================
-function selectMode(mode) {
-    MODE = mode;
-    if (mode === "employee") {
-        // Новый поток: выбор категории сотрудника
-        currentEmployeeCategory = null;
-        currentUnitList = [];
-        currentUnit = null;
-        selectedEmployee = null;
-        showScreen("employeeCategoryScreen");
-    } else {
-        // Гостевой режим
-        showScreen("guestHome");
-    }
-}
-
-// =================== НОВЫЙ ВЫБОР СОТРУДНИКА ===================
-
-// Получаем главную организацию (управление)
-function getMainOrg() {
-    return ORGANIZATIONS.find(o => o.type === "main") || {
-        type: "main",
-        level: 0,
-        name: "Управление физической культуры и спорта Карагандинской области"
-    };
-}
-
-function selectEmployeeCategory(category) {
-    // category: 'management' | 'org' | 'region'
-    currentEmployeeCategory = category;
-    currentUnitList = [];
-    currentUnit = null;
-    selectedEmployee = null;
-
-    const titleEl = document.getElementById("employeeUnitTitle");
-    const listEl = document.getElementById("employeeUnitList");
-    if (!listEl) return;
-
-    listEl.innerHTML = "";
-
-    if (category === "management") {
-        if (titleEl) titleEl.textContent = "Выбор отдела управления";
-
-        currentUnitList = MAIN_DEPARTMENTS.map(d => ({
-            type: "dept",
-            id: d.id,
-            name: d.name
-        }));
-
-    } else if (category === "org") {
-        if (titleEl) titleEl.textContent = "Выбор подведомственной организации";
-
-        currentUnitList = ORGANIZATIONS
-            .filter(o => o.type === "org")
-            .map(o => ({
-                type: "org",
-                org: o,
-                name: o.name
-            }));
-
-    } else if (category === "region") {
-        if (titleEl) titleEl.textContent = "Выбор отдела спорта";
-
-        currentUnitList = ORGANIZATIONS
-            .filter(o => o.type === "region")
-            .map(o => ({
-                type: "region",
-                org: o,
-                name: o.name
-            }));
-    }
-
-    currentUnitList.forEach((u, idx) => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.textContent = u.name || (u.org && u.org.name) || "Подразделение";
-        div.onclick = () => selectEmployeeUnit(idx);
-        listEl.appendChild(div);
+            btn.classList.add('active');
+            const targetScreen = document.getElementById(target);
+            if (targetScreen) targetScreen.classList.remove('hidden');
+        });
     });
 
-    showScreen("employeeUnitScreen");
+    // По умолчанию – AI вкладка
+    const first = document.querySelector('.guest-tab-button');
+    if (first) first.click();
 }
 
-function backFromEmployeeUnit() {
-    // Возврат к выбору категории
-    showScreen("employeeCategoryScreen");
-}
+function initGuestAI() {
+    const input    = document.getElementById('guestAiInput');
+    const btnSend  = document.getElementById('guestAiSend');
+    const chatBody = document.getElementById('guestAiChatBody');
 
-function selectEmployeeUnit(index) {
-    if (index < 0 || index >= currentUnitList.length) return;
-    currentUnit = currentUnitList[index];
+    if (!input || !btnSend || !chatBody) return;
 
-    const titleEl = document.getElementById("employeePersonTitle");
-    const listEl = document.getElementById("employeePersonList");
-    if (!listEl) return;
-    listEl.innerHTML = "";
-
-    let persons = [];
-    if (currentEmployeeCategory === "management") {
-        const dept = MAIN_DEPARTMENTS.find(d => d.id === currentUnit.id);
-        persons = dept ? dept.employees : [];
-        if (titleEl) titleEl.textContent = "Выбор сотрудника отдела";
-    } else {
-        // Временно используем типовые роли
-        persons = ORG_ROLES.slice();
-        if (titleEl) titleEl.textContent = "Выбор должности";
-    }
-
-    persons.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.textContent = p;
-        div.onclick = () => selectEmployeePerson(p);
-        listEl.appendChild(div);
-    });
-
-    showScreen("employeePersonScreen");
-}
-
-function backFromEmployeePerson() {
-    showScreen("employeeUnitScreen");
-}
-
-// Вспомогательная: получаем название организации для выбранного сотрудника
-function getSelectedOrgName() {
-    if (!currentEmployeeCategory) return "Организация";
-
-    if (currentEmployeeCategory === "management") {
-        const mainOrg = getMainOrg();
-        return mainOrg.name;
-    }
-
-    if (currentUnit && currentUnit.org) {
-        return currentUnit.org.name;
-    }
-
-    return "Организация";
-}
-
-// Генерация ключа для хранения пароля
-function normalizeForKey(str) {
-    return (str || "")
-        .toString()
-        .toLowerCase()
-        .replace(/[()\.\,\s«»"'/№\-]+/g, "");
-}
-
-function extractFioFromEmployeeLine(line) {
-    // Формат: "Должность (ФИО)"
-    const text = (line || "").toString();
-    const open = text.lastIndexOf("(");
-    const close = text.lastIndexOf(")");
-    if (open !== -1 && close !== -1 && close > open) {
-        return text.substring(open + 1, close).trim();
-    }
-    return text.trim();
-}
-
-function getPasswordKeyForSelected() {
-    if (!selectedEmployee) return null;
-    const orgName = getSelectedOrgName();
-
-    let base;
-    if (currentEmployeeCategory === "management") {
-        const fio = extractFioFromEmployeeLine(selectedEmployee.person);
-        base = normalizeForKey(fio);
-    } else {
-        // Пока в подведомственных и отделах спорта у нас только роль
-        base = normalizeForKey(selectedEmployee.person);
-    }
-
-    const orgKey = normalizeForKey(orgName);
-    return `pass_${base}_${orgKey}`;
-}
-
-function selectEmployeePerson(personText) {
-    selectedEmployee = {
-        category: currentEmployeeCategory,
-        unit: currentUnit,
-        person: personText
-    };
-
-    const orgLabel = document.getElementById("loginOrgLabel");
-    const roleLabel = document.getElementById("loginRoleLabel");
-    const orgName = getSelectedOrgName();
-
-    if (orgLabel) orgLabel.textContent = orgName;
-    if (roleLabel) roleLabel.textContent = personText;
-
-    const passInput = document.getElementById("employeePasswordInput");
-    if (passInput) passInput.value = "";
-
-    showScreen("employeePasswordScreen");
-}
-
-function backFromPassword() {
-    showScreen("employeePersonScreen");
-}
-
-function backFromCreatePassword() {
-    showScreen("employeePasswordScreen");
-}
-
-// Вход сотрудника по паролю
-function loginEmployee() {
-    if (!selectedEmployee) {
-        alert("Сначала выберите сотрудника.");
-        return;
-    }
-
-    const passInput = document.getElementById("employeePasswordInput");
-    if (!passInput) return;
-    const pwd = passInput.value.trim();
-    if (!pwd) {
-        alert("Введите пароль.");
-        return;
-    }
-
-    const key = getPasswordKeyForSelected();
-    if (!key) {
-        alert("Не удалось определить ключ пароля.");
-        return;
-    }
-
-    const savedPwd = loadLocal(key, null);
-
-    if (!savedPwd) {
-        // Первый вход — нужен только пароль 123
-        if (pwd !== "123") {
-            alert("При первом входе используйте пароль 123.");
+    btnSend.addEventListener('click', () => {
+        const text = input.value.trim();
+        if (!text) {
+            alert(translations[currentLang].guest_ai_empty);
             return;
         }
 
-        // Идём на экран создания нового пароля
-        const orgLabel = document.getElementById("createPassOrgLabel");
-        const roleLabel = document.getElementById("createPassRoleLabel");
-        const orgName = getSelectedOrgName();
+        appendChatMessage(chatBody, 'user', text);
+        input.value = "";
+        askBackendAI(text, 'guest')
+            .then(answer => appendChatMessage(chatBody, 'ai', answer))
+            .catch(() => appendChatMessage(chatBody, 'ai',
+                "К сожалению, сейчас сервер недоступен. Попробуйте позже."
+            ));
+    });
 
-        if (orgLabel) orgLabel.textContent = orgName;
-        if (roleLabel) roleLabel.textContent = selectedEmployee.person || "Сотрудник";
-
-        const p1 = document.getElementById("employeeNewPassword1");
-        const p2 = document.getElementById("employeeNewPassword2");
-        if (p1) p1.value = "";
-        if (p2) p2.value = "";
-
-        showScreen("employeeCreatePasswordScreen");
-        return;
-    }
-
-    // Сохранённый пароль уже есть — проверяем
-    if (pwd !== savedPwd) {
-        alert("Неверный пароль.");
-        return;
-    }
-
-    // Успешный вход
-    proceedEmployeeLoginAfterPassword();
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            btnSend.click();
+        }
+    });
 }
 
-// Сохранение нового пароля и вход
-function saveNewEmployeePassword() {
-    if (!selectedEmployee) {
-        alert("Сначала выберите сотрудника.");
-        return;
-    }
-
-    const p1 = document.getElementById("employeeNewPassword1");
-    const p2 = document.getElementById("employeeNewPassword2");
-    if (!p1 || !p2) return;
-
-    const v1 = p1.value.trim();
-    const v2 = p2.value.trim();
-
-    if (!v1 || !v2) {
-        alert("Введите новый пароль и его подтверждение.");
-        return;
-    }
-    if (v1 !== v2) {
-        alert("Пароли не совпадают.");
-        return;
-    }
-
-    const key = getPasswordKeyForSelected();
-    if (!key) {
-        alert("Не удалось сохранить пароль.");
-        return;
-    }
-
-    saveLocal(key, v1);
-    alert("Пароль сохранён.");
-
-    proceedEmployeeLoginAfterPassword();
+function appendChatMessage(container, role, text) {
+    const msg = document.createElement('div');
+    msg.classList.add('chat-message', role === 'user' ? 'chat-user' : 'chat-ai');
+    msg.textContent = text;
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
 }
 
-// Общая логика после успешной проверки пароля
-function proceedEmployeeLoginAfterPassword() {
-    const orgName = getSelectedOrgName();
-    const mainOrg = getMainOrg();
+function askBackendAI(question, mode) {
+    // Заготовка под настоящий бекенд:
+    // const apiUrl = 'https://gidcity-ai-backend-production.up.railway.app/ask';
+    //
+    // return fetch(apiUrl, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ question, mode })
+    // })
+    // .then(res => res.json())
+    // .then(data => data.answer || 'Нет ответа от AI.');
 
-    if (currentEmployeeCategory === "management") {
-        currentOrganization = mainOrg;
-        currentDepartmentId = selectedEmployee.unit ? selectedEmployee.unit.id : null;
-    } else if (selectedEmployee.unit && selectedEmployee.unit.org) {
-        currentOrganization = selectedEmployee.unit.org;
-        currentDepartmentId = null;
-    } else {
-        currentOrganization = mainOrg;
-        currentDepartmentId = null;
-    }
-
-    MODE = "employee";
-
-    // Выбранная "роль" — текст person
-    const roleText = selectedEmployee.person || "Сотрудник";
-    currentRole = roleText;
-
-    // Обновляем шапку и профиль
-    const orgLabel = currentOrganization ? currentOrganization.name : orgName;
-
-    document.getElementById("empOrg").textContent = orgLabel;
-    document.getElementById("empRole").textContent = roleText;
-
-    document.getElementById("profileOrg").textContent = orgLabel;
-    document.getElementById("profileRole").textContent = roleText;
-
-    syncEmployeeAvatarProfile();
-
-    showScreen("employeeHome");
+    // Пока просто фейковый ответ:
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve('AI: (демо-ответ) Ваш вопрос получен и будет обработан.');
+        }, 500);
+    });
 }
 
-// =================== АВАТАРЫ СОТРУДНИКА ===================
-function setEmployeeAvatar(dataUrl) {
-    const img = document.getElementById("employeeAvatarImg");
-    const ph = document.getElementById("employeeAvatarPlaceholder");
-    img.src = dataUrl;
-    img.style.display = "block";
-    ph.style.display = "none";
+function initGuestRequestForm() {
+    const form   = document.getElementById('guestRequestForm');
+    const name   = document.getElementById('guestRequestName');
+    const phone  = document.getElementById('guestRequestPhone');
+    const topic  = document.getElementById('guestRequestTopic');
+    const msg    = document.getElementById('guestRequestMessage');
 
-    // Профиль
-    const img2 = document.getElementById("employeeAvatarImg_profile");
-    const ph2 = document.getElementById("employeeAvatarPlaceholder_profile");
-    if (img2 && ph2) {
-        img2.src = dataUrl;
-        img2.style.display = "block";
-        ph2.style.display = "none";
-    }
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Здесь можно отправить данные на ваш сервер
+        console.log('Guest request:', {
+            name:  name?.value,
+            phone: phone?.value,
+            topic: topic?.value,
+            msg:   msg?.value
+        });
+
+        alert('Заявка отправлена. Спасибо!');
+        form.reset();
+    });
 }
 
-function syncEmployeeAvatarProfile() {
-    const dataUrl = loadLocal("employeeAvatar", null);
-    if (dataUrl) {
-        setEmployeeAvatar(dataUrl);
-    } else {
-        const img = document.getElementById("employeeAvatarImg");
-        const ph = document.getElementById("employeeAvatarPlaceholder");
-        if (img && ph) {
-            img.style.display = "none";
-            ph.style.display = "block";
+// ================== РЕЖИМ СОТРУДНИКА ==================
+function initEmployeeMode() {
+    initEmployeeLogin();
+    initEmployeeTabs();
+    initEmployeeAI();
+    initEmployeeCreateTask();
+    initEmployeeDBForm();
+}
+
+function initEmployeeLogin() {
+    const form   = document.getElementById('employeeLoginForm');
+    const iin    = document.getElementById('employeeLoginIIN');
+    const pass   = document.getElementById('employeeLoginPassword');
+    const error  = document.getElementById('employeeLoginError');
+
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Заглушка: любой ИИН и пароль считаем валидными,
+        // но можно добавить свою проверку
+        if (!iin.value.trim() || !pass.value.trim()) {
+            error.textContent = translations[currentLang].employee_login_error;
+            error.classList.remove('hidden');
+            return;
         }
 
-        const img2 = document.getElementById("employeeAvatarImg_profile");
-        const ph2 = document.getElementById("employeeAvatarPlaceholder_profile");
-        if (img2 && ph2) {
-            img2.style.display = "none";
-            ph2.style.display = "block";
+        error.classList.add('hidden');
+        showScreen('employeeMainScreen');
+        // По умолчанию показываем вкладку "Главная"
+        const firstTab = document.querySelector('.emp-tab-button');
+        if (firstTab) firstTab.click();
+    });
+}
+
+function initEmployeeTabs() {
+    const tabButtons = document.querySelectorAll('.emp-tab-button');
+    const tabScreens = document.querySelectorAll('.emp-tab-screen');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-tab');
+
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabScreens.forEach(s => s.classList.add('hidden'));
+
+            btn.classList.add('active');
+            const targetScreen = document.getElementById(target);
+            if (targetScreen) targetScreen.classList.remove('hidden');
+        });
+    });
+}
+
+function initEmployeeAI() {
+    const input    = document.getElementById('empAiInput');
+    const btnSend  = document.getElementById('empAiSend');
+    const chatBody = document.getElementById('empAiChatBody');
+
+    if (!input || !btnSend || !chatBody) return;
+
+    btnSend.addEventListener('click', () => {
+        const text = input.value.trim();
+        if (!text) return;
+
+        appendChatMessage(chatBody, 'user', text);
+        input.value = "";
+        askBackendAI(text, 'employee')
+            .then(answer => appendChatMessage(chatBody, 'ai', answer))
+            .catch(() => appendChatMessage(chatBody, 'ai',
+                "К сожалению, сейчас сервер недоступен. Попробуйте позже."
+            ));
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            btnSend.click();
         }
-    }
+    });
 }
 
-function triggerEmployeePhoto() {
-    const input = document.getElementById("employeeAvatarInput");
-    if (input) input.click();
-}
+// Создание задач (упрощённо, без реального сервера)
+function initEmployeeCreateTask() {
+    const form      = document.getElementById('empCreateTaskForm');
+    const tasksList = document.getElementById('empTasksList');
 
-function handleEmployeePhoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-        const dataUrl = reader.result;
-        saveLocal("employeeAvatar", dataUrl);
-        setEmployeeAvatar(dataUrl);
-    };
-    reader.readAsDataURL(file);
-}
+    if (!form || !tasksList) return;
 
-// =================== АВАТАРЫ ГОСТЯ ===================
-function setGuestAvatar(dataUrl) {
-    const img = document.getElementById("guestAvatarImg");
-    const ph = document.getElementById("guestAvatarPlaceholder");
-    img.src = dataUrl;
-    img.style.display = "block";
-    ph.style.display = "none";
-}
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const subject   = form.querySelector('#empTaskSubject').value.trim();
+        const desc      = form.querySelector('#empTaskDesc').value.trim();
+        const priority  = form.querySelector('#empTaskPriority').value;
+        const executor  = form.querySelector('#empTaskExecutor').value.trim();
 
-function triggerGuestPhoto() {
-    const input = document.getElementById("guestAvatarInput");
-    if (input) input.click();
-}
+        if (!subject) return;
 
-function handleGuestPhoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-        const dataUrl = reader.result;
-        saveLocal("guestAvatar", dataUrl);
-        setGuestAvatar(dataUrl);
-    };
-    reader.readAsDataURL(file);
-}
-
-// =================== НАВИГАЦИЯ СОТРУДНИКА ===================
-function goEmployeeHome() {
-    showScreen("employeeHome");
-}
-function openEmployeeProfile() {
-    syncEmployeeAvatarProfile();
-    showScreen("employeeProfile");
-}
-function openDatabase() {
-    buildDatabaseList();
-    showScreen("databaseScreen");
-}
-function openTasksScreen() {
-    renderTasks();
-    showScreen("tasksScreen");
-}
-function openAIChat() {
-    showScreen("aiScreen");
-}
-
-// =================== ГОСТЬ: НАВИГАЦИЯ ===================
-function openGuestProfile() {
-    showScreen("guestProfile");
-}
-function openGuestEvents() {
-    showScreen("guestEvents");
-}
-function openGuestSections() {
-    showScreen("guestSections");
-}
-function openGuestResults() {
-    showScreen("guestResults");
-}
-function openGuestRequestInfo() {
-    showScreen("guestRequest");
-}
-
-// =================== ПРОФИЛЬ ГОСТЯ ===================
-function saveGuestProfile() {
-    const fio = document.getElementById("guestFio").value.trim();
-    const phone = document.getElementById("guestPhone").value.trim();
-    const iin = document.getElementById("guestIin").value.trim();
-
-    if (!fio || !phone || !iin) {
-        alert("Заполните ФИО, телефон и ИИН");
-        return;
-    }
-
-    saveLocal("guestProfile", { fio, phone, iin });
-    alert("Профиль сохранён");
-    showScreen("guestHome");
-}
-
-// Демонстрация отправки запроса
-function sendGuestRequest() {
-    const t = document.getElementById("guestRequestTitle").value.trim();
-    const text = document.getElementById("guestRequestText").value.trim();
-    if (!t || !text) {
-        alert("Заполните тему и текст запроса");
-        return;
-    }
-    alert("Запрос принят (демо). В реальной версии он отправится в Управление.");
-    document.getElementById("guestRequestTitle").value = "";
-    document.getElementById("guestRequestText").value = "";
-    showScreen("guestHome");
-}
-
-// =================== БАЗА ДАННЫХ СОТРУДНИКА ===================
-function getDefaultSectionsForRole(role) {
-    const r = (role || "").toLowerCase();
-
-    if (r.includes("инфраструктур")) {
-        return [
-            { title: "Паспорт спортивных объектов", text: "Список объектов, адрес, вместимость, профиль." },
-            { title: "Состояние сооружений", text: "Текущие показатели, замечания, потребность в ремонте." },
-            { title: "Строительство и ремонт", text: "Планы, сметы, этапы реализации." }
-        ];
-    }
-    if (r.includes("массового") || r.includes("массовой") || r.includes("инвалидного")) {
-        return [
-            { title: "Массовые мероприятия", text: "Календарь массовых спортивных мероприятий." },
-            { title: "Инвалидный спорт", text: "Программы, секции, участие людей с ОВЗ." },
-            { title: "Охват населения", text: "Статистика по участникам и возрастным группам." }
-        ];
-    }
-    if (r.includes("высших достижений") || r.includes("резерва")) {
-        return [
-            { title: "Сборные команды", text: "Состав, тренеры, календарь сборов." },
-            { title: "Подготовка к стартам", text: "Планы тренировки, УТС, контрольные старты." },
-            { title: "Результаты спортсменов", text: "Выступления на РК, ЧМ, ОИ и т.д." }
-        ];
-    }
-    if (r.includes("экономики") || r.includes("финансового")) {
-        return [
-            { title: "Сметы и лимиты", text: "Годовые сметы по организациям и мероприятиям." },
-            { title: "Освоение средств", text: "Фактические расходы, остатки, перераспределение." },
-            { title: "Финансирование мероприятий", text: "Расходы по календарю соревнований." }
-        ];
-    }
-    if (r.includes("кадров") || r.includes("кадровым")) {
-        return [
-            { title: "Штатное расписание", text: "Список должностей и занятость." },
-            { title: "Кадровый резерв", text: "Перечень кандидатов и перспективных специалистов." },
-            { title: "Обучение и повышение квалификации", text: "Курсы, семинары, аттестации." }
-        ];
-    }
-
-    return [
-        { title: "Общие сведения", text: "Краткая информация по вашему направлению." },
-        { title: "Планы работы", text: "Основные задачи и плановые мероприятия." },
-        { title: "Отчёты", text: "Итоговые отчёты и аналитика." }
-    ];
-}
-
-function buildDatabaseList() {
-    const container = document.getElementById("dbSectionList");
-    container.innerHTML = "";
-
-    if (!currentRole) return;
-
-    if (!employeeDB[currentRole] || employeeDB[currentRole].length === 0) {
-        employeeDB[currentRole] = getDefaultSectionsForRole(currentRole);
-    }
-
-    employeeDB[currentRole].forEach((sec, i) => {
-        const div = document.createElement("div");
-        div.className = "db-section";
-        div.innerHTML = `
-            <input type="text" value="${sec.title}" oninput="updateDbTitle(${i}, this.value)" />
-            <textarea oninput="updateDbText(${i}, this.value)">${sec.text}</textarea>
+        // В реальности отправляем на сервер, а тут просто добавляем карточку
+        const card = document.createElement('div');
+        card.classList.add('emp-task-card');
+        card.innerHTML = `
+            <div class="emp-task-card-header">
+                <span class="emp-task-subject">${subject}</span>
+                <span class="emp-task-priority emp-priority-${priority.toLowerCase()}">${priority}</span>
+            </div>
+            <div class="emp-task-card-body">
+                <p>${desc}</p>
+                <p class="emp-task-executor">Исполнитель: ${executor || 'Не назначен'}</p>
+            </div>
         `;
-        container.appendChild(div);
+        tasksList.prepend(card);
+
+        alert(translations[currentLang].emp_task_created_ok);
+        form.reset();
     });
-    saveLocal("employeeDB", employeeDB);
 }
 
-function addDbSection() {
-    if (!currentRole) {
-        alert("Сначала выберите свою должность");
-        return;
-    }
-    if (!employeeDB[currentRole]) employeeDB[currentRole] = [];
-    employeeDB[currentRole].push({ title: "Новый раздел", text: "" });
-    buildDatabaseList();
-}
+// Работа с базой знаний (локальная имитация)
+let empDbItems = [];
+let empDbEditingIndex = null;
 
-function updateDbTitle(i, v) {
-    employeeDB[currentRole][i].title = v;
-    saveLocal("employeeDB", employeeDB);
-}
-function updateDbText(i, v) {
-    employeeDB[currentRole][i].text = v;
-    saveLocal("employeeDB", employeeDB);
-}
+function initEmployeeDBForm() {
+    const form      = document.getElementById('empDbForm');
+    const list      = document.getElementById('empDbList');
+    const searchInp = document.getElementById('empDbSearch');
 
-// =================== КОНТЕКСТ ДЛЯ ИИ ИЗ БАЗЫ СОТРУДНИКА ===================
-function buildEmployeeContext() {
-    if (!MODE || MODE !== "employee") return "";
-    if (!currentRole || !employeeDB[currentRole] || employeeDB[currentRole].length === 0) return "";
+    if (!form || !list) return;
 
-    const sections = employeeDB[currentRole];
-    const orgName = currentOrganization ? currentOrganization.name : "Организация не выбрана";
-    const roleName = currentRole;
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const q    = form.querySelector('#empDbQuestion').value.trim();
+        const a    = form.querySelector('#empDbAnswer').value.trim();
+        const tags = form.querySelector('#empDbTags').value.trim();
 
-    const contextParts = sections.map(sec => {
-        const title = (sec.title || "").trim();
-        const text = (sec.text || "").trim();
-        return `${title ? title + ": " : ""}${text}`;
+        if (!q || !a) return;
+
+        const item = { question: q, answer: a, tags };
+        if (empDbEditingIndex === null) {
+            empDbItems.push(item);
+        } else {
+            empDbItems[empDbEditingIndex] = item;
+            empDbEditingIndex = null;
+        }
+
+        renderEmpDbList();
+        alert(translations[currentLang].emp_db_saved_ok);
+        form.reset();
     });
 
-    const contextText = contextParts.join("\n\n");
-
-    return `
-Должность: ${roleName}
-Организация: ${orgName}
-
-Внутренняя база сотрудника (служебная информация):
-${contextText}
-    `.trim();
-}
-
-// =================== ИИ-ЧАТ ===================
-async function sendAI() {
-    const input = document.getElementById("aiMessage");
-    const text = input.value.trim();
-    if (!text) return;
-
-    addAIMessage("user", text);
-    input.value = "";
-
-    let questionForBackend = text;
-    const employeeContext = buildEmployeeContext();
-
-    if (employeeContext) {
-        questionForBackend =
-            "Ниже предоставлен служебный контекст сотрудника Управления физической культуры и спорта Карагандинской области.\n" +
-            "Отвечай, опираясь в первую очередь на эти данные. Если точной информации нет, делай аккуратные выводы и обязательно помечай, что это оценка.\n\n" +
-            employeeContext +
-            "\n\nВопрос сотрудника:\n" +
-            text;
-    } else if (MODE === "guest") {
-        questionForBackend =
-            "Ты — ИИ-ассистент гостевого режима Управления физической культуры и спорта Карагандинской области. " +
-            "Отвечай населению кратко и официально. Вопрос:\n" +
-            text;
+    if (searchInp) {
+        searchInp.addEventListener('input', () => {
+            renderEmpDbList(searchInp.value.trim());
+        });
     }
 
-    try {
-        const res = await fetch(
-            "https://gidcity-ai-backend-production.up.railway.app/ask",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ question: questionForBackend })
-            }
+    renderEmpDbList();
+}
+
+function renderEmpDbList(search = '') {
+    const list = document.getElementById('empDbList');
+    if (!list) return;
+
+    list.innerHTML = '';
+
+    const filtered = empDbItems.filter(item => {
+        if (!search) return true;
+        const s = search.toLowerCase();
+        return (
+            item.question.toLowerCase().includes(s) ||
+            item.answer.toLowerCase().includes(s) ||
+            item.tags.toLowerCase().includes(s)
         );
-
-        if (!res.ok) {
-            console.error("Backend error:", res.status);
-            addAIMessage("bot", generateAIAnswer(text));
-            return;
-        }
-
-        let data = null;
-        try {
-            data = await res.json();
-        } catch (e) {
-            console.error("JSON parse error:", e);
-        }
-
-        let answer = generateAIAnswer(text);
-
-        if (data) {
-            if (typeof data === "string") answer = data;
-            else if (typeof data.answer === "string") answer = data.answer;
-            else if (typeof data.response === "string") answer = data.response;
-            else if (typeof data.reply === "string") answer = data.reply;
-        }
-
-        addAIMessage("bot", answer);
-    } catch (err) {
-        console.error("Fetch error:", err);
-        addAIMessage("bot", generateAIAnswer(text));
-    }
-}
-
-function addAIMessage(type, text) {
-    const chat = document.getElementById("aiChat");
-    const div = document.createElement("div");
-    div.className = "chat-message " + type;
-    div.innerHTML = `<div class="chat-bubble">${text}</div>`;
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-}
-
-function generateAIAnswer(q) {
-    const query = q.toLowerCase();
-
-    if (MODE === "employee") {
-        if (!currentRole || !employeeDB[currentRole] || employeeDB[currentRole].length === 0) {
-            return "Для вашей должности база данных пока пустая. Заполните разделы в «База данных», чтобы ИИ мог опираться на ваши материалы.";
-        }
-
-        const sections = employeeDB[currentRole];
-
-        const fullText = sections
-            .map(s => ((s.title || "") + ". " + (s.text || "")))
-            .join(" \n")
-            .toLowerCase();
-
-        if (fullText.includes(query)) {
-            const matchedSections = sections.filter(s => {
-                const t = ((s.title || "") + " " + (s.text || "")).toLowerCase();
-                return t.includes(query);
-            });
-
-            const top = matchedSections.slice(0, 3).map(s => {
-                const t = (s.text || "").trim();
-                return `• ${s.title || "Раздел"} — ${t || "описание отсутствует"}`;
-            });
-
-            if (top.length > 0) {
-                return (
-                    "Нашёл информацию по вашему вопросу в вашей служебной базе данных:\n\n" +
-                    top.join("\n\n") +
-                    "\n\n(Ответ сгенерирован на основе ваших служебных разделов. При необходимости уточните данные в базе.)"
-                );
-            }
-        }
-
-        return "В вашей служебной базе данных точного ответа не нашлось. Дополните разделы в «База данных» или переформулируйте вопрос.";
-    }
-
-    // Гостевой режим — резервный ответ, если backend недоступен
-    return "Сейчас ИИ-ассистент гостевого режима недоступен. Пожалуйста, попробуйте повторить запрос позже или обратитесь в Управление физической культуры и спорта Карагандинской области.";
-}
-
-function backFromAI() {
-    if (MODE === "guest") showScreen("guestHome");
-    else showScreen("employeeHome");
-}
-
-// =================== СОЗДАНИЕ ПОРУЧЕНИЙ + ТАБЛИЦА ===================
-function openCreateTask() {
-    buildTaskTargets();
-    initTableEditor();
-    showScreen("createTaskScreen");
-}
-
-// Специалист не может выбирать уровень выше своего
-function buildTaskTargets() {
-    const sel = document.getElementById("taskTarget");
-    sel.innerHTML = "";
-
-    if (!currentOrganization) return;
-
-    const myLevel = currentOrganization.level ?? 1;
-
-    ORGANIZATIONS.forEach(o => {
-        if ((o.level ?? 1) >= myLevel) {
-            const opt = document.createElement("option");
-            opt.value = o.name;
-            opt.textContent = o.name;
-            sel.appendChild(opt);
-        }
     });
 
-    // если по какой-то причине список пуст — хотя бы своя организация
-    if (!sel.value && currentOrganization) {
-        const opt = document.createElement("option");
-        opt.value = currentOrganization.name;
-        opt.textContent = currentOrganization.name;
-        sel.appendChild(opt);
-    }
-}
-
-// инициализация таблицы
-function initTableEditor() {
-    table = {
-        columns: [{ id: 0, title: "Колонка 1", type: "text" }],
-        rows: [[""]]
-    };
-    renderTable();
-}
-
-function renderTable() {
-    const container = document.getElementById("tableEditor");
-    container.innerHTML = "";
-
-    const t = document.createElement("table");
-
-    // Header
-    const thead = document.createElement("thead");
-    const trHead = document.createElement("tr");
-    table.columns.forEach((col, i) => {
-        const th = document.createElement("th");
-        th.innerHTML = `
-            <input value="${col.title}" oninput="renameColumn(${i}, this.value)" />
-            <select onchange="changeColumnType(${i}, this.value)">
-                <option value="text" ${col.type === "text" ? "selected" : ""}>Текст</option>
-                <option value="number" ${col.type === "number" ? "selected" : ""}>Число</option>
-                <option value="date" ${col.type === "date" ? "selected" : ""}>Дата</option>
-            </select>
-        `;
-        trHead.appendChild(th);
-    });
-    thead.appendChild(trHead);
-    t.appendChild(thead);
-
-    // Body
-    const tbody = document.createElement("tbody");
-    table.rows.forEach((row, ri) => {
-        const tr = document.createElement("tr");
-        row.forEach((cell, ci) => {
-            const col = table.columns[ci];
-            const typeAttr =
-                col.type === "number" ? `type="number"` :
-                col.type === "date" ? `type="date"` : `type="text"`;
-            const valueAttr = col.type === "date" ? cell : cell;
-            const td = document.createElement("td");
-            td.innerHTML = `
-                <input ${typeAttr} value="${valueAttr}" oninput="editCell(${ri}, ${ci}, this.value)" />
-            `;
-            tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-    });
-    t.appendChild(tbody);
-
-    // Footer — суммы по числовым колонкам
-    const hasNumberCols = table.columns.some(c => c.type === "number");
-    if (hasNumberCols) {
-        const tfoot = document.createElement("tfoot");
-        const trSum = document.createElement("tr");
-        table.columns.forEach((col, ci) => {
-            const td = document.createElement("td");
-            if (col.type === "number") {
-                let sum = 0;
-                table.rows.forEach(row => {
-                    const raw = (row[ci] || "").toString().replace(",", ".");
-                    const v = parseFloat(raw);
-                    if (!isNaN(v)) sum += v;
-                });
-                td.textContent = "Σ " + sum;
-            } else {
-                td.textContent = "";
-            }
-            trSum.appendChild(td);
-        });
-        tfoot.appendChild(trSum);
-        t.appendChild(tfoot);
-    }
-
-    container.appendChild(t);
-}
-
-function addTableRow() {
-    const colsCount = table.columns.length;
-    table.rows.push(Array(colsCount).fill(""));
-    renderTable();
-}
-
-function addTableColumn() {
-    const newId = table.columns.length;
-    table.columns.push({ id: newId, title: "Колонка " + (newId + 1), type: "text" });
-    table.rows = table.rows.map(r => [...r, ""]);
-    renderTable();
-}
-
-function renameColumn(i, v) {
-    table.columns[i].title = v;
-}
-function changeColumnType(i, v) {
-    table.columns[i].type = v;
-    renderTable();
-}
-function editCell(r, c, v) {
-    table.rows[r][c] = v;
-}
-
-// Сохранение поручения
-function saveTask() {
-    const target = document.getElementById("taskTarget").value;
-    const targetPerson = document.getElementById("taskTargetPerson").value.trim();
-    const desc = document.getElementById("taskDescription").value.trim();
-    const deadline = document.getElementById("taskDeadline").value;
-
-    if (!desc) {
-        alert("Введите описание поручения");
+    if (filtered.length === 0) {
+        const empty = document.createElement('div');
+        empty.classList.add('emp-db-empty');
+        empty.textContent = translations[currentLang].emp_db_empty;
+        list.appendChild(empty);
         return;
     }
 
-    const task = {
-        id: Date.now(),
-        target,
-        targetPerson,
-        description: desc,
-        deadline,
-        table: JSON.parse(JSON.stringify(table))
-    };
-
-    tasks.push(task);
-    saveLocal("tasks", tasks);
-
-    alert("Поручение сохранено");
-    showScreen("employeeHome");
-}
-
-// =================== СПИСОК ПОРУЧЕНИЙ ===================
-function renderTasks() {
-    const container = document.getElementById("tasksList");
-    container.innerHTML = "";
-
-    if (!tasks.length) {
-        container.innerHTML = "<div class='task-meta'>Поручений пока нет.</div>";
-        return;
-    }
-
-    tasks.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "task-card";
-        div.innerHTML = `
-            <div class="task-title">${t.description}</div>
-            <div class="task-meta">Кому: ${t.target}</div>
-            <div class="task-meta">${t.targetPerson ? "Сотрудник: " + t.targetPerson : ""}</div>
-            <div class="task-meta">Дедлайн: ${t.deadline || "не указан"}</div>
+    filtered.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.classList.add('emp-db-card');
+        card.innerHTML = `
+            <h4>${item.question}</h4>
+            <p>${item.answer}</p>
+            <div class="emp-db-tags">${item.tags}</div>
+            <div class="emp-db-actions">
+                <button class="btn-small" data-action="edit" data-index="${index}">
+                    ${translations[currentLang].emp_db_edit}
+                </button>
+                <button class="btn-small btn-danger" data-action="delete" data-index="${index}">
+                    ${translations[currentLang].emp_db_delete}
+                </button>
+            </div>
         `;
-        container.appendChild(div);
+        list.appendChild(card);
+    });
+
+    list.querySelectorAll('button[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-action');
+            const idx    = parseInt(btn.getAttribute('data-index'), 10);
+            if (Number.isNaN(idx)) return;
+
+            if (action === 'edit') {
+                editEmpDbItem(idx);
+            } else if (action === 'delete') {
+                deleteEmpDbItem(idx);
+            }
+        });
     });
 }
 
-// =================== ВЫХОД СОТРУДНИКА ===================
-function resetEmployee() {
-    currentOrganization = null;
-    currentRole = null;
-    currentDepartmentId = null;
-    MODE = null;
-    currentEmployeeCategory = null;
-    currentUnitList = [];
-    currentUnit = null;
-    selectedEmployee = null;
-    showScreen("modeScreen");
+function editEmpDbItem(index) {
+    const form = document.getElementById('empDbForm');
+    if (!form) return;
+
+    const item = empDbItems[index];
+    if (!item) return;
+
+    form.querySelector('#empDbQuestion').value = item.question;
+    form.querySelector('#empDbAnswer').value   = item.answer;
+    form.querySelector('#empDbTags').value     = item.tags;
+    empDbEditingIndex = index;
+}
+
+function deleteEmpDbItem(index) {
+    empDbItems.splice(index, 1);
+    renderEmpDbList();
 }
